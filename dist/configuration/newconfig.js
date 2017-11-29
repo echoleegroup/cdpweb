@@ -3,7 +3,10 @@ var config={
 		user:'cdp',
 		password:'1q2w3e4r',
 		server:'10.57.200.40',   //這邊要注意一下!!
-		database:'poc'
+		database:'poc',
+		options: {
+			encrypt: true
+		}
 };
 var sql = require('mssql');
 sql.connect(config,function (err) {
