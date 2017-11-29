@@ -4,16 +4,17 @@
 /**
  * Module dependencies.
  */
+const path = require("path");
 global.BASE_DIR = __dirname;
 global.VIEW  =  "../views/";
-global.Download  =  "E:/Forestage/dist/public/upload/";
-global.session = require("../node_modules/" + 'express-session');
+global.Download = path.resolve(__dirname, "..", "dist", "public", "upload") + path.sep;
+global.session = require("express-session");
 global.webservice = "http://127.0.0.1:8080";
 //global.webservice = "http://10.201.1.130:8080";
-var server = require("../dist/server");
-var app = server.Server.bootstrap().app;
-var debug = require('debug')('forestage:server');
-var http = require('http');
+const server_boot = require("../dist/server");
+const app = server_boot.Server.bootstrap().app;
+const debug = require('debug')('forestage:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
