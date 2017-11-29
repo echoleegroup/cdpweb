@@ -48,3 +48,4 @@ public/swagger/dist/mockup-server
 
 # Sass cache
 .sass-cache
+package-lock.json

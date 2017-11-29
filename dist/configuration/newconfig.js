@@ -1,8 +1,8 @@
 "use strict";
 var config={
-		user:'sa',
+		user:'cdp',
 		password:'1q2w3e4r',
-		server:'127.0.0.1',   //這邊要注意一下!!
+		server:'10.57.200.40',   //這邊要注意一下!!
 		database:'poc'
 };
 var sql = require('mssql');
