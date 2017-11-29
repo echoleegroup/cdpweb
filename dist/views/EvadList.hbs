@@ -1,0 +1,279 @@
+{{> header}}
+{{> menu}}
+<input type ="hidden" id = "adlist" value ='{{adlist}}'/>
+<div class="content">
+    <div class="title">
+      <div class="container">
+        <h1>廣告排程清單<span>{{msm_tpc}}</span></h1>
+      </div>
+    </div>
+    <div class="container">
+      <!-- table set Start -->
+      <div class="table_block table-responsive">
+        <h2>廣告排程清單</h2><a href="/Evtad/EvtadUpload?evtpgID={{evtpgID}}" title="新增廣告"><button type="submit" class="btn btn-default pull-right fa fa-plus">新增廣告</button></a>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 網站
+              </th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 頻道
+              </th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 投放期間
+              </th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 版位
+              </th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 尺寸
+              </th>
+              <th>更新日期</th>
+              <th>回饋標籤</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id ="info">
+			
+          
+
+          </tbody>
+        </table>
+        <!-- pagination -->
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modal1">
+    <!-- form set Start -->
+    <div class="table_block">
+      <h2>廣告排程與特徵回饋</h2>
+      <form class="form-horizontal">
+	    <input type ="hidden" id ="evtadID" value =""/>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-3 control-label">廣告來源網站</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control " id="adSource" value="" placeholder="" disabled="">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-3 control-label">投放期間
+          </label>
+          <div class="col-sm-8">
+            <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
+            <div class="form-inline">
+              <input type="text" class="form-control" id="adSdt" placeholder=""> ~
+              <input type="text" class="form-control" id="adEdt" placeholder="">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-3 control-label">版位</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control " id="adPos" value="" placeholder="">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-3 control-label">尺寸</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control " id="adSize" value="" placeholder="">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-3 control-label">連結</label>
+          <div class="col-sm-8">
+           <textarea class="form-control" rows="3" id="url"></textarea>
+         </div>
+       </div>   
+    </form>
+    <div class="btn-block center-block">
+      <button type="button" class="btn btn-lg btn-default" onclick ="udevtad()">儲存</button>
+	  <button type="button" class="btn btn-lg btn-default" onclick ="delevtad()" >刪除</button>
+      <button type="button" class="btn btn-lg btn-default" onclick ="cancel()">取消</button>
+    </div>
+  </div>
+
+<a href="#" class="scrollToTop" style="display: block;"></a>
+
+<!-- Bootstrap JavaScript -->
+
+
+<script>
+  $('#adSdt').datepicker({
+    locale: "zh-tw"
+  });
+  $('#adEdt').datepicker({
+    locale: "zh-tw"
+  });
+</script>
+<!-- 開燈箱 -->
+<script>
+  $(function() {
+    $('.modal').hide();
+    $('.modal').append('<div class="overlay"></div>');
+    $('#openModal1').click(function(event) {
+      $('#modal1').show();
+      $('body').addClass('noscroll');
+      return false;
+    });
+    $('.modal .overlay').click(function(event) {
+      $('.modal').hide();
+      $('body').removeClass('noscroll');
+    });
+  });
+</script>
+
+<div class="overlay"></div></div>
+<script>
+var x = "" ;
+var o = document.getElementById("adlist").value;
+o = JSON.parse(o);
+for( i in o){
+  x+="<tr>";
+  x+="<td>"+o[i].ad[0].no+"</td>";
+  x+="<td id ='adSource"+o[i].ad[0].evtadID+"'>"+o[i].ad[0].adSource+"</td>";
+  x+="<td id ='adChannel"+o[i].ad[0].evtadID+"'>"+o[i].ad[0].adChannel+"</td>";
+  x+="<td>"+o[i].ad[0].adSdt+"~"+o[i].ad[0].adEdt+"</td>";
+  x+="<td id ='adSdt"+o[i].ad[0].evtadID+"' style ='display:none'>"+o[i].ad[0].adSdt+"</td>";
+  x+="<td id ='adEdt"+o[i].ad[0].evtadID+"' style ='display:none'>"+o[i].ad[0].adEdt+"</td>";
+  x+="<td id ='adPos"+o[i].ad[0].evtadID+"'>"+o[i].ad[0].adPos+"</td>";
+  x+="<td id ='adSize"+o[i].ad[0].evtadID+"'>"+o[i].ad[0].adSize+"</td>";
+  x+="<td id ='updTime"+o[i].ad[0].evtadID+"'>"+o[i].ad[0].updTime+"</td>";
+  if( o[i].ad[0].sumtag != 0 ) 
+	x+='<td><a href="#" class="fa fa-tag" aria-hidden="true"></a></td>';
+  else 
+	x+='<td></td>';
+  x+= '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td></tr>';
+  x+= '<tr class="sub_info"><td colspan="9"><h3>廣告資訊</h3><div class="form_block"><form class="form-horizontal"><div class="form-group"><label for="inputName" class="col-sm-2 control-label">連結內容</label><div class="col-sm-6"><textarea class="form-control" rows="5" id="url'+o[i].ad[0].evtadID+'">';
+  x+= o[i].ad[0].url+'</textarea></div></div><div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist">';
+  for( j in o[i].ad[1].taginfo) {
+	x+= '<li class="tag_item">'+o[i].ad[1].taginfo[j].tag+'<a href="javascript:deltag('+o[i].ad[0].evtadID+','+o[i].ad[1].taginfo[j].tagID+')" class="label label-cdp"><i class="fa fa-times"></i></a></li>';                            
+  }
+  x+= '</ul></div></div>';
+  x+='<div class="col-sm-8"><div class="form-inline"><input type="text" class="form-control" id="newtag'+o[i].ad[0].evtadID+'" placeholder=""><button type="button" onclick ="addtag('+o[i].ad[0].evtadID+')" class="btn btn-default fa fa-plus" aria-hidden="true"></button></div></div>';
+  x+='</div></form>';
+  x+= '<h3>更新資訊</h3><table class="table table-hover table-striped"><tbody><tr><td>最後更新時間</td><td>'+o[i].ad[0].updTime+'</td></tr><tr><td>最後更新人員</td><td>'+o[i].ad[0].updUser+'</td></tr></tbody></table>';
+  x+= '<div class="btn-block center-block"><button type="submit" onclick="edit('+o[i].ad[0].evtadID+')" class="btn btn-lg btn-default">修改</button></div></td></tr>';
+}
+document.getElementById("info").innerHTML = x;
+</script>
+<script>
+$(function() {
+	$('.customize a').click(function(event) {
+		$(this).parent('li').hide();
+	});
+});
+function deltag(evtadID,tagID){
+	$.ajax({
+		url: "/Evtad/delEvtadTag",
+		data: {"evtadID" : evtadID,
+				"tagID" : tagID
+		},
+		type:"POST",
+		dataType:'text',
+		success: function(msg){
+			alert("刪除成功");
+			
+		}
+	});
+}
+function addtag(evtadID){
+var index = "newtag"+evtadID.toString();
+var newtag =document.getElementById(index).value;
+	$.ajax({
+		url: "/Evtad/addEvtadTag",
+		data: {"evtadID" : evtadID,
+			   "newtag" :newtag
+		},
+		type:"POST",
+		dataType:'text',
+		success: function(msg){
+			if( msg == "已新增過")
+				alert(msg);
+			else {
+				$('#mtaglist').append('<li class="tag_item">'+newtag+'<a href="javascript:deltag('+evtadID+','+msg+')"><i class="fa fa-times"></i></a></li>');
+				$(function() {
+					$('.customize a').click(function(event) {
+						$(this).parent('li').hide();
+					});
+				});
+			}
+		}
+	});
+}
+function edit(evtadID){
+  document.getElementById("evtadID").value = evtadID ;
+  var adSourceindex = "adSource"+evtadID.toString();
+  var text = document.getElementById(adSourceindex).innerHTML;
+  document.getElementById("adSource").value = text ;
+  
+  var adSdtindex = "adSdt"+evtadID.toString();
+  text = document.getElementById(adSdtindex).innerHTML;
+  document.getElementById("adSdt").value = text ;
+  
+  var adEdtindex = "adEdt"+evtadID.toString();
+  text = document.getElementById(adEdtindex).innerHTML;
+  document.getElementById("adEdt").value = text ;
+  
+  var adPosindex = "adPos"+evtadID.toString();
+  text = document.getElementById(adPosindex).innerHTML;
+  document.getElementById("adPos").value = text ;
+  
+  var adSizeindex = "adSize"+evtadID.toString();
+  text = document.getElementById(adSizeindex).innerHTML;
+  document.getElementById("adSize").value = text ;
+  
+  var urlindex = "url"+evtadID.toString();
+  text = document.getElementById(urlindex).innerHTML;
+  document.getElementById("url").value = text ;
+
+  $('#modal1').show();
+  $('body').addClass('noscroll');
+
+}
+function udevtad(){
+  $.ajax({
+    url: "/Evtad/udEvtad",
+    data: { "evtadID" : document.getElementById("evtadID").value,
+			"adSdt" : document.getElementById("adSdt").value,
+			"adEdt" : document.getElementById("adEdt").value,
+			"adPos" : document.getElementById("adPos").value,
+			"adSize" : document.getElementById("adSize").value,
+			"url" : document.getElementById("url").value
+	},
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        alert(msg);
+		location.reload() ;
+    }
+});
+ 
+}
+function delevtad(){
+  $.ajax({
+    url: "/Evtad/delEvtad",
+    data: { "evtadID" : document.getElementById("evtadID").value
+
+	},
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        alert(msg);
+		location.reload() ;
+	}
+  });
+ 
+}
+function cancel(){
+	$('.modal').hide();
+}
+</script>
+
+  {{> footer}}

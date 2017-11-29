@@ -1,0 +1,359 @@
+{{> header}}
+{{> menu}}
+<input id ="aumenu" type ="hidden" value ='{{menu}}'/>
+<div class="content">
+        <div class="title">
+            <div class="container">
+                <h1>角色權限管理</h1>
+            </div>
+        </div>
+        <div class="container">
+            <!-- row div 於需要分兩欄才需要 -->
+            <div class="row">
+                <!-- 左欄 Start -->
+                <div class="col-md-8 col-sm-7 col-xs-12">
+                    <!-- form set Start -->
+                    <div class="form_block">
+                        <h2>角色設定</h2>
+                        <form class="form-horizontal" id ="reg" action="/userRole/UserGroupInfoEditAct" method="post">
+						<input id ="ugrpId" name ="ugrpId" type ="hidden" value="{{items.[0].ugrpId}}" disabled="disabled"/>
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-3 control-label">角色類別</label>
+                                <div class="col-sm-8">
+                                 <select class="form-control custom" id = "ugrpClass" name="ugrpClass" disabled="disabled">
+                                    {{#each ugrpClass as |ugrp|}}
+		  
+										<option value="{{ugrp.ugrpClassId}}">{{ugrp.ugrpClassName}}</option>
+		 
+									{{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName" class="col-sm-3 control-label">角色名稱</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control " id ="ugrpName" name ="ugrpName" value ="{{items.[0].ugrpName}}" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName" class="col-sm-3 control-label"><i flow="down" tooltip="tooltip說明"></i>停用註記</label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" id ="isstop" name="isstop" type = "checkbox" {{checked}} disabled="disabled"> 停用
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName" class="col-sm-3 control-label">註記</label>
+                            <div class="col-sm-8">
+                              <textarea class="form-control" rows="5" id ="remark"  name="remark"  disabled="disabled">{{items.[0].remark}}</textarea>
+                          </div>
+                      </div>
+					  <div class="btn-block center-block">
+						<div id ="mod" >
+							<input id ="modify" class="btn btn-lg btn-default" type ="button" value="修改" onclick="clickModify();" />
+						</div>	
+						<div id ="mod2" style="display:none">
+							<input id ="submit" class="btn btn-lg btn-default" type ="submit" value="儲存修改"  />
+							<input id ="cancel" class="btn btn-lg btn-default"  type ="button" value="取消" onclick="clickcancel();" />
+						</div>	
+					  </div>
+                  </form>
+                  
+            </div>
+            <!-- table set Start -->
+            <div class="table_block">
+                <h2>角色權限設定</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>
+                                    <i class="fa fa-sort" aria-hidden="true"></i>作業分類
+                                </th>
+                                <th><i class="fa fa-sort" aria-hidden="true"></i>作業項目</th>
+								<th>
+                                    ALL
+                                </th>
+                                <th>
+                                    瀏覽
+                                </th>
+                                <th>修改
+                                </th>
+                                <th>下載
+                                </th>
+                                <th>異動時間
+                                </th>
+                                <th>異動人員
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+						{{#each authority as |au|}}
+							<tr>
+								<td>{{au.no}}</td>
+								<td>{{au.pName}}</td>
+								<td>{{au.menuName}}</td>
+								<td><input name ="all" value ="{{au.isAll}}" type="checkbox" disabled/></td>
+								<td><input name ="read" value ="{{au.isRead}}" type="checkbox" disabled/></td>
+								<td><input name ="edit" value ="{{au.isEdit}}"  type="checkbox" disabled/></td>
+								<td><input name ="download" value ="{{au.isDownload}}" type="checkbox" disabled/></td>
+								<td>{{au.modifyDate}}</td>
+								<td>{{au.modifyUser}}</td>
+								<td><a id = "delete{{au.menuId}}" href="javascript:checkDel('{{au.ugrpId}}','{{au.menuId}}','delete{{au.menuId}}')" class="btn btn-default fa fa-close"></a></td>
+							</tr>
+						{{/each}}	
+                           
+                            
+                        </tbody>
+                    </table>
+                </div>
+				<div id="dialog" title="" style="display:none;"></div>
+                <div class="btn-block center-block">
+                    <button type="submit" class="btn btn-lg btn-default" onclick="checkAddBtn();">新增權限</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-5 col-xs-12">
+            <div class="table_block">
+                <h2>角色基本資料</h2>
+                <div class="info">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>新增時間：</td>
+                                    <td>{{items.[0].regdate}}</td>
+                                </tr>
+                                <tr>
+                                    <td>最後設定時間：</td>
+                                    <td>{{items.[0].modifyDate}}</td>
+                                </tr>
+                                <tr>
+                                    <td>最後設定人員：</td>
+                                    <td>{{items.[0].signer}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal" id="modal1" >
+    <div class="table_block">
+            <h2>新增作業項目</h2>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="additem">
+                    <ul id ="menulist">
+                        
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="additem">
+                  <h3>權限</h3>
+				  <div id ="addau">
+				  </div>
+                </div>
+
+           </div>
+        <div class="btn-block center-block">
+            <button type="submit" class="btn btn-lg btn-default" onclick ="addAuthority()">儲存</button>
+        </div>
+    </div>
+<script>
+
+	var x = document.getElementById("ugrpClass");
+	var i;
+    for (i = 0; i < x.length; i++) {
+	  if(x.options[i].value == {{items.[0].ugrpClass}})
+		x.options[i].selected  ='selected'; 
+	  
+	}
+	var checkall = document.getElementsByName("all") ;
+	for( i = 0 ; i < checkall.length ; i++ ) {
+		if ( checkall[i].value == 'Y' )
+		  checkall[i].checked = true ;
+	}
+	var checkedit = document.getElementsByName("edit") ;
+	for( i = 0 ; i < checkedit.length ; i++ ) {
+		if ( checkedit[i].value == 'Y' )
+		  checkedit[i].checked = true ;
+	}
+	var checkread = document.getElementsByName("read") ;
+	for( i = 0 ; i < checkread.length ; i++ ) {
+		if ( checkread[i].value == 'Y' )
+		  checkread[i].checked = true ;
+	}
+	var checkdownload = document.getElementsByName("download") ;
+	for( i = 0 ; i < checkdownload.length ; i++ ) {
+		if ( checkdownload[i].value == 'Y' )
+		  checkdownload[i].checked = true ;
+	}
+$(function() {
+        $('.modal').hide();
+		$('.modal').append('<div class="overlay"></div>');
+		$('.modal .overlay').click(function(event) {
+            $('.modal').hide();
+            $('body').removeClass('noscroll');
+        });
+ });
+function clickcancel(){
+	document.getElementById("mod").style.display="block" ;
+	document.getElementById("mod2").style.display="none" ;
+	document.getElementById("ugrpClass").disabled = true ;
+	document.getElementById("ugrpName").disabled = true ;
+	document.getElementById("remark").disabled = true ;
+	document.getElementById("isstop").disabled = true ;
+}
+function clickModify(){
+	$.ajax({
+    url: "/userRole/checkEditAuthority",
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        if( msg == 'ok' ) {
+			document.getElementById("mod").style.display="none" ;
+			document.getElementById("mod2").style.display="block" ;
+			document.getElementById("ugrpId").disabled = false ;
+			document.getElementById("ugrpClass").disabled = false ;
+			document.getElementById("ugrpName").disabled = false ;
+			document.getElementById("remark").disabled = false ;
+			document.getElementById("isstop").disabled = false ;
+		}
+		else
+			alert("您並無權限編輯");
+		
+    }
+});	
+}	
+
+function checkAddBtn(){
+  $.ajax({
+    url: "/userRole/checkEditAuthority",
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        if( msg == 'ok' ) {
+			btn();
+		}
+		else
+			alert("您並無權限編輯");
+		
+    }
+  });
+}
+function checkDel(ugrpId,menuId,deleteid){
+	$.ajax({
+    url: "/user/checkEditAuthority",
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        if( msg == 'ok' ) {
+			deleterow(ugrpId,menuId,deleteid);
+		}
+		else
+			alert("您並無權限編輯");
+		
+    }
+	});
+}
+function deleterow(ugrpId,menuId,deleteid){
+  deleteauthority(ugrpId,menuId);
+}
+function deleteauthority(ugrpId,menuId){
+	$.ajax({
+    url: "/userRole/delAuthority",
+    data: {"ugrpId" : ugrpId,
+			"menuId" : menuId
+	},
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        alert(msg);
+		location.reload() ;
+		
+    }
+});
+}
+function btn() {
+	var data='';
+	var checkboxdata ='' ;
+	var o = document.getElementById("aumenu").value;
+	o = JSON.parse(o);
+	for( i in o ){
+		data+= '<li><a href="#">'+o[i].mainMenu+'</a><ul>';
+	    for( j in o[i].childMenu ) {
+			data += '<li><a href ="javascript:clickname(\''+o[i].childMenu[j].menuId+'\')" title="'+o[i].childMenu[j].menuName+'" >'+o[i].childMenu[j].menuName+'</a></li>';
+		}
+		data += '</ul></li>';
+	}
+	data += '<input id = "menuId" name = "menuId" type = "hidden" value =""/>';
+	document.getElementById("menulist").innerHTML = data ;    
+	checkboxdata += '<div class="checkbox"><label><input id = "all" name = "all" type = "checkbox" value ="All" onchange="changeCheck()" checked />ALL</label></div>';
+	checkboxdata += '<div class="checkbox"><label><input id = "Read" name = "Read" type = "checkbox" value ="Read" disabled checked/>Read</label></div>';
+	checkboxdata += '<div class="checkbox"><label><input id = "Edit" name = "Edit" type = "checkbox" value ="Edit" disabled checked/>Edit</label></div>';
+	checkboxdata += '<div class="checkbox"><label><input id = "Download" name = "Download" type = "checkbox" disabled value ="Download" checked/>Download</label></div>';
+	document.getElementById("addau").innerHTML = checkboxdata ;    
+	$('#modal1').show();
+    $('body').addClass('noscroll');
+       
+}	
+function clickname(menuId){
+	document.getElementById("menuId").value = menuId ;
+	document.getElementById("all").checked = true ;
+	document.getElementById("Read").checked = true ;
+	document.getElementById("Read").disabled = true;
+	document.getElementById("Edit").checked = true ;
+	document.getElementById("Edit").disabled = true;
+	document.getElementById("Download").checked = true ;
+	document.getElementById("Download").disabled = true;
+}
+function changeCheck() {
+	if( document.getElementById("all").checked ) {
+		document.getElementById("Read").checked = true ;
+		document.getElementById("Read").disabled = true;
+		document.getElementById("Edit").checked = true ;
+		document.getElementById("Edit").disabled = true;
+		document.getElementById("Download").checked = true ;
+		document.getElementById("Download").disabled = true;
+	}
+	else {
+		document.getElementById("Read").checked = true ;
+		document.getElementById("Read").disabled = false;
+		document.getElementById("Edit").checked = true ;
+		document.getElementById("Edit").disabled = false;
+		document.getElementById("Download").checked = true ;
+		document.getElementById("Download").disabled = false;
+	}
+}
+function addAuthority(){
+  $.ajax({
+    url: "/userRole/addAuthority",
+    data: { "ugrpId" : document.getElementById("ugrpId").value,
+			"menuId" : document.getElementById("menuId").value,
+			"all" : document.getElementById("all").checked,
+			"Read" : document.getElementById("Read").checked,
+			"Edit" : document.getElementById("Edit").checked,
+			"Download" : document.getElementById("Download").checked,
+	},
+    type:"POST",
+    dataType:'text',
+    success: function(msg){
+        alert(msg);
+		document.getElementById("dialog").style.display="none";
+		location.reload() ;
+    }
+});
+ 
+}
+</script>
+{{> footer}}

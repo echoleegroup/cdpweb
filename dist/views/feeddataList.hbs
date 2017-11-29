@@ -1,0 +1,127 @@
+{{> header}}
+{{> menu}}
+<input type ="hidden" id = "feeddatalist" value ='{{feeddatalist}}'/>
+<div class="content">
+    <div class="title">
+      <div class="container">
+        <h1>實體活動清單</h1>
+      </div>
+    </div>
+    <div class="container">
+      <!-- table set Start -->
+      <div class="table_block table-responsive">
+        <h2>實體活動清單</h2><a href="/FeedData/FeedDataSearch" title="重新查詢"><button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button></a>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+				<th>#</th>
+				<th>
+              <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+				<i class="fa fa-sort" aria-hidden="true"></i> 品牌
+				</th>
+				<th>
+              <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+				<i class="fa fa-sort" aria-hidden="true"></i> 分類
+				</th>
+				<th>
+              <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+				<i class="fa fa-sort" aria-hidden="true"></i> 名單名稱
+				</th>
+				<th>活動期間</th>
+				<th>資料筆數</th>
+				<th>原始檔案下載</th>
+				<th></th>
+			</tr>
+          </thead>
+          <tbody id ="info">
+			
+          
+
+          </tbody>
+        </table>
+        <!-- pagination -->
+      </div>
+    </div>
+  </div>
+
+
+
+<script>
+var x = "" ;
+var o = document.getElementById("feeddatalist").value;
+o = JSON.parse(o);
+for( i in o){
+  x+="<tr>";
+  x+="<td>"+o[i].feeddata[0].no+"</td>";
+  x+="<td>"+o[i].feeddata[0].Client+"</td>";
+  x+="<td>"+o[i].feeddata[0].funcCatgeName+"</td>";
+  x+="<td>"+o[i].feeddata[0].ListName+"</td>";
+  x+="<td>"+o[i].feeddata[0].ListSdt+"~"+o[i].feeddata[0].ListEdt+"</td>";
+  x+="<td>"+o[i].feeddata[0].detcount+"</td>";
+  x+='<td><a href="/FeedData/Download?origName='+o[i].feeddata[0].origName+'&uniqName='+o[i].feeddata[0].uniqName+'" target="_blank">原始檔案下載</a></td>';
+  x+= '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td></tr>';
+  
+  x+= '<tr class="sub_info"><td colspan="9">';
+   if( o[i].feeddata[0].funcCatge != 'NCBS' ) {
+	x+= '<div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist'+o[i].feeddata[0].ListID+'">';
+	for( j in o[i].feeddata[1].taginfo) {
+		x+= '<li class="tag_item">'+o[i].feeddata[1].taginfo[j].tag+'<a href="javascript:deltag('+o[i].feeddata[0].ListID+','+o[i].feeddata[1].taginfo[j].tagID+')" class="label label-cdp"><i class="fa fa-times"></i></a></li>';                            
+	}
+	x+= '</ul></div></div>';
+	x+='<div class="col-sm-8"><div class="form-inline"><input type="text" class="form-control" id="newtag'+o[i].feeddata[0].ListID+'" placeholder=""><button type="button" onclick ="addtag('+o[i].feeddata[0].ListID+')" class="btn btn-default fa fa-plus" aria-hidden="true"></button></div></div>';
+	x+='</div></form>';
+  }
+  x+= '<h3>資料基本資訊</h3><table class="table table-hover table-striped"><tbody><tr><td>註記</td><td>'+o[i].feeddata[0].ListDesc+'</td></tr><tr><td>最後更新時間</td><td>'+o[i].feeddata[0].updTime+'</td></tr><tr><td>最後更新人員</td><td>'+o[i].feeddata[0].updUser+'</td></tr></tbody></table>';
+  x+= '</td></tr>';
+  
+}
+document.getElementById("info").innerHTML = x;
+</script>
+<script>
+$(function() {
+	$('.customize a').click(function(event) {
+		$(this).parent('li').hide();
+	});
+});
+function deltag(ListID,tagID){
+	$.ajax({
+		url: "/FeedData/delFeedDataTag",
+		data: {"ListID" : ListID,
+				"tagID" : tagID
+		},
+		type:"POST",
+		dataType:'text',
+		success: function(msg){
+			alert("刪除成功");
+			
+		}
+	});
+}
+function addtag(ListID){
+var index = "newtag"+ListID.toString();
+var newtag =document.getElementById(index).value;
+	$.ajax({
+		url: "/FeedData/addFeedDataTag",
+		data: {"ListID" : ListID,
+			   "newtag" :newtag
+		},
+		type:"POST",
+		dataType:'text',
+		success: function(msg){
+			if( msg == "已新增過")
+				alert(msg);
+			else {
+				$('#mtaglist'+o[i].feeddata[0].ListID).append('<li class="tag_item">'+newtag+'<a href="javascript:deltag('+ListID+','+msg+')"><i class="fa fa-times"></i></a></li>');
+				$(function() {
+					$('.customize a').click(function(event) {
+						$(this).parent('li').hide();
+					});
+				});
+			}
+		}
+	});
+}
+
+</script>
+
+  {{> footer}}

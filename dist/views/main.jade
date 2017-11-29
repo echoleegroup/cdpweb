@@ -1,0 +1,23 @@
+extends layout
+h1 Hello, #{title}
+hr
+table 
+	thead 
+		tr
+			th(data-field="id", align="center")
+				.th-inner 編號
+			th(data-field="name", align="center")
+				.th-inner 帳號
+			th(data-field="description", align="center")
+				.th-inner 姓名
+			th(data-field="modifytime", align="center")
+				.th-inner 最後登入時間
+			th(data-field="bookmark", align="center")
+				.th-inner 註記
+			-each user in items
+				tr
+					td(style="padding:20px")=user.uID
+					td(style="padding:20px")=user.userId
+					td(style="padding:20px")=user.userName
+					td(style="padding:20px")=user.modifyTime
+					td(style="padding:20px")=user.bookmark

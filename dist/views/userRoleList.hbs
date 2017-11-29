@@ -1,0 +1,45 @@
+{{> header}}
+{{> menu}}
+<div class="content">
+    <div class="title">
+      <div class="container">
+        <h1>角色權限管理</h1>
+      </div>
+    </div>
+    <div class="container">
+      <!-- table set Start -->
+      <div class="table_block table-responsive">
+        <h2>角色權限清單</h2><a href="/userRole/userRoleSearch" title="重新查詢"><button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button></a>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 類別
+              </th>
+              <th>
+                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+                <i class="fa fa-sort" aria-hidden="true"></i> 角色名稱
+              </th>
+              <th>註記</th>
+            </tr>
+          </thead>
+          <tbody>
+		  {{#each items as |userRole|}}
+			<tr>
+				<td>{{userRole.no}}</td>
+				<td>{{userRole.ugrpClassName}}</td>
+				<td><a href="/userRole/UserRoleInfoEdit?ugrpId={{userRole.ugrpId}}">{{userRole.ugrpName}}</a></td>
+				<td>{{userRole.remark}}</td>
+			</tr>
+		  {{/each}}
+          
+
+          </tbody>
+        </table>
+        <!-- pagination -->
+      </div>
+    </div>
+  </div>
+  {{> footer}}

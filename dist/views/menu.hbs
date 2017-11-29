@@ -1,0 +1,55 @@
+<nav class="menu">
+<input type ="hidden" id ="modellist" value ='{{modellist}}'/>
+        <div class="container">
+            <ul id ="menu">
+                
+                
+            </ul>
+        </div>
+ </nav>
+ 
+ 
+
+<script>
+var mdID,batID = "" ; 
+var menuHtml ="" ;
+var menuO = document.getElementById("tempusermenu").value;
+var modellist = document.getElementById("modellist").value;
+menuO = JSON.parse(menuO);
+modellist = JSON.parse(modellist);
+for( i in menuO ){
+  if(menuO[i].mainMenu == "模型客群" || menuO[i].mainMenu == "名單投放" ) {
+    menuHtml+= '<li><a href="#">'+menuO[i].mainMenu+'</a><div class="submenu big_submenu" style="display: none;"><h3>模型：<span></span></h3><div class="choose"><ul>';
+	for( l in modellist ){
+		for( k in modellist[l].model ) 
+		menuHtml+= "<li><a href=\"javascript:setpara('"+modellist[l].model[k].mdID+"','"+modellist[l].model[k].batBinded+"' )\">" + modellist[l].model[k].mdName+ "</a></li>";
+		
+	}
+	menuHtml+= "</ul></div>";
+	menuHtml+= "<a class='btn-menu' href='/model/modelList'>模型總覽</a>";
+	for( j in menuO[i].childMenu ) {
+		menuHtml+= "<a href=\"javascript:seturl('"+menuO[i].childMenu[j].url+"')\" class='btn-menu' style='display: none;'>" + menuO[i].childMenu[j].menuName+ "</a>";
+	}
+	menuHtml+="</div></li>";
+  }
+  else if( menuO[i].mainMenu != "系統管理" ) {
+
+	menuHtml+= '<li><a href="#">'+menuO[i].mainMenu+'</a><div class="submenu" style="display: none;">';
+
+	for( j in menuO[i].childMenu ) {
+		menuHtml+= "<a class='btn-menu' href='"+menuO[i].childMenu[j].url+"'>"+ menuO[i].childMenu[j].menuName+ "</a>";
+	}
+	menuHtml+="</div></li>";
+  }
+}
+document.getElementById("menu").innerHTML = menuHtml;
+
+function setpara(pmdID,pbatID){
+	mdID = pmdID;
+	batID = pbatID ;
+}
+function seturl(url){
+	location.href = encodeURI(url+"?mdID="+mdID+"&batID="+batID) ;
+}
+
+</script>
