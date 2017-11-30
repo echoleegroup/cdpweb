@@ -1,6 +1,5 @@
 "use strict";
-var config  = require("../configuration/newconfig");
-var db = config.db;
+var db  = require("../utils/sql-server-connector").db;
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }

@@ -1,6 +1,6 @@
 "use strict";
-var config  = require("../configuration/newconfig");
-var db = config.db;
+var db  = require("../utils/sql-server-connector").db;
+var java_api_endpoint = require("../config/app-config").get("JAVA_API_ENDPOINT");
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -73,7 +73,7 @@ var generaudicRoute = (function (_super) {
 						var modellist = req.session.modellist ;
 						var menuJson = req.session.menuJson ;
 						res.render('generaudicCP', {'id' : req.session.userid,'tacount' : tacount,'mdListCategCount' : JSON.stringify(mdListCategCount),'mdID' : mdID, 'batID' :batID,
-						'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist),'tapopcount':tapopcount,'splcount':splcount,'api':global.webservice,'modelinfo' : modelinfo});
+						'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist),'tapopcount':tapopcount,'splcount':splcount,'api':java_api_endpoint,'modelinfo' : modelinfo});
 						
 					}).catch(function (e){
 						console.log(e);

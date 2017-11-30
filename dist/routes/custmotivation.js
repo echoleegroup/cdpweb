@@ -1,6 +1,6 @@
 "use strict";
-var config  = require("../configuration/newconfig");
-var db = config.db;
+var db  = require("../utils/sql-server-connector").db;
+var java_api_endpoint = require("../config/app-config").get("JAVA_API_ENDPOINT");
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -48,7 +48,7 @@ var custmotivationRoute = (function (_super) {
 							var modellist = req.session["modellist"]  ;
 							var menuJson = req.session["menuJson"]  ;
 							items = recordset.recordset;
-							res.render('custmotivationCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':global.webservice});
+							res.render('custmotivationCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':java_api_endpoint});
 						});
 						
 					}).catch(function (e){
