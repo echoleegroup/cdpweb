@@ -1,5 +1,7 @@
 "use strict";
 var db  = require("../utils/sql-server-connector").db;
+const path = require("path");
+const downloadPath = path.resolve(__dirname, "..", "public", "upload") + path.sep;
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -50,7 +52,7 @@ var FeedDataRoute = (function (_super) {
 				const path = require('path');
 				res.setHeader('Content-Type', 'application/vnd.openxmlformats');  
 				res.setHeader("Content-Disposition", "attachment; filename="+origName)
-				res.sendFile(global.Download+uniqName);
+				res.sendFile(downloadPath + uniqName);
 				
 			}
 			else{
