@@ -114,7 +114,7 @@ var modelDownloadRoute = (function (_super) {
 							}			
 							var modellist = req.session.modellist ;
 							var menuJson = req.session.menuJson ;
-							res.render(VIEW + 'modelDownload', {'id' : req.session.userid, 'chartData' : JSON.stringify(chartData)
+							res.render('modelDownload', {'id' : req.session.userid, 'chartData' : JSON.stringify(chartData)
 							,'tacount' : tacount ,'mdListCategCount' : JSON.stringify(mdListCategCount), 'modelinfo' : modelinfo, 'batListThold' : batListThold,'mdID' : mdID, 'batID' :batID,
 							'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist),'tapopcount':tapopcount,'splcount':splcount});
 						});
@@ -128,7 +128,7 @@ var modelDownloadRoute = (function (_super) {
 			
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}			
         });
 		router.get('/modelDownloadact', function (req, res) {

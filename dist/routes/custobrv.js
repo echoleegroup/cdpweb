@@ -48,7 +48,7 @@ var custobrvRoute = (function (_super) {
 							var modellist = req.session["modellist"]  ;
 							var menuJson = req.session["menuJson"]  ;
 							items = recordset.recordset;
-							res.render(VIEW + 'custobrvCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':global.webservice});
+							res.render('custobrvCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':global.webservice});
 						});
 						
 					}).catch(function (e){
@@ -59,7 +59,7 @@ var custobrvRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}	
 			
         });

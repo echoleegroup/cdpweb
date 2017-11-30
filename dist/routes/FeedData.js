@@ -33,14 +33,14 @@ var FeedDataRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1]).then(function (results) {
-						res.render(VIEW + 'FeedDataSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
+						res.render('FeedDataSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.get('/Download', function (req, res) {
@@ -55,7 +55,7 @@ var FeedDataRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/FeedDataList', function (req, res) {
@@ -155,7 +155,7 @@ var FeedDataRoute = (function (_super) {
 								});
 						}
 						console.log(JSON.stringify(feeddatalist));
-						res.render(VIEW + 'feeddataList', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'feeddatalist':JSON.stringify(feeddatalist)});
+						res.render('feeddataList', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'feeddatalist':JSON.stringify(feeddatalist)});
 					});
 					}).catch(function (e){
 							console.log(e);
@@ -165,7 +165,7 @@ var FeedDataRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/FeedDataUploadAct',upload.single('uploadingFile') ,function (req, res) {
@@ -321,7 +321,7 @@ var FeedDataRoute = (function (_super) {
 				});			
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/FeedDataEdit', function (req, res) {
@@ -349,14 +349,14 @@ var FeedDataRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1]).then(function (results) {
-						res.render(VIEW + 'FeedDataEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'maininfo':maininfo,'outerListID':outerListID,'dispaly':dispaly,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'datetime':datetime});
+						res.render('FeedDataEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'maininfo':maininfo,'outerListID':outerListID,'dispaly':dispaly,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'datetime':datetime});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.get('/FeedDataUpload', function (req, res) {
@@ -376,14 +376,14 @@ var FeedDataRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1]).then(function (results) {
-						res.render(VIEW + 'FeedData_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
+						res.render('FeedData_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/addFeedDataTag', function (req, res) {

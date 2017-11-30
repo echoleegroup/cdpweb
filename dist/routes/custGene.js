@@ -48,7 +48,7 @@ var custGeneRoute = (function (_super) {
 							items = recordset.recordset;
 							var modellist = req.session["modellist"]  ;
 							var menuJson = req.session["menuJson"]  ;
-							res.render(VIEW + 'custGeneCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':global.webservice});
+							res.render('custGeneCP', {'id' : req.session.userid, 'items' : items,'popNum' : popNum,'splNum' :splNum, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'api':global.webservice});
 						});
 						
 					}).catch(function (e){
@@ -59,7 +59,7 @@ var custGeneRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}	
 			
         });

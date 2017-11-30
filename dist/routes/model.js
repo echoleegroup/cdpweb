@@ -48,11 +48,11 @@ var modelRoute = (function (_super) {
 					//send records as a respons
 					var modellist = req.session["modellist"]  ;
 					var menuJson = req.session["menuJson"]  ;
-					res.render(VIEW + 'commonList', {'id' : req.session.userid, 'items' : recordset.recordset, 'condition' : JSON.stringify(condition),'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+					res.render('commonList', {'id' : req.session.userid, 'items' : recordset.recordset, 'condition' : JSON.stringify(condition),'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}			
         });
 		

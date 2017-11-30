@@ -192,7 +192,7 @@ var NCBSDataRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/NCBSDataEdit', function (req, res) {
@@ -220,24 +220,24 @@ var NCBSDataRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1]).then(function (results) {
-						res.render(VIEW + 'FeedDataEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'maininfo':maininfo,'outerListID':outerListID,'dispaly':dispaly,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'datetime':datetime});
+						res.render('FeedDataEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'maininfo':maininfo,'outerListID':outerListID,'dispaly':dispaly,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'datetime':datetime});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.get('/NCBSDataUpload', function (req, res) {
 			var modellist = req.session["modellist"]  ;
 			var menudisplay = req.session["menuJson"]  ;
 			if( req.session.userid && req.session.userid != ''){
-				res.render(VIEW + 'NCBSData_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
+				res.render('NCBSData_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 

@@ -124,7 +124,7 @@ var talist_putuploadRoute = (function (_super) {
 												+ currentdate.getHours() + ":"  
 												+ currentdate.getMinutes() + ":" 
 												+ currentdate.getSeconds();
-										res.render(VIEW + 'talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
+										res.render('talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
 									}
 									
 									checkandinsert(i+1);
@@ -176,7 +176,7 @@ var talist_putuploadRoute = (function (_super) {
 													+ currentdate.getHours() + ":"  
 													+ currentdate.getMinutes() + ":" 
 													+ currentdate.getSeconds();
-												res.render(VIEW + 'talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
+												res.render('talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
 											}
 											
 											checkandinsert(i+1);
@@ -193,7 +193,7 @@ var talist_putuploadRoute = (function (_super) {
 														+ currentdate.getHours() + ":"  
 														+ currentdate.getMinutes() + ":" 
 														+ currentdate.getSeconds();
-													res.render(VIEW + 'talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
+													res.render('talist_putupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
 												}
 												
 												checkandinsert(i+1);									
@@ -216,7 +216,7 @@ var talist_putuploadRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/talist_putuploadAdd', function (req, res) {
@@ -262,14 +262,14 @@ var talist_putuploadRoute = (function (_super) {
 							var modellist = req.session["modellist"]  ;
 							var menuJson = req.session["menuJson"]  ;
 							items = recordset.recordset;
-							res.render(VIEW + 'talist_putupload_add', {'id' : req.session.userid, 'items' : items, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'batchlist':batchlist,'sentListCateg':sentListCateg,'sentListChannel':sentListChannel,'mdID':mdID});
+							res.render('talist_putupload_add', {'id' : req.session.userid, 'items' : items, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'batchlist':batchlist,'sentListCateg':sentListCateg,'sentListChannel':sentListChannel,'mdID':mdID});
 						});
 						}).catch(function (e){
 							console.log(e);
 				});		
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 

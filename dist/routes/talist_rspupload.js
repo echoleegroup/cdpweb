@@ -148,14 +148,14 @@ var talist_rspuploadRoute = (function (_super) {
                         + currentdate.getSeconds();
 						 var modellist = req.session.modellist ;
 						 var menuJson = req.session.menuJson ;
-						 res.render(VIEW + 'talist_rspupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
+						 res.render('talist_rspupload_add', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'mdID':mdID,'total':total,'dispaly':'block','datetime':datetime});
 						}).catch(function (e){
 							console.log(e);
 					});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/talist_rspuploadAdd', function (req, res) {
@@ -192,14 +192,14 @@ var talist_rspuploadRoute = (function (_super) {
 							var modellist = req.session["modellist"]  ;
 							var menuJson = req.session["menuJson"]  ;
 							items = recordset.recordset;
-							res.render(VIEW + 'talist_rspupload_add', {'id' : req.session.userid, 'items' : items, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'batchlist':batchlist,'sentListChannel':sentListChannel,'mdID':mdID});
+							res.render('talist_rspupload_add', {'id' : req.session.userid, 'items' : items, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'batchlist':batchlist,'sentListChannel':sentListChannel,'mdID':mdID});
 						});
 						}).catch(function (e){
 							console.log(e);
 				});		
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 

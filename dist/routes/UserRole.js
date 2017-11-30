@@ -54,7 +54,7 @@ var userRoleinfoRoute = (function (_super) {
 				}
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/userRoleAdd', function (req, res) {
@@ -64,25 +64,25 @@ var userRoleinfoRoute = (function (_super) {
 						if(err) console.log(err);
 						var modellist = req.session["modellist"]  ;
 						var menudisplay = req.session["menuJson"]  ;
-						res.render(VIEW + 'userRoleAdd', {'id' : req.session.userid,'ugrpClass' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay) });
+						res.render('userRoleAdd', {'id' : req.session.userid,'ugrpClass' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay) });
 					});
 				}
 				else{
-					res.render(VIEW + 'main', {'id' : req.session.userid});
+					res.render('main', {'id' : req.session.userid});
 				}
 			}
 			else{
-				res.render(VIEW + 'main', {'title' : req.session.userid});
+				res.render('main', {'title' : req.session.userid});
 			}
         });
 		router.get('/userRoleSearch', function (req, res) {
 			if( req.session.userid && req.session.userid != ''){
 				var modellist = req.session["modellist"]  ;
 				var menudisplay = req.session["menuJson"]  ;
-				res.render(VIEW + 'userRoleSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
+				res.render('userRoleSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/userRoleList', function (req, res) {
@@ -97,15 +97,15 @@ var userRoleinfoRoute = (function (_super) {
 					//send records as a respons
 						var modellist = req.session["modellist"]  ;
 						var menudisplay = req.session["menuJson"]  ;
-						res.render(VIEW + 'userRoleList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
+						res.render('userRoleList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
 					});
 				}
 				else{
-					res.render(VIEW + 'main', {'id' : req.session.userid, 'items' : ""});
+					res.render('main', {'id' : req.session.userid, 'items' : ""});
 				}
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/delAuthority', function (req, res) {
@@ -121,11 +121,11 @@ var userRoleinfoRoute = (function (_super) {
 					});
 				}
 				else{
-					res.render(VIEW + 'index', {'id' : req.session.userid, 'items' : ""});
+					res.render('index', {'id' : req.session.userid, 'items' : ""});
 				}
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/addAuthority', function (req, res) {
@@ -201,7 +201,7 @@ var userRoleinfoRoute = (function (_super) {
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
         router.get('/UserRoleInfoEdit', function (req, res) {
@@ -325,18 +325,18 @@ var userRoleinfoRoute = (function (_super) {
 					Promise.all([p1, p2, p3, p4]).then(function (results) {
 						var modellist = req.session["modellist"]  ;
 						var menudisplay = req.session["menuJson"]  ;
-						res.render(VIEW + 'UserGroupInfoEdit', {'id' : req.session.userid, 'items' : items,'checked' : checked,'ugrpClass' : ugrpClass, 'menu' : JSON.stringify(menuJson),'authority' : authority, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
+						res.render('UserGroupInfoEdit', {'id' : req.session.userid, 'items' : items,'checked' : checked,'ugrpClass' : ugrpClass, 'menu' : JSON.stringify(menuJson),'authority' : authority, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay)});
 						}).catch(function (e){
 							console.log(e);
 					});	
 				}
 				else {
 					console.log("失敗");
-					res.render(VIEW + 'main', {'id' : req.session.userid, 'items' : ""});
+					res.render('main', {'id' : req.session.userid, 'items' : ""});
 				}
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
 		});
     };

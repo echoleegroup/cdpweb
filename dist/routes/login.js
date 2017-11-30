@@ -188,7 +188,7 @@ var LoginRoute = (function (_super) {
 							}
 							req.session["modellist"] = modellist ;
 							req.session["menuJson"] = menuJson ;
-							res.render(VIEW + 'main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
+							res.render('main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
 						});
 						}).catch(function (e){
 						console.log(e);

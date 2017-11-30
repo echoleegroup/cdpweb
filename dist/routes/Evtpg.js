@@ -80,11 +80,11 @@ var EvtpgRoute = (function (_super) {
 					db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge'  order by codeValue desc ",function(err,recordset){
 						if(err) console.log(err);
 						funcCatge = recordset.recordset ;
-						res.render(VIEW + 'EvtpgAdd', {'id' : req.session.userid,'funcCatge' : funcCatge, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay) });
+						res.render('EvtpgAdd', {'id' : req.session.userid,'funcCatge' : funcCatge, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay) });
 					});		
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.get('/EvtpgSearch', function (req, res) {
@@ -102,14 +102,14 @@ var EvtpgRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1]).then(function (results) {
-						res.render(VIEW + 'EvtpgSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
+						res.render('EvtpgSearch', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.get('/EvtpgEdit', function (req, res) {
@@ -148,14 +148,14 @@ var EvtpgRoute = (function (_super) {
 						});
 				});
 				Promise.all([p1,p2,p3]).then(function (results) {
-						res.render(VIEW + 'EvtpgEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'atag':atag,'mtag':mtag,'maininfo':maininfo,'evtpgID':evtpgID});
+						res.render('EvtpgEdit', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'atag':atag,'mtag':mtag,'maininfo':maininfo,'evtpgID':evtpgID});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/EvtpgAddact', function (req, res) {
@@ -217,7 +217,7 @@ var EvtpgRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/EvtpgList', function (req, res) {
@@ -327,7 +327,7 @@ var EvtpgRoute = (function (_super) {
 								});
 						}
 						console.log(JSON.stringify(data));
-						res.render(VIEW + 'EvtpgList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'data':JSON.stringify(data)});
+						res.render('EvtpgList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'data':JSON.stringify(data)});
 					});
 					}).catch(function (e){
 							console.log(e);
@@ -337,7 +337,7 @@ var EvtpgRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 

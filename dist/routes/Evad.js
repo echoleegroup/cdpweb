@@ -111,7 +111,7 @@ var EvadRoute = (function (_super) {
 											+ currentdate.getHours() + ":"  
 											+ currentdate.getMinutes() + ":" 
 											+ currentdate.getSeconds();
-										res.render(VIEW + 'Evtad_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'total':total,'dispaly':'block','datetime':datetime});
+										res.render('Evtad_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),"successnum":successnum,"errormsg":errormsg,"errornum":errornum,'total':total,'dispaly':'block','datetime':datetime});
 									}
 									checkandinsert(i+1);
 								}
@@ -142,7 +142,7 @@ var EvadRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/SearchEvtpgID', function (req, res) {
@@ -222,14 +222,14 @@ var EvadRoute = (function (_super) {
 						resolve(1);
 				});
 				Promise.all([p1,p2,p3]).then(function (results) {
-						res.render(VIEW + 'Evtad_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'dispaly':dispaly,'datetime':datetime,'updTime':updTime,'updUser':updUser,'adcount':adcount});
+						res.render('Evtad_upload', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'funcCatge':funcCatge,'successnum':successnum,'errormsg':errormsg,'errornum':errornum,'total':total,'dispaly':dispaly,'datetime':datetime,'updTime':updTime,'updUser':updUser,'adcount':adcount});
 						}).catch(function (e){
 							console.log(e);
 				});	
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid});
+				res.render('index', {'title' : req.session.userid});
 			}
         });
 		router.post('/addEvtadTag', function (req, res) {
@@ -375,7 +375,7 @@ var EvadRoute = (function (_super) {
 								});
 						}
 						console.log(JSON.stringify(adlist));
-						res.render(VIEW + 'EvadList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'adlist':JSON.stringify(adlist),'msm_tpc':msm_tpc,'evtpgID':evtpgID});
+						res.render('EvadList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menudisplay),'adlist':JSON.stringify(adlist),'msm_tpc':msm_tpc,'evtpgID':evtpgID});
 					});
 					}).catch(function (e){
 							console.log(e);
@@ -385,7 +385,7 @@ var EvadRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 

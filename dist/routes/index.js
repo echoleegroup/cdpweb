@@ -24,11 +24,12 @@ var IndexRoute = (function (_super) {
 			db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
 				var modellist = req.session.modellist ;
 				var menuJson = req.session.menuJson ;
-				res.render(VIEW + 'main', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+				res.render('main', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 			});
 		}
 		else{	
-			res.render(VIEW + 'index');
+            console.log("===aaa");
+			res.render('index');
 		}
     };
     return IndexRoute;

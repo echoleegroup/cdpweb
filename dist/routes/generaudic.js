@@ -72,7 +72,7 @@ var generaudicRoute = (function (_super) {
 				Promise.all([p1,p2]).then(function (results) {			
 						var modellist = req.session.modellist ;
 						var menuJson = req.session.menuJson ;
-						res.render(VIEW + 'generaudicCP', {'id' : req.session.userid,'tacount' : tacount,'mdListCategCount' : JSON.stringify(mdListCategCount),'mdID' : mdID, 'batID' :batID,
+						res.render('generaudicCP', {'id' : req.session.userid,'tacount' : tacount,'mdListCategCount' : JSON.stringify(mdListCategCount),'mdID' : mdID, 'batID' :batID,
 						'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist),'tapopcount':tapopcount,'splcount':splcount,'api':global.webservice,'modelinfo' : modelinfo});
 						
 					}).catch(function (e){
@@ -83,7 +83,7 @@ var generaudicRoute = (function (_super) {
 				
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}	
 			
         });

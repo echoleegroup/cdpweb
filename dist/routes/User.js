@@ -38,14 +38,14 @@ var userinfoRoute = (function (_super) {
 				var modellist = req.session["modellist"]  ;
 				var menuJson = req.session["menuJson"]  ;
 				if( req.session.user_Edit == 'Y' ) {
-					res.render(VIEW + 'userAdd', {'id' : req.session.userid, 'ugrpClass' :'', 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+					res.render('userAdd', {'id' : req.session.userid, 'ugrpClass' :'', 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 				}	
 				else{
-					res.render(VIEW + 'main', {'id' : req.session.userid, 'items' : "", 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+					res.render('main', {'id' : req.session.userid, 'items' : "", 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 				}
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/userAddAct', function (req, res) {
@@ -65,7 +65,7 @@ var userinfoRoute = (function (_super) {
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.get('/userSearch', function (req, res) {
@@ -73,11 +73,11 @@ var userinfoRoute = (function (_super) {
 				db.query('select * from sy_ugrpClass'  ,function(err,recordset){
 					var modellist = req.session["modellist"]  ;
 					var menuJson = req.session["menuJson"]  ;
-					res.render(VIEW + 'userSearch', {'id' : req.session.userid, 'ugrpClass' :recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+					res.render('userSearch', {'id' : req.session.userid, 'ugrpClass' :recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/userList', function (req, res) {
@@ -117,11 +117,11 @@ var userinfoRoute = (function (_super) {
 				db.query(sql +where  ,function(err,recordset){
 					var modellist = req.session["modellist"]  ;
 					var menuJson = req.session["menuJson"]  ;
-					res.render(VIEW + 'userList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+					res.render('userList', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
 		router.post('/delUserRole', function (req, res) {
@@ -175,7 +175,7 @@ var userinfoRoute = (function (_super) {
 				});
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
         router.get('/UserInfoEdit', function (req, res) {
@@ -288,13 +288,13 @@ var userinfoRoute = (function (_super) {
 					var modellist = req.session["modellist"]  ;
 					var menuJson = req.session["menuJson"]  ;
 					console.log(JSON.stringify(aduglist));
-						res.render(VIEW + 'UserInfoEdit', {'id' : req.session.userid, 'items' : items, 'ugrpClass' : ugrpClass, 'userRole' : userRole, 'checked' : checked, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'ugclass' :JSON.stringify(aduglist)});
+						res.render('UserInfoEdit', {'id' : req.session.userid, 'items' : items, 'ugrpClass' : ugrpClass, 'userRole' : userRole, 'checked' : checked, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson),'ugclass' :JSON.stringify(aduglist)});
 						}).catch(function (e){
 							console.log(e);
 				});	
 			}
 			else{
-				res.render(VIEW + 'index', {'title' : req.session.userid, 'items' : ""});
+				res.render('index', {'title' : req.session.userid, 'items' : ""});
 			}
         });
     };

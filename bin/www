@@ -5,10 +5,9 @@
  * Module dependencies.
  */
 const path = require("path");
-global.BASE_DIR = __dirname;
-global.VIEW  =  "../views/";
+//global.BASE_DIR = __dirname;
+//global.VIEW  =  "../views/";
 global.Download = path.resolve(__dirname, "..", "dist", "public", "upload") + path.sep;
-global.session = require("express-session");
 global.webservice = "http://127.0.0.1:8080";
 //global.webservice = "http://10.201.1.130:8080";
 const server_boot = require("../dist/server");

@@ -2,6 +2,8 @@
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var express = require("express");
+var exphbs  = require('express-handlebars');
+var session = require("express-session");
 var logger = require("morgan");
 var path = require("path");
 var methodOverride = require("method-override");
@@ -22,9 +24,6 @@ var Evtpg = require("./routes/Evtpg");
 var Evad = require("./routes/Evad");
 var FeedData = require("./routes/FeedData");
 var NCBSData = require("./routes/NCBSData");
-var hbs = require('hbs');
-hbs.registerPartials(__dirname + '/views');
-
 var Server = (function () {
     function Server(req,res) {
         this.app = express();
@@ -53,7 +52,12 @@ var Server = (function () {
     Server.prototype.config = function () {
         this.app.use(express.static(path.join(__dirname, 'public')));
         this.app.set('views', path.join(__dirname, 'views'));
-        this.app.engine('hbs', hbs.__express);
+        this.app.engine('hbs', exphbs({
+            extname: '.hbs',
+            defaultLayout: 'layout',
+            layoutsDir: './dist/views/layouts',
+            partialsDir: ['./dist/views/partials']
+        }));
         this.app.set('view engine', 'hbs');
         this.app.use(logger('dev'));
         this.app.use(bodyParser.json());
