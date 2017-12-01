@@ -9,7 +9,6 @@ var path = require("path");
 var methodOverride = require("method-override");
 var Index_1 = require("./routes/index");
 var Login_1 = require("./routes/login");
-var sql = require('mssql');
 var User_1 = require("./routes/User");
 var UserRole_1 = require("./routes/UserRole");
 var model = require("./routes/model");

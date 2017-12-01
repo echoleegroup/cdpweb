@@ -1,5 +1,6 @@
 "use strict";
 var db  = require("../utils/sql-server-connector").db;
+var middleware = require("../middlewares/checksession");
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -13,23 +14,13 @@ var IndexRoute = (function (_super) {
     }
     IndexRoute.create = function (router) {
         console.log('[IndexRoute::create] Creating index route.');
-        router.get('/', function (req, res, next) {
-            new IndexRoute().index(req, res, next);
-        });
-    };
-    IndexRoute.prototype.index = function (req, res, next) {
-		if ( req.session.userid && req.session.userid != '' ) {
-			this.id = req.session.userid;
+        router.get('/', middleware.checkLogin(), function (req, res) {
 			db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
 				var modellist = req.session.modellist ;
 				var menuJson = req.session.menuJson ;
-				res.render('main', {'id' : req.session.userid, 'items' : recordset.recordset, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+				res.render('main', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
 			});
-		}
-		else{	
-            console.log("===aaa");
-			res.render('index');
-		}
+        });
     };
     return IndexRoute;
 }(Route_1.BaseRoute));

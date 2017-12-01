@@ -19,7 +19,10 @@ var LoginRoute = (function (_super) {
 			req.session.userid = "";
 			res.redirect('..');
 			
-        });
+		});
+		router.get('/login', function(req, res) {
+			res.render('index');
+		});
         router.post('/login', function (req, res) {
             var uID ='';
             var userId =  req.body.userId ||'' ;
@@ -32,7 +35,7 @@ var LoginRoute = (function (_super) {
 				if( recordset.rowsAffected == 0 ) {
 					res.locals.error = '使用者帳號或密碼錯誤';
 					var errormsg = 'YES';
-					res.render('index.hbs',{errormsg:errormsg});
+					res.render('index',{errormsg:errormsg});
 				}
 				else{
 				    req.session.uID = recordset.recordset[0].uID;
@@ -187,7 +190,8 @@ var LoginRoute = (function (_super) {
 							}
 							req.session["modellist"] = modellist ;
 							req.session["menuJson"] = menuJson ;
-							res.render('main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
+							res.redirect('/');
+							//res.render('main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
 						});
 						}).catch(function (e){
 						console.log(e);
