@@ -7,8 +7,8 @@ var session = require("express-session");
 var logger = require("morgan");
 var path = require("path");
 var methodOverride = require("method-override");
-var Index_1 = require("./routes/index");
-var Login_1 = require("./routes/login");
+var indexRouter = require("./routes/index");
+var loginRouter = require("./routes/login");
 var User_1 = require("./routes/User");
 var UserRole_1 = require("./routes/UserRole");
 var model = require("./routes/model");
@@ -27,8 +27,10 @@ var Server = (function () {
     function Server(req,res) {
         this.app = express();
         this.config();
-        this.routes();
-		this.login();
+        //this.routes();
+        this.app.use('/', indexRouter());
+        //this.login();
+        this.app.use('/', loginRouter());
 		this.userinfo();
 		this.userRoleinfo();
 		this.model();
@@ -88,7 +90,9 @@ var Server = (function () {
     Server.prototype.routes = function () {
         var router;
         router = express.Router();
+        console.log('==== type of express.Router(): ', typeof router);
         Index_1.IndexRoute.create(router);
+        console.log('==== type of express.Router(): ', typeof router);
         this.app.use('/', router);
     };
 	Server.prototype.login = function () {
