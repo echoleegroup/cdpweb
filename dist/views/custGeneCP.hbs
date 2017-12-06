@@ -199,11 +199,12 @@ $('.feature').children('.subtable').hide();
 			});
 		});
 		
-  },
+	},
   
-  error: function() {
-    alert("ERROR!!!");
-  }
+	error: function(e) {
+		console.log(e);
+		alert("ERROR!!!");
+	}
 });
 </script>
 

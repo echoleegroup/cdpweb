@@ -1,5 +1,8 @@
 "use strict";
+var http = require('http');
+var url = require('url');
 var db  = require("../utils/sql-server-connector").db;
+var appConfig = require("../config/app-config");
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -137,34 +140,35 @@ var modelDownloadRoute = (function (_super) {
 			var ex12c = req.query.ex12c ||'' ;
 			var num = req.query.num ||'' ;
 			var usemethod = req.query.method ||'' ;
-			var path = "/jsoninfo/downloadxls.do?mdID="+encodeURI(mdID)+"&batID="+encodeURI(batID)+"&scope="+encodeURI(ex12c)+"&total="+num+"&method="+usemethod+"&tapopcount="+tapopcount
-			var http = require('http');
-				var options = {
-					host: "127.0.0.1",
-					port: 8080,
-					path: path,
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json; charset=utf-8'
+			var path = "/jsoninfo/downloadxls.do?mdID="+encodeURI(mdID)+"&batID="+encodeURI(batID)+"&scope="+encodeURI(ex12c)+"&total="+num+"&method="+usemethod+"&tapopcount="+tapopcount;
+			var urlPaser = url.parse(appConfig.get('JAVA_API_ENDPOINT'));
+			var options = {
+				protocol: urlPaser.protocol,
+				host: urlPaser.hostname,
+				port: urlPaser.port,
+				path: path,
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json; charset=utf-8'
+			
+				}
 				
-					}
-					
-				};
-       
-				http.request(options, function(resp) {
-					var msg = '';
-					resp.setEncoding('utf8');
-					resp.on('data', function(chunk) {
-						msg += chunk;
-					});
-					resp.on('end', function() {
-						const fs = require('fs');
-						const path = require('path');
-						res.setHeader('Content-Type', 'application/vnd.openxmlformats');  
-						res.setHeader("Content-Disposition", "attachment; filename=file.xls"); 
-						res.sendFile(JSON.parse(msg).jsonOutput.data);
-					});
-				}).end();
+			};
+	
+			http.request(options, function(resp) {
+				var msg = '';
+				resp.setEncoding('utf8');
+				resp.on('data', function(chunk) {
+					msg += chunk;
+				});
+				resp.on('end', function() {
+					const fs = require('fs');
+					const path = require('path');
+					res.setHeader('Content-Type', 'application/vnd.openxmlformats');  
+					res.setHeader("Content-Disposition", "attachment; filename=file.xls"); 
+					res.sendFile(JSON.parse(msg).jsonOutput.data);
+				});
+			}).end();
 		});
 		
     };
