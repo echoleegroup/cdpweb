@@ -19,7 +19,7 @@ var modelRoute = (function (_super) {
 				var endDate = req.query.endDate ||'' ;
 				var isClosed = req.query.isClosed ||'' ;	
 				var condition = [] ;
-				var where = " where sc.codeGroup = 'mdGoal' and sc.codeValue = mm.mdGoal and mm.mdID = mb.mdID and mm.batBinded = mb.batID and ( mm.isDel <> 'Y' or mm.isDel is null) ";
+				var where = " where sc.codeGroup = 'mdGoal' and sc.codeValue = mm.mdGoal and mm.mdID = mb.mdID and mm.batID = mb.batID and ( mm.isDel <> 'Y' or mm.isDel is null) ";
 				if( startDate != '' ) {
 					where += " and exeDateFrom >= '"+startDate+ " 00:00:00' ";
 					condition.push({

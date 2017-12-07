@@ -22,7 +22,7 @@ for( i in menuO ){
     menuHtml+= '<li><a href="#">'+menuO[i].mainMenu+'</a><div class="submenu big_submenu" style="display: none;"><h3>模型：<span></span></h3><div class="choose"><ul>';
 	for( l in modellist ){
 		for( k in modellist[l].model ) 
-		menuHtml+= "<li><a href=\"javascript:setpara('"+modellist[l].model[k].mdID+"','"+modellist[l].model[k].batBinded+"' )\">" + modellist[l].model[k].mdName+ "</a></li>";
+		menuHtml+= "<li><a href=\"javascript:setpara('"+modellist[l].model[k].mdID+"','"+modellist[l].model[k].batID+"' )\">" + modellist[l].model[k].mdName+ "</a></li>";
 		
 	}
 	menuHtml+= "</ul></div>";

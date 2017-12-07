@@ -25,7 +25,7 @@ var generaudicRoute = (function (_super) {
 				var modelinfo ;
 				var mdListCategCount = [] ;
 				var items ;
-				var p1 = new Promise(function(resolve, reject){db.query("SELECT mdName,batBinded,splName,splDesc,popName,popDesc,taName,taDesc,convert(varchar, updTime, 111)updTime FROM md_Model where mdID ='"+mdID+"' and batBinded = '"+batID+"' " ,function(err,recordset){
+				var p1 = new Promise(function(resolve, reject){db.query("SELECT mdName,batID,splName,splDesc,popName,popDesc,taName,taDesc,convert(varchar, updTime, 111)updTime FROM md_Model where mdID ='"+mdID+"' and batID = '"+batID+"' " ,function(err,recordset){
 							if(err) { 
 								console.log(err);
 								reject(2);

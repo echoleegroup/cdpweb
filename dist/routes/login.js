@@ -72,7 +72,7 @@ module.exports = () => {
 						resolve(1);
 					});
 				});
-				var p3 = new Promise(function(resolve, reject){db.query("SELECT mdID,mdName,batBinded FROM md_Model order by updTime desc ",function(err,recordset){
+				var p3 = new Promise(function(resolve, reject){db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ",function(err,recordset){
 						if(err) {
 							console.log(err);
 							reject(3);
@@ -81,7 +81,7 @@ module.exports = () => {
 							model.push({
 								mdID : recordset.recordset[i].mdID,
 								mdName : recordset.recordset[i].mdName,
-								batBinded : recordset.recordset[i].batBinded
+								batID : recordset.recordset[i].batID
 							});
 							modellist.push({
 								model
@@ -274,7 +274,7 @@ var LoginRoute = (function (_super) {
 							resolve(1);
 						});
 					});
-					var p3 = new Promise(function(resolve, reject){db.query("SELECT mdID,mdName,batBinded FROM md_Model order by updTime desc ",function(err,recordset){
+					var p3 = new Promise(function(resolve, reject){db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ",function(err,recordset){
 							if(err) {
 								console.log(err);
 								reject(3);
@@ -283,7 +283,7 @@ var LoginRoute = (function (_super) {
 								model.push({
 									mdID : recordset.recordset[i].mdID,
 									mdName : recordset.recordset[i].mdName,
-									batBinded : recordset.recordset[i].batBinded
+									batID : recordset.recordset[i].batID
 								});
 								modellist.push({
 									model

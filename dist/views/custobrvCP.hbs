@@ -138,7 +138,7 @@ $(document).ready(function(){
 $.ajax({
   url: "{{api}}/jsoninfo/custObrv.do",
   data: {"mdID" : encodeURI("{{items.[0].mdID}}"),
-		 "batID" : encodeURI("{{items.[0].batBinded}}")
+		 "batID" : encodeURI("{{items.[0].batID}}")
 		},
   type: "GET",
   dataType: "json",
@@ -154,7 +154,7 @@ $.ajax({
 			for( k in myObj.infoDatalist[i].childClasslist[j].custInfolist ){
 				if( myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '1' ) {
 					x+= '<tr>';
-					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batBinded}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batID}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 					x+=  "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mid + '<img src="/images/icon_median.png" alt="中" class="icon_float"> </td>';
 					x+=  "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mean + '<img src="/images/icon_average.png" alt="平" class="icon_float"> </td>' ;
 					x+=  "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].std +'<img src="/images/icon_sd.png" alt="S.D." class="icon_float"> </td>' ;
@@ -162,7 +162,7 @@ $.ajax({
 				}
 				else if( myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '2' || myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
 					x+= '<tr>';
-					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batBinded}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batID}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 					x+=  "<td>最多為</td>";
 					x+=  "<td>"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].term+"</td>"  ;
 					x+=   "<td>"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].percent +"%</td>" ;
@@ -170,7 +170,7 @@ $.ajax({
 				}
 				else if( myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3' ) {
 					x+= '<tr>';
-					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batBinded}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+					x+= "<th><a href=\"javascript:getinfo('{{items.[0].mdID}}','{{items.[0].batID}}','"+myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID+"' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 					x+=  "於&nbsp;";
 					x+=   myObj.infoDatalist[i].childClasslist[j].custInfolist[k].time + "內&nbsp;" ;
 					x+=   myObj.infoDatalist[i].childClasslist[j].custInfolist[k].num +"次&nbsp;" ;
