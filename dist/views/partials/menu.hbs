@@ -24,9 +24,6 @@
 				</div>
 				{{else}}
 				<div class="submenu" style="display: none;">
-					<h3>模型：
-						<span></span>
-					</h3>
 					{{#each menu.childMenu as |item|}}
 					<a href="{{item.url}}" class="btn-menu">{{item.menuName}}</a>
 					{{/each}}
@@ -39,14 +36,14 @@
 </nav>
 
 <script>
-  var ThisMenu =	function () {
+	var ThisMenu = function () {
 		var mdId, batId;
 		return {
-			setModel: function(mdID, batID) {
+			setModel: function (mdID, batID) {
 				mdId = mdID;
 				batId = batID;
-			}, 
-			goTo: function(urlPath) {
+			},
+			goTo: function (urlPath) {
 				location.href = urlPath + '?mdID=' + mdId + '&batID=' + batId;
 			}
 		};
