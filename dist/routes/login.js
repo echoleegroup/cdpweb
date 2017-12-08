@@ -1,52 +1,66 @@
 "use strict";
-var db  = require("../utils/sql-server-connector").db;
+var db = require("../utils/sql-server-connector").db;
 var express = require("express");
+var _ = require("lodash");
 
 module.exports = () => {
 	console.log('[LoginRoute::create] Creating index route.');
 	var router = express.Router();
 	router.get('/logout', function (req, res) {
-		var userId =  req.body.userId ||'' ;
-		var password = 	req.body.password ||'' ;
+		var userId = req.body.userId || '';
+		var password = req.body.password || '';
 		req.session.userid = "";
 		res.redirect('..');
-		
+
 	});
-	router.get('/login', function(req, res) {
+	router.get('/login', function (req, res) {
 		res.render('index');
 	});
 	router.post('/login', function (req, res) {
-		var uID ='';
-		var userId =  req.body.userId ||'' ;
-		var password = 	req.body.password ||'' ;
-		var where = " where userId ='" +userId + "' and + password = '" + password + "'";
-		var model=[] ;
-		var modellist =[];
-		db.query('select * from sy_infouser' + where ,function(err,recordset){
-			if(err) console.log(err);
-			if( recordset.rowsAffected == 0 ) {
+		var uID = '';
+		var userId = req.body.userId || '';
+		var password = req.body.password || '';
+		var where = " where userId ='" + userId + "' and + password = '" + password + "'";
+		//var model=[] ;
+		//var modelList =[];
+		db.query('select * from sy_infouser' + where, function (err, recordset) {
+			if (err) console.log(err);
+			if (recordset.rowsAffected == 0) {
 				res.locals.error = '使用者帳號或密碼錯誤';
 				var errormsg = 'YES';
-				res.render('index',{errormsg:errormsg});
-			}
-			else{
+				res.render('index', { 
+					errormsg: errormsg 
+				});
+			} else {
 				req.session.uID = recordset.recordset[0].uID;
-				req.session.userid = userId ;
-				var p1 = new Promise(function(resolve, reject){db.query("update sy_infouser set loginTime = GETDATE() where userId = '" +userId + "'" ,function(err,recordset){
-						if(err) { 
-							console.log(err);
-							reject(2);
+				req.session.userid = userId;
+				var p1 = new Promise(function (resolve, reject) {
+					db.query("update sy_infouser set loginTime = GETDATE() where userId = '" + userId + "'", function (err, result) {
+						if (err) {
+							//console.log(err);
+							reject(err);
 						}
-						resolve(1);
+						resolve(result.recordset);
 					});
 				});
-				
+
 				//建立各個menu的權限
-				var p2 = new Promise(function(resolve, reject){db.query("SELECT syuw.userId,syuw.ugrpId ,sym.menuId,syu.isRead,syu.isEdit,syu.isDownload,sym.menuClass FROM sy_userWithUgrp syuw left join sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId left join sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null where userId = '"+userId+"' order by sym.menuId asc",function(err,recordset){
-						if(err) {
-							console.log(err);
-							reject(3);
+				var p2 = new Promise(function (resolve, reject) {
+					db.query("SELECT syuw.userId,syuw.ugrpId ,sym.menuCode,syu.isRead,syu.isEdit,syu.isDownload FROM sy_userWithUgrp syuw left join sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId left join sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null where userId = '" + userId + "' order by sym.menuId asc", function (err, result) {
+						if (err) {
+							//console.log(err);
+							reject(err);
 						}
+						let permission = result.recordset.reduce((accumulator, value, index) => {
+							if (!accumulator[value.menuCode]) {
+								accumulator[value.menuCode] = {}
+							}
+							accumulator[value.menuCode].read = accumulator[value.menuCode].read || (value.isRead === 'Y');
+							accumulator[value.menuCode].edit = accumulator[value.menuCode].edit || (value.isEdit === 'Y');
+							accumulator[value.menuCode].download = accumulator[value.menuCode].download || (value.isDownload === 'Y');
+							return accumulator;
+						}, {});
+						/*
 						var menuClass ;
 						for( var i = 0 ; i < recordset.rowsAffected ; i++){
 							menuClass = recordset.recordset[i].menuClass;
@@ -69,36 +83,71 @@ module.exports = () => {
 									req.session[menuClass+"_Download"] = 'N' ;
 							}
 						}
-						resolve(1);
+						*/
+						resolve(permission);
 					});
 				});
-				var p3 = new Promise(function(resolve, reject){db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ",function(err,recordset){
-						if(err) {
-							console.log(err);
-							reject(3);
+				var p3 = new Promise(function (resolve, reject) {
+					db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ", function (err, result) {
+						if (err) {
+							//console.log(err);
+							reject(err);
 						}
+						let modelList = result.recordset.map((row, index) => {
+							return {
+								mdID: row.mdID,
+								mdName: row.mdName,
+								batID: row.batID
+							};
+						});
+						/*
 						for( var i = 0 ; i < recordset.rowsAffected ; i++){
 							model.push({
 								mdID : recordset.recordset[i].mdID,
 								mdName : recordset.recordset[i].mdName,
 								batID : recordset.recordset[i].batID
 							});
-							modellist.push({
+							modelList.push({
 								model
 							});
 							model = [];
 						}
-						resolve(1);
+						*/
+						resolve(modelList);
 					});
-						
+
 				});
-				
+
 				Promise.all([p1, p2, p3]).then(function (results) {
-					db.query('SELECT sm.menuId,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url,sm.menuClass,pym.menuName premenuName FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null' ,function(err,recordset){
-						var menuJson = [];
-						var menu = [];
-						var premenuName = '';
-						var menuClass ;
+					let permission = results[1];
+					let modelList = results[2];
+					let navMenuList = [];
+					let mgrMenuList = [];
+					db.query('SELECT sm.menuCode,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url, sm.sticky,pym.menuName premenuName, pym.menuCode preMenuCode, pym.sticky preSticky FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null', function (err, result) {
+						console.log('===permission: ', permission);
+						for (let menu of result.recordset) {
+							let pointer = (menu.preSticky === '_mgr')? mgrMenuList: navMenuList;
+							if (permission[menu.menuCode] && permission[menu.menuCode].read) {
+								let parent = _.find(pointer, { menuCode: menu.preMenuCode });
+								if (!parent) {
+									parent = {
+										menuCode: menu.preMenuCode,
+										mainMenu: menu.premenuName,
+										_model: (menu.preSticky === '_model'),
+										_mgr: (menu.preSticky === '_mgr'),
+										childMenu: []
+									};
+									pointer.push(parent);
+								}
+								parent.childMenu.push({
+									menuName: menu.menuName,
+									url: menu.url,
+									sticky: menu.sticky
+								});
+							}
+						}
+
+						/*
 						for( var i = 0 ;  i < recordset.rowsAffected ; i++){
 							menuClass = recordset.recordset[i].menuClass;
 							if( req.session[menuClass+"_Read"] == 'Y' ) {
@@ -115,13 +164,13 @@ module.exports = () => {
 										url : recordset.recordset[i].url,
 										show : req.session[menuClass+"_Read"]
 									});
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
 								}
 								else if( premenuName != recordset.recordset[i].premenuName && premenuName != '' && i < recordset.rowsAffected - 1) {
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
@@ -134,7 +183,7 @@ module.exports = () => {
 									});
 								}
 								else if( premenuName != recordset.recordset[i].premenuName && premenuName != '' && i == recordset.rowsAffected - 1) {
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
@@ -145,7 +194,7 @@ module.exports = () => {
 										url : recordset.recordset[i].url,
 										show : req.session[menuClass+"_Read"]
 									});
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
@@ -157,7 +206,7 @@ module.exports = () => {
 										url : recordset.recordset[i].url,
 										show : req.session[menuClass+"_Read"]
 									});
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
@@ -173,21 +222,24 @@ module.exports = () => {
 							}	
 							else {
 								if(i == recordset.rowsAffected - 1 ){
-									menuJson.push({
+									navMenuList.push({
 										mainMenu : premenuName ,
 										childMenu : menu
 									});
 								}
 							}
 						}
-						req.session["modellist"] = modellist ;
-						req.session["menuJson"] = menuJson ;
+						*/
+						req.session.permission = permission;
+						req.session.modelList = modelList;
+						req.session.navMenuList = navMenuList;
+						req.session.mgrMenuList = mgrMenuList[0];
 						res.redirect('/');
-						//res.render('main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
+						//res.render('main', {'id' : req.session.userid, 'navMenuList' : navMenuList,'modelList' :modelList});
 					});
-					}).catch(function (e){
+				}).catch(function (e) {
 					console.log(e);
-				});		
+				});
 			}
 		});
 	});
@@ -223,7 +275,7 @@ var LoginRoute = (function (_super) {
 			var password = 	req.body.password ||'' ;
 			var where = " where userId ='" +userId + "' and + password = '" + password + "'";
 			var model=[] ;
-			var modellist =[];
+			var modelList =[];
 			db.query('select * from sy_infouser' + where ,function(err,recordset){
 				if(err) console.log(err);
 				if( recordset.rowsAffected == 0 ) {
@@ -285,7 +337,7 @@ var LoginRoute = (function (_super) {
 									mdName : recordset.recordset[i].mdName,
 									batID : recordset.recordset[i].batID
 								});
-								modellist.push({
+								modelList.push({
 									model
 								});
 								model = [];
@@ -297,7 +349,7 @@ var LoginRoute = (function (_super) {
 					
 					Promise.all([p1, p2, p3]).then(function (results) {
 						db.query('SELECT sm.menuId,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url,sm.menuClass,pym.menuName premenuName FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null' ,function(err,recordset){
-							var menuJson = [];
+							var navMenuList = [];
 							var menu = [];
 							var premenuName = '';
 							var menuClass ;
@@ -317,13 +369,13 @@ var LoginRoute = (function (_super) {
 											url : recordset.recordset[i].url,
 											show : req.session[menuClass+"_Read"]
 										});
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
 									}
 									else if( premenuName != recordset.recordset[i].premenuName && premenuName != '' && i < recordset.rowsAffected - 1) {
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
@@ -336,7 +388,7 @@ var LoginRoute = (function (_super) {
 										});
 									}
 									else if( premenuName != recordset.recordset[i].premenuName && premenuName != '' && i == recordset.rowsAffected - 1) {
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
@@ -347,7 +399,7 @@ var LoginRoute = (function (_super) {
 											url : recordset.recordset[i].url,
 											show : req.session[menuClass+"_Read"]
 										});
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
@@ -359,7 +411,7 @@ var LoginRoute = (function (_super) {
 											url : recordset.recordset[i].url,
 											show : req.session[menuClass+"_Read"]
 										});
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
@@ -375,17 +427,17 @@ var LoginRoute = (function (_super) {
 								}	
 								else {
 									if(i == recordset.rowsAffected - 1 ){
-										menuJson.push({
+										navMenuList.push({
 											mainMenu : premenuName ,
 											childMenu : menu
 										});
 									}
 								}
 							}
-							req.session["modellist"] = modellist ;
-							req.session["menuJson"] = menuJson ;
+							req.session["modelList"] = modelList ;
+							req.session["navMenuList"] = navMenuList ;
 							res.redirect('/');
-							//res.render('main', {'id' : req.session.userid, 'menuJson' : JSON.stringify(menuJson),'modellist' :JSON.stringify(modellist)});
+							//res.render('main', {'id' : req.session.userid, 'navMenuList' : navMenuList,'modelList' :modelList});
 						});
 						}).catch(function (e){
 						console.log(e);

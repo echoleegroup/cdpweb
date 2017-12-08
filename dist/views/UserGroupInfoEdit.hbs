@@ -1,6 +1,4 @@
 {{> header}}
-{{> menu}}
-<input id ="aumenu" type ="hidden" value ='{{menu}}'/>
 <div class="content">
         <div class="title">
             <div class="container">
@@ -287,8 +285,8 @@ function deleteauthority(ugrpId,menuId){
 function btn() {
 	var data='';
 	var checkboxdata ='' ;
-	var o = document.getElementById("aumenu").value;
-	o = JSON.parse(o);
+	var o = {{{menu}}};
+	//o = JSON.parse(o);
 	for( i in o ){
 		data+= '<li><a href="#">'+o[i].mainMenu+'</a><ul>';
 	    for( j in o[i].childMenu ) {

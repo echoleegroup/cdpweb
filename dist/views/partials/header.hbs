@@ -1,33 +1,25 @@
 <header id="header">
-        <div class="container">
-            <!-- LOGO -->
-            <div class="logo">
-                <a href="/"><img src="/images/logo.png"><span>Customer Data Platform</span></a>
-            </div>
-            <!-- 客戶登入 -->
-            <input id ="tempusermenu" type="hidden" value='{{menuJson}}'/>
-			<div class="custumer">
-                <a href="#" class="btn btn-default" id="setting"><i class="fa fa-user"></i>{{id}} / <span>和泰大數據平台</span></a>
-                <div class="loginBlock" style="display: none;" id ="usermenu">
-                
-                </div>
-			</div>
-		</div>
-    <button type="button" class="menuBtn fa fa-bars" style="display: none;"></button>
+  <div class="container">
+    <!-- LOGO -->
+    <div class="logo">
+      <a href="/">
+        <img src="/images/logo.png">
+        <span>Customer Data Platform</span>
+      </a>
+    </div>
+    <!-- 客戶登入 -->
+    <div class="custumer">
+      <a href="#" class="btn btn-default" id="setting">
+        <i class="fa fa-user"></i>{{id}} /
+        <span>和泰大數據平台</span>
+      </a>
+      <div class="loginBlock" style="display: none;" id="usermenu">
+        {{#each mgrMenuList.childMenu as |item|}}
+        <a href="{{item.url}}" class ="btn btn-default">{{item.menuName}}</a>
+        {{/each}}
+        <a href="/logout" class="btn btn-warning">登出</a>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="menuBtn fa fa-bars" style="display: none;"></button>
 </header>
-<script>
-var x = "" ;
-var o = document.getElementById("tempusermenu").value;
-o = JSON.parse(o);
-for( i in o ){
-  if(o[i].mainMenu == "系統管理") {
-	for( j in o[i].childMenu ) 
-		x+= '<a href="'+o[i].childMenu[j].url+'" class ="btn btn-default">'+o[i].childMenu[j].menuName+'</a>';
-	x+='<a href="/logout" class="btn btn-warning">登出</a>';
-  }
-}
-document.getElementById("usermenu").innerHTML = x;
-</script>
-
-	
-	

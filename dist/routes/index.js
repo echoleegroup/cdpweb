@@ -18,9 +18,9 @@ var IndexRoute = (function (_super) {
         console.log('[IndexRoute::create] Creating index route.');
         router.get('/', middleware.checkLogin(), function (req, res) {
 			db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
-				var modellist = req.session.modellist ;
-				var menuJson = req.session.menuJson ;
-				res.render('main', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+				var modelList = req.session.modelList ;
+				var navMenuList = req.session.navMenuList ;
+				res.render('main', {'id' : req.session.userid, 'modelList' :JSON.stringify(modelList), 'navMenuList':navMenuList});
 			});
         });
     };
@@ -33,9 +33,18 @@ module.exports = () => {
     var router = express.Router();
     router.get('/', middleware.checkLogin(), function (req, res) {
         db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
-            var modellist = req.session.modellist ;
-            var menuJson = req.session.menuJson ;
-            res.render('main', {'id' : req.session.userid, 'modellist' :JSON.stringify(modellist), 'menuJson':JSON.stringify(menuJson)});
+            var modelList = req.session.modelList ;
+            var navMenuList = req.session.navMenuList ;
+            var mgrMenuList = req.session.mgrMenuList ;
+            console.log('====modelList: ', JSON.stringify(modelList));
+            console.log('====navMenuList: ', JSON.stringify(navMenuList));
+            console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
+            res.render('main', {
+                'id': req.session.userid, 
+                'modelList': modelList, 
+                'navMenuList': navMenuList,
+                'mgrMenuList': mgrMenuList
+            });
         });
     });
     return router;
