@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Route_1 = require("./Route");
 var fs = require('fs')
 var multer = require('multer')
-var upload = multer({ dest: './public/upload/' });
+var upload = multer({ dest: '../client/public/upload/' });
 var xlsx = require("node-xlsx");
 var talist_rspuploadRoute = (function (_super) {
 	__extends(talist_rspuploadRoute, _super);

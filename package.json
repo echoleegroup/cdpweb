@@ -6,6 +6,7 @@
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "test": "mocha dist/test/**/*.js",
     "start": "node ./bin/www"
+    //"build": "webpack"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -62,6 +63,7 @@
     "nodemon": "^1.12.1",
     "supertest": "^2.0.1",
     "tslint": "^4.1.1",
-    "typescript": "^2.1.4"
+    "typescript": "^2.1.4",
+    "webpack": "^3.10.0"
   }
 }

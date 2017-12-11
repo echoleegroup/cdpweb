@@ -6,9 +6,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 	d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Route_1 = require("./Route");
-var fs = require('fs')
+var fs = require('fs');
+const path = require('path');
+const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
 var multer = require('multer')
-var upload = multer({ dest: './dist/public/upload/' });
+var upload = multer({ dest: storage });
 var xlsx = require("node-xlsx");
 var NCBSDataRoute = (function (_super) {
 	__extends(NCBSDataRoute, _super);

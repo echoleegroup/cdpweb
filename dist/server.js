@@ -51,7 +51,7 @@ var Server = (function () {
         return new Server();
     };
     Server.prototype.config = function () {
-        this.app.use(express.static(path.join(__dirname, 'public')));
+        this.app.use(express.static(path.join(__dirname, 'client/public')));
         this.app.set('views', path.join(__dirname, 'views'));
         this.app.engine('hbs', exphbs({
             extname: '.hbs',
