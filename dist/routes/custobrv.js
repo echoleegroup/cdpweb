@@ -53,7 +53,7 @@ var custobrvRoute = (function (_super) {
 						items = recordset.recordset;
 						res.render('custobrvCP', { 
 							'id': req.session.userid, 
-							'moduleInfo': items[0], 
+							'modelInfo': items[0], 
 							'funcName': '消費先期指標',
 							'popNum': popNum, 
 							'splNum': splNum, 

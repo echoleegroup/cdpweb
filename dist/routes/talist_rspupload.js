@@ -210,7 +210,7 @@ var talist_rspuploadRoute = (function (_super) {
 						items = recordset.recordset;
 						res.render('talist_rspupload_add', { 
 							'id': req.session.userid, 
-							'moduleInfo': items[0], 
+							'modelInfo': items[0], 
 							'modelList': modelList,
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,

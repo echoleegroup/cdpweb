@@ -15,7 +15,7 @@
             <div class="form_block">
                 <h2>角色設定</h2>
                 <form class="form-horizontal" id="reg" action="/userRole/UserGroupInfoEditAct" method="post">
-                    <input id="ugrpId" name="ugrpId" type="hidden" value="{{moduleInfo.ugrpId}}" disabled="disabled" />
+                    <input id="ugrpId" name="ugrpId" type="hidden" value="{{modelInfo.ugrpId}}" disabled="disabled" />
                     <div class="form-group">
                         <label for="inputName" class="col-sm-3 control-label">角色類別</label>
                         <div class="col-sm-8">
@@ -31,7 +31,7 @@
                     <div class="form-group">
                         <label for="inputName" class="col-sm-3 control-label">角色名稱</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control " id="ugrpName" name="ugrpName" value="{{moduleInfo.ugrpName}}" disabled="disabled">
+                            <input type="text" class="form-control " id="ugrpName" name="ugrpName" value="{{modelInfo.ugrpName}}" disabled="disabled">
                         </div>
                     </div>
                     <div class="form-group">
@@ -48,7 +48,7 @@
                     <div class="form-group">
                         <label for="inputName" class="col-sm-3 control-label">註記</label>
                         <div class="col-sm-8">
-                            <textarea class="form-control" rows="5" id="remark" name="remark" disabled="disabled">{{moduleInfo.remark}}</textarea>
+                            <textarea class="form-control" rows="5" id="remark" name="remark" disabled="disabled">{{modelInfo.remark}}</textarea>
                         </div>
                     </div>
                     <div class="btn-block center-block">
@@ -139,15 +139,15 @@
                             <tbody>
                                 <tr>
                                     <td>新增時間：</td>
-                                    <td>{{moduleInfo.regdate}}</td>
+                                    <td>{{modelInfo.regdate}}</td>
                                 </tr>
                                 <tr>
                                     <td>最後設定時間：</td>
-                                    <td>{{moduleInfo.modifyDate}}</td>
+                                    <td>{{modelInfo.modifyDate}}</td>
                                 </tr>
                                 <tr>
                                     <td>最後設定人員：</td>
-                                    <td>{{moduleInfo.signer}}</td>
+                                    <td>{{modelInfo.signer}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -184,11 +184,9 @@
         var x = document.getElementById("ugrpClass");
         var i;
         for (i = 0; i < x.length; i++) {
-            if (x.options[i].value == {{ moduleInfo.ugrpClass }
-        })
-        x.options[i].selected = 'selected'; 
-	  
-	}
+            if (x.options[i].value == {{ modelInfo.ugrpClass }})
+                x.options[i].selected = 'selected'; 
+            }
         var checkall = document.getElementsByName("all");
         for (i = 0; i < checkall.length; i++) {
             if (checkall[i].value == 'Y')
@@ -299,8 +297,7 @@
         function btn() {
             var data = '';
             var checkboxdata = '';
-            var o = {{{ menu }
-        }};
+            var o = {{{ menu }}};
         //o = JSON.parse(o);
         for (i in o) {
             data += '<li><a href="#">' + o[i].mainMenu + '</a><ul>';

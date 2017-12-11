@@ -342,7 +342,7 @@ var userRoleinfoRoute = (function (_super) {
 					var mgrMenuList = req.session.mgrMenuList;
 					res.render('UserGroupInfoEdit', {
 						'id': req.session.userid,
-						'moduleInfo': items[0],
+						'modelInfo': items[0],
 						'checked': checked,
 						'ugrpClass': ugrpClass,
 						'authority': authority,

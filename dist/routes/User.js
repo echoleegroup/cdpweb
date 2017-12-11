@@ -319,7 +319,7 @@ var userinfoRoute = (function (_super) {
 					console.log(JSON.stringify(aduglist));
 					res.render('UserInfoEdit', { 
 						'id': req.session.userid, 
-						'moduleInfo': items[0], 
+						'modelInfo': items[0], 
 						'funcName': '帳號管理',
 						'ugrpClass': ugrpClass, 
 						'userRole': userRole, 

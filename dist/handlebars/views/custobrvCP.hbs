@@ -6,12 +6,12 @@
 <script src="/javascripts/amcharts/serial.js" type="text/javascript"></script>
 <!-- chart.js -->
 <script src="/javascripts/Chart.min.js"></script>
-{{> title title='消費先期指標' mdName=moduleInfo.mdName}}
+{{> title title='消費先期指標' mdName=modelInfo.mdName}}
 <!--
 <div class="title">
 	<div class="container">
 		<h1>消費先期指標
-			<span>{{moduleInfo.mdName}}</span>
+			<span>{{modelInfo.mdName}}</span>
 		</h1>
 	</div>
 </div>
@@ -70,7 +70,7 @@
 								<tr>
 									<th rowspan="2">已購客群</th>
 									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{moduleInfo.splName}}</td>
+									<td>{{modelInfo.splName}}</td>
 								</tr>
 								<tr>
 									<td>
@@ -80,7 +80,7 @@
 								<tr>
 									<th rowspan="2">潛在客群</th>
 									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{moduleInfo.popName}}</td>
+									<td>{{modelInfo.popName}}</td>
 								</tr>
 								<tr>
 									<td>
@@ -142,8 +142,8 @@
 	$.ajax({
 		url: "{{api}}/jsoninfo/custObrv.do",
 		data: {
-			"mdID": '{{ moduleInfo.mdID }}',
-			"batID": '{{ moduleInfo.batID }}'
+			"mdID": '{{ modelInfo.mdID }}',
+			"batID": '{{ modelInfo.batID }}'
 		},
 		type: "GET",
 		dataType: "json",
@@ -159,7 +159,7 @@
 					for (k in myObj.infoDatalist[i].childClasslist[j].custInfolist) {
 						if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '1') {
 							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{moduleInfo.mdID}}','{{moduleInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+							x += "<th><a href=\"javascript:getinfo('{{modelInfo.mdID}}','{{modelInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mid + '<img src="/images/icon_median.png" alt="中" class="icon_float"> </td>';
 							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mean + '<img src="/images/icon_average.png" alt="平" class="icon_float"> </td>';
 							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].std + '<img src="/images/icon_sd.png" alt="S.D." class="icon_float"> </td>';
@@ -167,7 +167,7 @@
 						}
 						else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '2' || myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
 							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{moduleInfo.mdID}}','{{moduleInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+							x += "<th><a href=\"javascript:getinfo('{{modelInfo.mdID}}','{{modelInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 							x += "<td>最多為</td>";
 							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].term + "</td>";
 							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].percent + "%</td>";
@@ -175,7 +175,7 @@
 						}
 						else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
 							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{moduleInfo.mdID}}','{{moduleInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+							x += "<th><a href=\"javascript:getinfo('{{modelInfo.mdID}}','{{modelInfo.batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
 							x += "於&nbsp;";
 							x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].time + "內&nbsp;";
 							x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].num + "次&nbsp;";
