@@ -23,6 +23,7 @@ var Evtpg = require("./routes/Evtpg");
 var Evad = require("./routes/Evad");
 var FeedData = require("./routes/FeedData");
 var NCBSData = require("./routes/NCBSData");
+const targetRoute = require('./routes/target');
 var Server = (function () {
     function Server(req,res) {
         this.app = express();
@@ -52,12 +53,12 @@ var Server = (function () {
     };
     Server.prototype.config = function () {
         this.app.use(express.static(path.join(__dirname, 'client/public')));
-        this.app.set('views', path.join(__dirname, 'views'));
+        this.app.set('views', path.join(__dirname, 'handlebars/views'));
         this.app.engine('hbs', exphbs({
             extname: '.hbs',
             defaultLayout: 'layout',
-            layoutsDir: './dist/views/layouts',
-            partialsDir: ['./dist/views/partials']
+            layoutsDir: './dist/handlebars/layouts',
+            partialsDir: ['./dist/handlebars/partials']
         }));
         this.app.set('view engine', 'hbs');
         this.app.use(logger('dev'));
