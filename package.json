@@ -6,7 +6,6 @@
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "test": "mocha dist/test/**/*.js",
     "start": "node ./bin/www"
-    //"build": "webpack"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
