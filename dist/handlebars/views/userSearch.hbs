@@ -1,85 +1,85 @@
-{{> header}}
-{{> menu}}
-<div class="content">
-    <div class="title">
-      <div class="container">
-        <h1>帳號管理</h1>
-      </div>
-    </div>
-    
-    <div class="container">
-      <!-- table set Start -->
-      <div class="form_block">
-        <h2>帳號查詢</h2><a href="/user/userAdd" title="新增帳號"><button type="submit" class="btn btn-default pull-right fa fa-search">新增帳號</button></a>
-        <form class="form-horizontal" id ="reg" action="/user/userList" method="post">
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label">帳號</label>
-            <div class="col-sm-7">
-              <input id ="userId" name="userId" type = "text"  value ="" class="form-control " >
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label">姓名</label>
-            <div class="col-sm-7">
-              <input type="text" class="form-control " id="inputName" value="" placeholder="">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label">角色</label>
-            <div class="col-sm-7">
-				<select id = "ugrpClass" name="ugrpClass" class="form-control custom">
-					<option value="">全部</option>
-					{{#each ugrpClass as |ugrp|}}
-		  
-					<option value="{{ugrp.ugrpClassId}}">{{ugrp.ugrpClassName}}</option>
-		 
-					{{/each}}
-				</select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label form-inline">註冊期間</label>
-            <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
-            <div class="col-sm-7">
-              <div class="form-inline">
-                <input type="text" id ="sregdate"  name="sregdate" class="form-control" > ~
-                <input type="text" id ="eregdate"  name="eregdate" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label form-inline">最後登入期間</label>
-            <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
-            <div class="col-sm-7">
-              <div class="form-inline">
-                <input type="text" class="form-control" id ="slogindate"  name="slogindate"> ~
-                <input type="text" class="form-control" id ="elogindate"  name="elogindate">
-              </div>
-            </div>
-          </div>
-		  <div class="btn-block center-block">
-			<input type="submit" class="btn btn-lg btn-default" value ="查詢">
-          </div>
-        </form>
-        
-
-      </div>
-    </div>
+{{> header}} {{> menu}} {{> title title='帳號管理'}}
+<!--
+<div class="title">
+  <div class="container">
+    <h1>帳號管理</h1>
   </div>
+</div>
+-->
+<div class="container">
+  <!-- table set Start -->
+  <div class="form_block">
+    <h2>帳號查詢</h2>
+    <a href="/user/userAdd" title="新增帳號">
+      <button type="submit" class="btn btn-default pull-right fa fa-search">新增帳號</button>
+    </a>
+    <form class="form-horizontal" id="reg" action="/user/userList" method="post">
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label">帳號</label>
+        <div class="col-sm-7">
+          <input id="userId" name="userId" type="text" value="" class="form-control ">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label">姓名</label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control " id="inputName" value="" placeholder="">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label">角色</label>
+        <div class="col-sm-7">
+          <select id="ugrpClass" name="ugrpClass" class="form-control custom">
+            <option value="">全部</option>
+            {{#each ugrpClass as |ugrp|}}
+
+            <option value="{{ugrp.ugrpClassId}}">{{ugrp.ugrpClassName}}</option>
+
+            {{/each}}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label form-inline">註冊期間</label>
+        <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
+        <div class="col-sm-7">
+          <div class="form-inline">
+            <input type="text" id="sregdate" name="sregdate" class="form-control"> ~
+            <input type="text" id="eregdate" name="eregdate" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label form-inline">最後登入期間</label>
+        <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
+        <div class="col-sm-7">
+          <div class="form-inline">
+            <input type="text" class="form-control" id="slogindate" name="slogindate"> ~
+            <input type="text" class="form-control" id="elogindate" name="elogindate">
+          </div>
+        </div>
+      </div>
+      <div class="btn-block center-block">
+        <input type="submit" class="btn btn-lg btn-default" value="查詢">
+      </div>
+    </form>
+
+
+  </div>
+</div>
 
 <script>
-	$('#sregdate').datepicker({
-		locale: "zh-tw"
-	});
-	$('#eregdate').datepicker({
-		locale: "zh-tw"
-	});
-	$('#slogindate').datepicker({
-		locale: "zh-tw"
-	});
-	$('#elogindate').datepicker({
-		locale: "zh-tw"
-	});
+  $('#sregdate').datepicker({
+    locale: "zh-tw"
+  });
+  $('#eregdate').datepicker({
+    locale: "zh-tw"
+  });
+  $('#slogindate').datepicker({
+    locale: "zh-tw"
+  });
+  $('#elogindate').datepicker({
+    locale: "zh-tw"
+  });
 </script>
-{{> footer}}

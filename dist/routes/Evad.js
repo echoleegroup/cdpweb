@@ -416,7 +416,7 @@ var EvadRoute = (function (_super) {
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,
 							'adlist': JSON.stringify(adlist), 
-							'msm_tpc': msm_tpc, 
+							//'msm_tpc': msm_tpc, 
 							'evtpgID': evtpgID 
 						});
 					});

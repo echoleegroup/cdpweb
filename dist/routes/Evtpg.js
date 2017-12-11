@@ -359,10 +359,9 @@ var EvtpgRoute = (function (_super) {
 								adlist: adlist
 							});
 						}
-						console.log(JSON.stringify(data));
 						res.render('EvtpgList', { 
 							'id': req.session.userid, 
-							'items': recordset.recordset, 
+							//'items': recordset.recordset, 
 							'modelList': modelList,
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,

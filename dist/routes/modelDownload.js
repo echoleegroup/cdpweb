@@ -24,7 +24,7 @@ var modelDownloadRoute = (function (_super) {
 			var scrore = 0.8;
 			var chartData = [];
 			var batListThold = 0.0;
-			var modelinfo;
+			var modelInfo;
 			var mdListCategCount = [];
 			var tacount = 0;
 			var tapopcount = 0;
@@ -46,7 +46,7 @@ var modelDownloadRoute = (function (_super) {
 							console.log(err);
 							reject(2);
 						}
-						modelinfo = recordset.recordset;
+						modelInfo = recordset.recordset[0];
 						resolve(1);
 					});
 				});
@@ -125,7 +125,7 @@ var modelDownloadRoute = (function (_super) {
 							'chartData': JSON.stringify(chartData), 
 							'tacount': tacount, 
 							'mdListCategCount': JSON.stringify(mdListCategCount), 
-							'modelinfo': modelinfo, 
+							'modelInfo': modelInfo, 
 							'batListThold': batListThold, 
 							'mdID': mdID, 
 							'batID': batID,

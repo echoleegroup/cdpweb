@@ -1,85 +1,84 @@
-{{> header}}
-{{> menu}}
-<input type ="hidden" id = "datainfo" value ='{{data}}'/>
-<div class="content">
-    <div class="title">
-      <div class="container">
-        <h1>活動頁面清單</h1>
-      </div>
-    </div>
-    <div class="container">
-      <!-- table set Start -->
-      <div class="table_block table-responsive">
-        <h2>活動頁面查詢結果</h2><a href="/Evtpg/EvtpgSearch" title="重新查詢"><button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button></a>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>
-                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-                <i class="fa fa-sort" aria-hidden="true"></i> 類別
-              </th>
-              <th>活動名稱</th>
-              <th>
-                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-                <i class="fa fa-sort" aria-hidden="true"></i> 投放期間
-              </th>
-              <th>
-                <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-                <i class="fa fa-sort" aria-hidden="true"></i> 最後異動時間
-              </th>
-              <th>連結</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id ="info">
-			
-          
-
-          </tbody>
-        </table>
-        <!-- pagination -->
-      </div>
-    </div>
+{{> header}} {{> menu}} {{> title title='活動頁面查詢結果'}}
+<!--
+<div class="title">
+  <div class="container">
+    <h1>活動頁面清單</h1>
   </div>
-<script>
-var x = "" ;
-var o = document.getElementById("datainfo").value;
-o = JSON.parse(o);
-for( i in o){
-  x+="<tr>";
-  x+="<td>"+o[i].maininfo[0].no+"</td>";
-  x+="<td>"+o[i].maininfo[0].codeLabel+"</td>";
-  x+="<td>"+o[i].maininfo[0].msm_tpc+"</td>";
-  x+="<td>"+o[i].maininfo[0].sdt+"~"+o[i].maininfo[0].edt+"</td>";
-  x+="<td>"+o[i].maininfo[0].updTime+"</td>";
-  x+="<td><a href='javascript:window.open(\""+o[i].maininfo[0].url+"\",\"_blank\");'>開啟連結</a></td>";
-  x+= '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
-  x+='<tr class="sub_info"><td colspan="7"><h3>標籤內容</h3><div class="tag_block">';
-  for( j in o[i].maininfo[1].taginfo) {
-	x+= '<a href="#" class="label label-cdp">'+o[i].maininfo[1].taginfo[j].tag+'</a>'
-  }
-  x+='</div>';	
-  x+='<h3>廣告資訊</h3><table class="table table-hover table-striped"><thead><tr><th>#</th><th>網站</th><th>頻道</th><th>版位</th><th>尺寸</th><th>特徵</th></tr></thead><tbody>';
-  for( j in o[i].maininfo[2].adlist) {
-	x+='<tr>'
-	x+='<td>'+o[i].maininfo[2].adlist[j].ad.no+'</td>';
-	x+='<td>'+o[i].maininfo[2].adlist[j].ad.adSource+'</td>';
-	x+='<td>'+o[i].maininfo[2].adlist[j].ad.adChannel+'</td>';
-	x+='<td>'+o[i].maininfo[2].adlist[j].ad.adPos+'</td>';
-	x+='<td>'+o[i].maininfo[2].adlist[j].ad.adSize+'</td>';
-	if( o[i].maininfo[2].adlist[j].ad.sumtag != 0 ) 
-		x+='<td><a href="#" class="fa fa-tag" aria-hidden="true"></a></td>';
-	else 
-	    x+='<td></td>';
-	x+='</tr>'
-  }
-  x+= "</tbody></table>";
-  x+= '<div class="btn-block center-block"><a href ="/Evtad/EvtadUpload?evtpgID='+o[i].maininfo[0].evtpgID+'"><button type="button" class="btn btn-lg btn-default">廣告排程上傳</button></a>';
-  x+='<a href ="/Evtpg/EvtpgEdit?evtpgID='+o[i].maininfo[0].evtpgID+'"><button type="button" class="btn btn-lg btn-default">活動修改</button><div>';
-  x+="</td></tr>";
+</div>
+-->
+<div class="container">
+  <!-- table set Start -->
+  <div class="table_block table-responsive">
+    <h2>活動頁面查詢結果</h2>
+    <a href="/Evtpg/EvtpgSearch" title="重新查詢">
+      <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
+    </a>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+            <i class="fa fa-sort" aria-hidden="true"></i> 類別
+          </th>
+          <th>活動名稱</th>
+          <th>
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+            <i class="fa fa-sort" aria-hidden="true"></i> 投放期間
+          </th>
+          <th>
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+            <i class="fa fa-sort" aria-hidden="true"></i> 最後異動時間
+          </th>
+          <th>連結</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="info">
 
-}
-document.getElementById("info").innerHTML = x;
-</script>
-  {{> footer}}
+
+
+      </tbody>
+    </table>
+    <!-- pagination -->
+  </div>
+</div>
+<script>
+  var x = "";
+  var o = {{{data}}};
+  for (i in o) {
+    x += "<tr>";
+    x += "<td>" + o[i].maininfo[0].no + "</td>";
+    x += "<td>" + o[i].maininfo[0].codeLabel + "</td>";
+    x += "<td>" + o[i].maininfo[0].msm_tpc + "</td>";
+    x += "<td>" + o[i].maininfo[0].sdt + "~" + o[i].maininfo[0].edt + "</td>";
+    x += "<td>" + o[i].maininfo[0].updTime + "</td>";
+    x += "<td><a href='javascript:window.open(\"" + o[i].maininfo[0].url + "\",\"_blank\");'>開啟連結</a></td>";
+    x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
+    x += '<tr class="sub_info"><td colspan="7"><h3>標籤內容</h3><div class="tag_block">';
+    for (j in o[i].maininfo[1].taginfo) {
+      x += '<a href="#" class="label label-cdp">' + o[i].maininfo[1].taginfo[j].tag + '</a>'
+    }
+    x += '</div>';
+    x += '<h3>廣告資訊</h3><table class="table table-hover table-striped"><thead><tr><th>#</th><th>網站</th><th>頻道</th><th>版位</th><th>尺寸</th><th>特徵</th></tr></thead><tbody>';
+    for (j in o[i].maininfo[2].adlist) {
+      x += '<tr>'
+      x += '<td>' + o[i].maininfo[2].adlist[j].ad.no + '</td>';
+      x += '<td>' + o[i].maininfo[2].adlist[j].ad.adSource + '</td>';
+      x += '<td>' + o[i].maininfo[2].adlist[j].ad.adChannel + '</td>';
+      x += '<td>' + o[i].maininfo[2].adlist[j].ad.adPos + '</td>';
+      x += '<td>' + o[i].maininfo[2].adlist[j].ad.adSize + '</td>';
+      if (o[i].maininfo[2].adlist[j].ad.sumtag != 0)
+        x += '<td><a href="#" class="fa fa-tag" aria-hidden="true"></a></td>';
+      else
+        x += '<td></td>';
+      x += '</tr>'
+    }
+    x += "</tbody></table>";
+    x += '<div class="btn-block center-block"><a href ="/Evtad/EvtadUpload?evtpgID=' + o[i].maininfo[0].evtpgID + '"><button type="button" class="btn btn-lg btn-default">廣告排程上傳</button></a>';
+    x += '<a href ="/Evtpg/EvtpgEdit?evtpgID=' + o[i].maininfo[0].evtpgID + '"><button type="button" class="btn btn-lg btn-default">活動修改</button><div>';
+    x += "</td></tr>";
+
+  }
+  document.getElementById("info").innerHTML = x;
+</script> 

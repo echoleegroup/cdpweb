@@ -1,29 +1,29 @@
-{{> header}}
-{{> menu}}
-<div class="content">
-    <div class="title">
-      <div class="container">
-        <h1>角色權限管理</h1>
-      </div>
-    </div>
-    
-    <div class="container">
-      <!-- table set Start -->
-      <div class="form_block">
-        <h2>角色權限查詢</h2><a href="/userRole/userRoleAdd" title="新增角色"><button type="submit" class="btn btn-default pull-right fa fa-search">新增角色</button></a>
-        <form class="form-horizontal" id ="reg" action="/userRole/userRoleList" method="post">
-          <div class="form-group" >
-            <label for="inputName" class="col-sm-3 control-label">角色名稱</label>
-            <div class="col-sm-7">
-              <input type="text" class="form-control " id ="ugrpName" name="ugrpName">
-            </div>
-          </div>
-		  <div class="btn-block center-block">
-			<input type="submit" class="btn btn-lg btn-default" value="查詢">
-		  </div>
-        </form>
-        
-      </div>
-    </div>
+{{> header}} {{> menu}} {{> title title='角色權限管理'}}
+<!--
+<div class="title">
+  <div class="container">
+    <h1>角色權限管理</h1>
   </div>
-{{> footer}}
+</div>
+-->
+<div class="container">
+  <!-- table set Start -->
+  <div class="form_block">
+    <h2>角色權限查詢</h2>
+    <a href="/userRole/userRoleAdd" title="新增角色">
+      <button type="submit" class="btn btn-default pull-right fa fa-search">新增角色</button>
+    </a>
+    <form class="form-horizontal" id="reg" action="/userRole/userRoleList" method="post">
+      <div class="form-group">
+        <label for="inputName" class="col-sm-3 control-label">角色名稱</label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control " id="ugrpName" name="ugrpName">
+        </div>
+      </div>
+      <div class="btn-block center-block">
+        <input type="submit" class="btn btn-lg btn-default" value="查詢">
+      </div>
+    </form>
+
+  </div>
+</div>

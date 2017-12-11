@@ -53,7 +53,6 @@ var custGeneRoute = (function (_super) {
 						var mgrMenuList = req.session.mgrMenuList;
 						res.render('custGeneCP', {
 							'id': req.session.userid,
-							'funcTitle': '客戶顯著特徵',
 							'moduleInfo': items[0],
 							'popNum': popNum,
 							'splNum': splNum,

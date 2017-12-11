@@ -343,7 +343,6 @@ var userRoleinfoRoute = (function (_super) {
 					res.render('UserGroupInfoEdit', {
 						'id': req.session.userid,
 						'moduleInfo': items[0],
-						'funcTitle': '角色權限管理',
 						'checked': checked,
 						'ugrpClass': ugrpClass,
 						'authority': authority,

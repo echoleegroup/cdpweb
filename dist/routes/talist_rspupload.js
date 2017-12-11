@@ -211,7 +211,6 @@ var talist_rspuploadRoute = (function (_super) {
 						res.render('talist_rspupload_add', { 
 							'id': req.session.userid, 
 							'moduleInfo': items[0], 
-							'funcTitle': '回應名單上傳',
 							'modelList': modelList,
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,

@@ -53,7 +53,7 @@ var custmotivationRoute = (function (_super) {
 						items = recordset.recordset;
 						res.render('custmotivationCP', {
 							'id': req.session.userid,
-							'items': items,
+							'modelInfo': items[0],
 							'popNum': popNum,
 							'splNum': splNum,
 							'modelList': modelList,

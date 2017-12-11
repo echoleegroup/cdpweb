@@ -22,7 +22,7 @@ var generaudicRoute = (function (_super) {
 				var tacount = 0;
 				var tapopcount = 0;
 				var splcount = 0;
-				var modelinfo;
+				var modelInfo;
 				var mdListCategCount = [];
 				var items;
 				var p1 = new Promise(function (resolve, reject) {
@@ -31,7 +31,7 @@ var generaudicRoute = (function (_super) {
 							console.log(err);
 							reject(2);
 						}
-						modelinfo = recordset.recordset;
+						modelInfo = recordset.recordset[0];
 						resolve(1);
 					});
 				});
@@ -87,7 +87,7 @@ var generaudicRoute = (function (_super) {
 						'tapopcount': tapopcount,
 						'splcount': splcount,
 						'api': java_api_endpoint,
-						'modelinfo': modelinfo
+						'modelInfo': modelInfo
 					});
 
 				}).catch(function (e) {
