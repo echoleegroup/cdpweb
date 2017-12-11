@@ -308,7 +308,8 @@ var talist_putuploadRoute = (function (_super) {
 						items = recordset.recordset;
 						res.render('talist_putupload_add', {
 							'id': req.session.userid,
-							'items': items,
+							'moduleInfo': items[0],
+							'funcName': '投放名單上傳',
 							'modelList': modelList,
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,

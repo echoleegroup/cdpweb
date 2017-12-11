@@ -20,6 +20,7 @@
     "express-session": "^1.15.5",
     "forever": "^0.15.3",
     "fs": "0.0.1-security",
+    "handlebars-helpers": "^0.10.0",
     "inversify": "^3.0.0-rc.4",
     "knex": "^0.12.6",
     "lodash": "^4.17.4",

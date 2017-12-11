@@ -342,13 +342,15 @@ var userRoleinfoRoute = (function (_super) {
 					var mgrMenuList = req.session.mgrMenuList;
 					res.render('UserGroupInfoEdit', {
 						'id': req.session.userid,
-						'items': items,
+						'moduleInfo': items[0],
+						'funcTitle': '角色權限管理',
 						'checked': checked,
 						'ugrpClass': ugrpClass,
 						'authority': authority,
 						'modelList': modelList,
 						'navMenuList': navMenuList,
-						'mgrMenuList': mgrMenuList
+						'mgrMenuList': mgrMenuList,
+						'menu': JSON.stringify([].concat(mgrMenuList).concat(navMenuList))
 					});
 				}).catch(function (e) {
 					console.log(e);

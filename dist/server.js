@@ -3,6 +3,7 @@ var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var express = require("express");
 var exphbs  = require('express-handlebars');
+var helpers = require('handlebars-helpers');
 var session = require("express-session");
 var logger = require("morgan");
 var path = require("path");
@@ -58,7 +59,8 @@ var Server = (function () {
             extname: '.hbs',
             defaultLayout: 'layout',
             layoutsDir: './dist/handlebars/layouts',
-            partialsDir: ['./dist/handlebars/partials']
+            partialsDir: ['./dist/handlebars/partials', './dist/handlebars/views'],
+            helpers: helpers()
         }));
         this.app.set('view engine', 'hbs');
         this.app.use(logger('dev'));

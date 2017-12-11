@@ -51,6 +51,7 @@ var modelRoute = (function (_super) {
 					res.render('commonList', { 
 						'id': req.session.userid, 
 						'items': recordset.recordset, 
+						'funcTitle': '模型總覽',
 						'condition': JSON.stringify(condition), 
 						'modelList': modelList,
 						'navMenuList': navMenuList,
@@ -59,7 +60,7 @@ var modelRoute = (function (_super) {
 				});
 			}
 			else {
-				res.render('index', { 'title': req.session.userid, 'items': "" });
+				res.render('index', { 'title': req.session.userid});
 			}
 		});
 

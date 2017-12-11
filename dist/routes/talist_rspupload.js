@@ -210,7 +210,8 @@ var talist_rspuploadRoute = (function (_super) {
 						items = recordset.recordset;
 						res.render('talist_rspupload_add', { 
 							'id': req.session.userid, 
-							'items': items, 
+							'moduleInfo': items[0], 
+							'funcTitle': '回應名單上傳',
 							'modelList': modelList,
 							'navMenuList': navMenuList,
 							'mgrMenuList': mgrMenuList,

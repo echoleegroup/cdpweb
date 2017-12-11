@@ -1,22 +1,29 @@
-{{> header}}
-{{> menu}}
-<input id ="condition" type ="hidden" value="{{condition}}"/>
+{{> header}} {{> menu}}
 <div class="content">
+	{{> title}}
+	<!--
 	<div class="title">
 		<div class="container">
 			<h1>模型總覽</h1>
 		</div>
 	</div>
+	-->
 	<div class="container">
-	   
-		<div class="search"><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></div>
-	    <div id ="searchtag" style="display:none;">
-			<div class="search_tag" id ="fatag">
-				<i class="fa fa-tag" aria-hidden="true"></i>篩選：<span>2017/01/01~2017/12/31</span><span>含結案類型</span>
+
+		<div class="search">
+			<a href="#">
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</a>
+		</div>
+		<div id="searchtag" style="display:none;">
+			<div class="search_tag" id="fatag">
+				<i class="fa fa-tag" aria-hidden="true"></i>篩選：
+				<span>2017/01/01~2017/12/31</span>
+				<span>含結案類型</span>
 			</div>
 		</div>
 		<div class="search_block" style="display: none;">
-			<form id = "reg" name = "reg" action = "/model/modelList" method = "get">
+			<form id="reg" name="reg" action="/model/modelList" method="get">
 				<div class="col-md-8 col-md-offset-1 col-sm-12 col-xs-12">
 					<div class="form-group">
 						<label for="inputName" class="col-sm-3 control-label">執行期間
@@ -35,7 +42,7 @@
 						<div class="col-sm-9 col-xs-12">
 							<div class="form-check form-check-inline">
 								<label class="form-check-label">
-									<input class="form-check-input" type="checkbox" id="isClosed" name ="isClosed" > 含結案類型
+									<input class="form-check-input" type="checkbox" id="isClosed" name="isClosed"> 含結案類型
 								</label>
 							</div>
 						</div>
@@ -46,11 +53,11 @@
 						<button onclick="document.getElementById('reg').submit()" type="submit" class="btn btn-lg btn-default">查詢</button>
 					</div>
 				</div>
-			</form>	
+			</form>
 		</div>
 		<div class="overview">
 			<ul>
-			 {{#each items as |list|}}
+				{{#each items as |list|}}
 				<li>
 					<a href="javascript:gocp('{{list.mdID}}','{{list.batID}}')">
 						<h2>{{list.mdName}}</h2>
@@ -60,7 +67,7 @@
 						</div>
 					</a>
 				</li>
-			 {{/each}}
+				{{/each}}
 			</ul>
 		</div>
 	</div>
@@ -74,30 +81,28 @@
 	});
 </script>
 <script>
-	$(document).ready(function(){
-		$('[data-toggle="tooltip"]').tooltip();   
+	$(document).ready(function () {
+		$('[data-toggle="tooltip"]').tooltip();
 	});
 </script>
 <script>
-	function gocp(mdID,batID){
-		var url = encodeURI("/custGene/custGeneCP?mdID="+mdID+"&batID="+batID);
+	function gocp(mdID, batID) {
+		var url = encodeURI("/custGene/custGeneCP?mdID=" + mdID + "&batID=" + batID);
 		location.href = url;
-		
+
 	}
 </script>
 <script>
-  var tagHtml = "" ;
-  var hasdata = false ;
-  var tagO= document.getElementById("condition").value;
-  tagO = JSON.parse(tagO);
-  tagHtml+= '<i class="fa fa-tag" aria-hidden="true"></i>篩選：';
-  for( j in tagO ) {
-	tagHtml+= '<span>'+tagO[j].query+'</span>'	
-	hasdata = true ;
-  }
-  document.getElementById("fatag").innerHTML = tagHtml;
-  if( hasdata ) 
-    document.getElementById("searchtag").style.display ="block" ;
-  
-</script>
-{{> footer}}
+	var tagHtml = "";
+	var hasdata = false;
+	var tagO = {{{condition}}};
+	tagHtml += '<i class="fa fa-tag" aria-hidden="true"></i>篩選：';
+	for (j in tagO) {
+		tagHtml += '<span>' + tagO[j].query + '</span>'
+		hasdata = true;
+	}
+	document.getElementById("fatag").innerHTML = tagHtml;
+	if (hasdata)
+		document.getElementById("searchtag").style.display = "block";
+
+</script> {{> footer}}
