@@ -10,11 +10,13 @@ module.exports = () => {
 		var userId = req.body.userId || '';
 		var password = req.body.password || '';
 		req.session.userid = "";
-		res.redirect('..');
+		res.redirect('/');
 
 	});
 	router.get('/login', function (req, res) {
-		res.render('index');
+		res.render('index', {
+			layout: 'layout-login'
+		});
 	});
 	router.post('/login', function (req, res) {
 		var uID = '';
