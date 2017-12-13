@@ -193,7 +193,12 @@ $(function() {
 $(function() {
     $("a:contains('複製連結')").css("white-space", "nowrap");
     $("a:contains('開啟連結')").css("white-space", "nowrap");
-    
+    $('.tag a').click(function(event) {
+        return false;
+    });
+    $('.customize a').click(function(event) {
+        $(this).parent('li').hide();
+    });
 });
 $(function() {
     $('.search_block').hide();
@@ -259,6 +264,11 @@ $(function() {
 ///////////////模組選擇選單//////////////
 /*-----------------------------------*/
 $(function() {
+    $('.choose').hover(function() {
+     $('body').addClass('noscroll');
+ }, function() {
+    $('body').removeClass('noscroll');
+});
     $('.choose').siblings('a').hide();
     var len = 15; // 超過50個字以"..."取代
     $(".choose ul li a").each(function(index) {

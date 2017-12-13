@@ -33,6 +33,7 @@ var Server = (function () {
         this.app.use('/', indexRouter());
         //this.login();
         this.app.use('/', loginRouter());
+        this.app.use('/target', targetRoute);
 		this.userinfo();
 		this.userRoleinfo();
 		this.model();

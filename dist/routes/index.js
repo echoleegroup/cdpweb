@@ -36,9 +36,9 @@ module.exports = () => {
             var modelList = req.session.modelList ;
             var navMenuList = req.session.navMenuList ;
             var mgrMenuList = req.session.mgrMenuList ;
-            console.log('====modelList: ', JSON.stringify(modelList));
-            console.log('====navMenuList: ', JSON.stringify(navMenuList));
-            console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
+            //console.log('====modelList: ', JSON.stringify(modelList));
+            //console.log('====navMenuList: ', JSON.stringify(navMenuList));
+            //console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
             res.render('main', {
                 'id': req.session.userid, 
                 'modelList': modelList, 
