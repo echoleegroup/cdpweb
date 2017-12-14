@@ -5,67 +5,67 @@ const _ = require("lodash");
 const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
-	console.log('[LoginRoute::create] Creating index route.');
-	var router = express.Router();
+  console.log('[LoginRoute::create] Creating index route.');
+  var router = express.Router();
 
-	router.get('/logout', function (req, res) {
-		var userId = req.body.userId || '';
-		var password = req.body.password || '';
-		req.session.userid = "";
-		res.redirect('/');
+  router.get('/logout', function (req, res) {
+    var userId = req.body.userId || '';
+    var password = req.body.password || '';
+    req.session.userid = "";
+    res.redirect('/');
 
-	});
+  });
 
-	router.get('/login', function (req, res) {
-		res.render('index', {
-			layout: 'layout-login'
-		});
-	});
-	
-	router.post('/login', function (req, res) {
-		var uID = '';
-		var userId = req.body.userId || '';
-		var password = req.body.password || '';
-		var where = " where userId ='" + userId + "' and + password = '" + password + "'";
-		//var model=[] ;
-		//var modelList =[];
-		db.query('select * from sy_infouser' + where, function (err, recordset) {
-			if (err) console.log(err);
-			if (recordset.rowsAffected == 0) {
-				res.locals.error = '使用者帳號或密碼錯誤';
-				var errormsg = 'YES';
-				res.render('index', { 
-					errormsg: errormsg 
-				});
-			} else {
-				req.session.uID = recordset.recordset[0].uID;
-				req.session.userid = userId;
-				var p1 = new Promise(function (resolve, reject) {
-					db.query("update sy_infouser set loginTime = GETDATE() where userId = '" + userId + "'", function (err, result) {
-						if (err) {
-							//console.log(err);
-							reject(err);
-						}
-						resolve(result.recordset);
-					});
-				});
+  router.get('/login', function (req, res) {
+    res.render('index', {
+      layout: 'layout-login'
+    });
+  });
 
-				//建立各個menu的權限
-				var p2 = new Promise(function (resolve, reject) {
-					db.query("SELECT syuw.userId,syuw.ugrpId ,sym.menuCode,syu.isRead,syu.isEdit,syu.isDownload FROM sy_userWithUgrp syuw left join sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId left join sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null where userId = '" + userId + "' order by sym.menuId asc", function (err, result) {
-						if (err) {
-							//console.log(err);
-							reject(err);
-						}
-						let permission = result.recordset.reduce((accumulator, value, index) => {
-							if (!accumulator[value.menuCode]) {
-								accumulator[value.menuCode] = {}
-							}
-							accumulator[value.menuCode].read = accumulator[value.menuCode].read || (value.isRead === 'Y');
-							accumulator[value.menuCode].edit = accumulator[value.menuCode].edit || (value.isEdit === 'Y');
-							accumulator[value.menuCode].download = accumulator[value.menuCode].download || (value.isDownload === 'Y');
-							return accumulator;
-						}, {});
+  router.post('/login', function (req, res) {
+    var uID = '';
+    var userId = req.body.userId || '';
+    var password = req.body.password || '';
+    var where = " where userId ='" + userId + "' and + password = '" + password + "'";
+    //var model=[] ;
+    //var modelList =[];
+    db.query('select * from sy_infouser' + where, function (err, recordset) {
+      if (err) console.log(err);
+      if (recordset.rowsAffected == 0) {
+        res.locals.error = '使用者帳號或密碼錯誤';
+        var errormsg = 'YES';
+        res.render('index', {
+          errormsg: errormsg
+        });
+      } else {
+        req.session.uID = recordset.recordset[0].uID;
+        req.session.userid = userId;
+        var p1 = new Promise(function (resolve, reject) {
+          db.query("update sy_infouser set loginTime = GETDATE() where userId = '" + userId + "'", function (err, result) {
+            if (err) {
+              //console.log(err);
+              reject(err);
+            }
+            resolve(result.recordset);
+          });
+        });
+
+        //建立各個menu的權限
+        var p2 = new Promise(function (resolve, reject) {
+          db.query("SELECT syuw.userId,syuw.ugrpId ,sym.menuCode,syu.isRead,syu.isEdit,syu.isDownload FROM sy_userWithUgrp syuw left join sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId left join sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null where userId = '" + userId + "' order by sym.menuId asc", function (err, result) {
+            if (err) {
+              //console.log(err);
+              reject(err);
+            }
+            let permission = result.recordset.reduce((accumulator, value, index) => {
+              if (!accumulator[value.menuCode]) {
+                accumulator[value.menuCode] = {}
+              }
+              accumulator[value.menuCode].read = accumulator[value.menuCode].read || (value.isRead === 'Y');
+              accumulator[value.menuCode].edit = accumulator[value.menuCode].edit || (value.isEdit === 'Y');
+              accumulator[value.menuCode].download = accumulator[value.menuCode].download || (value.isDownload === 'Y');
+              return accumulator;
+            }, {});
 						/*
 						var menuClass ;
 						for( var i = 0 ; i < recordset.rowsAffected ; i++){
@@ -90,22 +90,22 @@ module.exports = (app) => {
 							}
 						}
 						*/
-						resolve(permission);
-					});
-				});
-				var p3 = new Promise(function (resolve, reject) {
-					db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ", function (err, result) {
-						if (err) {
-							//console.log(err);
-							reject(err);
-						}
-						let modelList = result.recordset.map((row, index) => {
-							return {
-								mdID: row.mdID,
-								mdName: row.mdName,
-								batID: row.batID
-							};
-						});
+            resolve(permission);
+          });
+        });
+        var p3 = new Promise(function (resolve, reject) {
+          db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ", function (err, result) {
+            if (err) {
+              //console.log(err);
+              reject(err);
+            }
+            let modelList = result.recordset.map((row, index) => {
+              return {
+                mdID: row.mdID,
+                mdName: row.mdName,
+                batID: row.batID
+              };
+            });
 						/*
 						for( var i = 0 ; i < recordset.rowsAffected ; i++){
 							model.push({
@@ -119,40 +119,40 @@ module.exports = (app) => {
 							model = [];
 						}
 						*/
-						resolve(modelList);
-					});
+            resolve(modelList);
+          });
 
-				});
+        });
 
-				Promise.all([p1, p2, p3]).then(function (results) {
-					let permission = results[1];
-					let modelList = results[2];
-					let navMenuList = [];
-					let mgrMenuList = [];
-					db.query('SELECT sm.menuCode,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url, sm.sticky,pym.menuName premenuName, pym.menuCode preMenuCode, pym.sticky preSticky FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null', function (err, result) {
-						console.log('===permission: ', permission);
-						for (let menu of result.recordset) {
-							let pointer = (menu.preSticky === '_mgr')? mgrMenuList: navMenuList;
-							if (permission[menu.menuCode] && permission[menu.menuCode].read) {
-								let parent = _.find(pointer, { menuCode: menu.preMenuCode });
-								if (!parent) {
-									parent = {
-										menuCode: menu.preMenuCode,
-										mainMenu: menu.premenuName,
-										_model: (menu.preSticky === '_model'),
-										_mgr: (menu.preSticky === '_mgr'),
-										childMenu: []
-									};
-									pointer.push(parent);
-								}
-								parent.childMenu.push({
-									menuName: menu.menuName,
-									url: menu.url,
-									sticky: menu.sticky,
-									menuCode: menu.menuCode
-								});
-							}
-						}
+        Promise.all([p1, p2, p3]).then(function (results) {
+          let permission = results[1];
+          let modelList = results[2];
+          let navMenuList = [];
+          let mgrMenuList = [];
+          db.query('SELECT sm.menuCode,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url, sm.sticky,pym.menuName premenuName, pym.menuCode preMenuCode, pym.sticky preSticky FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null', function (err, result) {
+            console.log('===permission: ', permission);
+            for (let menu of result.recordset) {
+              let pointer = (menu.preSticky === '_mgr') ? mgrMenuList : navMenuList;
+              if (permission[menu.menuCode] && permission[menu.menuCode].read) {
+                let parent = _.find(pointer, { menuCode: menu.preMenuCode });
+                if (!parent) {
+                  parent = {
+                    menuCode: menu.preMenuCode,
+                    mainMenu: menu.premenuName,
+                    _model: (menu.preSticky === '_model'),
+                    _mgr: (menu.preSticky === '_mgr'),
+                    childMenu: []
+                  };
+                  pointer.push(parent);
+                }
+                parent.childMenu.push({
+                  menuName: menu.menuName,
+                  url: menu.url,
+                  sticky: menu.sticky,
+                  menuCode: menu.menuCode
+                });
+              }
+            }
 
 						/*
 						for( var i = 0 ;  i < recordset.rowsAffected ; i++){
@@ -237,20 +237,20 @@ module.exports = (app) => {
 							}
 						}
 						*/
-						req.session.permission = permission;
-						req.session.modelList = modelList;
-						req.session.navMenuList = navMenuList;
-						req.session.mgrMenuList = mgrMenuList[0];
-						res.redirect('/');
-						//res.render('main', {'id' : req.session.userid, 'navMenuList' : navMenuList,'modelList' :modelList});
-					});
-				}).catch(function (e) {
-					console.log(e);
-				});
-			}
-		});
-	});
-	return router;
+            req.session.permission = permission;
+            req.session.modelList = modelList;
+            req.session.navMenuList = navMenuList;
+            req.session.mgrMenuList = mgrMenuList[0];
+            res.redirect('/');
+            //res.render('main', {'id' : req.session.userid, 'navMenuList' : navMenuList,'modelList' :modelList});
+          });
+        }).catch(function (e) {
+          console.log(e);
+        });
+      }
+    });
+  });
+  return router;
 };
 /*
 var __extends = (this && this.__extends) || function (d, b) {

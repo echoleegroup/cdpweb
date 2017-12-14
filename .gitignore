@@ -44,7 +44,7 @@ jspm_packages
 public/swagger/mockup-server
 
 # VSCode
-.vscode/*
+.vscode/!setting.json
 
 # Sass cache
 .sass-cache

@@ -10,7 +10,7 @@ module.exports = (app) => {
     console.log('[TargetRoute::create] Creating target route.');
     const router = express.Router();
 
-    router.get('/custom_search', middleware.checkLogin(), function (req, res) {
+    router.get('/custom_search', middleware.check(), function (req, res) {
         let modelList = req.session.modelList ;
         let navMenuList = req.session.navMenuList ;
         let mgrMenuList = req.session.mgrMenuList ;

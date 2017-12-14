@@ -32,7 +32,7 @@ var IndexRoute = (function (_super) {
 module.exports = (app) => {
     console.log('[IndexRoute::create] Creating index route.');
     var router = express.Router();
-    router.get('/', middleware.checkLogin(), function (req, res) {
+    router.get('/', middleware.check(), function (req, res) {
         db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
             var modelList = req.session.modelList ;
             var navMenuList = req.session.navMenuList ;
