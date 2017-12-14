@@ -1,16 +1,18 @@
 "use strict";
 const express = require('express');
-const db = require("../utils/sql-server-connector").db;
+const winston = require('winston');
 const fs = require('fs');
 const path = require('path');
-const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
-const multer = require('multer')
-const upload = multer({ dest: storage });
+const multer = require('multer');
 const xlsx = require("node-xlsx");
+const db = require("../utils/sql-server-connector").db;
+
+const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
+const upload = multer({ dest: storage });;
 
 module.exports = (app) => {
 	console.log('[talist_putuploadRoute::create] Creating talist_putupload route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.post('/talist_putuploadAddact', upload.single('uploadingFile'), function (req, res) {
 		if (req.session.userid && req.session.userid != '') {

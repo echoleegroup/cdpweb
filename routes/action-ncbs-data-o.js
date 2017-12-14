@@ -2,15 +2,17 @@
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
-const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
-const upload = multer({ dest: storage });
+const winston = require('winston');
 const xlsx = require("node-xlsx");
 const express = require('express');
 const db = require("../utils/sql-server-connector").db;
 
+const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
+const upload = multer({ dest: storage });
+
 module.exports = (app) => {
 	console.log('[NCBSDataRoute::create] Creating NCBSData route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.post('/NCBSDataUploadAct', upload.single('uploadingFile'), function (req, res) {
 		if (req.session.userid && req.session.userid != '') {

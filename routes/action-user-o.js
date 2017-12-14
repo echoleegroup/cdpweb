@@ -1,10 +1,11 @@
 "use strict";
 const express = require('express');
+const winston = require('winston');
 const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
 	console.log('[userRoute::create] Creating user route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.post('/checkEditAuthority', function (req, res) {
 		if (req.session.user_Edit == 'Y')

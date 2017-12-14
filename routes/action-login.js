@@ -1,7 +1,8 @@
 "use strict";
-const db = require("../utils/sql-server-connector").db;
 const express = require("express");
+const winston = require('winston');
 const _ = require("lodash");
+const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
 	console.log('[LoginRoute::create] Creating index route.');

@@ -1,11 +1,12 @@
 "use strict";
 const express = require('express');
+const winston = require('winston');
 const db = require("../utils/sql-server-connector").db;
 const java_api_endpoint = require("../config/app-config").get("JAVA_API_ENDPOINT");
 
 module.exports = (app) => {
 	console.log('[custmotivationRoute::create] Creating custmotivation route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.get('/custMotivationCP', function (req, res) {
 		if (req.session.userid && req.session.userid != '') {

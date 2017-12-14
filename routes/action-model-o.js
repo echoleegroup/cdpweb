@@ -1,10 +1,11 @@
 "use strict";
 const express = require('express');
+const winston = require('winston');
 const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
 	console.log('[modelRoute::create] Creating model route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.get('/modelList', function (req, res) {
 		if (req.session.userid && req.session.userid != '') {

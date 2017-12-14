@@ -2,12 +2,13 @@
 const http = require('http');
 const url = require('url');
 const express = require('express');
-const db = require("../utils/sql-server-connector").db;
+const winston = require('winston');
 const appConfig = require("../config/app-config");
+const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
 	console.log('[modelDownloadRoute::create] Creating modelDownload route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.get('/modelDownload', function (req, res) {
 		var mdID = req.query.mdID || '';

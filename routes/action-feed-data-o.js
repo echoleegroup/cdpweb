@@ -3,14 +3,16 @@ const express = require('express');
 const path = require("path");
 const fs = require('fs');
 const multer = require('multer');
-const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
-const upload = multer({ dest: storage });
+const winston = require('winston');
 const xlsx = require("node-xlsx");
 const db = require("../utils/sql-server-connector").db;
 
+const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
+const upload = multer({ dest: storage });
+
 module.exports = (app) => {
 	console.log('[FeedDataRoute::create] Creating FeedData route.');
-	let router = express.Router();
+	const router = express.Router();
 
 	router.get('/FeedDataSearch', function (req, res) {
 		var funcCatge;

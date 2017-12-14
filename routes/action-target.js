@@ -8,7 +8,7 @@ const middleware = require('../middlewares/login-check');
 
 module.exports = (app) => {
     console.log('[TargetRoute::create] Creating target route.');
-    let router = express.Router();
+    const router = express.Router();
 
     router.get('/custom_search', middleware.checkLogin(), function (req, res) {
         let modelList = req.session.modelList ;
