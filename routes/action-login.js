@@ -148,7 +148,8 @@ module.exports = (app) => {
 								parent.childMenu.push({
 									menuName: menu.menuName,
 									url: menu.url,
-									sticky: menu.sticky
+									sticky: menu.sticky,
+									menuCode: menu.menuCode
 								});
 							}
 						}

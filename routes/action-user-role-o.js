@@ -141,11 +141,12 @@ module.exports = (app) => {
 
 	router.post('/addAuthority', function (req, res) {
 		var ugrpId = req.body.ugrpId || '';
-		var menuId = req.body.menuId || '';
+		var menuCode = req.body.menuCode || '';
 		var all = req.body.all || '';
 		var Read = req.body.Read || '';
 		var Edit = req.body.Edit || '';
 		var Download = req.body.Download || '';
+		var menuId = '';
 		if (all == "true")
 			all = 'Y';
 		else
@@ -162,34 +163,50 @@ module.exports = (app) => {
 			Download = 'Y';
 		else
 			Download = 'N';
-		function addAuthority(ugrpId, menuId, all, Read, Edit, Download, callback) {
-			var where = " where ugrpId = " + ugrpId + " and menuId =" + menuId;
-			db.query('select count(*) total from sy_ugrpcode' + where, function (err, recordset) {
-				if (err)
-					callback(err, null);
-				else
-					callback(null, recordset.recordset[0].total);
+		var p1 = new Promise(function (resolve, reject) {
+			console.log("SELECT menuId From sy_menu where menuCode = '" + menuCode + "'");
+			db.query("SELECT menuId From sy_menu where menuCode = '" + menuCode + "'", function (err, recordset) {
+				if (err) {
+					console.log(err);
+					reject(err);
+				}
+				menuId = recordset.recordset[0].menuId;
+				resolve(menuId);
 			});
-		}
-		addAuthority(ugrpId, menuId, all, Read, Edit, Download, function (err, data) {
-			if (err)
-				console.log("ERROR : ", err);
-			else if (data != 0) {
+		});
+		Promise.all([p1]).then(function (results) {
+			function addAuthority(ugrpId, menuId, all, Read, Edit, Download, callback) {
 				var where = " where ugrpId = " + ugrpId + " and menuId =" + menuId;
-				db.query("update sy_ugrpcode set isAll = '" + all + "',isRead = '" + Read + "',isEdit = '" + Edit + "',isDownload = '" + Download + "',modifyDate = GETDATE(),modifyUser ='" + req.session.userid + "'" + where, function (err, recordset) {
+				db.query('select count(*) total from sy_ugrpcode' + where, function (err, recordset) {
 					if (err)
-						console.log("ERROR : ", err);
-					res.end('更新成功');
+						callback(err, null);
+					else
+						callback(null, recordset.recordset[0].total);
 				});
 			}
-			else {
-				var values = "VALUES(" + ugrpId + "," + menuId + ",GETDATE(),GETDATE(),'" + req.session.userid + "','" + all + "','" + Read + "','" + Edit + "','" + Download + "')"
-				db.query("INSERT INTO sy_ugrpcode(ugrpId,menuId,modifyDate,regDate,modifyUser,isAll,isRead,isEdit,isDownload)" + values, function (err, recordset) {
-					if (err)
-						console.log("ERROR : ", err);
-					res.end('新增成功');
-				});
-			}
+
+			addAuthority(ugrpId, menuId, all, Read, Edit, Download, function (err, data) {
+				if (err)
+					console.log("ERROR : ", err);
+				else if (data != 0) {
+					var where = " where ugrpId = " + ugrpId + " and menuId =" + menuId;
+					db.query("update sy_ugrpcode set isAll = '" + all + "',isRead = '" + Read + "',isEdit = '" + Edit + "',isDownload = '" + Download + "',modifyDate = GETDATE(),modifyUser ='" + req.session.userid + "'" + where, function (err, recordset) {
+						if (err)
+							console.log("ERROR : ", err);
+						res.end('更新成功');
+					});
+				}
+				else {
+					var values = "VALUES(" + ugrpId + "," + menuId + ",GETDATE(),GETDATE(),'" + req.session.userid + "','" + all + "','" + Read + "','" + Edit + "','" + Download + "')"
+					db.query("INSERT INTO sy_ugrpcode(ugrpId,menuId,modifyDate,regDate,modifyUser,isAll,isRead,isEdit,isDownload)" + values, function (err, recordset) {
+						if (err)
+							console.log("ERROR : ", err);
+						res.end('新增成功');
+					});
+				}
+			});
+		}).catch(function (e) {
+			console.log(e);
 		});
 	});
 

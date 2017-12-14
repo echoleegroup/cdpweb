@@ -126,7 +126,7 @@
                 </div>
                 <div id="dialog" title="" style="display:none;"></div>
                 <div class="btn-block center-block">
-                    <button type="submit" class="btn btn-lg btn-default" onclick="checkAddBtn();">新增權限</button>
+                    <button type="submit" class="btn btn-lg btn-default" onclick="btn();">新增權限</button>
                 </div>
             </div>
         </div>
@@ -179,147 +179,130 @@
             <button type="submit" class="btn btn-lg btn-default" onclick="addAuthority()">儲存</button>
         </div>
     </div>
-    <script>
+</div>
+<script>
 
-        var x = document.getElementById("ugrpClass");
-        var i;
-        for (i = 0; i < x.length; i++) {
-            if (x.options[i].value == {{ modelInfo.ugrpClass }})
-                x.options[i].selected = 'selected'; 
+    var x = document.getElementById("ugrpClass");
+    var i;
+    for (i = 0; i < x.length; i++) {
+        if (x.options[i].value == {{ modelInfo.ugrpClass }})
+    x.options[i].selected = 'selected'; 
             }
-        var checkall = document.getElementsByName("all");
-        for (i = 0; i < checkall.length; i++) {
-            if (checkall[i].value == 'Y')
-                checkall[i].checked = true;
-        }
-        var checkedit = document.getElementsByName("edit");
-        for (i = 0; i < checkedit.length; i++) {
-            if (checkedit[i].value == 'Y')
-                checkedit[i].checked = true;
-        }
-        var checkread = document.getElementsByName("read");
-        for (i = 0; i < checkread.length; i++) {
-            if (checkread[i].value == 'Y')
-                checkread[i].checked = true;
-        }
-        var checkdownload = document.getElementsByName("download");
-        for (i = 0; i < checkdownload.length; i++) {
-            if (checkdownload[i].value == 'Y')
-                checkdownload[i].checked = true;
-        }
-        $(function () {
+    var checkall = document.getElementsByName("all");
+    for (i = 0; i < checkall.length; i++) {
+        if (checkall[i].value == 'Y')
+            checkall[i].checked = true;
+    }
+    var checkedit = document.getElementsByName("edit");
+    for (i = 0; i < checkedit.length; i++) {
+        if (checkedit[i].value == 'Y')
+            checkedit[i].checked = true;
+    }
+    var checkread = document.getElementsByName("read");
+    for (i = 0; i < checkread.length; i++) {
+        if (checkread[i].value == 'Y')
+            checkread[i].checked = true;
+    }
+    var checkdownload = document.getElementsByName("download");
+    for (i = 0; i < checkdownload.length; i++) {
+        if (checkdownload[i].value == 'Y')
+            checkdownload[i].checked = true;
+    }
+    $(function () {
+        $('.modal').hide();
+        $('.modal').append('<div class="overlay"></div>');
+        $('.modal .overlay').click(function (event) {
             $('.modal').hide();
-            $('.modal').append('<div class="overlay"></div>');
-            $('.modal .overlay').click(function (event) {
-                $('.modal').hide();
-                $('body').removeClass('noscroll');
-            });
+            $('body').removeClass('noscroll');
         });
-        function clickcancel() {
-            document.getElementById("mod").style.display = "block";
-            document.getElementById("mod2").style.display = "none";
-            document.getElementById("ugrpClass").disabled = true;
-            document.getElementById("ugrpName").disabled = true;
-            document.getElementById("remark").disabled = true;
-            document.getElementById("isstop").disabled = true;
-        }
-        function clickModify() {
-            $.ajax({
-                url: "/userRole/checkEditAuthority",
-                type: "POST",
-                dataType: 'text',
-                success: function (msg) {
-                    if (msg == 'ok') {
-                        document.getElementById("mod").style.display = "none";
-                        document.getElementById("mod2").style.display = "block";
-                        document.getElementById("ugrpId").disabled = false;
-                        document.getElementById("ugrpClass").disabled = false;
-                        document.getElementById("ugrpName").disabled = false;
-                        document.getElementById("remark").disabled = false;
-                        document.getElementById("isstop").disabled = false;
-                    }
-                    else
-                        alert("您並無權限編輯");
+    });
+    function clickcancel() {
+        document.getElementById("mod").style.display = "block";
+        document.getElementById("mod2").style.display = "none";
+        document.getElementById("ugrpClass").disabled = true;
+        document.getElementById("ugrpName").disabled = true;
+        document.getElementById("remark").disabled = true;
+        document.getElementById("isstop").disabled = true;
+    }
+    function clickModify() {
 
+        document.getElementById("mod").style.display = "none";
+        document.getElementById("mod2").style.display = "block";
+        document.getElementById("ugrpId").disabled = false;
+        document.getElementById("ugrpClass").disabled = false;
+        document.getElementById("ugrpName").disabled = false;
+        document.getElementById("remark").disabled = false;
+        document.getElementById("isstop").disabled = false;
+
+    }
+    function checkDel(ugrpId, menuId, deleteid) {
+        $.ajax({
+            url: "/user/checkEditAuthority",
+            type: "POST",
+            dataType: 'text',
+            success: function (msg) {
+                if (msg == 'ok') {
+                    deleterow(ugrpId, menuId, deleteid);
                 }
-            });
-        }
+                else
+                    alert("您並無權限編輯");
 
-        function checkAddBtn() {
-            $.ajax({
-                url: "/userRole/checkEditAuthority",
-                type: "POST",
-                dataType: 'text',
-                success: function (msg) {
-                    if (msg == 'ok') {
-                        btn();
-                    }
-                    else
-                        alert("您並無權限編輯");
-
-                }
-            });
-        }
-        function checkDel(ugrpId, menuId, deleteid) {
-            $.ajax({
-                url: "/user/checkEditAuthority",
-                type: "POST",
-                dataType: 'text',
-                success: function (msg) {
-                    if (msg == 'ok') {
-                        deleterow(ugrpId, menuId, deleteid);
-                    }
-                    else
-                        alert("您並無權限編輯");
-
-                }
-            });
-        }
-        function deleterow(ugrpId, menuId, deleteid) {
-            deleteauthority(ugrpId, menuId);
-        }
-        function deleteauthority(ugrpId, menuId) {
-            $.ajax({
-                url: "/userRole/delAuthority",
-                data: {
-                    "ugrpId": ugrpId,
-                    "menuId": menuId
-                },
-                type: "POST",
-                dataType: 'text',
-                success: function (msg) {
-                    alert(msg);
-                    location.reload();
-
-                }
-            });
-        }
-        function btn() {
-            var data = '';
-            var checkboxdata = '';
-            var o = {{{ menu }}};
-        //o = JSON.parse(o);
-        for (i in o) {
-            data += '<li><a href="#">' + o[i].mainMenu + '</a><ul>';
-            for (j in o[i].childMenu) {
-                data += '<li><a href ="javascript:clickname(\'' + o[i].childMenu[j].menuId + '\')" title="' + o[i].childMenu[j].menuName + '" >' + o[i].childMenu[j].menuName + '</a></li>';
             }
-            data += '</ul></li>';
+        });
+    }
+    function deleterow(ugrpId, menuId, deleteid) {
+        deleteauthority(ugrpId, menuId);
+    }
+    function deleteauthority(ugrpId, menuId) {
+        $.ajax({
+            url: "/userRole/delAuthority",
+            data: {
+                "ugrpId": ugrpId,
+                "menuId": menuId
+            },
+            type: "POST",
+            dataType: 'text',
+            success: function (msg) {
+                alert(msg);
+                location.reload();
+
+            }
+        });
+    }
+    function btn() {
+        var data = '';
+        var checkboxdata = '';
+        var o = {{{ menu }}};
+    for (i in o) {
+        data += '<li><a href="#">' + o[i].mainMenu + '</a><ul>';
+        for (j in o[i].childMenu) {
+            data += '<li><a href ="javascript:clickname(\'' + o[i].childMenu[j].menuCode + '\')" title="' + o[i].childMenu[j].menuName + '" >' + o[i].childMenu[j].menuName + '</a></li>';
         }
-        data += '<input id = "menuId" name = "menuId" type = "hidden" value =""/>';
-        document.getElementById("menulist").innerHTML = data;
-        checkboxdata += '<div class="checkbox"><label><input id = "all" name = "all" type = "checkbox" value ="All" onchange="changeCheck()" checked />ALL</label></div>';
-        checkboxdata += '<div class="checkbox"><label><input id = "Read" name = "Read" type = "checkbox" value ="Read" disabled checked/>Read</label></div>';
-        checkboxdata += '<div class="checkbox"><label><input id = "Edit" name = "Edit" type = "checkbox" value ="Edit" disabled checked/>Edit</label></div>';
-        checkboxdata += '<div class="checkbox"><label><input id = "Download" name = "Download" type = "checkbox" disabled value ="Download" checked/>Download</label></div>';
-        document.getElementById("addau").innerHTML = checkboxdata;
-        $('#modal1').show();
-        $('body').addClass('noscroll');
+        data += '</ul></li>';
+    }
+    data += '<input id = "menuCode" name = "menuCode" type = "hidden" value =""/>';
+    document.getElementById("menulist").innerHTML = data;
+    checkboxdata += '<div class="checkbox"><label><input id = "all" name = "all" type = "checkbox" value ="All" onchange="changeCheck()" checked />ALL</label></div>';
+    checkboxdata += '<div class="checkbox"><label><input id = "Read" name = "Read" type = "checkbox" value ="Read" disabled checked/>Read</label></div>';
+    checkboxdata += '<div class="checkbox"><label><input id = "Edit" name = "Edit" type = "checkbox" value ="Edit" disabled checked/>Edit</label></div>';
+    checkboxdata += '<div class="checkbox"><label><input id = "Download" name = "Download" type = "checkbox" disabled value ="Download" checked/>Download</label></div>';
+    document.getElementById("addau").innerHTML = checkboxdata;
+    $('#modal1').show();
+    $('body').addClass('noscroll');
        
-}
-        function clickname(menuId) {
-            document.getElementById("menuId").value = menuId;
-            document.getElementById("all").checked = true;
+    }
+    function clickname(menuCode) {
+        document.getElementById("menuCode").value = menuCode;
+        document.getElementById("all").checked = true;
+        document.getElementById("Read").checked = true;
+        document.getElementById("Read").disabled = true;
+        document.getElementById("Edit").checked = true;
+        document.getElementById("Edit").disabled = true;
+        document.getElementById("Download").checked = true;
+        document.getElementById("Download").disabled = true;
+    }
+    function changeCheck() {
+        if (document.getElementById("all").checked) {
             document.getElementById("Read").checked = true;
             document.getElementById("Read").disabled = true;
             document.getElementById("Edit").checked = true;
@@ -327,43 +310,34 @@
             document.getElementById("Download").checked = true;
             document.getElementById("Download").disabled = true;
         }
-        function changeCheck() {
-            if (document.getElementById("all").checked) {
-                document.getElementById("Read").checked = true;
-                document.getElementById("Read").disabled = true;
-                document.getElementById("Edit").checked = true;
-                document.getElementById("Edit").disabled = true;
-                document.getElementById("Download").checked = true;
-                document.getElementById("Download").disabled = true;
-            }
-            else {
-                document.getElementById("Read").checked = true;
-                document.getElementById("Read").disabled = false;
-                document.getElementById("Edit").checked = true;
-                document.getElementById("Edit").disabled = false;
-                document.getElementById("Download").checked = true;
-                document.getElementById("Download").disabled = false;
-            }
+        else {
+            document.getElementById("Read").checked = true;
+            document.getElementById("Read").disabled = false;
+            document.getElementById("Edit").checked = true;
+            document.getElementById("Edit").disabled = false;
+            document.getElementById("Download").checked = true;
+            document.getElementById("Download").disabled = false;
         }
-        function addAuthority() {
-            $.ajax({
-                url: "/userRole/addAuthority",
-                data: {
-                    "ugrpId": document.getElementById("ugrpId").value,
-                    "menuId": document.getElementById("menuId").value,
-                    "all": document.getElementById("all").checked,
-                    "Read": document.getElementById("Read").checked,
-                    "Edit": document.getElementById("Edit").checked,
-                    "Download": document.getElementById("Download").checked,
-                },
-                type: "POST",
-                dataType: 'text',
-                success: function (msg) {
-                    alert(msg);
-                    document.getElementById("dialog").style.display = "none";
-                    location.reload();
-                }
-            });
+    }
+    function addAuthority() {
+        $.ajax({
+            url: "/userRole/addAuthority",
+            data: {
+                "ugrpId": document.getElementById("ugrpId").value,
+                "menuCode": document.getElementById("menuCode").value,
+                "all": document.getElementById("all").checked,
+                "Read": document.getElementById("Read").checked,
+                "Edit": document.getElementById("Edit").checked,
+                "Download": document.getElementById("Download").checked,
+            },
+            type: "POST",
+            dataType: 'text',
+            success: function (msg) {
+                alert(msg);
+                document.getElementById("dialog").style.display = "none";
+                location.reload();
+            }
+        });
 
-        }
-    </script>
+    }
+</script>
