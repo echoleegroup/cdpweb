@@ -4,12 +4,13 @@ const Q = require('q');
 const winston = require('winston');
 const mssql = require('mssql');
 const _connector  = require('../utils/sql-query-util');
-const middleware = require('../middlewares/checksession');
+const middleware = require('../middlewares/login-check');
 
-module.exports = (() => {
+module.exports = (app) => {
     console.log('[TargetRoute::create] Creating target route.');
     let router = express.Router();
-    router.get('/customSearch', middleware.checkLogin(), function (req, res) {
+
+    router.get('/custom_search', middleware.checkLogin(), function (req, res) {
         let modelList = req.session.modelList ;
         let navMenuList = req.session.navMenuList ;
         let mgrMenuList = req.session.mgrMenuList ;
@@ -64,5 +65,6 @@ module.exports = (() => {
             winston.error('===query model failed:', err);
         });
     });
+
     return router;
-})();
+};

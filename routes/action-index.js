@@ -1,7 +1,7 @@
 "use strict";
-var express = require("express");
-var db  = require("../utils/sql-server-connector").db;
-var middleware = require("../middlewares/checksession");
+const express = require("express");
+const db  = require("../utils/sql-server-connector").db;
+const middleware = require("../middlewares/login-check");
 /*
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28,7 +28,7 @@ var IndexRoute = (function (_super) {
 }(Route_1.BaseRoute));
 */
 //exports.IndexRoute = IndexRoute;
-module.exports = () => {
+module.exports = (app) => {
     console.log('[IndexRoute::create] Creating index route.');
     var router = express.Router();
     router.get('/', middleware.checkLogin(), function (req, res) {

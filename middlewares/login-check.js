@@ -1,9 +1,9 @@
 "use strict";
+const boom = require('boom');
 const DEFAULT_MAIN_PATH = '/login';
 
 module.exports.checkLogin = (redirect) => {
 	return (req, res, next) => {
-		console.log('=== middleware check login');
 		if(req.session.userid && req.session.userid != '') {
 			return next();
 		} else {
@@ -11,3 +11,13 @@ module.exports.checkLogin = (redirect) => {
 		}
 	  };
 };
+
+module.exports.ajaxCheck = () => {
+	return (req, res, next) => {
+	  if (req.session.userid && req.session.userid != '') {
+		return next();
+	  }
+  
+	  next(boom.forbidden('Not Logged In'));
+	};
+  };

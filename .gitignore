@@ -41,7 +41,7 @@ jspm_packages
 
 
 # Output of Swagger Codegen
-public/swagger/dist/mockup-server
+public/swagger/mockup-server
 
 # VSCode
 .vscode/*
@@ -50,6 +50,6 @@ public/swagger/dist/mockup-server
 .sass-cache
 
 #uploaeded file
-public/upload/*
+client/public/upload/*
 
 package-lock.json

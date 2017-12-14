@@ -1,4 +1,71 @@
 "use strict";
+
+require('dotenv').config({ silent: true });
+
+const fs = require('fs');
+const path = require('path');
+const winston = require('winston');
+const express = require('express');
+const exphbs = require('express-handlebars');
+const helpers = require('handlebars-helpers');
+const session = require("express-session");
+const logger = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const methodOverride = require("method-override");
+const boot_dir = './boot';
+
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'client/public')));
+app.set('views', path.join(__dirname, 'handlebars/views'));
+app.engine('hbs', exphbs({
+    extname: '.hbs',
+    defaultLayout: 'layout',
+    layoutsDir: './handlebars/layouts',
+    partialsDir: ['./handlebars/partials', './handlebars/views'],
+    helpers: helpers()
+}));
+app.set('view engine', 'hbs');
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(cookieParser('SECRET_GOES_HERE'));
+app.use(methodOverride());
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
+    cookie: { maxAge: 60 * 1000 * 10 } // 10分鐘session
+}));
+app.use(function (req, res, next) {
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+
+fs.readdirSync(boot_dir).forEach(file => {
+    winston.info(file);
+    if (!file.startsWith('off-')) {
+        require(path.join(__dirname, boot_dir, file))(app);
+        winston.info('=== [Boot] Loaded:', file);
+    }
+})
+
+module.exports = app;
+/*
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var express = require("express");
@@ -59,8 +126,8 @@ var Server = (function () {
         this.app.engine('hbs', exphbs({
             extname: '.hbs',
             defaultLayout: 'layout',
-            layoutsDir: './dist/handlebars/layouts',
-            partialsDir: ['./dist/handlebars/partials', './dist/handlebars/views'],
+            layoutsDir: './handlebars/layouts',
+            partialsDir: ['./handlebars/partials', './handlebars/views'],
             helpers: helpers()
         }));
         this.app.set('view engine', 'hbs');
@@ -235,3 +302,4 @@ var Server = (function () {
 exports.Server = Server;
 
 //# sourceMappingURL=server.js.map
+*/

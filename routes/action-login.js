@@ -1,11 +1,12 @@
 "use strict";
-var db = require("../utils/sql-server-connector").db;
-var express = require("express");
-var _ = require("lodash");
+const db = require("../utils/sql-server-connector").db;
+const express = require("express");
+const _ = require("lodash");
 
-module.exports = () => {
+module.exports = (app) => {
 	console.log('[LoginRoute::create] Creating index route.');
 	var router = express.Router();
+
 	router.get('/logout', function (req, res) {
 		var userId = req.body.userId || '';
 		var password = req.body.password || '';
@@ -13,11 +14,13 @@ module.exports = () => {
 		res.redirect('/');
 
 	});
+
 	router.get('/login', function (req, res) {
 		res.render('index', {
 			layout: 'layout-login'
 		});
 	});
+	
 	router.post('/login', function (req, res) {
 		var uID = '';
 		var userId = req.body.userId || '';
