@@ -6,6 +6,7 @@ const boom = require('boom');
 //const constants = require('../constants');
 
 module.exports = (app) => {
+  //hook for web request
   app.use('/target', require('./action-target')(app));
   app.use('/', require('./action-index')(app));
   app.use('/', require('./action-login')(app));
@@ -23,6 +24,9 @@ module.exports = (app) => {
   app.use('/Evtad', require('./action-event-ad-o')(app));
   app.use('/FeedData', require('./action-feed-data-o')(app));
   app.use('/NCBSData', require('./action-ncbs-data-o')(app));
+  //hook for restful api
+  app.use('/api/model', require('./api-model')(app));
+
   //route not found
   app.use((req, res) => {
     res.status(404).send('Not Found');

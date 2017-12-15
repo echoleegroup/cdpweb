@@ -1,10 +1,7 @@
 {
   "workbench.editor.enablePreview": false,   
   "explorer.openEditors.visible": 10,
-  "files.autoSave": "off",
   "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}${separator}${appName}",
   "explorer.openEditors.dynamicHeight": false,
-  "workbench.editor.enablePreviewFromQuickOpen": false,
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false    
+  "workbench.editor.enablePreviewFromQuickOpen": false  
 }
