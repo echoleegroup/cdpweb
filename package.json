@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "test": "mocha test/**/*.js",
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
     "build-windows": "set NODE_ENV=production&& webpack -p --config ./webpack.config.js",
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
