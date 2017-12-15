@@ -8,7 +8,7 @@ const webpack = require("webpack");
 
 //const pluginConfig = require('./plugin-config');
 
-const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_cdp&timeout=20000&reload=true';
+const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 let webpackEntries = {
     'react.bundle': ['./client/src/Portal.js'],
