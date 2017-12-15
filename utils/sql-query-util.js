@@ -20,8 +20,7 @@ const config = {
 
 module.exports = (() => {
   const pool = new mssql.ConnectionPool(config).connect((err) => {
-    winston.error('connect db failed: %j', err);
-    throw e;
+    err && winston.error('connect db failed: %j', err);
   });
   winston.info('mssql connection pool established.');
 
