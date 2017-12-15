@@ -53,6 +53,6 @@ public/swagger/mockup-server
 client/public/upload/*
 
 #webpack Output
-client/public/!js
+#client/public/!js!js
 
 package-lock.json
