@@ -23,6 +23,8 @@
     "forever": "^0.15.3",
     "handlebars-helpers": "^0.10.0",
     "knex": "^0.12.6",
+    "level": "^2.1.1",
+    "level-session-store": "^2.1.0",
     "lodash": "^4.17.4",
     "method-override": "^2.3.7",
     "morgan": "^1.7.0",

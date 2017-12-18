@@ -9,6 +9,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const helpers = require('handlebars-helpers');
 const session = require("express-session");
+const LevelStore = require('level-session-store')(session);
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -38,7 +39,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
-    cookie: { maxAge: 60 * 1000 * 10 } // 10分鐘session
+    cookie: { maxAge: 60 * 1000 * 10 }, // 10分鐘session
+    store: new LevelStore('.sessiondb')
 }));
 app.use(function (req, res, next) {
 

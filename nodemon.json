@@ -1,0 +1,8 @@
+{
+  "ignore": [
+    "client/*",
+    "views/*",
+    ".sessiondb"
+  ],
+  "ext": "js json css html"
+}
