@@ -46,6 +46,9 @@ public/swagger/mockup-server
 # VSCode
 .vscode/!setting.json
 
+#idea
+.idea
+
 # Sass cache
 .sass-cache
 
