@@ -1,11 +1,43 @@
 "use strict";
+
+const boom = require('boom');
 const express = require("express");
 const passport = require('passport');
 const winston = require('winston');
 const _ = require("lodash");
+const Q = require('q');
 const db = require("../utils/sql-server-connector").db;
+const menuService = require('../services/menu-service');
+const modelService = require('../services/model-service');
+const userService = require('../services/user-service');
 const DEFAULT_LOGIN_PATH = '/login';
 const DEFAULT_HOME_PATH = '/home';
+
+const getUserPermission = (userId) => {
+  return Q.nfcall(userService.getUserUgrpMenu, userId).then((resultSet) => {
+    return resultSet.reduce((accumulator, value, index) => {
+      if (!accumulator[value.menuCode]) {
+        accumulator[value.menuCode] = {}
+      }
+      accumulator[value.menuCode].read = accumulator[value.menuCode].read || (value.isRead === 'Y');
+      accumulator[value.menuCode].edit = accumulator[value.menuCode].edit || (value.isEdit === 'Y');
+      accumulator[value.menuCode].download = accumulator[value.menuCode].download || (value.isDownload === 'Y');
+      return accumulator;
+    }, {});
+  });
+};
+
+const getModels = () => {
+  return Q.nfcall(modelService.getModels).then((resultSet) => {
+    return resultSet.map((row) => {
+      return {
+        mdID: row.mdID,
+        mdName: row.mdName,
+        batID: row.batID
+      };
+    });
+  });
+};
 
 module.exports = (app) => {
   console.log('[LoginRoute::create] Creating index route.');
@@ -39,81 +71,47 @@ module.exports = (app) => {
     let user = req.user;
     let userId = req.session.userid = user.userId;
 
-    //建立各個menu的權限
-    var p2 = new Promise(function (resolve, reject) {
-      db.query("SELECT syuw.userId,syuw.ugrpId ,sym.menuCode,syu.isRead,syu.isEdit,syu.isDownload FROM sy_userWithUgrp syuw left join sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId left join sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null where userId = '" + userId + "' order by sym.menuId asc", function (err, result) {
-        if (err) {
-          //console.log(err);
-          reject(err);
-        }
-        let permission = result.recordset.reduce((accumulator, value, index) => {
-          if (!accumulator[value.menuCode]) {
-            accumulator[value.menuCode] = {}
-          }
-          accumulator[value.menuCode].read = accumulator[value.menuCode].read || (value.isRead === 'Y');
-          accumulator[value.menuCode].edit = accumulator[value.menuCode].edit || (value.isEdit === 'Y');
-          accumulator[value.menuCode].download = accumulator[value.menuCode].download || (value.isDownload === 'Y');
-          return accumulator;
-        }, {});
-        resolve(permission);
-      });
-    });
-    var p3 = new Promise(function (resolve, reject) {
-      db.query("SELECT mdID,mdName,batID FROM md_Model order by updTime desc ", function (err, result) {
-        if (err) {
-          //console.log(err);
-          reject(err);
-        }
-        let modelList = result.recordset.map((row, index) => {
-          return {
-            mdID: row.mdID,
-            mdName: row.mdName,
-            batID: row.batID
-          };
-        });
-        resolve(modelList);
-      });
-
-    });
-
-    Promise.all([p2, p3]).then(function (results) {
-      let permission = results[0];
-      let modelList = results[1];
+    let promises = [
+      getUserPermission(userId),
+      getModels(),
+      Q.nfcall(menuService.getMenuTree)
+    ];
+    Q.all(promises).spread((permission, models, menuTree) => {
       let navMenuList = [];
       let mgrMenuList = [];
-      db.query('SELECT sm.menuCode,sm.parentId,sm.menuName,sm.modifyDate,sm.modifyUser,sm.url, sm.sticky,pym.menuName premenuName, pym.menuCode preMenuCode, pym.sticky preSticky FROM sy_menu sm left join sy_menu pym on sm.parentId = pym.menuId where sm.parentId is not null', function (err, result) {
-        console.log('===permission: ', permission);
-        for (let menu of result.recordset) {
-          let pointer = (menu.preSticky === '_mgr') ? mgrMenuList : navMenuList;
-          if (permission[menu.menuCode] && permission[menu.menuCode].read) {
-            let parent = _.find(pointer, { menuCode: menu.preMenuCode });
-            if (!parent) {
-              parent = {
-                menuCode: menu.preMenuCode,
-                mainMenu: menu.premenuName,
-                _model: (menu.preSticky === '_model'),
-                _mgr: (menu.preSticky === '_mgr'),
-                childMenu: []
-              };
-              pointer.push(parent);
-            }
-            parent.childMenu.push({
-              menuName: menu.menuName,
-              url: menu.url,
-              sticky: menu.sticky,
-              menuCode: menu.menuCode
-            });
+      for (let menu of menuTree.recordset) {
+        let pointer = (menu.preSticky === '_mgr') ? mgrMenuList : navMenuList;
+        if (permission[menu.menuCode] && permission[menu.menuCode].read) {
+          let parent = _.find(pointer, { menuCode: menu.preMenuCode });
+          if (!parent) {
+            parent = {
+              menuCode: menu.preMenuCode,
+              mainMenu: menu.premenuName,
+              _model: (menu.preSticky === '_model'),
+              _mgr: (menu.preSticky === '_mgr'),
+              childMenu: []
+            };
+            pointer.push(parent);
           }
+          parent.childMenu.push({
+            menuName: menu.menuName,
+            url: menu.url,
+            sticky: menu.sticky,
+            menuCode: menu.menuCode
+          });
         }
+      }
 
-        req.session.permission = permission;
-        req.session.modelList = modelList;
-        req.session.navMenuList = navMenuList;
-        req.session.mgrMenuList = mgrMenuList[0];
-        res.redirect(DEFAULT_HOME_PATH);
-      });
-    }).catch(function (e) {
-      console.log(e);
+      return [permission, models, navMenuList, mgrMenuList];
+    }).spread((permission, models, navMenuList, mgrMenuList) => {
+      req.session.permission = permission;
+      req.session.modelList = models;
+      req.session.navMenuList = navMenuList;
+      req.session.mgrMenuList = mgrMenuList[0];
+      res.redirect(DEFAULT_HOME_PATH);
+    }).fail(err => {
+      winston.error('=== get user login extended data failed: %j', err);
+      res(boom.serverUnavailable());
     });
   });
 

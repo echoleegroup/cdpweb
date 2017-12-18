@@ -34,7 +34,7 @@ module.exports = (() => {
     },
     execSqlByParams: (sql, params = {}, callback = (err, resultSet) => { }) => {
       let request = pool.request();
-      _.reduce(params, (_request, value, key) => {
+      _.reduce(params || {}, (_request, value, key) => {
         return _request.input(key, value.type, value.value);
       }, request)
       .query(sql)

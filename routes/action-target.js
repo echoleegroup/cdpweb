@@ -10,7 +10,7 @@ module.exports = (app) => {
     console.log('[TargetRoute::create] Creating target route.');
     const router = express.Router();
 
-    router.get('/custom/search', middleware.check(), function (req, res) {
+    router.get('/custom/model/:mdId/batch/:batId/search', middleware.check(), function (req, res) {
         let modelList = req.session.modelList ;
         let navMenuList = req.session.navMenuList ;
         let mgrMenuList = req.session.mgrMenuList ;
@@ -46,16 +46,16 @@ module.exports = (app) => {
         Q.nfcall(_connector.execSqlByParams, modelSql, {
             mdID: {
                 type: mssql.NVarChar,
-                value: req.query.mdID
+                value: req.params.mdId
             },
             batID: {
                 type: mssql.NVarChar,
-                value: req.query.batID
+                value: req.params.batId
             }
         }).then((resultSet) => {
             winston.info('===resultSet: %j', resultSet);
             res.render('custom-search', {
-                'id': req.session.userid, 
+                'id': req.session.user.userId,
                 'modelInfo': resultSet[0],
                 'modelList': modelList, 
                 'navMenuList': navMenuList,

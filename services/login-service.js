@@ -26,7 +26,7 @@ module.exports.loginPlatform = (username, password, callback = () => { }) => {
       return callback(new Error('multi users response'));
     }
   }).fail((err) => {
-    winston.error('====[loginPlatform] query sy_infouser failed: : ', err);
+    winston.error('====[loginPlatform] query sy_infouser failed: ', err);
     return callback(err);
   });
 };
