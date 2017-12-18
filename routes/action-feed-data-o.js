@@ -7,7 +7,7 @@ const winston = require('winston');
 const xlsx = require("node-xlsx");
 const db = require("../utils/sql-server-connector").db;
 
-const storage = path.resolve(__dirname, "../client/public/upload") + path.sep;
+const storage = path.resolve(__dirname, "../_upload") + path.sep;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {

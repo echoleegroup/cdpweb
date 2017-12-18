@@ -54,6 +54,7 @@ public/swagger/mockup-server
 
 #uploaeded file
 client/public/upload/*
+_upload
 
 #webpack Output
 #client/public/!js!js
