@@ -30,23 +30,24 @@ var IndexRoute = (function (_super) {
 */
 //exports.IndexRoute = IndexRoute;
 module.exports = (app) => {
+
     console.log('[IndexRoute::create] Creating index route.');
     var router = express.Router();
-    router.get('/', middleware.check(), function (req, res) {
-        db.query('select * from sy_infouser order by uID asc'  ,function(err,recordset){
-            var modelList = req.session.modelList ;
-            var navMenuList = req.session.navMenuList ;
-            var mgrMenuList = req.session.mgrMenuList ;
-            //console.log('====modelList: ', JSON.stringify(modelList));
-            //console.log('====navMenuList: ', JSON.stringify(navMenuList));
-            //console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
-            res.render('main', {
-                'id': req.session.userid, 
-                'modelList': modelList, 
-                'navMenuList': navMenuList,
-                'mgrMenuList': mgrMenuList
-            });
-        });
+
+    router.get('/home', middleware.check(), function (req, res) {
+      var modelList = req.session.modelList ;
+      var navMenuList = req.session.navMenuList ;
+      var mgrMenuList = req.session.mgrMenuList ;
+      //console.log('====modelList: ', JSON.stringify(modelList));
+      //console.log('====navMenuList: ', JSON.stringify(navMenuList));
+      //console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
+      res.render('main', {
+          'id': req.user.userId, 
+          'modelList': modelList, 
+          'navMenuList': navMenuList,
+          'mgrMenuList': mgrMenuList
+      });
     });
+
     return router;
 };

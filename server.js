@@ -6,18 +6,21 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const express = require('express');
-const exphbs = require('express-handlebars');
-const helpers = require('handlebars-helpers');
 const session = require("express-session");
 const LevelStore = require('level-session-store')(session);
+const exphbs = require('express-handlebars');
+const helpers = require('handlebars-helpers');
+const passport = require('passport');
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const methodOverride = require("method-override");
+const flash = require('connect-flash');
 const boot_dir = './boot';
 
 const app = express();
 
+//app.set('trust proxy', true);
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.set('views', path.join(__dirname, 'handlebars/views'));
 app.engine('hbs', exphbs({
@@ -39,9 +42,16 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
-    cookie: { maxAge: 60 * 1000 * 10 }, // 10分鐘session
+    cookie: { 
+      //secure: true,
+      maxAge: 60 * 1000 * 10
+    }, // 10分鐘session
     store: new LevelStore('.sessiondb')
 }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
 app.use(function (req, res, next) {
 
     // Request methods you wish to allow

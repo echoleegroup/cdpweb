@@ -20,13 +20,12 @@ module.exports = (app) => {
         'FROM md_Model mm, md_Batch mb ' + 
         'WHERE mm.mdID = mb.mdID and mm.batID = mb.batID and mm.mdID = @mdID and mm.batID = @batID';
 
-        winston.info('===_connector.execSqlByParams');
+        //preparedStatement
+        /*
         let prepared = _connector.preparedStatement()
         .setType('mdID', mssql.NVarChar)
         .setType('batID', mssql.NVarChar);
 
-        //preparedStatement
-        /*
         Q.nfcall(prepared.execute, modelSql, {
             mdID: req.query.mdID,
             batID: req.query.batID
@@ -43,6 +42,7 @@ module.exports = (app) => {
             winston.error('===query model failed:', err);
         });
         */
+        winston.info('===_connector.execSqlByParams');
         Q.nfcall(_connector.execSqlByParams, modelSql, {
             mdID: {
                 type: mssql.NVarChar,

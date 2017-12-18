@@ -27,7 +27,7 @@ module.exports = (() => {
   return {
     execSql: (sql, callback = (err, resultSet) => { }) => {
       pool.request().query(sql).then((result) => {
-        callback(null, result.recordsets);
+        callback(null, result.recordset);
       }).catch(err => {
         callback(err);
       });
@@ -39,7 +39,7 @@ module.exports = (() => {
       }, request)
       .query(sql)
       .then((result) => {
-        callback(null, result.recordsets);
+        callback(null, result.recordset);
       }).catch((err) => {
         callback(err);
       });
