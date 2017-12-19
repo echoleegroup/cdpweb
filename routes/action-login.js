@@ -71,6 +71,7 @@ module.exports = (app) => {
     let user = req.user;
     let userId = req.session.userid = user.userId;
 
+    winston.info('===get user: %j', user);
     let promises = [
       getUserPermission(userId),
       getModels(),
@@ -79,7 +80,7 @@ module.exports = (app) => {
     Q.all(promises).spread((permission, models, menuTree) => {
       let navMenuList = [];
       let mgrMenuList = [];
-      for (let menu of menuTree.recordset) {
+      for (let menu of menuTree) {
         let pointer = (menu.preSticky === '_mgr') ? mgrMenuList : navMenuList;
         if (permission[menu.menuCode] && permission[menu.menuCode].read) {
           let parent = _.find(pointer, { menuCode: menu.preMenuCode });

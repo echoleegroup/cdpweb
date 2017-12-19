@@ -27,7 +27,6 @@ module.exports = () => {
     const loginService = require('../services/login-service');
 
     Q.nfcall(loginService.loginPlatform, username, password).then((user) => {
-      winston.info('===login user: %j: ', user);
       if (user) {
         Q.nfcall(loginService.updateLoginTime, user.userId).then((result) => {
           return done(null, _.pick(user, ['userId', 'userName', 'email']));
