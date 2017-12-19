@@ -67,7 +67,7 @@ module.exports = (app) => {
   app.post('/login', passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
-  }), (req, res) => {
+  }), (req, res, next) => {
     let user = req.user;
     let userId = req.session.userid = user.userId;
 
@@ -130,7 +130,7 @@ module.exports = (app) => {
       res.redirect(DEFAULT_HOME_PATH);
     }).fail(err => {
       winston.error('=== get user login extended data failed: %j', err);
-      res(boom.serverUnavailable());
+      next(boom.serverUnavailable());
     });
   });
 

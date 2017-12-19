@@ -25,7 +25,7 @@ module.exports = (app) => {
   app.use('/FeedData', require('./action-feed-data-o')(app));
   app.use('/NCBSData', require('./action-ncbs-data-o')(app));
   //hook for restful api
-  app.use('/api/model', require('./api-model')(app));
+  app.use('/api/model', require('./api/api-model')(app));
 
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));
