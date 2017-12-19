@@ -10,12 +10,12 @@ module.exports = (app) => {
   console.log('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
-  router.get('/custom/model/:mdId/batch/:batId/search', middleware.check(), function (req, res, next) {
+  router.get('/custom/search', middleware.check(), function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
 
-    Q.nfcall(modelService.getModelBatch, req.params.mdId, req.params.batId).then((result) => {
+    Q.nfcall(modelService.getModelBatch, req.query.mdID, req.query.batID).then((result) => {
       res.render('custom-search', {
         'id': req.user.userId,
         'modelInfo': result,
