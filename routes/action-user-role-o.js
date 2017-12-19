@@ -358,6 +358,7 @@ module.exports = (app) => {
         var modelList = req.session.modelList;
         var navMenuList = req.session.navMenuList;
         var mgrMenuList = req.session.mgrMenuList;
+        var allMenuList = req.session.allMenuList;
         res.render('UserGroupInfoEdit', {
           'id': req.session.userid,
           'modelInfo': items[0],
@@ -367,7 +368,7 @@ module.exports = (app) => {
           'modelList': modelList,
           'navMenuList': navMenuList,
           'mgrMenuList': mgrMenuList,
-          'menu': JSON.stringify([].concat(mgrMenuList).concat(navMenuList))
+          'menu': JSON.stringify(allMenuList)
         });
       }).catch(function (e) {
         console.log(e);

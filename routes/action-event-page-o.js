@@ -2,6 +2,7 @@
 const express = require('express');
 const winston = require('winston');
 const db = require("../utils/sql-server-connector").db;
+const middleware = require("../middlewares/login-check");
 
 module.exports = (app) => {
 	console.log('[EvtpgRoute::create] Creating Evtpg route.');
@@ -65,7 +66,7 @@ module.exports = (app) => {
 			res.end('ok');
 		});
 	});
-	router.get('/EvtpgAdd', function (req, res) {
+	router.get('/EvtpgAdd',[middleware.check(),middleware.checkEditPermission("_actad_actEdit")], function (req, res) {
 		var modelList = req.session.modelList;
 		var navMenuList = req.session.navMenuList;
 		var mgrMenuList = req.session.mgrMenuList;
@@ -85,7 +86,7 @@ module.exports = (app) => {
 
 
 	});
-	router.get('/EvtpgSearch', function (req, res) {
+	router.get('/EvtpgSearch',[middleware.check(),middleware.checkViewPermission("_actad_actList")], function (req, res) {
 		var funcCatge;
 		var modelList = req.session.modelList;
 		var navMenuList = req.session.navMenuList;
@@ -115,7 +116,7 @@ module.exports = (app) => {
 
 
 	});
-	router.get('/EvtpgEdit', function (req, res) {
+	router.get('/EvtpgEdit',[middleware.check(),middleware.checkEditPermission("_actad_actEdit")], function (req, res) {
 		var evtpgID = req.query.evtpgID;
 		var modelList = req.session.modelList;
 		var navMenuList = req.session.navMenuList;
@@ -169,7 +170,7 @@ module.exports = (app) => {
 			console.log(e);
 		});
 	});
-	router.post('/EvtpgAddact', function (req, res) {
+	router.post('/EvtpgAddact',[middleware.check(),middleware.checkEditPermission("_actad_actEdit")], function (req, res) {
 		var modelList = req.session.modelList;
 		var navMenuList = req.session.navMenuList;
 		var mgrMenuList = req.session.mgrMenuList;
@@ -229,7 +230,7 @@ module.exports = (app) => {
 
 
 	});
-	router.post('/EvtpgList', function (req, res) {
+	router.post('/EvtpgList',[middleware.check(),middleware.checkViewPermission("_actad_actList")], function (req, res) {
 		var modelList = req.session.modelList;
 		var navMenuList = req.session.navMenuList;
 		var mgrMenuList = req.session.mgrMenuList;
