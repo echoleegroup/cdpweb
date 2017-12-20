@@ -80,9 +80,7 @@ module.exports = (app) => {
     Q.all(promises).spread((permission, models, menuTree) => {
       let navMenuList = [];
       let mgrMenuList = [];
-      let allMenuList = []; //群組對選單權限使用
       for (let menu of menuTree) {
-        let allpointer = allMenuList ;
         let pointer = (menu.preSticky === '_mgr') ? mgrMenuList : navMenuList;
         if (permission[menu.menuCode] && permission[menu.menuCode].read) {
           let parent = _.find(pointer, { menuCode: menu.preMenuCode });
@@ -103,30 +101,14 @@ module.exports = (app) => {
             menuCode: menu.menuCode
           });
         }
-        //全部的menu
-        let allparent = _.find(allpointer,{ menuCode: menu.preMenuCode });
-        if (!allparent) {
-          allparent = {
-            menuCode: menu.preMenuCode,
-            mainMenu: menu.premenuName,
-            childMenu: []
-          };
-          allpointer.push(allparent);
-        }
-        allparent.childMenu.push({
-          menuName: menu.menuName,
-          url: menu.url,
-          menuCode: menu.menuCode
-        });
       }
 
-      return [permission, models, navMenuList, mgrMenuList, allMenuList];
-    }).spread((permission, models, navMenuList, mgrMenuList, allMenuList) => {
+      return [permission, models, navMenuList, mgrMenuList];
+    }).spread((permission, models, navMenuList, mgrMenuList) => {
       req.session.permission = permission;
       req.session.modelList = models;
       req.session.navMenuList = navMenuList;
       req.session.mgrMenuList = mgrMenuList[0];
-      req.session.allMenuList = allMenuList ;
       res.redirect(DEFAULT_HOME_PATH);
     }).fail(err => {
       winston.error('=== get user login extended data failed: %j', err);
