@@ -23,6 +23,7 @@
     "express-session": "^1.15.5",
     "forever": "^0.15.3",
     "handlebars-helpers": "^0.10.0",
+    "immutable": "^3.8.2",
     "knex": "^0.12.6",
     "level": "^2.1.1",
     "level-session-store": "^2.1.0",

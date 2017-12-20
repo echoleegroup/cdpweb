@@ -215,7 +215,6 @@ $(function() {
     $('.menu .submenu').hide();
     $('body').append('<div class="floatMenu"></div>');
     $('.floatMenu').append('<button type="button" class="close"></button>');
-    $('header').append('<button type="button" class="menuBtn fa fa-bars"></button>');
     $('.menuBtn').hide();
     $('.floatMenu').hide();
     $(window).on("load resize", function(e) {
