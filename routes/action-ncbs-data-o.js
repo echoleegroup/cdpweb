@@ -106,6 +106,7 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
+              var currentdate = new Date();
               var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
@@ -163,6 +164,7 @@ module.exports = (app) => {
                   }
                   successnum++;
                   if (i == list[0].data.length - 1) {
+                    var currentdate = new Date();
                     var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                       + currentdate.getHours() + ":"
                       + currentdate.getMinutes() + ":"
