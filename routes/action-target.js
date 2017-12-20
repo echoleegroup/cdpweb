@@ -17,7 +17,7 @@ module.exports = (app) => {
 
     Q.nfcall(modelService.getModelBatch, req.query.mdID, req.query.batID).then((result) => {
       res.render('custom-search', {
-        'id': req.user.userId,
+        'id': req.user.userName,
         'modelInfo': result,
         'modelList': modelList,
         'navMenuList': navMenuList,

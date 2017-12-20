@@ -44,7 +44,7 @@ app.use(session({
     secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
     cookie: { 
       //secure: true,
-      maxAge: 60 * 1000 * 10
+      maxAge: 60 * 1000 * 240
     }, // 10分鐘session
     store: new LevelStore('.sessiondb')
 }));
