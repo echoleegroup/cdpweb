@@ -50,7 +50,12 @@
 <script>
 	var x = "";
 	var o = {{{ feeddatalist }}};
+  var datasource = '';
 	for (i in o) {
+    if (o[i].feeddata[0].funcCatge == "NCBS" )
+      datasource = "NCBS" ;
+    else
+      datasource = "outdata" ;    
 		x += "<tr>";
 		x += "<td>" + o[i].feeddata[0].no + "</td>";
 		x += "<td>" + o[i].feeddata[0].Client + "</td>";
@@ -58,7 +63,7 @@
 		x += "<td>" + o[i].feeddata[0].ListName + "</td>";
 		x += "<td>" + o[i].feeddata[0].ListSdt + "~" + o[i].feeddata[0].ListEdt + "</td>";
 		x += "<td>" + o[i].feeddata[0].detcount + "</td>";
-		x += '<td><a href="/FeedData/Download?origName=' + o[i].feeddata[0].origName + '&uniqName=' + o[i].feeddata[0].uniqName + '" target="_blank">原始檔案下載</a></td>';
+		x += '<td><a href="/FeedData/Download?ListID=' + o[i].feeddata[0].ListID + '&datasource=' + datasource + '" target="_blank">原始檔案下載</a></td>';
 		x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td></tr>';
 
 		x += '<tr class="sub_info"><td colspan="9">';
