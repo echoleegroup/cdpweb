@@ -7,6 +7,7 @@ const xlsx = require("node-xlsx");
 const express = require('express');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
+const permission = require("../utils/permission").menucode;
 const storage = path.resolve(__dirname, "../_upload") + path.sep;
 const upload = multer({ dest: storage });
 
@@ -14,7 +15,7 @@ module.exports = (app) => {
   console.log('[NCBSDataRoute::create] Creating NCBSData route.');
   const router = express.Router();
 
-  router.post('/NCBSDataUploadAct', [middleware.check(), middleware.checkEditPermission("feedDataNCBSEdit"), upload.single('uploadingFile')], function (req, res) {
+  router.post('/NCBSDataUploadAct', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS), upload.single('uploadingFile')], function (req, res) {
     var client = req.body.client || '';
     var ncbsYear = req.body.ncbsYear || '';
     var ncbsQus = req.body.ncbsQus || '';
@@ -184,7 +185,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/NCBSDataEdit', [middleware.check(), middleware.checkEditPermission("feedDataNCBSEdit")], function (req, res) {
+  router.get('/NCBSDataEdit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var ncbsID = req.query.ncbsID || '';
     var successnum = req.query.successnum || '';
     var errormsg = req.query.errormsg || '';
@@ -227,7 +228,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/NCBSDataUpload', [middleware.check(), middleware.checkEditPermission("feedDataNCBSEdit")], function (req, res) {
+  router.get('/NCBSDataUpload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
