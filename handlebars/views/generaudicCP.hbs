@@ -1,383 +1,344 @@
-{{> include-chart}}
-{{> title title='客戶顯著特徵' mdName=modelInfo.mdName}}
-<!--
-<div class="title">
-	<div class="container">
-		<h1>客戶顯著特徵
-			<span>{{modelinfo.[0].mdName}}</span>
-		</h1>
-	</div>
-</div>
--->
+{{> include-chart}} {{> title title='客戶顯著特徵' mdName=modelInfo.mdName}}
 <div class="container">
-	<!-- row div 於需要分兩欄才需要 -->
-	<div class="row">
-		<!-- 左欄 Start -->
-		<div class="col-md-8 col-sm-7 col-xs-12">
-			<!-- table set Start -->
-			<div class="table_block feature" id="leftcontent">
-			</div>
-		</div>
-		<!-- 右欄 Start -->
-		<div class="col-md-4 col-sm-5 col-xs-12">
-			<!-- table set Start -->
-			<div class="table_block table-responsive " id="sampleChart" style="display: none;">
-				<h2 id="nodename">車輛屬性 &gt; 販賣經銷商</h2>
-				<h3>內容與分佈</h3>
-				<div class="chart_block_feature">
-					<div id="skillsChart" style="width: 100%; height: 400px;"></div>
-				</div>
-				<table class="table">
-					<tbody>
-						<tr>
-							<td>單位:</td>
-							<td id="unit">ECHO</td>
-						</tr>
-						<tr>
-							<td>說明：</td>
-							<td id="desc">ECHO</td>
-						</tr>
-						<tr>
-							<td>資料來源：</td>
-							<td id="source">ECHO</td>
-						</tr>
-						<tr>
-							<td>更新日期：</td>
-							<td id="updtime">2017/03/05 01:00:05</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<!-- table set Start -->
-			<div class="table_block table-responsive" id="">
-				<h2>受眾資訊</h2>
-				<div class="chart_block">
-					<div id="chartdiv2" style="width:100%;height:200px;"></div>
+  <!-- row div 於需要分兩欄才需要 -->
+  <div class="row">
+    <!-- 左欄 Start -->
+    <div class="col-md-8 col-sm-7 col-xs-12">
+      <!-- table set Start -->
+      <div class="table_block feature" id="leftcontent">
+      </div>
+    </div>
+    <!-- 右欄 Start -->
+    <div class="col-md-4 col-sm-5 col-xs-12">
+      <!-- table set Start -->
+      <div class="table_block table-responsive " id="sampleChart" style="display: none;">
+        <h2 id="nodename">車輛屬性 &gt; 販賣經銷商</h2>
+        <h3>內容與分佈</h3>
+        <div class="chart_block_feature">
+          <div id="skillsChart" style="width: 100%; height: 400px;"></div>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>單位:</td>
+              <td id="unit">ECHO</td>
+            </tr>
+            <tr>
+              <td>說明：</td>
+              <td id="desc">ECHO</td>
+            </tr>
+            <tr>
+              <td>資料來源：</td>
+              <td id="source">ECHO</td>
+            </tr>
+            <tr>
+              <td>更新日期：</td>
+              <td id="updtime">2017/03/05 01:00:05</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- table set Start -->
+      <div class="table_block table-responsive" id="">
+        <h2>受眾資訊</h2>
+        <div class="chart_block">
+          <div id="chartdiv2" style="width:100%;height:200px;"></div>
 
-				</div>
-				<div class="info">
-					<div class="table-responsive">
+        </div>
+        <div class="info">
+          <div class="table-responsive">
 
-						<table class="table">
-							<tbody>
-								<tr>
-									<th rowspan="2">模型受眾</th>
-									<td>{{modelinfo.[0].taName}}
-									</td>
-								</tr>
-								<tr>
-									<td>{{tacount}}</td>
-								</tr>
-								<tr>
-									<th rowspan="2">已購客群</th>
-									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{modelinfo.[0].splName}}</td>
-								</tr>
-								<tr>
-									<td>
-										<span class="bigNumber">{{splcount}}</span>
-									</td>
-								</tr>
-								<tr>
-									<th rowspan="2">潛在客群</th>
-									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{modelinfo.[0].popName}}</td>
-								</tr>
-								<tr>
-									<td>
-										<span class="bigNumber">{{tapopcount}}</span>
-									</td>
-								</tr>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th rowspan="2">模型受眾</th>
+                  <td>{{modelinfo.taName}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{tacount}}</td>
+                </tr>
+                <tr>
+                  <th rowspan="2">已購客群</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelinfo.splName}}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bigNumber">{{splcount}}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th rowspan="2">潛在客群</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelinfo.popName}}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bigNumber">{{tapopcount}}</span>
+                  </td>
+                </tr>
 
-							</tbody>
-						</table>
+              </tbody>
+            </table>
 
-					</div>
-				</div>
-			</div>
+          </div>
+        </div>
+      </div>
 
 
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
 
 <script>
-	var mdListCategCount = JSON.parse('{{{mdListCategCount}}}');
-	var chart;
-	AmCharts.ready(function () {
-		// SERIAL CHART
-		chart = new AmCharts.AmSerialChart();
-		chart.dataProvider = mdListCategCount;
-		chart.categoryField = "mdListCateg";
-		// this single line makes the chart a bar chart,
-		// try to set it to false - your bars will turn to columns
-		chart.rotate = true;
-		// the following two lines makes chart 3D
-		chart.depth3D = 20;
-		chart.angle = 30;
-
-		// AXES
-		// Category
-		var categoryAxis = chart.categoryAxis;
-		categoryAxis.gridPosition = "start";
-		categoryAxis.axisColor = "#DADADA";
-		categoryAxis.fillAlpha = 1;
-		categoryAxis.gridAlpha = 0;
-		categoryAxis.fillColor = "#FAFAFA";
-
-		// value
-		var valueAxis = new AmCharts.ValueAxis();
-		valueAxis.axisColor = "#DADADA";
-		valueAxis.title = "total";
-		valueAxis.gridAlpha = 0.1;
-		chart.addValueAxis(valueAxis);
-
-		// GRAPH
-		var graph = new AmCharts.AmGraph();
-		graph.title = "total";
-		graph.valueField = "total";
-		graph.type = "column";
-		graph.balloonText = "total in [[category]]:[[value]]";
-		graph.lineAlpha = 0;
-		graph.fillColors = "#bf1c25";
-		graph.fillAlphas = 1;
-		chart.addGraph(graph);
-
-		chart.creditsPosition = "top-right";
-
-		// WRITE
-		chart.write("chartdiv2");
-	});
+  var mdListCategCount = JSON.parse('{{{mdListCategCount}}}');
+  var chart;
+  AmCharts.ready(function () {
+    // SERIAL CHART
+    var chartData = mdListCategCount;
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData;
+    chart.categoryField = "mdListCateg";
+    chart.rotate = true;
+    chart.columnWidth = 0.9;
+    chart.startDuration = 1;
+    // AXES
+    // Category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridAlpha = 0.1;
+    categoryAxis.axisAlpha = 0;
+    categoryAxis.gridPosition = "start";
+    // Value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.gridAlpha = 0.1;
+    valueAxis.axisAlpha = 0;
+    chart.addValueAxis(valueAxis);
+    // GRAPH
+    var graph = new AmCharts.AmGraph();
+    graph.valueField = "total";
+    graph.type = "column";
+    graph.lineAlpha = 0;
+    graph.colorField = "color";
+    graph.fillAlphas = 0.8;
+    chart.addGraph(graph);
+    chart.creditsPosition = "top-right";
+    // WRITE
+    chart.write("chartdiv2");
+  });
 </script>
-
-</script>
-
-
-
 <script>
-	$.ajax({
-		url: "{{api}}/jsoninfo/generaudic.do",
-		data: {
-			"mdID": encodeURI("{{mdID}}"),
-			"batID": encodeURI("{{batID}}")
-		},
-		type: "GET",
-		dataType: "json",
-		success: function (Jdata) {
-			var myObj, i, j, k, x = "";
-			myObj = Jdata.jsonOutput.data;
-			for (i in myObj.infoDatalist) {
+  $.ajax({
+    url: "{{api}}/jsoninfo/generaudic.do",
+    data: {
+      "mdID": encodeURI("{{mdID}}"),
+      "batID": encodeURI("{{batID}}")
+    },
+    type: "GET",
+    dataType: "json",
+    success: function (Jdata) {
+      var myObj, i, j, k, x = "";
+      myObj = Jdata.jsonOutput.data;
+      for (i in myObj.infoDatalist) {
 
-				x += "<h2>" + myObj.infoDatalist[i].mainClass + "</h2>"
-				for (j in myObj.infoDatalist[i].childClasslist) {
-					x += '<h3>' + myObj.infoDatalist[i].childClasslist[j].className + '<span class="number">' + myObj.infoDatalist[i].childClasslist[j].num + '</span></h3>';
-					x += '<div class="table-responsive subtable" style="display: none;"><table class="table table-hover table-striped table-condensed"><tbody>'
-					for (k in myObj.infoDatalist[i].childClasslist[j].custInfolist) {
-						if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '1') {
-							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
-							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mid + '<img src="/images/icon_median.png" alt="中" class="icon_float"> </td>';
-							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mean + '<img src="/images/icon_average.png" alt="平" class="icon_float"> </td>';
-							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].std + '<img src="/images/icon_sd.png" alt="S.D." class="icon_float"> </td>';
-							x += "</tr>";
-						}
-						else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '2' || myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
-							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
-							x += "<td>最多為</td>";
-							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].term + "</td>";
-							x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].percent + "%</td>";
-							x += "</tr>";
-						}
-						else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
-							x += '<tr>';
-							x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
-							x += "於&nbsp;";
-							x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].time + "內&nbsp;";
-							x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].num + "次&nbsp;";
-							x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].numofpeople + "人";
-							x += "</h3>";
-						}
-					}
-					x += "</tbody></table></div>"
-				}
-			}
+        x += "<h2>" + myObj.infoDatalist[i].mainClass + "</h2>"
+        for (j in myObj.infoDatalist[i].childClasslist) {
+          x += '<h3>' + myObj.infoDatalist[i].childClasslist[j].className + '<span class="number">' + myObj.infoDatalist[i].childClasslist[j].num + '</span></h3>';
+          x += '<div class="table-responsive subtable" style="display: none;"><table class="table table-hover table-striped table-condensed"><tbody>'
+          for (k in myObj.infoDatalist[i].childClasslist[j].custInfolist) {
+            if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '1') {
+              x += '<tr>';
+              x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+              x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mid + '<img src="/images/icon_median.png" alt="中" class="icon_float"> </td>';
+              x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].mean + '<img src="/images/icon_average.png" alt="平" class="icon_float"> </td>';
+              x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].std + '<img src="/images/icon_sd.png" alt="S.D." class="icon_float"> </td>';
+              x += "</tr>";
+            }
+            else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '2' || myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
+              x += '<tr>';
+              x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+              x += "<td>最多為</td>";
+              x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].term + "</td>";
+              x += "<td>" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].percent + "%</td>";
+              x += "</tr>";
+            }
+            else if (myObj.infoDatalist[i].childClasslist[j].custInfolist[k].chartType == '3') {
+              x += '<tr>';
+              x += "<th><a href=\"javascript:getinfo('{{mdID}}','{{batID}}','" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].featID + "' )\">" + myObj.infoDatalist[i].childClasslist[j].custInfolist[k].item + '</a></th>';
+              x += "於&nbsp;";
+              x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].time + "內&nbsp;";
+              x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].num + "次&nbsp;";
+              x += myObj.infoDatalist[i].childClasslist[j].custInfolist[k].numofpeople + "人";
+              x += "</h3>";
+            }
+          }
+          x += "</tbody></table></div>"
+        }
+      }
+      document.getElementById("leftcontent").innerHTML = x;
+      $('.feature').children('.subtable').hide();
+      $('#sampleChart').hide();
+      $('.feature .active').click(function (event) {
+        $('#sampleChart').slideDown();
+      });
+      $('.feature h3').each(function (index, el) {
+        $(this).append('<i class="fa fa-plus" aria-hidden="true"></i>')
+        $(this).click(function (event) {
+          $(this).children('i').toggleClass('fa-minus');
+          // $(this).siblings('.subtable').slideUp();
+          $(this).next('.subtable').slideToggle();
 
-			document.getElementById("leftcontent").innerHTML = x;
-			$('.feature').children('.subtable').hide();
-			$('#sampleChart').hide();
-			$('.feature .active').click(function (event) {
-				$('#sampleChart').slideDown();
-			});
-			$('.feature h3').each(function (index, el) {
-				$(this).append('<i class="fa fa-plus" aria-hidden="true"></i>')
-				$(this).click(function (event) {
-					$(this).children('i').toggleClass('fa-minus');
-					// $(this).siblings('.subtable').slideUp();
-					$(this).next('.subtable').slideToggle();
+          return false;
+        });
+      });
 
-					return false;
-				});
-			});
-
-		},
-
-		error: function () {
-			alert("ERROR!!!");
-		}
-	});
+    },
+    error: function () {
+      alert("ERROR!!!");
+    }
+  });
 </script>
-
 <script>
-	function getinfo(mdID, batID, featID) {
-		$.ajax({
-			url: "{{api}}/jsoninfo/generaudicfeat.do",
-			data: {
-				"mdID": encodeURI(mdID),
-				"batID": encodeURI(batID),
-				"featID": encodeURI(featID)
-			},
-			type: "GET",
-			dataType: "json",
-			success: function (Jdata) {
-				var myObj, i, j, k, x = "";
-				myObj = Jdata.jsonOutput.featinfo;
-				document.getElementById("nodename").innerHTML = myObj.pnodeName + "&gt;" + myObj.nodeName;
-				document.getElementById("source").innerHTML = myObj.dataSource;
-				document.getElementById("updtime").innerHTML = myObj.updateDate;
-				document.getElementById("unit").innerHTML = myObj.featNameExt;
-				document.getElementById("desc").innerHTML = myObj.featDesc;
+  function getinfo(mdID, batID, featID) {
+    $.ajax({
+      url: "{{api}}/jsoninfo/generaudicfeat.do",
+      data: {
+        "mdID": encodeURI(mdID),
+        "batID": encodeURI(batID),
+        "featID": encodeURI(featID)
+      },
+      type: "GET",
+      dataType: "json",
+      success: function (Jdata) {
+        var myObj, i, j, k, x = "";
+        myObj = Jdata.jsonOutput.featinfo;
+        document.getElementById("nodename").innerHTML = myObj.pnodeName + "&gt;" + myObj.nodeName;
+        document.getElementById("source").innerHTML = myObj.dataSource;
+        document.getElementById("updtime").innerHTML = myObj.updateDate;
+        document.getElementById("unit").innerHTML = myObj.featNameExt;
+        document.getElementById("desc").innerHTML = myObj.featDesc;
 
-				var chartData = myObj.cpinfolist;
+        var chartData = myObj.cpinfolist;
 
-				if (myObj.chartType == '1') {
-					// SERIAL CHART
-					chart = new AmCharts.AmSerialChart();
-					chart.dataProvider = chartData;
-					chart.categoryField = "x";
-					chart.startDuration = 0.5;
-					chart.balloon.color = "#000000";
-					// AXES
-					// category
-					var categoryAxis = chart.categoryAxis;
-					categoryAxis.fillAlpha = 1;
-					categoryAxis.fillColor = "#FAFAFA";
-					categoryAxis.gridAlpha = 0;
-					categoryAxis.axisAlpha = 0;
-					categoryAxis.gridPosition = "start";
-					categoryAxis.position = "bottom";
+        if (myObj.chartType == '1') {
+          // SERIAL CHART
+          chart = new AmCharts.AmSerialChart();
+          chart.dataProvider = chartData;
+          chart.categoryField = "x";
+          chart.startDuration = 0.5;
+          chart.balloon.color = "#000000";
+          // AXES
+          // category
+          var categoryAxis = chart.categoryAxis;
+          categoryAxis.fillAlpha = 1;
+          categoryAxis.fillColor = "#FAFAFA";
+          categoryAxis.gridAlpha = 0;
+          categoryAxis.axisAlpha = 0;
+          categoryAxis.gridPosition = "start";
+          categoryAxis.position = "bottom";
 
-					// value
-					var valueAxis = new AmCharts.ValueAxis();
-					valueAxis.title = "%";
-					valueAxis.dashLength = 5;
-					valueAxis.axisAlpha = 0;
+          // value
+          var valueAxis = new AmCharts.ValueAxis();
+          valueAxis.title = "%";
+          valueAxis.dashLength = 5;
+          valueAxis.axisAlpha = 0;
 
-					valueAxis.integersOnly = true;
-					valueAxis.gridCount = 10;
-					valueAxis.reversed = false; // this line makes the value axis reversed
+          valueAxis.integersOnly = true;
+          valueAxis.gridCount = 10;
+          valueAxis.reversed = false; // this line makes the value axis reversed
 
-					chart.addValueAxis(valueAxis);
+          chart.addValueAxis(valueAxis);
 
-					// GRAPHS
-
-
-					var graph = new AmCharts.AmGraph();
-					graph.title = "模型受眾";
-					graph.valueField = "splY";
-					graph.balloonText = " 模型受眾 in [[category]]: [[value]]";
-					graph.bullet = "Not set";
-					graph.lineColor = "#f2b530";
-					graph.lineThickness = 2;
-					chart.addGraph(graph);
-
-					var graph = new AmCharts.AmGraph();
-					graph.title = "現有潛在客群";
-					graph.valueField = "popY";
-					graph.balloonText = " 現有潛在客群 in [[category]]: [[value]]";
-					graph.bullet = "Not set";
-					graph.lineColor = "#d4d4d4";
-					graph.lineThickness = 2;
-					chart.addGraph(graph);
-
-					// CURSOR
-					var chartCursor = new AmCharts.ChartCursor();
-					chartCursor.cursorPosition = "mouse";
-					chartCursor.zoomable = false;
-					chartCursor.cursorAlpha = 0;
-					chart.addChartCursor(chartCursor);
-
-					// LEGEND
-					var legend = new AmCharts.AmLegend();
-					legend.useGraphSettings = true;
-					chart.addLegend(legend);
-
-					// WRITE
-					chart.write("skillsChart");
-
-				}
-				else {
-					chart = new AmCharts.AmSerialChart();
-					chart.dataProvider = chartData;
-					chart.categoryField = "x";
-					chart.startDuration = 1;
-					chart.plotAreaBorderColor = "#DADADA";
-					chart.plotAreaBorderAlpha = 1;
-					// this single line makes the chart a bar chart
-					chart.rotate = true;
-
-					// AXES
-					// Category
-					var categoryAxis = chart.categoryAxis;
-					categoryAxis.gridPosition = "start";
-					categoryAxis.gridAlpha = 0.1;
-					categoryAxis.axisAlpha = 0;
-
-					// Value
-					var valueAxis = new AmCharts.ValueAxis();
-					valueAxis.axisAlpha = 0;
-					valueAxis.gridAlpha = 0.1;
-					valueAxis.position = "top";
-					chart.addValueAxis(valueAxis);
-
-					// GRAPHS
-					// first graph
-					var graph1 = new AmCharts.AmGraph();
-					graph1.type = "column";
-					graph1.title = "模型受眾";
-					graph1.valueField = "splY";
-					graph1.balloonText = "模型受眾:[[value]]%";
-					graph1.lineAlpha = 0;
-					graph1.fillColors = "#f2b530";
-					graph1.fillAlphas = 1;
-					chart.addGraph(graph1);
-
-					// second graph
-					var graph2 = new AmCharts.AmGraph();
-					graph2.type = "column";
-					graph2.title = "現有潛在客群";
-					graph2.valueField = "popY";
-					graph2.balloonText = "現有潛在客群:[[value]]%";
-					graph2.lineAlpha = 0;
-					graph2.fillColors = "#d4d4d4";
-					graph2.fillAlphas = 1;
-					chart.addGraph(graph2);
-
-					// LEGEND
-					var legend = new AmCharts.AmLegend();
-					chart.addLegend(legend);
-
-					chart.creditsPosition = "top-right";
-					chart.write("skillsChart");
-				}
-				document.getElementById("sampleChart").style.display = "block";
-			},
-			error: function () {
-				alert("ERROR!!!");
-			}
-		});
-	}
+          // GRAPHS
 
 
+          var graph = new AmCharts.AmGraph();
+          graph.title = "模型受眾";
+          graph.valueField = "splY";
+          graph.balloonText = " 模型受眾 in [[category]]: [[value]]";
+          graph.bullet = "Not set";
+          graph.lineColor = "#f56b58";
+          graph.lineThickness = 2;
+          chart.addGraph(graph);
 
+          var graph = new AmCharts.AmGraph();
+          graph.title = "現有潛在客群";
+          graph.valueField = "popY";
+          graph.balloonText = " 現有潛在客群 in [[category]]: [[value]]";
+          graph.bullet = "Not set";
+          graph.lineColor = "#d4d4d4";
+          graph.lineThickness = 2;
+          chart.addGraph(graph);
+
+          // CURSOR
+          var chartCursor = new AmCharts.ChartCursor();
+          chartCursor.cursorPosition = "mouse";
+          chartCursor.zoomable = false;
+          chartCursor.cursorAlpha = 0;
+          chart.addChartCursor(chartCursor);
+
+          // LEGEND
+          var legend = new AmCharts.AmLegend();
+          legend.useGraphSettings = true;
+          chart.addLegend(legend);
+
+          // WRITE
+          chart.write("skillsChart");
+
+        }
+        else {
+          chart = new AmCharts.AmSerialChart();
+          chart.dataProvider = chartData;
+          chart.categoryField = "x";
+          chart.startDuration = 1;
+          chart.plotAreaBorderColor = "#DADADA";
+          chart.plotAreaBorderAlpha = 1;
+          // this single line makes the chart a bar chart
+          chart.rotate = true;
+          // AXES
+          // Category
+          var categoryAxis = chart.categoryAxis;
+          categoryAxis.gridPosition = "start";
+          categoryAxis.gridAlpha = 0.1;
+          categoryAxis.axisAlpha = 0;
+          // Value
+          var valueAxis = new AmCharts.ValueAxis();
+          valueAxis.axisAlpha = 0;
+          valueAxis.gridAlpha = 0.1;
+          valueAxis.position = "top";
+          chart.addValueAxis(valueAxis);
+          // GRAPHS
+          // first graph
+          var graph1 = new AmCharts.AmGraph();
+          graph1.type = "column";
+          graph1.title = "模型受眾";
+          graph1.valueField = "splY";
+          graph1.balloonText = "模型受眾:[[value]]%";
+          graph1.lineAlpha = 0;
+          graph1.fillColors = "#f56b58";
+          graph1.fillAlphas = 1;
+          chart.addGraph(graph1);
+          // second graph
+          var graph2 = new AmCharts.AmGraph();
+          graph2.type = "column";
+          graph2.title = "現有潛在客群";
+          graph2.valueField = "popY";
+          graph2.balloonText = "現有潛在客群:[[value]]%";
+          graph2.lineAlpha = 0;
+          graph2.fillColors = "#d4d4d4";
+          graph2.fillAlphas = 1;
+          chart.addGraph(graph2);
+          // LEGEND
+          var legend = new AmCharts.AmLegend();
+          chart.addLegend(legend);
+          chart.creditsPosition = "top-right";
+          chart.write("skillsChart");
+        }
+        document.getElementById("sampleChart").style.display = "block";
+      },
+      error: function () {
+        alert("ERROR!!!");
+      }
+    });
+  }
 </script>
