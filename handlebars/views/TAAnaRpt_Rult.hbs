@@ -1,0 +1,293 @@
+{{> header}}
+{{> menu}}
+
+
+<script src="/javascripts/amcharts/amcharts.js" type="text/javascript"></script>
+<script src="/javascripts/amcharts/pie.js" type="text/javascript"></script>
+<script src="/javascripts/amcharts/serial.js" type="text/javascript"></script>
+<!-- chart.js -->
+<script src="/javascripts/Chart.min.js" ></script>
+<div class="content">
+	<div class="title">
+		<div class="container">
+			<h1>投放成效報表</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="table_block table-responsive result">
+			<h2>模型整體資訊</h2>
+			<div class="table-responsive" id = "modelifno">
+			</div>
+		</div>
+		<div class="table_block table-responsive result" id="batchinfo">
+        </div>
+		<div class="table_block table-responsive">
+          <h2>受訂資訊</h2>
+          <div class="btn-block center-block">
+            <button type="submit" class="btn btn-lg btn-default">受訂資料下載</button>
+          </div>
+        </div>
+	</div>
+</div>
+
+
+
+
+<script>
+
+$.ajax({
+
+  url: "{{api}}/jsoninfo/getReport.do",
+  data: {"mdID" : encodeURI("{{mdID}}")
+		},
+  type: "GET",
+  dataType: "json",
+  success: function(Jdata) {
+    var myObj, x,batchHtml,status = "";
+	var order,tostore,register,click,orderpercent,tostorepercent,registerpercent,clickpercent;
+	var batchorder,batchtostore,batchregister,batchclick,batchorderpercent,batchtostorepercent,batchregisterpercent,batchclickpercent;
+	var mdID ='{{mdID}}';
+	myObj = Jdata.jsonOutput.data;
+	if( myObj.isClosed == "Y")
+		status = "已結案" ;
+	else 
+		status = "進行中" ;
+	if( myObj.order == null)
+		order = "-" ;
+	else 
+		order = myObj.order;
+	if( myObj.tostore == null)
+		tostore = "-" ;
+	else 
+		tostore = myObj.tostore;
+	if( myObj.register == null)
+		register = "-" ;
+	else 
+		register = myObj.register;
+	if( myObj.click == null)
+		click = "-" ;
+	else 
+		click = myObj.click;
+	if( myObj.orderpercent == null)
+		orderpercent = "-" ;
+	else 
+		orderpercent = myObj.orderpercent;
+	if( myObj.tostorepercent == null)
+		tostorepercent = "-" ;
+	else 
+		tostorepercent = myObj.tostorepercent;
+	if( myObj.registerpercent == null)
+		registerpercent = "-" ;
+	else 
+		registerpercent = myObj.registerpercent;
+	if( myObj.clickpercent == null)
+		clickpercent = "-" ;
+	else 
+		clickpercent = myObj.clickpercent;	
+	x = "";	
+	x+= '<table class="table table-bordered"><tbody><tr><td rowspan="5"><h3>'+myObj.modelName+'</h3></td>';
+	x+= '<td rowspan="2">投放人數</td><td>受訂人數</td><td>來店人數</td><td>登錄人數</td><td>點擊人數</td></tr>';
+	x+= '<tr><td><span class="num">'+order+'</span></td><td><span class="num">'+tostore+'</span></td><td><span class="num">'+register+'</span></td><td><span class="num">'+click+'</span></td></tr>';
+	x+= '<tr><td rowspan="2"><span class="num">'+myObj.sentCount+'</span></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
+	x+=	'<tr><td><span class="num">'+orderpercent+'</span></td><td><span class="num">'+tostorepercent+'</span></td><td><span class="num">'+registerpercent+'</span></td><td><span class="num">'+clickpercent+'</span></td></tr>';
+	x+= '<tr><td colspan="5"><div class="info"><div class="table-responsive"><table class="table"><tbody>' ;
+	x+= '<tr><th>類別</th><td>'+myObj.mdGoal+'</td></tr><tr><th>訂單計算區間</th><td>'+myObj.exeDateFrom+' - '+myObj.exeDateTo+'</td></tr><tr><th>(現有) 潛在客群</th><td>'+myObj.taName+'</td></tr>';
+	x+= '<tr><th>執行狀態</th><td>'+status+'</td></tr><tr>';
+    x+= '<th>計算更新時間</th><td>'+myObj.mdRptCalTime+'</td></tr>';
+	x+= '</tbody></table></div></div></td></tr></tbody></table>';
+	
+	batchHtml = "<h2>投放成效分析</h2>" ;
+	var k = 1 ;
+	for( i in myObj.betchInfolist ){
+		if( myObj.betchInfolist[i].sentCount == 0 ) 
+			batchHtml+= '<h3 class="month">'+myObj.betchInfolist[i].batName+'</h3><div class="noresult"><p>尚無成效數據</p></div>';
+		else{
+			if( myObj.order == null)
+        		batchorder = "-" ;
+        	else 
+        		batchorder = myObj.order;
+        	if( myObj.tostore == null)
+        		batchtostore = "-" ;
+        	else 
+        		batchtostore = myObj.tostore;
+        	if( myObj.register == null)
+        		batchregister = "-" ;
+        	else 
+        		batchregister = myObj.register;
+        	if( myObj.click == null)
+        		batchclick = "-" ;
+        	else 
+        		batchclick = myObj.click;
+        	if( myObj.orderpercent == null)
+        		batchorderpercent = "-" ;
+        	else 
+        		batchorderpercent = myObj.orderpercent;
+        	if( myObj.tostorepercent == null)
+        		batchtostorepercent = "-" ;
+        	else 
+        		batchtostorepercent = myObj.tostorepercent;
+        	if( myObj.registerpercent == null)
+        		batchregisterpercent = "-" ;
+        	else 
+        		batchregisterpercent = myObj.registerpercent;
+        	if( myObj.clickpercent == null)
+        		batchclickpercent = "-" ;
+        	else 
+        		batchclickpercent = myObj.clickpercent;
+			batchHtml+= '<h3 class="month">'+myObj.betchInfolist[i].batName+'</h3><div class="table-responsive result"><table class="table table-bordered"><tbody>';
+			batchHtml+= '<tr><td rowspan="2">投放人數</td><td>受訂人數</td><td>來店人數</td><td>登錄人數</td><td>點擊人數</td><td rowspan="4" width="180"><a href="javascript:getDeatil('+k+',\''+myObj.betchInfolist[i].batID+'\',\''+mdID+'\')" id="openModal1" class="btn btn-chart"><img src="/images/btn_chart.png" alt="">各名單來源受訂/回應圖</a></td></tr>';
+			batchHtml+= '<tr><td><span class="num">'+batchorder+'</span></td><td><span class="num">'+batchtostore+'</span></td><td><span class="num">'+batchregister+'</span></td><td><span class="num">'+batchclick+'</span></td></tr>';
+			batchHtml+= '<tr><td rowspan="2"><span class="num">'+myObj.sentCount+'</span></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
+			batchHtml+= '<tr><td><span class="num">'+batchorderpercent+'</span></td><td><span class="num">'+batchtostorepercent+'</span></td><td><span class="num">'+batchregisterpercent+'</span></td><td><span class="num">'+batchclickpercent+'</span></td></tr>';
+			batchHtml+= '</tbody></table></div>' ;
+			batchHtml+= '<div id="chart'+k+'" class="chart"><div class="table_block" id="tableChart'+k+'"><h3>各名單來源受訂/回應圖</h3><div class="chart_block"><div id="chartdiv'+k+'" style="width:100%; height: 400px;"></div></div></div></div>';
+		}
+		k++;
+	}	
+	
+	document.getElementById("modelifno").innerHTML = x;
+	document.getElementById("batchinfo").innerHTML = batchHtml;
+	$('.chart').hide();
+		
+  },
+  
+  error: function() {
+    alert("ERROR!!!");
+  }
+});
+</script>
+
+<script>
+function getDeatil(index,batID,mdID) {
+	$.ajax({
+		url: "{{api}}/jsoninfo/getReportDetail.do",
+		data: {"mdID" : encodeURI(mdID),
+				"batID" : encodeURI(batID) },
+		type: "GET",
+		dataType: "json",
+		success: function(Jdata) {
+			var myObj,batchObj ,x,batchHtml = "";
+			myObj = Jdata.jsonOutput.ReportDetailChartList ;
+			var chart;
+            var chartData = myObj;
+			chart = new AmCharts.AmSerialChart();
+            chart.dataProvider = chartData;
+            chart.categoryField = "item";
+            chart.startDuration = 1;
+            chart.plotAreaBorderColor = "#DADADA";
+            chart.plotAreaBorderAlpha = 1;
+            // this single line makes the chart a bar chart
+            chart.rotate = true;
+
+            // AXES
+            // Category
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.gridPosition = "start";
+            categoryAxis.gridAlpha = 0.1;
+            categoryAxis.axisAlpha = 0;
+
+            // Value
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.axisAlpha = 0;
+            valueAxis.gridAlpha = 0.1;
+            valueAxis.position = "top";
+            chart.addValueAxis(valueAxis);
+
+            // GRAPHS
+            // first graph
+            var graph1 = new AmCharts.AmGraph();
+            graph1.type = "column";
+            graph1.title = "系統建議組";
+            graph1.valueField = "modelcent";
+            graph1.balloonText = "系統建議組:[[value]]";
+            graph1.lineAlpha = 0;
+            graph1.fillColors = "#888888";
+            graph1.fillAlphas = 1;
+            chart.addGraph(graph1);
+
+            // second graph
+            var graph2 = new AmCharts.AmGraph();
+            graph2.type = "column";
+            graph2.title = "自定組";
+            graph2.valueField = "custompercent";
+            graph2.balloonText = "自定組:[[value]]";
+            graph2.lineAlpha = 0;
+            graph2.fillColors = "#00AA00";
+            graph2.fillAlphas = 1;
+            chart.addGraph(graph2);
+			var graph3 = new AmCharts.AmGraph();
+            graph3.type = "column";
+            graph3.title = "自定組之模型名單";
+            graph3.valueField = "customTApercent";
+            graph3.balloonText = "自定組之模型名單:[[value]]";
+            graph3.lineAlpha = 0;
+            graph3.fillColors = "#66009D";
+            graph3.fillAlphas = 1;
+            chart.addGraph(graph3);
+            // LEGEND
+            var legend = new AmCharts.AmLegend();
+            chart.addLegend(legend);
+            chart.creditsPosition = "top-right";
+            chart.write("chartdiv"+index);
+			//圖畫完
+			batchObj = Jdata.jsonOutput.data ;
+			$("#table"+index).remove(".table");
+			batchHtml = '<table class="table table-bordered" id ="table'+index+'"><tbody><tr><th>名單來源</th><th>投放數</th><th>受訂數</th><th>來店數</th><th>登錄數</th><th>點擊數</th><th>受訂率</th><th>來店率</th><th>登錄率</th><th>點擊率</th></tr>';
+			for( i in batchObj ) {
+				if( batchObj[i].order == null ) 
+					batchorder = "-";
+				else
+					batchorder = batchObj[i].order;
+				if( batchObj[i].tostore == null ) 
+					batchtostore = "-";
+				else
+					batchtostore = batchObj[i].tostore;
+				if( batchObj[i].register == null ) 
+					batchregister = "-";
+				else
+					batchregister = batchObj[i].register;
+				if( batchObj[i].click == null ) 
+					batchclick = "-";
+				else
+					batchclick = batchObj[i].click;
+				if( batchObj[i].orderpercent == null ) 
+					batchorderpercent = "-";
+				else
+					batchorderpercent = batchObj[i].orderpercent;
+				if( batchObj[i].tostorepercent == null ) 
+					batchtostorepercent = "-";
+				else
+					batchtostorepercent = batchObj[i].tostorepercent;	
+				if( batchObj[i].registerpercent == null ) 
+					batchregisterpercent = "-";
+				else
+					batchregisterpercent = batchObj[i].registerpercent;
+				if( batchObj[i].clickpercent == null ) 
+					batchclickpercent = "-";
+				else
+					batchclickpercent = batchObj[i].clickpercent;
+				batchHtml += '<tr>';
+				batchHtml += '<td>'+batchObj[i].sentListCateg+'</td>';
+				batchHtml += '<td>'+batchObj[i].sentCount+'</td>';
+				batchHtml += '<td>'+batchorder+'</td>';
+				batchHtml += '<td>'+batchtostore+'</td>';
+				batchHtml += '<td>'+batchregister+'</td>';
+				batchHtml += '<td>'+batchclick+'</td>';
+				batchHtml += '<td>'+batchorderpercent+'</td>';
+				batchHtml += '<td>'+batchtostorepercent+'</td>';
+				batchHtml += '<td>'+batchregisterpercent+'</td>';
+				batchHtml += '<td>'+batchclickpercent+'</td>';
+				batchHtml += '</tr>';
+			}
+			batchHtml += '</tbody></table>'
+			$("#tableChart"+index).append(batchHtml);
+			$('#chart'+index).stop(true, true).slideToggle();			
+		},
+		
+		error: function() {
+			alert("ERROR!!!");
+		}
+	});
+}
+</script>
+{{> footer}}

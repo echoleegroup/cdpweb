@@ -53,82 +53,75 @@ module.exports = (app) => {
     });
   });
   router.get('/modelContent', [middleware.check(), middleware.checkViewPermission(permission.MODEL_LIST)], function (req, res) {
-    if (req.session.userid && req.session.userid != '') {
-      var mdID = req.query.mdID || '';
-      var batID = req.query.batID || '';
-      var modelInfo = "";
-      var batcharray = "";
-      var newBatchName = "";
-      var newBatchLastTime = "";
-      var p1 = new Promise(function (resolve, reject) {
-        db.query("SELECT mm.mdID,mm.mdName,sc.codeLabel,mm.mdClient,mm.batBinded,mm.taDesc,convert(varchar,mm.exeDateFrom,111)exeDateFrom,convert(varchar,mm.exeDateTo,111)exeDateTo,mm.isClosed,convert(varchar,mm.updTime,120)updTime,convert(varchar,mm.crtTime,120)crtTime,convert(varchar,mm.mdRptCalTime,120)mdRptCalTime,mm.updUser "
-          + " FROM md_Model mm "
-          + " left join sy_CodeTable sc on mm.mdGoal = sc.codeValue and sc.codeGroup = 'mdGoal' "
-          + " where mm.mdID = '" + mdID + "'", function (err, recordset) {
-            if (err) {
-              reject(err);
-            }
-            modelInfo = recordset.recordset[0];
-            resolve(modelInfo);
-          });
-      });
-      var p2 = new Promise(function (resolve, reject) {
-        db.query("SELECT batID,batName,batDesc,convert(varchar,lastTime,120)lasttime,(select count(*) from cu_SentListDet csld where csld.mdID = '" + mdID + "' and csld.batID = mb.batID )sentcount,(select count(*) from cu_RespListDet crld where crld.mdID = '" + mdID + "' and crld.batID = mb.batID)respcount "
-          + " FROM md_Batch mb "
-          + " where (mb.isDel != 'Y' or mb.isDel is null ) and mb.mdID = '" + mdID + "'"
-          + " order by mb.LastTime desc ", function (err, recordset) {
-            if (err) {
-              reject(err);
-            }
-            if (recordset.rowsAffected > 0) {
-              batcharray = recordset.recordset;
-              newBatchName = recordset.recordset[0].batName;
-              newBatchLastTime = recordset.recordset[0].lasttime;
-            }
-            resolve(batcharray);
-          });
-      });
-      Promise.all([p1, p2]).then(function (results) {
-        var modelList = req.session.modelList;
-        var navMenuList = req.session.navMenuList;
-        var mgrMenuList = req.session.mgrMenuList;
-        res.render('modelCP', {
-          'id': req.session.userid,
-          'batID': batID,
-          'modelInfo': modelInfo,
-          'batcharray': batcharray,
-          'newBatchName': newBatchName,
-          'newBatchLastTime': newBatchLastTime,
-          'modelList': modelList,
-          'navMenuList': navMenuList,
-          'mgrMenuList': mgrMenuList
+
+    var mdID = req.query.mdID || '';
+    var batID = req.query.batID || '';
+    var modelInfo = "";
+    var batcharray = "";
+    var newBatchName = "";
+    var newBatchLastTime = "";
+    var p1 = new Promise(function (resolve, reject) {
+      db.query("SELECT mm.mdID,mm.mdName,sc.codeLabel,mm.mdClient,mm.batBinded,mm.taDesc,convert(varchar,mm.exeDateFrom,111)exeDateFrom,convert(varchar,mm.exeDateTo,111)exeDateTo,mm.isClosed,convert(varchar,mm.updTime,120)updTime,convert(varchar,mm.crtTime,120)crtTime,convert(varchar,mm.mdRptCalTime,120)mdRptCalTime,mm.updUser "
+        + " FROM md_Model mm "
+        + " left join sy_CodeTable sc on mm.mdGoal = sc.codeValue and sc.codeGroup = 'mdGoal' "
+        + " where mm.mdID = '" + mdID + "'", function (err, recordset) {
+          if (err) {
+            reject(err);
+          }
+          modelInfo = recordset.recordset[0];
+          resolve(modelInfo);
         });
-      }).catch(function (e) {
-        console.log(e);
+    });
+    var p2 = new Promise(function (resolve, reject) {
+      db.query("SELECT batID,batName,batDesc,convert(varchar,lastTime,120)lasttime,(select count(*) from cu_SentListDet csld where csld.mdID = '" + mdID + "' and csld.batID = mb.batID )sentcount,(select count(*) from cu_RespListDet crld where crld.mdID = '" + mdID + "' and crld.batID = mb.batID)respcount "
+        + " FROM md_Batch mb "
+        + " where (mb.isDel != 'Y' or mb.isDel is null ) and mb.mdID = '" + mdID + "'"
+        + " order by mb.LastTime desc ", function (err, recordset) {
+          if (err) {
+            reject(err);
+          }
+          if (recordset.rowsAffected > 0) {
+            batcharray = recordset.recordset;
+            newBatchName = recordset.recordset[0].batName;
+            newBatchLastTime = recordset.recordset[0].lasttime;
+          }
+          resolve(batcharray);
+        });
+    });
+    Promise.all([p1, p2]).then(function (results) {
+      var modelList = req.session.modelList;
+      var navMenuList = req.session.navMenuList;
+      var mgrMenuList = req.session.mgrMenuList;
+      res.render('modelCP', {
+        'id': req.session.userid,
+        'batID': batID,
+        'modelInfo': modelInfo,
+        'batcharray': batcharray,
+        'newBatchName': newBatchName,
+        'newBatchLastTime': newBatchLastTime,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList
       });
-    }
-    else {
-      res.render(VIEW + 'index', { 'title': req.session.userid, 'items': "" });
-    }
+    }).catch(function (e) {
+      console.log(e);
+    });
+
   });
   router.post('/modleCPeditAct', [middleware.check(), middleware.checkEditPermission(permission.MODEL_LIST)], function (req, res) {
-    if (req.session.userid && req.session.userid != '') {
-      var mdID = req.body.mdID || '';
-      var batID = req.body.batID || '';
-      var exeDateFrom = req.body.exeDateFrom || '';
-      var exeDateTo = req.body.exeDateTo || '';
-      var taDesc = req.body.taDesc || '';
-      var isClosed = req.body.isClosed || '';
-      if (isClosed == "on")
-        isClosed = "Y";
-      db.query("update md_Model set exeDateFrom ='" + exeDateFrom + "', exeDateTo = '" + exeDateTo + "', taDesc = '" + taDesc + "', isClosed = '" + isClosed + "'"
-        + " where mdID = '" + mdID + "'", function (err, recordset) {
-          res.redirect("/model/modelContent?mdID=" + mdID + "&batID=" + batID);
-        });
-    }
-    else {
-      res.render(VIEW + 'index', { 'title': req.session.userid, 'items': "" });
-    }
+    var mdID = req.body.mdID || '';
+    var batID = req.body.batID || '';
+    var exeDateFrom = req.body.exeDateFrom || '';
+    var exeDateTo = req.body.exeDateTo || '';
+    var taDesc = req.body.taDesc || '';
+    var isClosed = req.body.isClosed || '';
+    if (isClosed == "on")
+      isClosed = "Y";
+    db.query("update md_Model set exeDateFrom ='" + exeDateFrom + "', exeDateTo = '" + exeDateTo + "', taDesc = '" + taDesc + "', isClosed = '" + isClosed + "'"
+      + " where mdID = '" + mdID + "'", function (err, recordset) {
+        res.redirect("/model/modelContent?mdID=" + mdID + "&batID=" + batID);
+      });
+
   });
   router.post('/sentDetail', function (req, res) {
     var mdID = req.body.mdID || '';

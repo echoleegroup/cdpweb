@@ -14,7 +14,8 @@ var MENU_CODE={
   MODEL_DOWNLOAD: "_targetDao",
   MODEL_LIST: "_modelOvv",
   TA_DISPATCH_UPLOAD: "_taDispach",
-  TA_REACTION_UPLOAD: "_taReaction"
+  TA_REACTION_UPLOAD: "_taReaction",
+  TAANARPT_RULT: "_taanaRpt"
 };
 
 exports.menucode = MENU_CODE;
