@@ -1,138 +1,129 @@
-{{> include-chart}}
-{{> title title='模型名單下載' mdName=modelInfo.mdName}}
-<!--
-<div class="title">
-	<div class="container">
-		<h1>模型名單下載
-			<span>{{modelinfo.[0].mdName}}</span>
-		</h1>
-	</div>
-</div>
--->
+{{> include-chart}} {{> title title='模型名單下載' mdName=modelInfo.mdName}}
+
 <div class="container">
-	<!-- row div 於需要分兩欄才需要 -->
-	<div class="row">
-		<!-- 左欄 Start -->
-		<div class="col-md-8 col-sm-7 col-xs-12">
-			<!-- table set Start -->
+  <!-- row div 於需要分兩欄才需要 -->
+  <div class="row">
+    <!-- 左欄 Start -->
+    <div class="col-md-8 col-sm-7 col-xs-12">
+      <!-- table set Start -->
 
-			<div class="form_block">
-				<h2>模型受眾名單調整</h2>
-				<form class="form-horizontal">
-					<h3>名單數量調整</h3>
-					<div class="radio">
-						<label class="col-sm-4 control-label">
-							<input type="radio" id="enternum" name="optradio">設定名單數量：</label>
-						<div class="col-sm-5">
-							<input type="text" class="form-control " id="num" name="num" value="" placeholder="">
-						</div>
-					</div>
-					<div class="radio">
-						<label class="col-sm-4 control-label">
-							<input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：</label>
-						<div class="col-sm-12">
-							<div class="rangeslider">
-								<span class="high">高</span>
-								<span class="low">低</span>
-								<span class="sliderName">閥值分數</span>
-								<input id="ex12c" type="text" num="scope" />
-								<div class="info">
-									<p>名單數：
-										<input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
-									</p>
-								</div>
-							</div>
+      <div class="form_block">
+        <h2>模型受眾名單調整</h2>
+        <form class="form-horizontal">
+          <h3>名單數量調整</h3>
+          <div class="radio">
+            <label class="col-sm-4 control-label">
+              <input type="radio" id="enternum" name="optradio">設定名單數量：</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control " id="num" name="num" value="" placeholder="">
+            </div>
+          </div>
+          <div class="radio">
+            <label class="col-sm-4 control-label">
+              <input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：</label>
+            <div class="col-sm-12">
+              <div class="rangeslider">
+                <span class="high">高</span>
+                <span class="low">低</span>
+                <span class="sliderName">閥值分數</span>
+                <input id="ex12c" type="text" num="scope" />
+                <div class="info">
+                  <p>名單數：
+                    <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
+                  </p>
+                </div>
+              </div>
 
-						</div>
+            </div>
 
-					</div>
-				</form>
-				<div class="btn-block center-block">
-					<input type="hidden" id="mdID" name="mdID" value="{{mdID}}" />
-					<input type="hidden" id="batID" name="batID" value="{{batID}}" />
-					<button type="submit" class="btn btn-lg btn-default" onclick="download()">推薦受眾名單下載</button>
-				</div>
-			</div>
-		</div>
-		<!-- 右欄 Start -->
-		<div class="col-md-4 col-sm-5 col-xs-12">
-			<!-- table set Start -->
-			<div class="table_block table-responsive " id="sampleChart">
-				<h2>閥值與名單數資訊</h2>
-				<h3>內容與分佈</h3>
-				<div class="chart_block">
-					<div id="chartdiv" style="width:100%; height:400px;"></div>
-					<input id="chartData" type="hidden" value='{{chartData}}' />
-				</div>
-				<table class="table">
-					<tr>
-						<td>模型受眾名單數：</td>
-						<td>{{tacount}}</td>
-					</tr>
-					<tr>
-						<td>建議閥值：</td>
-						<td>{{batListThold}}
-							<i flow="down" tooltip="tooltip說明">
-						</td>
-					</tr>
+          </div>
+        </form>
+        <div class="btn-block center-block">
+          <input type="hidden" id="mdID" name="mdID" value="{{mdID}}" />
+          <input type="hidden" id="batID" name="batID" value="{{batID}}" />
+          <button type="submit" class="btn btn-lg btn-default" onclick="download()">推薦受眾名單下載</button>
+        </div>
+      </div>
+    </div>
+    <!-- 右欄 Start -->
+    <div class="col-md-4 col-sm-5 col-xs-12">
+      <!-- table set Start -->
+      <div class="table_block table-responsive " id="sampleChart">
+        <h2>閥值與名單數資訊</h2>
+        <h3>內容與分佈</h3>
+        <div class="chart_block">
+          <div id="chartdiv" style="width:100%; height:400px;"></div>
+          <input id="chartData" type="hidden" value='{{chartData}}' />
+        </div>
+        <table class="table">
+          <tr>
+            <td>模型受眾名單數：</td>
+            <td>{{tacount}}</td>
+          </tr>
+          <tr>
+            <td>建議閥值：</td>
+            <td>{{batListThold}}
+              <i flow="down" tooltip="tooltip說明">
+            </td>
+          </tr>
 
-				</table>
-			</div>
-			<!-- table set Start -->
-			<div class="table_block table-responsive" id="">
-				<h2>受眾資訊</h2>
-				<div class="chart_block">
-					<div id="chartdiv2" style="width:100%; height: 200px;"></div>
-				</div>
-				<div class="info">
-					<div class="table-responsive">
+        </table>
+      </div>
+      <!-- table set Start -->
+      <div class="table_block table-responsive" id="">
+        <h2>受眾資訊</h2>
+        <div class="chart_block">
+          <div id="chartdiv2" style="width:100%; height: 200px;"></div>
+        </div>
+        <div class="info">
+          <div class="table-responsive">
 
-						<table class="table">
-							<tbody>
-								<tr>
-									<th rowspan="2">模型受眾</th>
-									<td>{{modelinfo.[0].taName}}
-									</td>
-								</tr>
-								<tr>
-									<td>{{tacount}}</td>
-								</tr>
-								<tr>
-									<th rowspan="2">已購客群</th>
-									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{modelinfo.[0].splName}}</td>
-								</tr>
-								<tr>
-									<td>
-										<span class="bigNumber">{{splcount}}</span>
-									</td>
-								</tr>
-								<tr>
-									<th rowspan="2">潛在客群</th>
-									<!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-									<td>{{modelinfo.[0].popName}}</td>
-								</tr>
-								<tr>
-									<td>
-										<span class="bigNumber">{{tapopcount}}</span>
-									</td>
-								</tr>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th rowspan="2">模型受眾</th>
+                  <td>{{modelinfo.taName}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{tacount}}</td>
+                </tr>
+                <tr>
+                  <th rowspan="2">已購客群</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelinfo.splName}}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bigNumber">{{splcount}}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th rowspan="2">潛在客群</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelinfo.popName}}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bigNumber">{{tapopcount}}</span>
+                  </td>
+                </tr>
 
-							</tbody>
-						</table>
-						<ul>
-							<li>更新日期：{{modelinfo.[0].updTime}}</li>
-						</ul>
-					</div>
-				</div>
-			</div>
+              </tbody>
+            </table>
+            <ul>
+              <li>更新日期：{{modelinfo.updTime}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
 
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
 <script>
-	$("#ex12c").bootstrapSlider({ id: "slider12c", min: 0, max: 1, range: true, value: [{{ batListThold }}, 1] });
+  $("#ex12c").bootstrapSlider({ id: "slider12c", min: 0, max: 1, range: true, value: [{{ batListThold }}, 1] });
 </script>
 
 <input id="mdListCategCount" type="hidden" value='{{mdListCategCount}}' />
@@ -140,169 +131,160 @@
 
 <script>
 
-	var chartData = document.getElementById("chartData").value;
-	chartData = JSON.parse(chartData);
-	var chart;
-	AmCharts.ready(function () {
-		// SERIAL CHART
-		chart = new AmCharts.AmSerialChart();
-		chart.dataProvider = chartData;
-		chart.categoryField = "mdListScore";
+  var chartData = '{{{chartData}}}';
+  chartData = JSON.parse(chartData);
+  var chart;
+  AmCharts.ready(function () {
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData;
+    chart.categoryField = "mdListScore";
 
 
-		var balloon = chart.balloon;
-		balloon.cornerRadius = 6;
-		balloon.adjustBorderColor = false;
-		balloon.horizontalPadding = 10;
-		balloon.verticalPadding = 10;
+    var balloon = chart.balloon;
+    balloon.cornerRadius = 6;
+    balloon.adjustBorderColor = false;
+    balloon.horizontalPadding = 10;
+    balloon.verticalPadding = 10;
 
-		// AXES
-		// category axis
-		var categoryAxis = chart.categoryAxis;
-		categoryAxis.parseDates = false; // as our data is date-based, we set parseDates to true
-		categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
-		categoryAxis.autoGridCount = false;
-		categoryAxis.gridCount = 5;
-		categoryAxis.gridAlpha = 0;
-		categoryAxis.gridColor = "#000000";
-		categoryAxis.axisColor = "#555555";
-		// we want custom date formatting, so we change it in next line
+    // AXES
+    // category axis
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.parseDates = false; // as our data is date-based, we set parseDates to true
+    categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
+    categoryAxis.autoGridCount = false;
+    categoryAxis.gridCount = 5;
+    categoryAxis.gridAlpha = 0;
+    categoryAxis.gridColor = "#000000";
+    categoryAxis.axisColor = "#555555";
+    // we want custom date formatting, so we change it in next line
 
-		// as we have data of different units, we create two different value axes
-		// Duration value axis
-		var durationAxis = new AmCharts.ValueAxis();
-		durationAxis.gridAlpha = 0.05;
-		durationAxis.axisAlpha = 0;
-		// the following line makes this value axis to convert values to duration
-		// it tells the axis what duration unit it should use. mm - minute, hh - hour...
+    // as we have data of different units, we create two different value axes
+    // Duration value axis
+    var durationAxis = new AmCharts.ValueAxis();
+    durationAxis.gridAlpha = 0.05;
+    durationAxis.axisAlpha = 0;
+    // the following line makes this value axis to convert values to duration
+    // it tells the axis what duration unit it should use. mm - minute, hh - hour...
 
-		chart.addValueAxis(durationAxis);
-
-
-		// GRAPHS
-		// duration graph
-		var durationGraph = new AmCharts.AmGraph();
-		durationGraph.title = "total";
-		durationGraph.valueField = "total";
-		durationGraph.type = "line";
-		durationGraph.valueAxis = durationAxis; // indicate which axis should be used
-		durationGraph.lineColorField = "lineColor";
-		durationGraph.fillColorsField = "lineColor";
-		durationGraph.fillAlphas = 0.3;
-		durationGraph.balloonText = "[[value]]";
-		durationGraph.lineThickness = 1;
-		durationGraph.legendValueText = "[[value]]";
-		durationGraph.bullet = "not set";
-		durationGraph.bulletBorderThickness = 1;
-		durationGraph.bulletBorderAlpha = 1;
-		chart.addGraph(durationGraph);
-
-		// CURSOR
-		var chartCursor = new AmCharts.ChartCursor();
-		chartCursor.zoomable = false;
-
-		chartCursor.cursorAlpha = 0;
-		chart.addChartCursor(chartCursor);
+    chart.addValueAxis(durationAxis);
 
 
+    // GRAPHS
+    // duration graph
+    var durationGraph = new AmCharts.AmGraph();
+    durationGraph.title = "total";
+    durationGraph.valueField = "total";
+    durationGraph.type = "line";
+    durationGraph.valueAxis = durationAxis; // indicate which axis should be used
+    durationGraph.lineColorField = "lineColor";
+    durationGraph.fillColorsField = "lineColor";
+    durationGraph.fillAlphas = 0.3;
+    durationGraph.balloonText = "[[value]]";
+    durationGraph.lineThickness = 1;
+    durationGraph.legendValueText = "[[value]]";
+    durationGraph.bullet = "not set";
+    durationGraph.bulletBorderThickness = 1;
+    durationGraph.bulletBorderAlpha = 1;
+    chart.addGraph(durationGraph);
+
+    // CURSOR
+    var chartCursor = new AmCharts.ChartCursor();
+    chartCursor.zoomable = false;
+
+    chartCursor.cursorAlpha = 0;
+    chart.addChartCursor(chartCursor);
 
 
-		// WRITE
-		chart.write("chartdiv");
-	});
+
+
+    // WRITE
+    chart.write("chartdiv");
+  });
 </script>
 
 <script>
-	var mdListCategCount = document.getElementById("mdListCategCount").value;
-	mdListCategCount = JSON.parse(mdListCategCount);
-	var chart;
-	AmCharts.ready(function () {
-		// SERIAL CHART
-		chart = new AmCharts.AmSerialChart();
-		chart.dataProvider = mdListCategCount;
-		chart.categoryField = "mdListCateg";
-		// this single line makes the chart a bar chart,
-		// try to set it to false - your bars will turn to columns
-		chart.rotate = true;
-		// the following two lines makes chart 3D
-		chart.depth3D = 20;
-		chart.angle = 30;
+  var mdListCategCount = '{{{mdListCategCount}}}';
+  mdListCategCount = JSON.parse(mdListCategCount);
+  var chart;
+  AmCharts.ready(function () {
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = mdListCategCount;
+    chart.categoryField = "mdListCateg";
+    chart.rotate = true;
+    chart.columnWidth = 0.9;
+    chart.startDuration = 1;
 
-		// AXES
-		// Category
-		var categoryAxis = chart.categoryAxis;
-		categoryAxis.gridPosition = "start";
-		categoryAxis.axisColor = "#DADADA";
-		categoryAxis.fillAlpha = 1;
-		categoryAxis.gridAlpha = 0;
-		categoryAxis.fillColor = "#FAFAFA";
+    // AXES
+    // Category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridAlpha = 0.1;
+    categoryAxis.axisAlpha = 0;
+    categoryAxis.gridPosition = "start";
+    // Value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.gridAlpha = 0.1;
+    valueAxis.axisAlpha = 0;
+    chart.addValueAxis(valueAxis);
 
-		// value
-		var valueAxis = new AmCharts.ValueAxis();
-		valueAxis.axisColor = "#DADADA";
-		valueAxis.title = "total";
-		valueAxis.gridAlpha = 0.1;
-		chart.addValueAxis(valueAxis);
+    // GRAPH
+    var graph = new AmCharts.AmGraph();
+    graph.valueField = "total";
+    graph.type = "column";
+    graph.lineAlpha = 0;
+    graph.colorField = "color";
+    graph.fillAlphas = 0.8;
+    chart.addGraph(graph);
 
-		// GRAPH
-		var graph = new AmCharts.AmGraph();
-		graph.title = "total";
-		graph.valueField = "total";
-		graph.type = "column";
-		graph.balloonText = "total in [[category]]:[[value]]";
-		graph.lineAlpha = 0;
-		graph.fillColors = "#bf1c25";
-		graph.fillAlphas = 1;
-		chart.addGraph(graph);
+    chart.creditsPosition = "top-right";
 
-		chart.creditsPosition = "top-right";
-
-		// WRITE
-		chart.write("chartdiv2");
-	});
+    // WRITE
+    chart.write("chartdiv2");
+  });
 </script>
 <script>
-	$('#startDate').datepicker({
-		locale: "zh-tw"
-	});
-	$('#endDate').datepicker({
-		locale: "zh-tw"
-	});
+  $('#startDate').datepicker({
+    locale: "zh-tw"
+  });
+  $('#endDate').datepicker({
+    locale: "zh-tw"
+  });
 </script>
 <script>
-	$(document).ready(function () {
-		$('[data-toggle="tooltip"]').tooltip();
-	});
+  $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 </script>
 <script>
-	function gocp(mdID, batID) {
-		var url = encodeURI("/custGene/custGeneCP?mdID=" + mdID + "&batID=" + batID);
-		location.href = url;
+  function gocp(mdID, batID) {
+    var url = encodeURI("/custGene/custGeneCP?mdID=" + mdID + "&batID=" + batID);
+    location.href = url;
 
-	}
+  }
 </script>
 <script>
-	function download() {
-		var method;
-		if (!document.getElementById("sliderscope").checked && !document.getElementById("enternum").checked) {
-			alert("請選擇要下載的方式");
-			return false;
-		}
-		else {
-			if (document.getElementById("num").value == "" && document.getElementById("enternum").checked) {
-				alert("請輸入數字");
-				return false;
-			}
-		}
-		if (document.getElementById("sliderscope").checked)
-			method = 1;
-		else
-			method = 2;
+  function download() {
+    var method;
+    if (!document.getElementById("sliderscope").checked && !document.getElementById("enternum").checked) {
+      alert("請選擇要下載的方式");
+      return false;
+    }
+    else {
+      if (document.getElementById("num").value == "" && document.getElementById("enternum").checked) {
+        alert("請輸入數字");
+        return false;
+      }
+    }
+    if (document.getElementById("sliderscope").checked)
+      method = 1;
+    else
+      method = 2;
 
-		var url = "/modelDownload/modelDownloadact?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
-		url += "&ex12c=" + document.getElementById("ex12c").value + "&num=" + document.getElementById("num").value + "&method=" + method;
-		window.open(url, '_blank');
+    var url = "/modelDownload/modelDownloadact?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
+    url += "&ex12c=" + document.getElementById("ex12c").value + "&num=" + document.getElementById("num").value + "&method=" + method;
+    window.open(url, '_blank');
 
 
-	}
+  }
 </script>
