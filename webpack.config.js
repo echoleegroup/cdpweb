@@ -11,8 +11,8 @@ const webpack = require("webpack");
 const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 let webpackEntries = {
-    'react.bundle': ['./client/src/Portal.js'],
-    'react.bundle.custom.search': ['./client/src/PreferredTarget.js']
+    'react.bundle': ['./client/src/Portal.js']
+    //'react.bundle.custom.search': ['./client/src/TargetFilterHome.js']
 };
 let webpackIncludes = [path.join(__dirname, 'client/src')];
 /*

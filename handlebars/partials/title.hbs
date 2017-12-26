@@ -1,11 +1,9 @@
 <div class="title">
   <div class="container">
-    <h1>
-      {{#if mdName}}
-        {{title}}<span>{{mdName}}</span>
-      {{else}}
-        {{title}}
-      {{/if}}
-    </h1>
+    {{#if mdName}}
+      <h1>{{title}}<span class="model">{{mdName}}</span></h1>
+    {{else}}
+      <h1>{{title}}</h1>
+    {{/if}}
   </div>
 </div>

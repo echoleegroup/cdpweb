@@ -1,5 +1,5 @@
 import React from 'react';
-import PreferredTargetCriteria from './PreferredTargetCriteria';
+import TargetFilterCriteria from './TargetFilterCriteria';
 
 export default class PreferredTargetAction extends React.Component {
   render() {
@@ -25,7 +25,7 @@ export default class PreferredTargetAction extends React.Component {
             <button type="submit" className="btn btn-lg btn-default">自定名單下載</button>
           </div>
         </div>
-        <PreferredTargetCriteria/>
+        <TargetFilterCriteria/>
       </div>
     );
   };

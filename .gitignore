@@ -57,9 +57,10 @@ client/public/upload/*
 _upload
 
 #webpack Output
-#client/public/!js!js
+#client/public/!js
 
 #file-based session storage
 .sessiondb
 
 package-lock.json
+

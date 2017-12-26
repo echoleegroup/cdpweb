@@ -6,7 +6,7 @@ const DEFAULT_HOME_PATH = '/home';
 
 module.exports.check = (redirect) => {
   return (req, res, next) => {
-    if(req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
       return next();
     } else {
       return res.redirect(redirect || DEFAULT_LOGIN_PATH);
