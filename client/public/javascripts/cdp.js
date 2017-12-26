@@ -251,7 +251,7 @@ $(function() {
                     $(this).children('.submenu').stop(true, true).fadeIn();
                 }, function() {
                     $(this).children('.submenu').stop(true, true).fadeOut();
-                    $(this).children('.submenu').children('.choose').siblings('a').hide();
+                    //$(this).children('.submenu').children('.choose').siblings('a').hide();
                 });
             });
             $('body').css('padding-top', 0);
@@ -268,7 +268,7 @@ $(function() {
  }, function() {
     $('body').removeClass('noscroll');
 });
-    $('.choose').siblings('a').hide();
+    $('.choose').siblings('a:not(._fix)').hide();
     var len = 15; // 超過50個字以"..."取代
     $(".choose ul li a").each(function(index) {
         if ($(this).text().length > len) {
@@ -283,7 +283,7 @@ $(function() {
             var spanText=$(this).html();
             console.log(text);
             $('.choose').siblings('h3').find('span').text(spanText);
-            $('.choose').siblings('a').each(function(index, el) {
+            $('.choose').siblings('a:not(._fix)').each(function(index, el) {
                 $(this).hide();
                 $(this).delay(100 * index).fadeIn();
             });

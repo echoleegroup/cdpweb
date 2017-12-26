@@ -10,12 +10,12 @@ const loginService = require('../services/login-service');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    winston.info('serializeUser: %j', user);
+    // winston.info('serializeUser: %j', user);
     done(null, user);
   });
 
   passport.deserializeUser((session_user, done) => {
-    winston.info('serializeUser: %j', session_user);
+    // winston.info('serializeUser: %j', session_user);
     done(null, session_user);
   });
 

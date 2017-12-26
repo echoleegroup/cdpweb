@@ -47,7 +47,7 @@ module.exports.getModelBatch = (mdId, batId, callback=() => {}) => {
     winston.error('===query model failed:', err);
   });
 */
-  winston.info('===_connector.execSqlByParams');
+  //winston.info('===_connector.execSqlByParams');
   Q.nfcall(_connector.execSqlByParams, sql, {
     mdID: {
       type: mssql.NVarChar,

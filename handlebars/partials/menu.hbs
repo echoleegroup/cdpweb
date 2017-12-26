@@ -14,14 +14,19 @@
                   {{#each ../modelList as |model|}}
                     <li>
                       <a href="#" title="{{model.mdName}}"
-                         onclick="ThisMenu.setModel('{{model.mdID}}', '{{model.batID}}')">{{model.mdName}}</a>
+                         onclick="ThisMenu.setModel('{{model.mdID}}', '{{model.batID}}')">{{model.mdName}}
+                      </a>
                     </li>
                   {{/each}}
                 </ul>
               </div>
               {{#each menu.childMenu as |item|}}
-                <a href="#" class="btn-menu {{item.sticky}}"
-                   onclick="ThisMenu.goTo('{{item.url}}')">{{item.menuName}}</a>
+                {{#if item.sticky}}
+                  <a href="{{item.url}}" class="btn-menu {{item.sticky}}">{{item.menuName}}</a>
+                {{else}}
+                  <a href="#" class="btn-menu"
+                     onclick="ThisMenu.goTo('{{item.url}}')">{{item.menuName}}</a>
+                {{/if}}
               {{/each}}
             </div>
           {{else}}
@@ -46,7 +51,7 @@
         batId = batID;
       },
       goTo: function (urlPath) {
-        location.href = urlPath + '?mdID=' + mdId + '&batID=' + batId;
+        location.href = urlPath + '/' + mdId + '/' + batId;
       }
     };
   }();
