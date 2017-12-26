@@ -1,4 +1,4 @@
-'use restrict'
+'use strict'
 
 const _ = require('lodash');
 const Q = require('q');
