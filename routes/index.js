@@ -13,9 +13,9 @@ module.exports = (app) => {
   app.use('/system', require('./action-user-o')(app));
   app.use('/system', require('./action-user-role-o')(app));
   app.use('/model', require('./action-model-o')(app));
-  app.use('/custGene', require('./action-cust-gene-o')(app));
-  app.use('/custobrv', require('./action-cust-obrv-o')(app));
-  app.use('/custMotivation', require('./action-cust-motivation-o')(app));
+  app.use('/model', require('./action-cust-gene-o')(app));
+  app.use('/model', require('./action-cust-obrv-o')(app));
+  app.use('/model', require('./action-cust-motivation-o')(app));
   app.use('/modelDownload', require('./action-model-download-o')(app));
   app.use('/generaudic', require('./action-gene-raudic-o')(app));
   app.use('/talist_putupload', require('./action-ta-dispatch-upload-o')(app));
