@@ -14,7 +14,7 @@
             <!-- form set Start -->
             <div class="form_block">
                 <h2>角色設定</h2>
-                <form class="form-horizontal" id="reg" action="/userRole/UserGroupInfoEditAct" method="post">
+                <form class="form-horizontal" id="reg" action="/system/user/role/edit_act" method="post">
                     <input id="ugrpId" name="ugrpId" type="hidden" value="{{modelInfo.ugrpId}}" disabled="disabled" />
                     <div class="form-group">
                         <label for="inputName" class="col-sm-3 control-label">角色類別</label>
@@ -115,7 +115,7 @@
                                 <td>{{au.modifyDate}}</td>
                                 <td>{{au.modifyUser}}</td>
                                 <td>
-                                    <a id="delete{{au.menuId}}" href="javascript:checkDel('{{au.ugrpId}}','{{au.menuId}}','delete{{au.menuId}}')" class="btn btn-default fa fa-close"></a>
+                                    <a id="delete{{au.menuId}}" href="javascript:deleterow('{{au.ugrpId}}','{{au.menuId}}','delete{{au.menuId}}')" class="btn btn-default fa fa-close"></a>
                                 </td>
                             </tr>
                             {{/each}}
@@ -235,27 +235,12 @@
         document.getElementById("isstop").disabled = false;
 
     }
-    function checkDel(ugrpId, menuId, deleteid) {
-        $.ajax({
-            url: "/user/checkEditAuthority",
-            type: "POST",
-            dataType: 'text',
-            success: function (msg) {
-                if (msg == 'ok') {
-                    deleterow(ugrpId, menuId, deleteid);
-                }
-                else
-                    alert("您並無權限編輯");
-
-            }
-        });
-    }
     function deleterow(ugrpId, menuId, deleteid) {
         deleteauthority(ugrpId, menuId);
     }
     function deleteauthority(ugrpId, menuId) {
         $.ajax({
-            url: "/userRole/delAuthority",
+            url: "/system//user/role/authority/del",
             data: {
                 "ugrpId": ugrpId,
                 "menuId": menuId
@@ -321,7 +306,7 @@
     }
     function addAuthority() {
         $.ajax({
-            url: "/userRole/addAuthority",
+            url: "/system/user/role/authority/add",
             data: {
                 "ugrpId": document.getElementById("ugrpId").value,
                 "menuCode": document.getElementById("menuCode").value,

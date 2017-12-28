@@ -14,7 +14,7 @@
             <!-- form set Start -->
             <div class="form_block">
                 <h2>帳號新增</h2>
-                <form id="reg" action="/user/UserAddAct" method="post" onsubmit="return checkForm()" class="form-horizontal">
+                <form id="reg" action="/system/user/add_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
                     <div class="form-group">
                         <label for="inputName" class="col-sm-3 control-label">
                             <i flow="down" tooltip="請以工號設定為帳號"></i>帳號</label>
@@ -66,7 +66,7 @@
     var issame = false;
     $('#userId').blur(function () {
         $.ajax({
-            url: "/user/checkUserId",
+            url: "/system/user/add/checkID",
             data: {
                 "userId": document.getElementById("userId").value
             },

@@ -10,8 +10,8 @@ module.exports = (app) => {
   app.use('/target', require('./action-target')(app));
   app.use('/', require('./action-index')(app));
   app.use('/', require('./action-login')(app));
-  app.use('/user', require('./action-user-o')(app));
-  app.use('/userRole', require('./action-user-role-o')(app));
+  app.use('/system', require('./action-user-o')(app));
+  app.use('/system', require('./action-user-role-o')(app));
   app.use('/model', require('./action-model-o')(app));
   app.use('/custGene', require('./action-cust-gene-o')(app));
   app.use('/custobrv', require('./action-cust-obrv-o')(app));

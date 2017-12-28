@@ -10,7 +10,7 @@
   <!-- table set Start -->
   <div class="table_block table-responsive">
     <h2>角色權限清單</h2>
-    <a href="/userRole/userRoleSearch" title="重新查詢">
+    <a href="/system/user/role/search" title="重新查詢">
       <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
     </a>
     <table class="table table-hover">
@@ -34,7 +34,7 @@
           <td>{{userRole.no}}</td>
           <td>{{userRole.ugrpClassName}}</td>
           <td>
-            <a href="/userRole/UserRoleInfoEdit?ugrpId={{userRole.ugrpId}}">{{userRole.ugrpName}}</a>
+            <a href="/system/user/role/edit?ugrpId={{userRole.ugrpId}}">{{userRole.ugrpName}}</a>
           </td>
           <td>{{userRole.remark}}</td>
         </tr>

@@ -10,7 +10,7 @@
   <!-- table set Start -->
   <div class="table_block table-responsive">
     <h2>帳號清單</h2>
-    <a href="/user/userSearch" title="重新查詢">
+    <a href="/system/user/search" title="重新查詢">
       <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
     </a>
     <table class="table table-hover">
@@ -38,7 +38,7 @@
           <td>{{user.no}}</td>
           <td>{{user.userId}}</td>
           <td>
-            <a href="/user/UserInfoEdit?userId={{user.userId}}">{{user.username}}</a>
+            <a href="/system/user/edit?userId={{user.userId}}">{{user.username}}</a>
           </td>
           <td>{{user.loginTime}}</td>
           <td>{{user.isstop}}</td>
