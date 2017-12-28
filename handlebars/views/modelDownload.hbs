@@ -257,13 +257,6 @@
   });
 </script>
 <script>
-  function gocp(mdID, batID) {
-    var url = encodeURI("/custGene/custGeneCP?mdID=" + mdID + "&batID=" + batID);
-    location.href = url;
-
-  }
-</script>
-<script>
   function download() {
     var method;
     if (!document.getElementById("sliderscope").checked && !document.getElementById("enternum").checked) {
@@ -281,7 +274,7 @@
     else
       method = 2;
 
-    var url = "/modelDownload/modelDownloadact?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
+    var url = "/target/model/download_act?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
     url += "&ex12c=" + document.getElementById("ex12c").value + "&num=" + document.getElementById("num").value + "&method=" + method;
     window.open(url, '_blank');
 

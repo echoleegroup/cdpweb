@@ -13,8 +13,8 @@ var MENU_CODE={
   GENE_RAUDIC: "_targetCal",
   MODEL_DOWNLOAD: "_targetDao",
   MODEL_LIST: "_modelOvv",
-  TA_DISPATCH_UPLOAD: "_taDispach",
-  TA_REACTION_UPLOAD: "_taReaction",
+  TA_DISPATCH_UPLOAD: "__targetTaDispach",
+  TA_REACTION_UPLOAD: "__targetTaReaction",
   TAANARPT_RULT: "_taanaRpt"
 };
 

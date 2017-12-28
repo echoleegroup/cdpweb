@@ -10,9 +10,9 @@ module.exports = (app) => {
   console.log('[generaudicRoute::create] Creating generaudic route.');
   const router = express.Router();
 
-  router.get('/generaudicCP',[middleware.check(), middleware.checkViewPermission(permission.CUST_GENE)], function (req, res) {
-    var mdID = req.query.mdID || '';
-    var batID = req.query.batID || '';
+  router.get('/cal/cp/:mdID/:batID',[middleware.check(), middleware.checkViewPermission(permission.GENE_RAUDIC)], function (req, res) {
+    var mdID = req.params.mdID || '';
+    var batID = req.params.batID || '';
     var where = " where mdID = '" + mdID + "' and batID = '" + batID + "' ";
     var tacount = 0;
     var tapopcount = 0;

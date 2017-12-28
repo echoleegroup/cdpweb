@@ -12,9 +12,9 @@ module.exports = (app) => {
   console.log('[modelDownloadRoute::create] Creating modelDownload route.');
   const router = express.Router();
 
-  router.get('/modelDownload', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
-    var mdID = req.query.mdID || '';
-    var batID = req.query.batID || '';
+  router.get('/model/download/:mdID/:batID', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
+    var mdID = req.params.mdID || '';
+    var batID = req.params.batID || '';
     var where = " where mdID = '" + mdID + "' and batID = '" + batID + "' and mdListCateg ='tapop' order by mdListScore asc ";
     var items;
     var scrore = 0.8;
@@ -133,7 +133,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/modelDownloadact', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
+  router.get('/model/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
     var mdID = req.query.mdID || '';
     var batID = req.query.batID || '';
     var tapopcount = req.query.tapopcount || '';

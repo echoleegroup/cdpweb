@@ -15,7 +15,7 @@ module.exports = (app) => {
   console.log('[talist_putuploadRoute::create] Creating talist_putupload route.');
   const router = express.Router();
 
-  router.post('/talist_putuploadAddact', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD), upload.single('uploadingFile')], function (req, res) {
+  router.post('/ta/send/upload_act', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD), upload.single('uploadingFile')], function (req, res) {
     var mdID = req.body.mdID || '';
     var batID = req.body.batID || '';
     var sentListCateg = req.body.sentListCateg || '';
@@ -119,7 +119,7 @@ module.exports = (app) => {
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
-              res.redirect("/talist_putupload/talist_putuploadEdit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
+              res.redirect("/target/ta/send/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
             }
             checkandinsert(i + 1);
           }
@@ -162,7 +162,7 @@ module.exports = (app) => {
                     + currentdate.getHours() + ":"
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
-                  res.redirect("/talist_putupload/talist_putuploadEdit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
+                  res.redirect("/target/ta/send/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
                 }
                 checkandinsert(i + 1);
               }
@@ -176,7 +176,7 @@ module.exports = (app) => {
                       + currentdate.getHours() + ":"
                       + currentdate.getMinutes() + ":"
                       + currentdate.getSeconds();
-                    res.redirect("/talist_putupload/talist_putuploadEdit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
+                    res.redirect("/target/ta/send/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime + "&sentListID=" + newindex);
                   }
                   checkandinsert(i + 1);
                 });
@@ -190,9 +190,9 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/talist_putuploadAdd', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
-    var mdID = req.query.mdID || '';
-    var batID = req.query.batID || '';
+  router.get('/ta/send/upload/:mdID/:batID', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
+    var mdID = req.params.mdID || '';
+    var batID = req.params.batID || '';
     var batchlist;
     var sentListCateg;
     var sentListChannel;
@@ -247,7 +247,7 @@ module.exports = (app) => {
       console.log(e);
     });
   });
-  router.get('/talist_putuploadEdit', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
+  router.get('/ta/send/edit', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
     var mdID = decodeURI(req.query.mdID) || '';
     var batID = decodeURI(req.query.batID) || '';
     var sentListID = decodeURI(req.query.sentListID) || '';
@@ -280,12 +280,12 @@ module.exports = (app) => {
       });
     });
   });
-  router.post('/talist_putuploadEditact', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
+  router.post('/ta/send/edit_act', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {
     var sentListID = req.body.sentListID || '';
     var sentListName = req.body.sentListName || '';
     var sentListDesc = req.body.sentListDesc || '';
     db.query("update cu_SentListMst set sentListName = '" + sentListName + "', sentListDesc = '" + sentListDesc + "'  where sentListID = " + sentListID, function (err, recordset) {
-      res.redirect("/talist_putupload/talist_putuploadEdit?sentListID=" + sentListID);
+      res.redirect("/target/ta/send/edit?sentListID=" + sentListID);
     });
 
   });
