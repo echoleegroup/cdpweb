@@ -7,7 +7,7 @@
 			<!-- form set Start -->
 			<div class="form_block">
 				<h2>活動頁面設定</h2>
-				<form id="reg" action="/Evtpg/EvtpgAddact" method="post" onsubmit="return checkForm()" class="form-horizontal">
+				<form id="reg" action="/actad/act/edit_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
 					<input type="hidden" value="{{evtpgID}}" id="evtpgID" />
 					<div class="form-group">
 						<label for="inputName" class="col-sm-3 control-label">品牌</label>
@@ -138,10 +138,10 @@
 					</table>
 					<div class="btn-block center-block">
 
-						<a href="/Evtad/EvtadUpload?evtpgID={{evtpgID}}">
+						<a href="/actad/add/upload?evtpgID={{evtpgID}}">
 							<button type="button" class="btn btn-lg btn-default">廣告排程上傳</button>
 						</a>
-						<a href="/Evtad/EvtadList?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].msm_tpc}}">
+						<a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].msm_tpc}}">
 							<button type="button" class="btn btn-lg btn-default">廣告清單</button>
 						</a>
 					</div>
@@ -178,7 +178,7 @@
 <script>
 	function deltag(evtpgID, tagID) {
 		$.ajax({
-			url: "/Evtpg/delEvtpgTag",
+			url: "/actad/act/tag/del",
 			data: {
 				"evtpgID": evtpgID,
 				"tagID": tagID
@@ -195,7 +195,7 @@
 		var evtpgID = document.getElementById("evtpgID").value;
 		var newtag = document.getElementById("newtag").value;
 		$.ajax({
-			url: "/Evtpg/addEvtpgTag",
+			url: "/actad/act/tag/add",
 			data: {
 				"evtpgID": evtpgID,
 				"newtag": newtag

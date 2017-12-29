@@ -1,5 +1,5 @@
 "use strict";
-var MENU_CODE={
+var MENU_CODE = {
   USER: "_mgrUser",
   USER_ROLE: "_mgrRole",
   CUST_GENE: "_modelChar",
@@ -7,6 +7,7 @@ var MENU_CODE={
   CUST_OBRV: "_modelBhv",
   EVENT_PAGE_LIST: "_actad_actList",
   EVENT_PAGE_EDIT: "_actad_actEdit",
+  EVENT_AD: "_actad_ad",
   FEED_DATA_LIST: "_feedDataList",
   FEED_DATA_OUT: "_feedDataOutEdit",
   FEED_DATA_NCBS: "_feedDataNCBSEdit",

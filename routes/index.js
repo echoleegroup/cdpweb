@@ -25,8 +25,8 @@ module.exports = (app) => {
   app.use('/target', require('./action-ta-dispatch-upload-o')(app));
   app.use('/target', require('./action-ta-reaction-upload-o')(app));
   
-  app.use('/Evtpg', require('./action-event-page-o')(app));
-  app.use('/Evtad', require('./action-event-ad-o')(app));
+  app.use('/actad', require('./action-event-page-o')(app));
+  app.use('/actad', require('./action-event-ad-o')(app));
   app.use('/FeedData', require('./action-feed-data-o')(app));
   app.use('/NCBSData', require('./action-ncbs-data-o')(app));
   app.use('/taanarpt_rult', require('./action-taanarpt-rult-o')(app));
