@@ -1,72 +1,118 @@
 import React from 'react';
-import {reject} from 'lodash';
+import {reject, isEmpty} from 'lodash';
 import shortid from 'shortid';
-import {default as constants} from '../utils/constants';
 import CriteriaField from './CriteriaField';
 
+const OPERATOR_DICT =  Object.assign({}, {
+  and: '全部',
+  or: '任一'
+});
+
 export default class CriteriaBundle extends React.PureComponent {
-  constructor(props, type) {
+  constructor(props, options) {
     super(props);
-    //console.log('CriteriaBundle props.criteria: ', props.criteria);
-    this.state = Object.assign({
-      key: shortid.generate(),
-      type: type || 'bundle',  //combo, ref, field
+    this.OPERATOR_DICT = OPERATOR_DICT;
+    this.state = Object.assign({}, this.getInitialState(options), props.criteria);
+    console.log('CriteriaBundle::constructor: ', this.state.uuid);
+  };
+
+  getInitialState(options = {}) {
+    const state = {
+      type: 'bundle',  //combo, ref, field
       operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
       criteria: []
-    }, props.criteria);
-    this.OPTIONS = ['and', 'or'];
+    };
+
+    return Object.assign(state, {
+      uuid: shortid.generate(),
+      type: options.type || state.type,
+      operator: options.operator || state.operator
+    });
+  };
+
+  componentWillMount() {
+    let _this = this;
+    _this.getCriteria = () => {
+      let subCrits = _this.criteriaComponents.reduce((collector, comp) => {
+        let crite = comp.getCriteria();
+        return isEmpty(crite)? collector: collector.concat(crite);
+      }, []);
+
+      return isEmpty(subCrits)? {}: Object.assign(_this.state, {
+        criteria: subCrits
+      });
+    };
+  };
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log('CriteriaBundle: componentWillUpdate: ', nextState.uuid);
   };
 
   componentWillUnmount() {
-    console.log('CriteriaBundle: componentWillUnmount', this.state.key);
+    console.log('CriteriaBundle: componentWillUnmount: ', this.state.uuid);
   };
 
   render() {
-    let mapToProps = {
-      isPreview: this.props.isPreview,
-      foldingFields: this.props.foldingFields,
-      refOptions: this.props.refOptions,
-      refFields: this.props.refFields,
-      refFolds: this.props.refFolds
-    };
-
-    return this._render(mapToProps, this);
-  };
-
-  _render(mapToProps, _that) {
     return (
       <div>
         {/*<!-- head -->*/}
-        <div className="head">
-          以下條件
-          <select className="form-control" defaultValue={_that.state.operator} disabled={_that.props.isPreview}>
-            {
-              _that.OPTIONS.map((key) => {
-                return <option value={key} key={key}>{constants.PREFERRED_OPERATOR[key]}</option>;
-              })
-            }
-          </select>符合
-        </div>
+        {this.CriteriaHead()}
         {/*<!-- 第二層 -->*/}
-        <div className="level form-inline">
-          {_that.state.criteria.map((_criteria) => {
-            return _that.BundleContent(_criteria, mapToProps);
-          })}
-        </div>
-        {_that.ControlButton()}
+        {this.ChildCriteriaBlock()}
+        {this.ControlButton()}
       </div>
     );
   }
 
-  BundleContent(criteria, mapToProps) {
-    //console.log('CriteriaBundle criteria.type: ', criteria.type);
+  CriteriaHead() {
+    console.log('CriteriaBundle::CriteriaHead')
+    return (
+      <div className="head">
+        以下條件{this.CriteriaOperatorSelector()}符合
+        {this.CriteriaHeadTail()}
+      </div>
+    );
+  };
+
+  CriteriaHeadTail() {
+    return null;
+  };
+
+  CriteriaOperatorSelector() {
+    return (
+      <select className="form-control" defaultValue={this.state.operator} disabled={this.props.isPreview}>
+        {
+          Object.keys(this.OPERATOR_DICT).map((key) => {
+            return <option value={key} key={key}>{this.OPERATOR_DICT[key]}</option>;
+          })
+        }
+      </select>
+    );
+  };
+
+  ChildCriteriaBlock() {
+    this.criteriaComponents = [];
+    return (
+      <div className="level form-inline">
+        {this.state.criteria.map((_criteria) => {
+          return this.ChildCriteria(_criteria);
+        })}
+      </div>
+    );
+  };
+
+  ChildCriteria(criteria) {
+    console.log('CriteriaBundle::ChildCriteria: ', criteria);
     switch(criteria.type) {
       case 'field':
-        let removeCriteria = this.removeCriteria.bind(this);
-        return <CriteriaField key={criteria.key} criteria={criteria} {...mapToProps} removeCriteria={removeCriteria}/>;
+        return <CriteriaField key={criteria.uuid} {...this.props}
+                              criteria={criteria}
+                              removeCriteria={this.removeCriteria.bind(this)}
+                              ref={(e) => {
+                                e && this.criteriaComponents.push(e);
+                              }}/>;
       default:
-        return <div key={criteria.key}/>;
-        //return <CriteriaField key={criteria.key} criteria={criteria} {...mapToProps} removeCriteria={removeCriteria}/>;
+        return <div key={criteria.uuid}/>;
     }
   };
 
@@ -74,25 +120,29 @@ export default class CriteriaBundle extends React.PureComponent {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="submit" className="btn btn-warning"><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
+          <button type="button" className="btn btn-warning" onClick={() => {
+            this.props.addCriteriaField(this.setCriteria.bind(this));
+          }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
         </div>
       );
     }
   };
 
+  setCriteria(criteria) {
+    console.log('CriteriaBundle:setCriteria: ', criteria);
+    this.setState((prevState) => {
+      return Object.assign({}, prevState, {
+        criteria: prevState.criteria.concat(criteria)
+      });
+    });
+  };
+
   removeCriteria(key) {
+    console.log('CriteriaBundle:removeCriteria: ', this.state.uuid);
     this.setState({
       criteria: reject(this.state.criteria, {
-        key: key
+        uuid: key
       })
     });
   }
-
-  getCriteria() {
-    if (this.state.criteria.size() === 0) {
-      return [];
-    } else {
-      //return this.state;
-    }
-  };
 };

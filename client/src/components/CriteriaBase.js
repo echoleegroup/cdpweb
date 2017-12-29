@@ -2,12 +2,11 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce} from 'lodash';
 import {nfcall, all} from 'q';
+import CriteriaFieldPicker from './CriteriaFieldPicker';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
 import CriteriaComboBundleList from './CriteriaComboBundleList';
 import {default as _test} from '../../test/preferred-criteria-test'
-
-const _FOLDING = 'preferred_target';
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -25,8 +24,6 @@ export default class CriteriaBase extends React.PureComponent {
     //this.refOptions = _test.refs;
     //this.criteria = [];
     this.options = Object.assign({
-      _title: null,
-      _subTitle: null,
       _folding: ''
     }, options);
   };
@@ -34,14 +31,13 @@ export default class CriteriaBase extends React.PureComponent {
   componentDidMount() {
     all([
       nfcall(getCriteria, this.options._folding),
-      nfcall(getFoldingFields, this.options._folding),
-      nfcall(getRefOptions),
-    ]).spread((criteria, foldingFields, refOptions) => {
+      nfcall(getFoldingFieldData, this.options._folding)
+    ]).spread((criteria, foldingFieldsInfo) => {
       this.criteria = criteria;
-      this.foldingFields = foldingFields;
-      this.refOptions = refOptions;
-      this.refFields = getRefFields(foldingFields);
-      this.refFolds = getRefFolds(foldingFields);
+      this.foldingFields = foldingFieldsInfo.folding_fields;
+      this.refOptions = foldingFieldsInfo.ref_options;
+      this.refFields = getRefFields(this.foldingFields);
+      this.refFolds = getRefFolders(this.foldingFields);
     }).finally(() => {
       this.setState({
         isLoaded: true
@@ -49,7 +45,16 @@ export default class CriteriaBase extends React.PureComponent {
     });
   };
 
+  componentWillUpdate() {
+    console.log('CriteriaBase::componentWillUpdate: ');
+  };
+
   render() {
+    const switchToEditMode = () => {
+      this.setState({
+        isPreview: false
+      });
+    };
     return (
       <Loader loaded={this.state.isLoaded}>
         {(() => {
@@ -59,21 +64,19 @@ export default class CriteriaBase extends React.PureComponent {
             );
           } else if (this.state.isPreview && this.criteria.length === 0) {
             /** use PreferredTargetCriteriaPreviewEmpty to show empty preview data */
-            return <CriteriaPreviewEmpty/>;
+            return <CriteriaPreviewEmpty switchToEditMode={switchToEditMode}/>;
           } else {
             let className = 'condition';
             if (!this.state.isPreview ) {
               className = 'condition edit';
             }
-            let MainTitle = (this.options._title)? <h2>{this.options._title}</h2>: <div/>;
-            let SubTitle = (this.options._subTitle)? <h3>{this.options._subTitle}</h3>: <div/>;
             /**
              * DO NOT user functional component, which would enforce unmount/re-mount the component
              */
             return (
               <div className="table_block">
-                {MainTitle}
-                {SubTitle}
+                {this.MainTitle()}
+                {this.SubTitle()}
                 <div className={className}>
                   <form className="form-horizontal">
                     <div className="level form-inline">
@@ -86,40 +89,46 @@ export default class CriteriaBase extends React.PureComponent {
             );
           }
         })()}
+        {/*<!-- 新增條件組合 -->*/}
+        <CriteriaFieldPicker foldingFields={this.foldingFields} refOptions={this.refOptions} ref={(e) => {
+          this.fieldPicker = e;
+        }}/>
       </Loader>
     );
   };
+
+  MainTitle() {
+    return <div/>;
+  }
+
+  SubTitle() {
+    return <div/>;
+  }
 
   /** Here, if criteria is empty, it must be edit mode,
    * coz empty data in preview mode would rendered and returned before.
    * */
   CriteriaNonEmptyContentRender() {
-    let mapToProps = {
-      isPreview: this.state.isPreview,
+    const mapToProps = {
       foldingFields: this.foldingFields,
       refOptions: this.refOptions,
       refFields: this.refFields,
       refFolds: this.refFolds,
-      criteria: this.criteria
+      addCriteriaField: (callback) => {
+        console.log('CriteriaBase::addCriteriaField');
+        this.fieldPicker.openModal(callback);
+      }
     };
 
-    if (this.criteria.length === 0) {
-      return (
-        <CriteriaComboBundle
-          {...mapToProps}
-          ref={(e) => {
-            this.criteriaWrapper = e;
-          }}/>
-      );
-    } else {
-      return (
-        <CriteriaComboBundleList
-          {...mapToProps}
-          ref={(e) => {
-            this.criteriaWrapper = e;
-          }}/>
-      );
-    }
+    return (
+      <CriteriaComboBundleList
+        {...mapToProps}
+        isPreview={this.state.isPreview}
+        criteria={this.criteria}
+        ref={(e) => {
+          this.criteriaWrapper = e;
+        }}/>
+    );
   }
 
   ControlButtonRender() {
@@ -136,7 +145,9 @@ export default class CriteriaBase extends React.PureComponent {
     } else {
       return (
         <div className="btn-block center-block">
-          <button type="submit" className="btn btn-lg btn-default" onClick={() => {
+          <button type="button" className="btn btn-lg btn-default" onClick={() => {
+            this.criteria = this.criteriaWrapper.getCriteria();
+            console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
             this.setState({
               isPreview: true
             });
@@ -148,85 +159,75 @@ export default class CriteriaBase extends React.PureComponent {
 };
 
 const getCriteria = (_folding, callback) => {
-  callback(null, _test.criteria[_folding]);
+  //callback(null, _test.criteria[_folding]);
+  callback(null, []);
 };
 
-const getFoldingFields = (_folding, callback) => {
-  callback(null, _test.fields[_folding]);
-};
-
-const getRefOptions = (callback) => {
-  callback(null, _test.refs);
+const getFoldingFieldData = (_folding, callback) => {
+  callback(null, {
+    folding_fields: _test.fields[_folding],
+    ref_options: _test.refs
+  });
 };
 
 /**
  *
  * @param folds
  * @param callback
- * @example folds = {
-      _none: {
-        fields: [{
-          id: 'last_visit_date',
-          label: '最後訪問日',
-          data_type: 'date',
-          default_value: Date.now()
-        }]
-      },
-      customer_profile: {
+ * @example folds = [
+ {
+   type: 'field',
+   id: 'last_visit_date',
+   label: '最後訪問日',
+   data_type: 'date',
+   default_value: Date.now()
+ }, {
+        type: 'folder',
         id: 'customer_profile',
         label: '客戶屬性',
         fields: [{
+          type: 'field',
           id: 'gender',
           label: '性別',
           data_type: 'refOption', //for cassandra
           ref: 'gender',
           default_value: 'M'
         }, {
+          type: 'field',
           id: 'age',
           label: '年紀',
           data_type: 'number'
         }]
-      },
-      interaction: {
-        id: 'inter_action',
-        label: '互動狀態',
-        fields: [{
-          id: 'lexus',
-          label: 'LEXUS保有台數',
-          data_type: 'number'
-        }, {
-          id: 'toyota',
-          label: 'TOYOTA保有台數',
-          data_type: 'number'
-        }]
       }
-    }
+ ]
  */
-const getRefFields = (folds) => {
-  return reduce(folds, (fields, fold) => {
-    return fields.concat(fold.fields);
-  }, []).reduce((dictionary, field) => {
-    return assign(dictionary, {
-      [field.id]: {
-        id: field.id,
-        label: field.label,
-        data_type: field.data_type,
-        default_value: field.default_value,
-        ref: field.ref
-      }
-    });
+const getRefFields = (folders) => {
+  return reduce(folders, (dictionary, data) => {
+    if ('field' === data.type) {
+      return Object.assign(dictionary, {
+        [data.id]: {
+          id: data.id,
+          label: data.label,
+          data_type: data.data_type,
+          default_value: data.default_value,
+          ref: data.ref
+        }
+      });
+    } else if ('folder' === data.type) {
+      return Object.assign(dictionary, getRefFields(data.fields));
+    }
   }, {});
 };
 
-const getRefFolds = (folds) => {
-  return reduce(folds, (dictionary, fold) => {
-    if (fold) {
+const getRefFolders = (folders) => {
+  return reduce(folders, (dictionary, data) => {
+    if ('folder' === data.type) {
       return assign(dictionary, {
-        [fold.id]: {
-          id: fold.id,
-          label: fold.label
+        [data.id]: {
+          id: data.id,
+          label: data.label
         }
-      });
+      }, getRefFolders(data.fields));
     } else {
       return dictionary;
     }

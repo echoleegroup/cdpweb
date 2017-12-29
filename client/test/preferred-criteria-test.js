@@ -1,133 +1,155 @@
 import shortid from 'shortid';
 export default {
   fields: {
-    preferred_target: {
-      _none: {
-        fields: [{
-          id: 'last_visit_date',
-          label: '最後訪問日',
-          data_type: 'date',
-          default_value: Date.now()
-        }]
-      },
-      customer_profile: {
+    preferred_target: [
+      {
+        type: 'field',
+        id: 'last_visit_date',
+        label: '最後訪問日',
+        data_type: 'date',
+        default_value: Date.now()
+      }, {
+        type: 'folder',
         id: 'customer_profile',
         label: '客戶屬性',
         fields: [{
+          type: 'field',
           id: 'gender',
           label: '性別',
-          data_type: 'refOption', //for cassandra
+          data_type: 'refOption',
           ref: 'gender',
-          default_value: 'M'
+          default_value: ['M']
         }, {
-          id: 'age',
-          label: '年紀',
-          data_type: 'number'
-        }]
-      },
-      interaction: {
-        id: 'inter_action',
-        label: '互動狀態',
-        fields: [{
-          id: 'lexus',
-          label: 'LEXUS保有台數',
-          data_type: 'number'
-        }, {
-          id: 'toyota',
-          label: 'TOYOTA保有台數',
-          data_type: 'number'
-        }]
-      }
-    },
-    customer_profile: {
-      _none: {
-        fields: [{
-          id: 'last_visit_date',
-          label: '最後訪問日',
-          data_type: 'date', //for cassandra
-          default_value: Date.now()
-        }]
-      },
-      customer_profile: {
-        id: 'customer_profile',
-        label: '客戶屬性',
-        fields: [{
-          id: 'gender',
-          label: '性別',
-          data_type: 'refOption', //for cassandra
-          ref: 'gender',
-          default_value: 'M'
-        }, {
-          id: 'age',
-          label: '年紀',
-          data_type: 'number'
-        }]
-      },
-      interaction: {
-        id: 'inter_action',
-        label: '互動狀態',
-        fields: [{
-          id: 'lexus',
-          label: 'LEXUS保有台數',
-          data_type: 'number'
-        }, {
-          id: 'toyota',
-          label: 'TOYOTA保有台數',
-          data_type: 'number'
-        }]
-      }
-    },
-    vehicle_condition: {
-      _none: {
-        fields: [{
-          id: 'regular_recall',
-          label: '每年連續回廠定保',
+          type: 'field',
+          id: 'gender2',
+          label: '性別2',
           data_type: 'refOption',
           ref: 'booleanYN',
-          default_value: 'Y'
+          default_value: ['M']
         }, {
-          id: 'purpose',
-          label: '類別',
-          data_type: 'refOption',
-          ref: 'carPurpose',
-          default_value: '2'
+          type: 'field',
+          id: 'age',
+          label: '年紀',
+          data_type: 'number'
+        }]
+      }, {
+        type: 'folder',
+        id: 'inter_action',
+        label: '互動狀態',
+        fields: [{
+          type: 'field',
+          id: 'lexus',
+          label: 'LEXUS保有台數',
+          data_type: 'number'
+        }, {
+          type: 'field',
+          id: 'toyota',
+          label: 'TOYOTA保有台數',
+          data_type: 'number'
         }]
       }
-    },
-    details: {
-      point: {
+    ],
+    customer_profile: [
+      {
+        type: 'field',
+        id: 'last_visit_date',
+        label: '最後訪問日',
+        data_type: 'date',
+        default_value: Date.now()
+      }, {
+        type: 'folder',
+        id: 'customer_profile',
+        label: '客戶屬性',
+        fields: [{
+          type: 'field',
+          id: 'gender',
+          label: '性別',
+          data_type: 'refOption', //for cassandra
+          ref: 'gender',
+          default_value: ['M']
+        }, {
+          type: 'field',
+          id: 'age',
+          label: '年紀',
+          data_type: 'number'
+        }]
+      }, {
+        type: 'field',
+        id: 'first_visit_date2',
+        label: '初次訪問日',
+        data_type: 'date',
+        default_value: Date.now()
+      }, {
+        id: 'inter_action',
+        label: '互動狀態',
+        fields: [{
+          id: 'lexus',
+          label: 'LEXUS保有台數',
+          data_type: 'number'
+        }, {
+          id: 'toyota',
+          label: 'TOYOTA保有台數',
+          data_type: 'number'
+        }]
+      }
+    ],
+    vehicle_condition: [
+      {
+        type: 'field',
+        id: 'regular_recall',
+        label: '每年連續回廠定保',
+        data_type: 'refOption',
+        ref: 'booleanYN',
+        default_value: ['Y']
+      }, {
+        type: 'field',
+        id: 'purpose',
+        label: '類別',
+        data_type: 'refOption',
+        ref: 'carPurpose',
+        default_value: ['2']
+      }
+    ],
+    details: [
+      {
+        type: 'folder',
         id: 'point',
         label: '點數明細',
         fields: [{
+          type: 'field',
           id: 'exchange_date',
           label: '兌換日期',
           default_value: Date.now(),
           data_type: 'date'
         }, {
+          type: 'field',
           id: 'exchange_price',
           label: '兌換金額',
           default_value: 2,
           data_type: 'number'
         }]
-      },
-      insurance: {
-        id: 'point',
+      }, {
+        type: 'folder',
+        id: 'point2',
         label: '點數明細',
         fields: [{
-          id: 'exchange_date',
+          type: 'field',
+          id: 'exchange_date2',
           label: '兌換日期',
           default_value: Date.now(),
           data_type: 'date'
         }, {
-          id: 'exchange_price',
+          type: 'field',
+          id: 'exchange_price2',
           label: '兌換金額',
           default_value: 2,
           data_type: 'number'
         }]
       }
-    },
-    footprint: {
-      vehicle: {
+    ],
+    fingerprint: [
+      {
+        type: 'field',
         id: 'vehicle',
         label: '足跡',
         fields: [{
@@ -136,16 +158,18 @@ export default {
           default_value: 10,
           data_type: 'number',
         }, {
+          type: 'field',
           id: 'calculation',
           label: '購車試算',
           default_value: 5,
           data_type: 'number',
         }]
       }
-    }
+    ],
   },
-  tag_pools: {
-    event: {
+  tag_pools: [
+    {
+      type: 'folder',
       id: 'event',
       label: '活動名單標籤',
       tags: [{
@@ -155,8 +179,7 @@ export default {
         id: 234,
         label: '2017TOYOTA玩具愛分享'
       }]
-    },
-    media: {
+    }, {
       id: 'media',
       label: '自有媒體標籤',
       tags: [{
@@ -166,8 +189,7 @@ export default {
         id: 567,
         label: 'Altis'
       }]
-    },
-    interesting: {
+    }, {
       id: 'interesting',
       label: '興趣標籤',
       tags: [{
@@ -178,41 +200,41 @@ export default {
         label: '頭又大'
       }]
     }
-  },
+  ],
   criteria: {
     preferred_target: [
       { //自訂名單下載
-        key: shortid.generate(),
-        type: 'combo',  //combo, refDetails, field, bundle, tag, footprint
+        uuid: shortid.generate(),
+        type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
         operator: 'or',  //and, or, eq, ne, lt, le, gt, ge, not
         criteria: [{
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'field',
           cate: null,
-          id: 'last_visit_date',
-          label: '最近訪問日',
+          field_id: 'last_visit_date',
+          field_label: '最近訪問日',
           value: Date.now(),
           data_type: 'date',
           operator: 'lt'
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'bundle',
           operator: 'and',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
             cate: 'customer_profile',
-            id: 'age',
-            label: '年紀',
+            field_id: 'age',
+            field_label: '年紀',
             value: 40,
             data_type: 'number',
             operator: 'lt'
           }, {
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
             cate: 'interaction',
-            id: 'toyota',
-            label: 'TOYOTA保有台數',
+            field_id: 'toyota',
+            field_label: 'TOYOTA保有台數',
             value: 2,
             data_type: 'number',
             operator: 'gt'
@@ -224,37 +246,37 @@ export default {
       { //顧客屬性條件
         consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
         criteria: {
-          key: shortid.generate(),
-          type: 'combo',  //combo, refDetails, field, bundle, tag, footprint
+          uuid: shortid.generate(),
+          type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
           operator: 'or',  //and, or, eq, ne, lt, le, gt, ge, not
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
             cate: null,
-            id: 'last_visit_date',
-            label: '最近訪問日',
+            field_id: 'last_visit_date',
+            field_label: '最近訪問日',
             value: Date.now(),
             data_type: 'date',
             operator: 'lg'
           }, {
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'bundle',
             operator: 'and',
             criteria: [{
-              key: shortid.generate(),
+              uuid: shortid.generate(),
               type: 'field',
               cate: 'customer_profile',
-              id: 'age',
-              label: '年紀',
+              field_id: 'age',
+              field_label: '年紀',
               value: 40,
               data_type: 'number',
               operator: 'lt'
             }, {
-              key: shortid.generate(),
+              uuid: shortid.generate(),
               type: 'field',
               cate: 'interaction',
-              id: 'toyota',
-              label: 'TOYOTA保有台數',
+              field_id: 'toyota',
+              field_label: 'TOYOTA保有台數',
               value: 2,
               data_type: 'number',
               operator: 'gt'
@@ -265,47 +287,47 @@ export default {
     ], //顧客屬性條件 end
     vehicle_condition: [
       {  //車輛屬性資料
-        key: shortid.generate(),
+        uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'field',
-          id: 'regular_recall',
-          label: '每年連續回廠定保',
-          value: 'Y',
+          field_id: 'regular_recall',
+          field_label: '每年連續回廠定保',
+          value: ['Y'],
           data_type: 'refOption',
           value_label: '是',
           operator: 'eq'
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'field',
-          id: 'purpose',
-          label: '類別',
-          value: '2',
+          field_id: 'purpose',
+          field_label: '類別',
+          value: ['2'],
           data_type: 'refOption',
           value_label: '一般自用',
           operator: 'gt'
         }]
       }, {
-        key: shortid.generate(),
+        uuid: shortid.generate(),
         type: 'combo',
         operator: 'not',
         criteria: [{
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'field',
-          id: 'regular_recall',
-          label: '每年連續回廠定保',
-          value: 'Y',
+          field_id: 'regular_recall',
+          field_label: '每年連續回廠定保',
+          value: ['Y'],
           data_type: 'refOption',
           value_label: '是',
           operator: 'eq'
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'field',
-          id: 'purpose',
-          label: '類別',
-          value: '1',
+          field_id: 'purpose',
+          field_label: '類別',
+          value: ['1'],
           data_type: 'refOption',
           value_label: '一般自用',
           operator: 'gt'
@@ -314,74 +336,74 @@ export default {
     ],  //車輛屬性資料 end
     details: [
       { //明細資料指定條件
-        key: shortid.generate(),
+        uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'refDetails',
           operator: 'and',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_date',
-            label: '兌換日期',
+            field_id: 'exchange_date',
+            field_label: '兌換日期',
             value: Date.now(),
             data_type: 'date',
             operator: 'ge'
           }, {
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_price',
-            label: '兌換金額',
+            field_id: 'exchange_price',
+            field_label: '兌換金額',
             value: 2,
             data_type: 'number',
             operator: 'ge'
           }]
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'refDetails',
           operator: 'or',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_date',
-            label: '兌換日期',
+            field_id: 'exchange_date',
+            field_label: '兌換日期',
             value: Date.now(),
             data_type: 'date',
             operator: 'ge'
           }, {
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_price',
-            label: '兌換金額',
+            field_id: 'exchange_price',
+            field_label: '兌換金額',
             value: 2,
             data_type: 'number',
             operator: 'ge'
           }]
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'refDetails',
           operator: 'not',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_date',
-            label: '兌換日期',
+            field_id: 'exchange_date',
+            field_label: '兌換日期',
             value: Date.now(),
             data_type: 'date',
             operator: 'ge'
           }, {
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             type: 'field',
-            id: 'exchange_price',
-            label: '兌換金額',
+            field_id: 'exchange_price',
+            field_label: '兌換金額',
             value: 2,
             data_type: 'number',
             operator: 'ge'
@@ -391,78 +413,78 @@ export default {
     ],
     tags: [
       { //標籤篩選
-        key: shortid.generate(),
+        uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'tag',
           operator: 'or',
           ref: 'event',
           ref_label: '活動名單標籤',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 123,
             tagLabel: '2016TOYOTA玩具愛分享'
           },{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 234,
             tagLabel: '2017TOYOTA玩具愛分享'
           }]
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'tag',
           operator: 'and',
           ref: 'media',
           ref_label: '自有媒體標籤',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 456,
             tagLabel: 'Camery'
           },{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 567,
             tagLabel: 'Altis'
           }]
         }, {
-          key: shortid.generate(),
+          uuid: shortid.generate(),
           type: 'tag',
           operator: 'not',
           ref: 'interesting',
           ref_label: '興趣標籤',
           criteria: [{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 678,
             tagLabel: '拉屎菌'
           },{
-            key: shortid.generate(),
+            uuid: shortid.generate(),
             tagId: 789,
             tagLabel: '頭又大'
           }]
         }]
       },   //標籤篩選 end
     ],
-    footprint: [
+    fingerprint: [
       {
-        key: shortid.generate(),
+        uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          key: shortid.generate(),
-          type: 'footprint',
+          uuid: shortid.generate(),
+          type: 'fingerprint',
           operator: 'gt',
-          id: 'product',
-          label: '車款',
+          field_id: 'product',
+          field_label: '車款',
           value: 10,
           data_type: 'number',
           periodFrom: Date.now(),
           periodTo: Date.now()
         }, {
-          key: shortid.generate(),
-          type: 'footprint',
+          uuid: shortid.generate(),
+          type: 'fingerprint',
           operator: 'gt',
-          id: 'calculation',
-          label: '購車試算',
+          field_id: 'calculation',
+          field_label: '購車試算',
           value: 5,
           data_type: 'number',
           periodFrom: Date.now(),
@@ -514,6 +536,17 @@ export default {
       optCode: 'N',
       label: '否',
       seq: '2d'
+    }],
+    gender: [{
+      refCode: 'gender',
+      optCode: 'M',
+      label: '男',
+      seq: '1'
+    }, {
+      refCode: 'gender',
+      optCode: 'F',
+      label: '女',
+      seq: '2'
     }]
   }
 };

@@ -4,24 +4,37 @@ import CriteriaDetailBundle from './CriteriaDetailBundle';
 
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
-    super(props, 'combo');
+    super(props, {
+      type: 'combo'
+    });
   }
 
-  componentWillUnmount() {
-    console.log('CriteriaComboBundle: componentWillUnmount', this.props.criteria.key);
+  componentWillUnmount(nextProps, nextState) {
+    console.log('CriteriaComboBundle: componentWillUnmount', nextState);
   };
 
-  BundleContent(criteria, mapToProps) {
-    //console.log('CriteriaComboBundle criteria.type: ', criteria.type);
+  ChildCriteria(criteria) {
     switch(criteria.type) {
       case 'combo':
-        return <CriteriaComboBundle key={criteria.key} criteria={criteria} {...mapToProps}/>;
+        return <CriteriaComboBundle key={criteria.uuid} {...this.props}
+                                    criteria={criteria}
+                                    ref={(e) => {
+                                      e && this.criteriaComponents.push(e);
+                                    }}/>;
       case 'bundle':
-        return <CriteriaBundle key={criteria.key} criteria={criteria} {...mapToProps}/>;
+        return <CriteriaBundle key={criteria.uuid} {...this.props}
+                               criteria={criteria}
+                               ref={(e) => {
+                                 e && this.criteriaComponents.push(e);
+                               }}/>;
       case 'refDetails':
-        return <CriteriaDetailBundle key={criteria.key} criteria={criteria} {...mapToProps}/>;
+        return <CriteriaDetailBundle key={criteria.uuid} {...this.props}
+                                     criteria={criteria}
+                                     ref={(e) => {
+                                       e && this.criteriaComponents.push(e);
+                                     }}/>;
       default:
-        return super.BundleContent(criteria, mapToProps);
+        return super.ChildCriteria(criteria);
     }
   };
 
@@ -29,10 +42,20 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="submit" className="btn btn-warning"><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
-          <button type="submit" className="btn btn-warning"><i className="fa fa-plus" aria-hidden="true"/>加條件組合</button>
+          <button type="button" className="btn btn-warning" onClick={() => {
+            this.props.addCriteriaField(this.setCriteria.bind(this));
+          }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
+          <button type="button" className="btn btn-warning" onClick={() => {
+            this.setState((prevState) => {
+              return Object.assign({}, prevState, {
+                criteria: prevState.criteria.concat(this.getInitialState())
+              })
+            })
+          }}><i className="fa fa-plus" aria-hidden="true"/>加條件組合</button>
         </div>
       );
     }
   };
+
+  addCriteriaBundle() {}
 };

@@ -1,18 +1,32 @@
 import React from 'react';
 import {find} from 'lodash';
 import moment from 'moment';
-import {default as constants} from '../utils/constants';
+import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
+
+const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
+  eq: '=',
+  ne: '≠',
+  lt: '<',
+  le: '<=',
+  gt: '>',
+  ge: '>=',
+  in: '無資料',
+  nn: '有資料'
+});
 
 export default class CriteriaField extends React.PureComponent {
   constructor(props) {
     super(props);
     //this.state = Object.assign({}, props.criteria);
+
+    this.OPERATOR_DICT = OPERATOR_DICT;
     /**
      * {
+          uuid: 'xdsfa',
           type: 'field',
           cate: null,
-          id: 'last_visit_date',
-          label: '最近訪問日',
+          field_id: 'last_visit_date',
+          field_label: '最近訪問日',
           value: Date.now(),
           data_type: 'date',
           operator: 'lt'
@@ -20,8 +34,15 @@ export default class CriteriaField extends React.PureComponent {
      */
   }
 
+  componentWillMount() {
+    let _this = this;
+    _this.getCriteria = () => {
+      return _this.props.criteria;
+    };
+  };
+
   componentWillUnmount() {
-    console.log('CriteriaField: componentWillUnmount: ', this.props.criteria.key);
+    console.log('CriteriaField::componentWillUnmount: ', this.props.criteria.uuid);
   };
 
   render() {
@@ -32,16 +53,17 @@ export default class CriteriaField extends React.PureComponent {
     return (
       <div className="con-option">
         <div className="form-group">
-          <input type="text" className="form-control" id="" value={this.props.refFields[criteria.id].label} disabled={true}/>
+          <input type="text" className="form-control" id="" value={this.props.refFields[criteria.field_id].label} disabled={true}/>
         </div>
         <div className="form-group">
-          <input type="text" className="form-control judgment" id="" defaultValue={constants.PREFERRED_OPERATOR[criteria.operator]} disabled={true}/>
+          <input type="text" className="form-control judgment" id="" defaultValue={OPERATOR_DICT[criteria.operator]} disabled={true}/>
         </div>
         <div className="form-group">
-          <FieldValue value={criteria.value} field={this.props.refFields[criteria.id]} refOptions={this.props.refOptions}/>
+          <FieldValue value={criteria.value} field={this.props.refFields[criteria.field_id]} refOptions={this.props.refOptions}/>
         </div>
         {(this.props.isPreview)? null: <i className="fa fa-times" aria-hidden="true" onClick={() => {
-          this.props.removeCriteria(criteria.key);
+          console.log('CriteriaField::onClick::removeCriteria: ', criteria.uuid);
+          this.props.removeCriteria(criteria.uuid);
         }}/>}
       </div>
     );
@@ -63,12 +85,22 @@ class FieldValue extends React.PureComponent {
     // console.log('field.ref: ', field.ref);
     // console.log('refOptions: ', refOptions);
     // console.log('refOptions[field.ref]: ', refOptions[field.ref]);
+    if(!value)
+      return null;
+
     switch (field.data_type) {
       case 'number':
       case 'text':
         return value;
       case 'refOption':
-        return find(refOptions[field.ref], {
+        let refDict = refOptions[field.ref];
+        return value.map((v) => {
+          return '[' + find(refDict, {
+            optCode: v
+          }).label + ']';
+        }).join(', ')
+
+        find(refOptions[field.ref], {
           optCode: value
         }).label;
       case 'date':

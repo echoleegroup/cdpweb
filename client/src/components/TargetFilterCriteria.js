@@ -10,7 +10,6 @@ const _folding = 'preferred_target';
 export default class PreferredTargetCriteria extends CriteriaBase {
   constructor(props) {
     super(props, {
-      _title: '名單條件設定',
       _folding: _folding
     });
   };
@@ -22,4 +21,12 @@ export default class PreferredTargetCriteria extends CriteriaBase {
   render() {
     return super.render();
   };
+
+  MainTitle() {
+    return <h2>名單條件設定</h2>;
+  }
+
+  SubTitle() {
+    return <div/>;
+  }
 };
