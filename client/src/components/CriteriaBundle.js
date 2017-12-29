@@ -31,17 +31,34 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillMount() {
-    let _this = this;
-    _this.getCriteria = () => {
-      let subCrits = _this.criteriaComponents.reduce((collector, comp) => {
+    this.getCriteria = () => {
+      let subCrits = this.criteriaComponents.reduce((collector, comp) => {
         let crite = comp.getCriteria();
         return isEmpty(crite)? collector: collector.concat(crite);
       }, []);
 
-      return isEmpty(subCrits)? {}: Object.assign(_this.state, {
+      return isEmpty(subCrits)? {}: Object.assign(this.state, {
         criteria: subCrits
       });
     };
+
+    this.setCriteria = (criteria) => {
+      console.log('CriteriaBundle:setCriteria: ', criteria);
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          criteria: prevState.criteria.concat(criteria)
+        });
+      });
+    };
+
+    this.removeCriteria = (key) => {
+      console.log('CriteriaBundle:removeCriteria: ', this.state.uuid);
+      this.setState({
+        criteria: reject(this.state.criteria, {
+          uuid: key
+        })
+      });
+    }
   };
 
   componentWillUpdate(nextProps, nextState) {
@@ -80,10 +97,11 @@ export default class CriteriaBundle extends React.PureComponent {
 
   CriteriaOperatorSelector() {
     return (
-      <select className="form-control" defaultValue={this.state.operator} disabled={this.props.isPreview} onChange={(e) => {
-        this.setState(Object.assign({}, this.state, {
-          operator: e.target.value
-        }));
+      <select className="form-control" defaultValue={this.state.operator} disabled={this.props.isPreview}
+              onChange={(e) => {
+                this.setState(Object.assign({}, this.state, {
+                  operator: e.target.value
+                }));
       }}>
         {
           Object.keys(this.OPERATOR_DICT).map((key) => {
@@ -111,7 +129,7 @@ export default class CriteriaBundle extends React.PureComponent {
       case 'field':
         return <CriteriaField key={criteria.uuid} {...this.props}
                               criteria={criteria}
-                              removeCriteria={this.removeCriteria.bind(this)}
+                              removeCriteria={this.removeCriteria}
                               ref={(e) => {
                                 e && this.criteriaComponents.push(e);
                               }}/>;
@@ -125,7 +143,7 @@ export default class CriteriaBundle extends React.PureComponent {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
           <button type="button" className="btn btn-warning" onClick={() => {
-            this.props.addCriteriaField(this.setCriteria.bind(this));
+            this.props.addCriteriaField(this.setCriteria);
           }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
         </div>
       );

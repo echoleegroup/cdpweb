@@ -43,7 +43,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
           <button type="button" className="btn btn-warning" onClick={() => {
-            this.props.addCriteriaField(this.setCriteria.bind(this));
+            this.props.addCriteriaField(this.setCriteria);
           }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
           <button type="button" className="btn btn-warning" onClick={() => {
             this.setState((prevState) => {
@@ -56,6 +56,4 @@ export default class CriteriaComboBundle extends CriteriaBundle {
       );
     }
   };
-
-  addCriteriaBundle() {}
 };
