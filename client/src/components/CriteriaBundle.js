@@ -80,7 +80,11 @@ export default class CriteriaBundle extends React.PureComponent {
 
   CriteriaOperatorSelector() {
     return (
-      <select className="form-control" defaultValue={this.state.operator} disabled={this.props.isPreview}>
+      <select className="form-control" defaultValue={this.state.operator} disabled={this.props.isPreview} onChange={(e) => {
+        this.setState(Object.assign({}, this.state, {
+          operator: e.target.value
+        }));
+      }}>
         {
           Object.keys(this.OPERATOR_DICT).map((key) => {
             return <option value={key} key={key}>{this.OPERATOR_DICT[key]}</option>;

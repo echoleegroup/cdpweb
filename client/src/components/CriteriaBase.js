@@ -3,9 +3,9 @@ import Loader from 'react-loader';
 import {assign, reduce} from 'lodash';
 import {nfcall, all} from 'q';
 import CriteriaFieldPicker from './CriteriaFieldPicker';
-import CriteriaComboBundle from './CriteriaComboBundle';
+import CriteriaPreview from './CriteriaPreview';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
-import CriteriaComboBundleList from './CriteriaComboBundleList';
+import CriteriaEdit from './CriteriaEdit';
 import {default as _test} from '../../test/preferred-criteria-test'
 
 /**
@@ -24,14 +24,16 @@ export default class CriteriaBase extends React.PureComponent {
     //this.refOptions = _test.refs;
     //this.criteria = [];
     this.options = Object.assign({
-      _folding: ''
+      _folding: '',
+      main_title: '',
+      sub_title: ''
     }, options);
   };
 
-  componentDidMount() {
+  getPreparingData(options) {
     all([
-      nfcall(getCriteria, this.options._folding),
-      nfcall(getFoldingFieldData, this.options._folding)
+      nfcall(getCriteria, options._folding),
+      nfcall(getFoldingFieldData, options._folding)
     ]).spread((criteria, foldingFieldsInfo) => {
       this.criteria = criteria;
       this.foldingFields = foldingFieldsInfo.folding_fields;
@@ -39,10 +41,26 @@ export default class CriteriaBase extends React.PureComponent {
       this.refFields = getRefFields(this.foldingFields);
       this.refFolds = getRefFolders(this.foldingFields);
     }).finally(() => {
+      this.mapToProps = {
+        foldingFields: this.foldingFields,
+        refOptions: this.refOptions,
+        refFields: this.refFields,
+        refFolds: this.refFolds,
+        moduleOptions: this.options,
+        addCriteriaField: (callback) => {
+          console.log('CriteriaBase::addCriteriaField');
+          this.fieldPicker.openModal(callback);
+        }
+      };
+
       this.setState({
         isLoaded: true
       });
     });
+  }
+
+  componentWillMount() {
+    this.getPreparingData(this.options);
   };
 
   componentWillUpdate() {
@@ -50,111 +68,43 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   render() {
-    const switchToEditMode = () => {
-      this.setState({
-        isPreview: false
-      });
-    };
+    let ContentView = (!this.state.isLoaded)? null:
+      (this.state.isPreview)?
+        (this.criteria.length === 0)?
+          <CriteriaPreviewEmpty {...this.mapToProps}
+                                doEdit={() => {
+                                  this.setState({
+                                    isPreview: false
+                                  });
+                                }}/>:
+          <CriteriaPreview {...this.mapToProps}
+                           isPreview={this.state.isPreview}
+                           criteria={this.criteria}
+                           doEdit={() => {
+                             this.setState({
+                               isPreview: false
+                             });
+                           }}/>
+        :
+        <CriteriaEdit {...this.mapToProps}
+                      isPreview={this.state.isPreview}
+                      criteria={this.criteria}
+                      doPreview={(criteria) => {
+                        this.criteria = criteria;
+                        this.setState({
+                          isPreview: true
+                        })
+                      }}/>;
+
     return (
       <Loader loaded={this.state.isLoaded}>
-        {(() => {
-          if (!this.criteria) {
-            return (
-              <div/>
-            );
-          } else if (this.state.isPreview && this.criteria.length === 0) {
-            /** use PreferredTargetCriteriaPreviewEmpty to show empty preview data */
-            return <CriteriaPreviewEmpty switchToEditMode={switchToEditMode}/>;
-          } else {
-            let className = 'condition';
-            if (!this.state.isPreview ) {
-              className = 'condition edit';
-            }
-            /**
-             * DO NOT user functional component, which would enforce unmount/re-mount the component
-             */
-            return (
-              <div className="table_block">
-                {this.MainTitle()}
-                {this.SubTitle()}
-                <div className={className}>
-                  <form className="form-horizontal">
-                    <div className="level form-inline">
-                      {this.CriteriaNonEmptyContentRender()}
-                    </div>
-                  </form>
-                </div>
-                {this.ControlButtonRender()}
-              </div>
-            );
-          }
-        })()}
+        {ContentView}
         {/*<!-- 新增條件組合 -->*/}
         <CriteriaFieldPicker foldingFields={this.foldingFields} refOptions={this.refOptions} ref={(e) => {
           this.fieldPicker = e;
         }}/>
       </Loader>
     );
-  };
-
-  MainTitle() {
-    return <div/>;
-  }
-
-  SubTitle() {
-    return <div/>;
-  }
-
-  /** Here, if criteria is empty, it must be edit mode,
-   * coz empty data in preview mode would rendered and returned before.
-   * */
-  CriteriaNonEmptyContentRender() {
-    const mapToProps = {
-      foldingFields: this.foldingFields,
-      refOptions: this.refOptions,
-      refFields: this.refFields,
-      refFolds: this.refFolds,
-      addCriteriaField: (callback) => {
-        console.log('CriteriaBase::addCriteriaField');
-        this.fieldPicker.openModal(callback);
-      }
-    };
-
-    return (
-      <CriteriaComboBundleList
-        {...mapToProps}
-        isPreview={this.state.isPreview}
-        criteria={this.criteria}
-        ref={(e) => {
-          this.criteriaWrapper = e;
-        }}/>
-    );
-  }
-
-  ControlButtonRender() {
-    if (this.state.isPreview) {
-      return (
-        <div className="btn-block center-block">
-          <button type="submit" className="btn btn-lg btn-default" onClick={() => {
-            this.setState({
-              isPreview: false
-            });
-          }}>編輯條件</button>
-        </div>
-      );
-    } else {
-      return (
-        <div className="btn-block center-block">
-          <button type="button" className="btn btn-lg btn-default" onClick={() => {
-            this.criteria = this.criteriaWrapper.getCriteria();
-            console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
-            this.setState({
-              isPreview: true
-            });
-          }}>完成編輯</button>
-        </div>
-      );
-    }
   };
 };
 

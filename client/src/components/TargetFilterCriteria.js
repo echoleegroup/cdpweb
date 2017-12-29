@@ -10,23 +10,9 @@ const _folding = 'preferred_target';
 export default class PreferredTargetCriteria extends CriteriaBase {
   constructor(props) {
     super(props, {
-      _folding: _folding
+      _folding: _folding,
+      main_title: '名單條件設定',
+      //sub_title: ''
     });
   };
-
-  componentDidMount() {
-    super.componentDidMount();
-  };
-
-  render() {
-    return super.render();
-  };
-
-  MainTitle() {
-    return <h2>名單條件設定</h2>;
-  }
-
-  SubTitle() {
-    return <div/>;
-  }
 };
