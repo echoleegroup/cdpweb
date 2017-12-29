@@ -16,7 +16,7 @@ module.exports = (app) => {
   console.log('[FeedDataRoute::create] Creating FeedData route.');
   const router = express.Router();
 
-  router.get('/FeedDataSearch', [middleware.check(), middleware.checkViewPermission(permission.FEED_DATA_LIST)], function (req, res) {
+  router.get('/search', [middleware.check(), middleware.checkViewPermission(permission.FEED_DATA_LIST)], function (req, res) {
     var funcCatge;
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
@@ -46,7 +46,7 @@ module.exports = (app) => {
 
   });
 
-  router.get('/Download', [middleware.check(), middleware.checkDownloadPermission(permission.FEED_DATA_LIST)], function (req, res) {
+  router.get('/download', [middleware.check(), middleware.checkDownloadPermission(permission.FEED_DATA_LIST)], function (req, res) {
     var listid = req.query.ListID || '';
     var datasource = req.query.datasource || '';
     downloadService.getFilePath(listid, datasource, function (err, result) {
@@ -56,7 +56,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/FeedDataList', [middleware.check(), middleware.checkDownloadPermission(permission.FEED_DATA_LIST)], function (req, res) {
+  router.post('/list', [middleware.check(), middleware.checkDownloadPermission(permission.FEED_DATA_LIST)], function (req, res) {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
@@ -162,7 +162,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/FeedDataUploadAct', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT), upload.single('uploadingFile')], function (req, res) {
+  router.post('/outdata/upload_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT), upload.single('uploadingFile')], function (req, res) {
     var client = req.body.client || '';
     var optradio = req.body.optradio || '';
     var outerListName = req.body.outerListName || '';
@@ -282,7 +282,7 @@ module.exports = (app) => {
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
-              res.redirect("/FeedData/FeedDataEdit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+              res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
             }
             checkandinsert(i + 1);
           }
@@ -298,7 +298,7 @@ module.exports = (app) => {
                   + currentdate.getHours() + ":"
                   + currentdate.getMinutes() + ":"
                   + currentdate.getSeconds();
-                res.redirect("/FeedData/FeedDataEdit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
               }
               checkandinsert(i + 1);
             });
@@ -311,7 +311,7 @@ module.exports = (app) => {
 
   });
 
-  router.get('/FeedDataEdit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
+  router.get('/outdata/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
     var outerListID = req.query.outerListID || '';
     var successnum = req.query.successnum || '';
     var errormsg = req.query.errormsg || '';
@@ -355,7 +355,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/FeedDataUpload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
+  router.get('/outdata/upload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
     var funcCatge;
     var adcount = 0;
     var updUser, updTime;
@@ -384,7 +384,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/addFeedDataTag', function (req, res) {
+  router.post('/outdata/tag/add', function (req, res) {
     var ListID = req.body.ListID;
     var newtag = req.body.newtag;
     var issame = '';
@@ -433,7 +433,7 @@ module.exports = (app) => {
 
   });
 
-  router.post('/delFeedDataTag', function (req, res) {
+  router.post('/outdata/tag/del', function (req, res) {
     var ListID = req.body.ListID;
     var tagID = req.body.tagID;
     db.query("delete FROM cu_OuterListTag where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {

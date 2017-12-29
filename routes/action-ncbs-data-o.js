@@ -15,7 +15,7 @@ module.exports = (app) => {
   console.log('[NCBSDataRoute::create] Creating NCBSData route.');
   const router = express.Router();
 
-  router.post('/NCBSDataUploadAct', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS), upload.single('uploadingFile')], function (req, res) {
+  router.post('/NCBS/upload_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS), upload.single('uploadingFile')], function (req, res) {
     var client = req.body.client || '';
     var ncbsYear = req.body.ncbsYear || '';
     var ncbsQus = req.body.ncbsQus || '';
@@ -112,7 +112,7 @@ module.exports = (app) => {
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
-              res.redirect("/NCBSData/NCBSDataEdit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+              res.redirect("/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
             }
             checkandinsert(i + 1);
           }
@@ -154,7 +154,7 @@ module.exports = (app) => {
                     + currentdate.getHours() + ":"
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
-                  res.redirect("/NCBSData/NCBSDataEdit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                  res.redirect("/feeddata/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
                 }
                 checkandinsert(i + 1);
               }
@@ -171,7 +171,7 @@ module.exports = (app) => {
                       + currentdate.getMinutes() + ":"
                       + currentdate.getSeconds();
 
-                    res.redirect("/NCBSData/NCBSDataEdit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                    res.redirect("/feeddata/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
                   }
                   checkandinsert(i + 1);
                 });
@@ -185,7 +185,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/NCBSDataEdit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
+  router.get('/NCBS/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var ncbsID = req.query.ncbsID || '';
     var successnum = req.query.successnum || '';
     var errormsg = req.query.errormsg || '';
@@ -228,7 +228,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/NCBSDataUpload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
+  router.get('/NCBS/upload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;

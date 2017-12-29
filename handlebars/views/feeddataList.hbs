@@ -10,7 +10,7 @@
 	<!-- table set Start -->
 	<div class="table_block table-responsive">
 		<h2>實體活動清單</h2>
-		<a href="/FeedData/FeedDataSearch" title="重新查詢">
+		<a href="/feeddata/search" title="重新查詢">
 			<button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
 		</a>
 		<table class="table table-hover">
@@ -63,7 +63,7 @@
 		x += "<td>" + o[i].feeddata[0].ListName + "</td>";
 		x += "<td>" + o[i].feeddata[0].ListSdt + "~" + o[i].feeddata[0].ListEdt + "</td>";
 		x += "<td>" + o[i].feeddata[0].detcount + "</td>";
-		x += '<td><a href="/FeedData/Download?ListID=' + o[i].feeddata[0].ListID + '&datasource=' + datasource + '" target="_blank">原始檔案下載</a></td>';
+		x += '<td><a href="/feeddata/download?ListID=' + o[i].feeddata[0].ListID + '&datasource=' + datasource + '" target="_blank">原始檔案下載</a></td>';
 		x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td></tr>';
 
 		x += '<tr class="sub_info"><td colspan="9">';
@@ -90,7 +90,7 @@
 	});
 	function deltag(ListID, tagID) {
 		$.ajax({
-			url: "/FeedData/delFeedDataTag",
+			url: "/feeddata/outdata/tag/del",
 			data: {
 				"ListID": ListID,
 				"tagID": tagID
@@ -107,7 +107,7 @@
 		var index = "newtag" + ListID.toString();
 		var newtag = document.getElementById(index).value;
 		$.ajax({
-			url: "/FeedData/addFeedDataTag",
+			url: "/feeddata/outdata/tag/add",
 			data: {
 				"ListID": ListID,
 				"newtag": newtag

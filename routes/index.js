@@ -27,8 +27,10 @@ module.exports = (app) => {
   
   app.use('/actad', require('./action-event-page-o')(app));
   app.use('/actad', require('./action-event-ad-o')(app));
-  app.use('/FeedData', require('./action-feed-data-o')(app));
-  app.use('/NCBSData', require('./action-ncbs-data-o')(app));
+
+  app.use('/feeddata', require('./action-feed-data-o')(app));
+  app.use('/feeddata', require('./action-ncbs-data-o')(app));
+  
   app.use('/taanarpt_rult', require('./action-taanarpt-rult-o')(app));
   //hook for restful api
   app.use('/api/model', require('./api/api-model')(app));
