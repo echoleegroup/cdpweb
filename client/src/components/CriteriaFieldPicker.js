@@ -42,7 +42,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaFieldPicker::componentWillUpdate: ', nextState);
+    // console.log('CriteriaFieldPicker::componentWillUpdate: ', nextState);
   };
 
   openModal(callback) {
@@ -68,13 +68,13 @@ export default class CriteriaFieldPicker extends React.PureComponent {
       value: data.value,
       value_label: data.value_label
     });
-    console.log('CriteriaFieldPicker::confirmCriteria: ', c);
+    // console.log('CriteriaFieldPicker::confirmCriteria: ', c);
     this.responseCriteria(c);
     this.closeModal();
   };
 
   setCriteria(field) {
-    console.log('CriteriaFieldPicker::mapToProps::setCriteria: ', field);
+    // console.log('CriteriaFieldPicker::mapToProps::setCriteria: ', field);
     this.setState({
       type: field.type,
       field_id: field.id,
@@ -238,11 +238,11 @@ class FieldPicker extends React.PureComponent {
 class InputBase extends React.PureComponent {
   constructor(props) {
     super(props);
-    console.log('CriteriaInputBase::constructor: ', this.props.criteria.data_type);
+    // console.log('CriteriaInputBase::constructor: ', this.props.criteria.data_type);
   }
 
   componentWillUpdate() {
-    console.log('InputBase::componentWillUpdate');
+    // console.log('InputBase::componentWillUpdate');
   };
 
   getInputData() {
@@ -269,7 +269,7 @@ class TextInput extends InputBase {}
 class DateInput extends InputBase {
   getInputData() {
     let d = $(this.input).datepicker('getDate');
-    console.log('DateInput::getInputData: ', d);
+    // console.log('DateInput::getInputData: ', d);
     return {
       value: d? moment(d).utc().valueOf(): null
     };

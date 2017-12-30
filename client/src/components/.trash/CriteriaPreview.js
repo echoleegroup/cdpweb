@@ -1,12 +1,8 @@
 import React from 'react';
-import CriteriaView from './CriteriaView';
+import CriteriaView from '../CriteriaView';
 //import CriteriaPreviewEmpty from './CriteriaPreviewEmpty'
 
 export default class CriteriaPreview extends CriteriaView {
-  getBodyStyleClass() {
-    return 'condition';
-  };
-
   ControlButtonRender() {
     return (
       <div className="btn-block center-block">

@@ -1,11 +1,11 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {assign, reduce} from 'lodash';
+import {assign, reduce, isEmpty} from 'lodash';
 import {nfcall, all} from 'q';
+// import {fromJS} from 'immutable';
 import CriteriaFieldPicker from './CriteriaFieldPicker';
-import CriteriaPreview from './CriteriaPreview';
+import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
-import CriteriaEdit from './CriteriaEdit';
 import {default as _test} from '../../test/preferred-criteria-test'
 
 /**
@@ -43,12 +43,12 @@ export default class CriteriaBase extends React.PureComponent {
     }).finally(() => {
       this.mapToProps = {
         foldingFields: this.foldingFields,
+        moduleOptions: this.options,
         refOptions: this.refOptions,
         refFields: this.refFields,
         refFolds: this.refFolds,
-        moduleOptions: this.options,
         addCriteriaField: (callback) => {
-          console.log('CriteriaBase::addCriteriaField');
+          // console.log('CriteriaBase::addCriteriaField');
           this.fieldPicker.openModal(callback);
         }
       };
@@ -61,39 +61,56 @@ export default class CriteriaBase extends React.PureComponent {
 
   componentWillMount() {
     this.getPreparingData(this.options);
+
+    this.PreviewControlButtonRender = () => {
+      return (
+        <button type="button" className="btn btn-lg btn-default" onClick={() => {
+          this.setState({
+            isPreview: false
+          });
+        }}>編輯條件</button>
+      );
+    };
+
+    this.EditControlButtonRender = () => {
+      return (
+        <button type="button" className="btn btn-lg btn-default" onClick={() => {
+          this.criteria = this.editView.getCriteria();
+          console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
+          this.setState({
+            isPreview: true
+          })
+        }}>完成編輯</button>
+      );
+    };
   };
 
   componentWillUpdate() {
-    console.log('CriteriaBase::componentWillUpdate: ');
+    // console.log('CriteriaBase::componentWillUpdate: ');
   };
 
   render() {
     let ContentView = (!this.state.isLoaded)? null:
       (this.state.isPreview)?
-        (this.criteria.length === 0)?
+        isEmpty(this.criteria)?
           <CriteriaPreviewEmpty {...this.mapToProps}
-                                doEdit={() => {
-                                  this.setState({
-                                    isPreview: false
-                                  });
-                                }}/>:
-          <CriteriaPreview {...this.mapToProps}
+                                styleClass={'nocondition'}
+                                controlButtonRender={this.PreviewControlButtonRender}/>:
+          //Preview View
+          <CriteriaView {...this.mapToProps}
                            isPreview={this.state.isPreview}
+                           styleClass={'condition'}
                            criteria={this.criteria}
-                           doEdit={() => {
-                             this.setState({
-                               isPreview: false
-                             });
-                           }}/>
+                           controlButtonRender={this.PreviewControlButtonRender}/>
         :
-        <CriteriaEdit {...this.mapToProps}
+        //Edit View
+        <CriteriaView {...this.mapToProps}
                       isPreview={this.state.isPreview}
+                      styleClass={'condition edit'}
                       criteria={this.criteria}
-                      doPreview={(criteria) => {
-                        this.criteria = criteria;
-                        this.setState({
-                          isPreview: true
-                        })
+                      controlButtonRender={this.EditControlButtonRender}
+                      ref={(e) => {
+                        this.editView = e;
                       }}/>;
 
     return (

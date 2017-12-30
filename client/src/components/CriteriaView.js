@@ -9,9 +9,13 @@ export default class CriteriaView extends React.PureComponent {
     super(props);
   }
 
-  getBodyStyleClass() {
-    return null;
-  };
+  componentWillMount() {
+    this.getCriteria = () => {
+      let c = this.criteriaWrapper.getCriteria();
+      console.log('CriteriaView::getCriteria: ', c);
+      return c;
+    }
+  }
 
   render() {
     /**
@@ -21,20 +25,30 @@ export default class CriteriaView extends React.PureComponent {
       <div className="table_block">
         {this.MainTitle()}
         {this.SubTitle()}
-        <div className={this.getBodyStyleClass()}>
+        <div className={this.props.styleClass}>
           {this.CriteriaBody()}
         </div>
-        {this.ControlButtonRender()}
+        <div className="btn-block center-block">
+          {this.props.controlButtonRender()}
+        </div>
       </div>
     );
   };
 
   CriteriaBody() {
+    const mapToProps = {
+      isPreview: this.props.isPreview,
+      criteria: this.props.criteria,
+      refOptions: this.props.refOptions,
+      refFields: this.props.refFields,
+      refFolds: this.props.refFolds,
+      addCriteriaField: this.props.addCriteriaField
+    };
     return (
       <form className="form-horizontal">
         <div className="level form-inline">
           <CriteriaComboBundleList
-            {...this.props}
+            {...mapToProps}
             ref={(e) => {
               this.criteriaWrapper = e;
             }}/>
@@ -58,10 +72,4 @@ export default class CriteriaView extends React.PureComponent {
       return null;
     }
   }
-
-  ControlButtonRender() {
-    return (
-      <div/>
-    );
-  };
 }

@@ -35,14 +35,22 @@ export default class CriteriaField extends React.PureComponent {
   }
 
   componentWillMount() {
-    let _this = this;
-    _this.getCriteria = () => {
-      return _this.props.criteria;
+    console.log('CriteriaField: componentWillMount: ', this.props.criteria);
+
+    this.getCriteria = () => {
+      return this.props.criteria;
     };
+
+    this.props.collectCriteriaComponents(this.props.criteria.uuid, this);
+  };
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log('CriteriaField: componentWillUpdate: ', nextProps);
   };
 
   componentWillUnmount() {
-    console.log('CriteriaField::componentWillUnmount: ', this.props.criteria.uuid);
+    console.log('CriteriaField::componentWillUnmount: ', this.props.criteria);
+    this.props.removeCriteriaComponents(this.props.criteria.uuid);
   };
 
   render() {
@@ -62,8 +70,8 @@ export default class CriteriaField extends React.PureComponent {
           <FieldValue value={criteria.value} field={this.props.refFields[criteria.field_id]} refOptions={this.props.refOptions}/>
         </div>
         {(this.props.isPreview)? null: <i className="fa fa-times" aria-hidden="true" onClick={() => {
-          console.log('CriteriaField::onClick::removeCriteria: ', criteria.uuid);
-          this.props.removeCriteria(criteria.uuid);
+          // console.log('CriteriaField::onClick::removeCriteria: ', criteria.uuid);
+          this.props.removeCriteria(this.props.index);
         }}/>}
       </div>
     );
@@ -99,10 +107,6 @@ class FieldValue extends React.PureComponent {
             optCode: v
           }).label + ']';
         }).join(', ')
-
-        find(refOptions[field.ref], {
-          optCode: value
-        }).label;
       case 'date':
         return moment(value).format('YYYY/MM/DD');
       default:

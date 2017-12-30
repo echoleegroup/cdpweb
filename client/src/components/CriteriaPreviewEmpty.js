@@ -1,11 +1,7 @@
 import React from 'react';
-import CriteriaPreview from './CriteriaPreview';
+import CriteriaView from './CriteriaView';
 
-export default class CriteriaPreviewEmpty extends CriteriaPreview {
-  getBodyStyleClass() {
-    return 'nocondition';
-  };
-
+export default class CriteriaPreviewEmpty extends CriteriaView {
   CriteriaBody() {
     return (
       <p>無條件設定</p>
