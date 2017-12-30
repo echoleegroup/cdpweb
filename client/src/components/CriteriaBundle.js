@@ -35,7 +35,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillMount() {
-    console.log('CriteriaBundle: componentWillMount: ', this.state);
+    // console.log('CriteriaBundle: componentWillMount: ', this.state);
     this.criteriaComponents = {};
 
     this.collectCriteriaComponents = (uuid, component) => {
@@ -44,7 +44,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.removeCriteriaComponents = (uuid) => {
-      console.log('CriteriaBundle::removeCriteriaComponents: ', uuid);
+      // console.log('CriteriaBundle::removeCriteriaComponents: ', uuid);
       delete this.criteriaComponents[uuid];
       // console.log('CriteriaBundle::removeCriteriaComponents: ', component);
       // let index = indexOf(this.criteriaComponents, component);
@@ -54,14 +54,14 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.getCriteria = () => {
-      console.log('CriteriaBundle::getCriteria: ', this.criteriaComponents);
+      // console.log('CriteriaBundle::getCriteria: ', this.criteriaComponents);
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.getCriteria(); //immutable Map
         // console.log('CriteriaBundle::getCriteria::crite ', crite);
         return isEmpty(crite)? collector: collector.push(crite);
       }, List());
 
-      console.log('CriteriaBundle::getCriteria::subCrits ', subCrits);
+      // console.log('CriteriaBundle::getCriteria::subCrits ', subCrits);
       return (subCrits.size === 0)? {}: Object.assign({}, this.state, {
         criteria: subCrits
       });
@@ -90,7 +90,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaBundle: componentWillUpdate: ', nextState);
+    // console.log('CriteriaBundle: componentWillUpdate: ', nextState);
   };
 
   componentWillUnmount() {

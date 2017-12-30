@@ -76,7 +76,7 @@ export default class CriteriaBase extends React.PureComponent {
       return (
         <button type="button" className="btn btn-lg btn-default" onClick={() => {
           this.criteria = this.editView.getCriteria();
-          console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
+          // console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
           this.setState({
             isPreview: true
           })
@@ -90,32 +90,9 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   render() {
-    let ContentView = (!this.state.isLoaded)? null:
-      (this.state.isPreview)?
-        isEmpty(this.criteria)?
-          <CriteriaPreviewEmpty {...this.mapToProps}
-                                styleClass={'nocondition'}
-                                controlButtonRender={this.PreviewControlButtonRender}/>:
-          //Preview View
-          <CriteriaView {...this.mapToProps}
-                           isPreview={this.state.isPreview}
-                           styleClass={'condition'}
-                           criteria={this.criteria}
-                           controlButtonRender={this.PreviewControlButtonRender}/>
-        :
-        //Edit View
-        <CriteriaView {...this.mapToProps}
-                      isPreview={this.state.isPreview}
-                      styleClass={'condition edit'}
-                      criteria={this.criteria}
-                      controlButtonRender={this.EditControlButtonRender}
-                      ref={(e) => {
-                        this.editView = e;
-                      }}/>;
-
     return (
       <Loader loaded={this.state.isLoaded}>
-        {ContentView}
+        {this.ContentView()}
         {/*<!-- 新增條件組合 -->*/}
         <CriteriaFieldPicker foldingFields={this.foldingFields} refOptions={this.refOptions} ref={(e) => {
           this.fieldPicker = e;
@@ -123,6 +100,38 @@ export default class CriteriaBase extends React.PureComponent {
       </Loader>
     );
   };
+
+  ContentView() {
+    if (!this.state.isLoaded)
+      return null;
+
+    let props = {};
+    if(this.state.isPreview) {
+      if (isEmpty(this.criteria)) {
+        return <CriteriaPreviewEmpty {...this.mapToProps}
+                                     styleClass={'nocondition'}
+                                     controlButtonRender={this.PreviewControlButtonRender}/>
+      } else {
+        Object.assign(props, {
+          styleClass: 'condition',
+          controlButtonRender: this.PreviewControlButtonRender
+        });
+      }
+    } else {  //edit view
+      Object.assign(props, {
+        styleClass: 'condition edit',
+        controlButtonRender: this.EditControlButtonRender,
+        ref: (e) => {
+          this.editView = e;
+        }
+      });
+    }
+
+    return <CriteriaView {...this.mapToProps}
+                         {...props}
+                         isPreview={this.state.isPreview}
+                         criteria={this.criteria}/>
+  }
 };
 
 const getCriteria = (_folding, callback) => {

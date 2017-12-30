@@ -35,7 +35,7 @@ export default class CriteriaField extends React.PureComponent {
   }
 
   componentWillMount() {
-    console.log('CriteriaField: componentWillMount: ', this.props.criteria);
+    // console.log('CriteriaField: componentWillMount: ', this.props.criteria);
 
     this.getCriteria = () => {
       return this.props.criteria;
@@ -45,7 +45,7 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaField: componentWillUpdate: ', nextProps);
+    // console.log('CriteriaField: componentWillUpdate: ', nextProps);
   };
 
   componentWillUnmount() {

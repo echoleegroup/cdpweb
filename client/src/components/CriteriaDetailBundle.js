@@ -11,7 +11,7 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   }
 
   componentWillUnmount() {
-    // console.log('CriteriaDetailBundle: componentWillUnmount', this.props.uuid);
+    console.log('CriteriaDetailBundle: componentWillUnmount', this.props.uuid);
   };
 
   render() {

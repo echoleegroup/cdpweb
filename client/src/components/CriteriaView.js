@@ -12,7 +12,7 @@ export default class CriteriaView extends React.PureComponent {
   componentWillMount() {
     this.getCriteria = () => {
       let c = this.criteriaWrapper.getCriteria();
-      console.log('CriteriaView::getCriteria: ', c);
+      // console.log('CriteriaView::getCriteria: ', c);
       return c;
     }
   }
