@@ -135,8 +135,8 @@ export default class CriteriaBase extends React.PureComponent {
 };
 
 const getCriteria = (_folding, callback) => {
-  callback(null, _test.criteria[_folding]);
-  //callback(null, []);
+  //callback(null, _test.criteria[_folding]);
+  callback(null, []);
 };
 
 const getFoldingFieldData = (_folding, callback) => {
