@@ -2,7 +2,6 @@ import React from 'react';
 import shortid from "shortid";
 import moment from 'moment';
 import {find} from 'lodash';
-import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
 const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
@@ -25,85 +24,76 @@ const DATA_TYPE_OPERATOR_OPTIONS = (dataType) => {
       return ['eq', 'ne', 'in', 'nn'];
   }
 };
-const INITIAL_CRITERIA = () => {
-  const state = {
-    uuid: undefined,
-    type: undefined,
-    field_id: undefined,
-    field_label: undefined,
-    data_type: undefined,
-    ref: undefined,
-    value: undefined,
-    value_label: undefined,
-    operator: 'eq'  //for default value
-  };
-
-  return Map(state);
-}
+const INITIAL_STATE = {
+  type: undefined,
+  field_id: undefined,
+  field_label: undefined,
+  data_type: undefined,
+  ref: undefined,
+  value: undefined,
+  value_label: undefined,
+  operator: 'eq'  //for default value
+};
 
 export default class CriteriaFieldPicker extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      isOpen: false,
-      collapse: true,
-      criteria: INITIAL_CRITERIA()
-    };
+    this.state = INITIAL_STATE;  //state is the current criteria properties.
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    // console.log('CriteriaFieldPicker::componentWillUpdate: ', nextState);
   };
 
-  componentWillMount() {
-    this.openModal = (callback) => {
-      // console.log('CriteriaFieldPicker::openModal');
-      this.responseCriteria = callback;
-      this.setState({
-        isOpen: true,
-        criteria: INITIAL_CRITERIA().merge({
-          uuid: shortid.generate()
-        })
-      });
-      $('body').addClass('noscroll');
-    };
-
-    this.closeModal = () => {
-      this.setState({
-        isOpen: false
-      });
-      $('body').removeClass('noscroll');
-    };
-
-    this.confirmCriteria = () => {
-      let data = this.fieldInput? this.fieldInput.getInputData(): {};
-      let c = this.state.criteria.merge({
-        value: data.value,
-        value_label: data.value_label
-      });
-      // console.log('CriteriaFieldPicker::confirmCriteria: ', c);
-      this.responseCriteria(c.toJSON());
-      this.closeModal();
-    };
-
-    this.setCriteria = (field) => {
-      this.setState((prevState) => {
-        return {
-          criteria: prevState.criteria.merge({
-            type: field.type,
-            field_id: field.id,
-            field_label: field.label,
-            data_type: field.data_type,
-            ref: field.ref,
-            //value: 'Y',
-            //value_label: '是',
-            operator: 'eq'  //for default value
-          })
-        }
-      });
-    };
+  openModal(callback) {
+    this.responseCriteria = callback;
+    this.setState(Object.assign({}/*, INITIAL_STATE*/, {
+      uuid: shortid.generate(),
+      //TODO: keep current data_type and ref coz the selected filed not be clean yet.
+      //data_type: this.state.data_type,
+      //ref: this.state.ref
+    }));
+    $(this.fieldPicker).show();
+    $('body').addClass('noscroll');
   };
+
+  closeModal() {
+    $(this.fieldPicker).hide();
+    $('body').removeClass('noscroll');
+  }
+
+  confirmCriteria() {
+    let data = this.fieldInput? this.fieldInput.getInputData(): {};
+    let c = Object.assign({}, this.state, {
+      value: data.value,
+      value_label: data.value_label
+    });
+    // console.log('CriteriaFieldPicker::confirmCriteria: ', c);
+    this.responseCriteria(c);
+    this.closeModal();
+  };
+
+  setCriteria(field) {
+    // console.log('CriteriaFieldPicker::mapToProps::setCriteria: ', field);
+    this.setState({
+      type: field.type,
+      field_id: field.id,
+      field_label: field.label,
+      data_type: field.data_type,
+      ref: field.ref,
+      //value: 'Y',
+      //value_label: '是',
+      operator: 'eq'  //for default value
+    });
+  }
 
   render() {
-    let display = (this.state.isOpen)? '': 'none';
+    const mapToProps = {
+      setCriteria: this.setCriteria.bind(this)
+    };
+
     return (
-      <div className="modal" style={{display: display}} ref={(e) => {
+      <div className="modal" style={{display: 'none'}} ref={(e) => {
         this.fieldPicker = e;
       }}>
         <div className="table_block">
@@ -115,98 +105,45 @@ export default class CriteriaFieldPicker extends React.PureComponent {
                 <ul>
                   {this.props.foldingFields.map((ff) => {
                     if ('field' === ff.type) {
-                      return this.FieldPicker(ff);
+                      return <FieldPicker key={ff.id} field={ff} {...mapToProps}/>;
                     } else {
-                      return this.FieldFolder(ff);
+                      return <FieldFolder key={ff.id} folder={ff} {...mapToProps}/>;
                     }
                   })}
                 </ul>
               </form>
             </div>
             <div className="col-md-2">
-              {this.CriteriaOperatorBlock(this.state.criteria)}
+              {this.CriteriaOperatorBlock()}
             </div>
             <div className="col-md-4">
-              {this.CriteriaInputBlock(this.state.criteria)}
+              {this.CriteriaInputBlock()}
             </div>
           </div>
           <div className="btn-block center-block">
-            <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
-            <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
+            <button type="submit" className="btn btn-lg btn-default" onClick={this.confirmCriteria.bind(this)}>確定</button>
+            <button type="submit" className="btn btn-lg btn-default" onClick={this.closeModal.bind(this)}>取消</button>
           </div>
         </div>
         <div className="overlay" onClick={() => {
-          this.setState({
-            isOpen: false
-          });
+          $(this.fieldPicker).hide();
           $('body').removeClass('noscroll');
         }}/>
       </div>
     );
   };
 
-  FieldFolder(folder) {
-    // console.log('CriteriaFieldPicker::FieldFolder: ');
-    let collapse = true;  //this.state.collapse;
-    let className = 'fa fa-plus';
-    let style = {display: 'none'};
-    let iconDom, itemDom = null;
-    /*
-    if (!collapse) {
-      className += ' fa-minus';
-      style = {};
-    }*/
-    return (
-      <li key={folder.id}>
-        <a href="#" onClick={() => {
-          $(itemDom).toggle();
-          $(iconDom).toggleClass('fa-minus');
-        }}>{folder.label}
-          <i className={className} aria-hidden={collapse} ref={(e) => {
-            iconDom = e;
-          }}/>
-        </a>
-        <ul style={style} ref={(e) => {
-          itemDom = e;
-        }}>
-          {folder.fields.map((field) => {
-            return this.FieldPicker(field)
-          })}
-        </ul>
-      </li>
-    );
-  };
-
-  FieldPicker(field) {
-    // console.log('field.id: ', field.id);
-    // console.log('this.state.criteria: ', this.state.criteria);
-    // console.log('this.state.criteria.field_id: ', this.state.criteria.get('field_id'));
-    return (
-      <li className="radio" key={field.id}>
-        <label>
-          <input type="radio" name="optradio" checked={field.id === this.state.criteria.get('field_id')}
-                 onClick={(e) => {
-                   this.setCriteria(field);
-                 }}/>{field.label}</label>
-      </li>
-    );
-  };
-
-  CriteriaOperatorBlock(criteria) {
-    // console.log('CriteriaFieldPicker::CriteriaOperatorBlock: ', criteria);
-    if (criteria.get('data_type')) {
+  CriteriaOperatorBlock() {
+    if (this.state.data_type) {
       return (
         <div>
           <h3>條件</h3>
           <select className="form-control judgment" onChange={(e) => {
-            let inputValue = e.target.value;
-            this.setState((prevState) => {
-              return {
-                criteria: prevState.criteria.set('operator', inputValue)
-              };
+            this.setState({
+              operator: e.target.value
             });
-          }} value={criteria.get('operator')}>
-            {DATA_TYPE_OPERATOR_OPTIONS(criteria.get('data_type')).map((operator) => {
+          }} value={this.state.operator}>
+            {DATA_TYPE_OPERATOR_OPTIONS(this.state.data_type).map((operator) => {
               return (
                 <option key={operator} value={operator}>{OPERATOR_DICT[operator]}</option>
               );
@@ -216,37 +153,37 @@ export default class CriteriaFieldPicker extends React.PureComponent {
       );
     }
     return null;
-  };
+  }
 
-  CriteriaInputBlock(criteria) {
+  CriteriaInputBlock() {
     const excludes = ['in', 'nn'];
-    if (criteria.get('data_type') && excludes.indexOf(criteria.get('operator')) < 0) {
+    if (this.state.data_type && excludes.indexOf(this.state.operator) < 0) {
       return (
         <div>
           <h3>條件值</h3>
-          {this.CriteriaFieldInput(criteria)}
+          {this.CriteriaFieldInput()}
         </div>
       );
     }
     return null;
   };
 
-  CriteriaFieldInput(criteria) {
-    switch (criteria.get('data_type')) {
+  CriteriaFieldInput() {
+    switch (this.state.data_type) {
       case 'number':
-        return <NumberInput criteria={criteria} ref={(e) => {
+        return <NumberInput criteria={this.state} ref={(e) => {
           this.fieldInput = e;
         }}/>;
       case 'text':
-        return <TextInput criteria={criteria} ref={(e) => {
+        return <TextInput criteria={this.state} ref={(e) => {
           this.fieldInput = e;
         }}/>;
       case 'date':
-        return <DateInput criteria={criteria} ref={(e) => {
+        return <DateInput criteria={this.state} ref={(e) => {
           this.fieldInput = e;
         }}/>;
       case 'refOption':
-        return <RefOptionInput criteria={criteria} refOptions={this.props.refOptions[this.state.criteria.get('ref')]} ref={(e) => {
+        return <RefOptionInput criteria={this.state} refOptions={this.props.refOptions} ref={(e) => {
           this.fieldInput = e;
         }}/>;
     }
@@ -254,21 +191,16 @@ export default class CriteriaFieldPicker extends React.PureComponent {
 };
 
 class FieldFolder extends React.PureComponent {
-  /*
   constructor(props) {
     super(props);
     this.state = {
       collapse: true
     }
-  }*/
-
-  componentWillUpdate() {
-    $('body').addClass('noscroll');
   }
 
   render() {
     const folder = this.props.folder;
-    //let collapse = this.state.collapse;
+    let collapse = this.state.collapse;
     let className = 'fa fa-plus';
     let style = {display: 'none'};
     if (!collapse) {
@@ -279,7 +211,7 @@ class FieldFolder extends React.PureComponent {
       <li>
         <a href="#" onClick={() => {
           this.setState({collapse: !this.state.collapse});
-        }}>{folder.label} <i className={className} aria-hidden={true}/></a>
+        }}>{folder.label} <i className={className} aria-hidden={collapse}/></a>
         <ul style={style}>
           {folder.fields.map((field) => {
             return <FieldPicker key={field.id} {...this.props} field={field} />;
@@ -376,7 +308,7 @@ class RefOptionInput extends InputBase {
   }
 
   render() {
-    this.options = this.props.refOptions;
+    this.options = this.props.refOptions[this.props.criteria.ref];
     return (
       <div>
         <div className="btn-block">

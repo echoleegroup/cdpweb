@@ -1,6 +1,4 @@
 import React from 'react';
-import Loader from 'react-loader';
-import CriteriaFieldPicker from './CriteriaFieldPicker';
 
 import CriteriaComboBundleList from './CriteriaComboBundleList';
 
