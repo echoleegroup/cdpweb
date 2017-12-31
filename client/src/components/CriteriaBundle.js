@@ -4,7 +4,7 @@ import {isEmpty, reduce} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
 
-const OPERATOR_DICT =  Object.assign({}, {
+const OPERATOR_OPTIONS =  Object.assign({}, {
   and: '全部',
   or: '任一'
 });
@@ -12,7 +12,7 @@ const OPERATOR_DICT =  Object.assign({}, {
 export default class CriteriaBundle extends React.PureComponent {
   constructor(props, options) {
     super(props);
-    this.OPERATOR_DICT = OPERATOR_DICT;
+    this.OPERATOR_OPTIONS = options.OPERATOR_OPTIONS || OPERATOR_OPTIONS;
     this.state = this.getInitialState(options, props.criteria);
     //this.state = Object.assign({}, this.getInitialState(options), props.criteria);
     // console.log('CriteriaBundle::constructor: ', this.state.get('uuid'));
@@ -23,13 +23,17 @@ export default class CriteriaBundle extends React.PureComponent {
     const state = {
       type: 'bundle',  //combo, ref, field
       operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
+      ref: null,
+      ref_label: null,
       criteria: List()
     };
 
     return Object.assign({}, state, {
-      uuid: shortid.generate(),
+      uuid: injection.uuid || shortid.generate(),
       type: injection.type || options.type || state.type,
       operator: injection.operator || options.operator || state.operator,
+      ref: injection.ref || options.ref || state.ref,
+      ref_label: injection.ref_label || options.ref_label || state.ref_label,
       criteria: state.criteria.concat(options.criteria || [], injection.criteria || [])
     });
   };
@@ -54,7 +58,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.getCriteria = () => {
-      // console.log('CriteriaBundle::getCriteria: ', this.criteriaComponents);
+      // console.log('CriteriaBundle::getCriteria: ', this.state.type, this.criteriaComponents);
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.getCriteria(); //immutable Map
         // console.log('CriteriaBundle::getCriteria::crite ', crite);
@@ -94,7 +98,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillUnmount() {
-    console.log('CriteriaBundle: componentWillUnmount: ', this.state);
+    console.log('CriteriaBundle::componentWillUnmount: ', this.state);
     this.props.removeCriteriaComponents(this.state.uuid);
   };
 
@@ -136,8 +140,8 @@ export default class CriteriaBundle extends React.PureComponent {
                 });
       }}>
         {
-          Object.keys(this.OPERATOR_DICT).map((key) => {
-            return <option value={key} key={key}>{this.OPERATOR_DICT[key]}</option>;
+          Object.keys(this.OPERATOR_OPTIONS).map((key) => {
+            return <option value={key} key={key}>{this.OPERATOR_OPTIONS[key]}</option>;
           })
         }
       </select>
@@ -161,6 +165,7 @@ export default class CriteriaBundle extends React.PureComponent {
         return <CriteriaField key={criteria.uuid} {...this.props}
                               criteria={criteria}
                               index={index}
+                              field={this.props.refFields[criteria.field_id]}
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}

@@ -10,12 +10,12 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   }
 
   componentWillMount() {
-    console.log('CriteriaComboBundle::componentWillMount: ', this.state);
+    // console.log('CriteriaComboBundle::componentWillMount: ', this.state);
     super.componentWillMount();
   };
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaBundle: componentWillUpdate: ', nextState);
+    // console.log('CriteriaBundle: componentWillUpdate: ', nextState);
   };
 
   componentWillUnmount() {

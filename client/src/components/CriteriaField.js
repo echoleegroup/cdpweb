@@ -36,9 +36,14 @@ export default class CriteriaField extends React.PureComponent {
 
   componentWillMount() {
     // console.log('CriteriaField: componentWillMount: ', this.props.criteria);
+    this.field_label = this.props.field.label;
+    this.value_label = this.displayTextFormatter(this.props.criteria.value, this.props.field, this.props.refOptions);
 
     this.getCriteria = () => {
-      return this.props.criteria;
+      return Object.assign({}, this.props.criteria, {
+        field_label: this.props.field.label,
+        value_label: this.value_label
+      });
     };
 
     this.props.collectCriteriaComponents(this.props.criteria.uuid, this);
@@ -61,13 +66,16 @@ export default class CriteriaField extends React.PureComponent {
     return (
       <div className="con-option">
         <div className="form-group">
-          <input type="text" className="form-control" id="" value={this.props.refFields[criteria.field_id].label} disabled={true}/>
+          <input type="text" className="form-control" id="" value={this.field_label} disabled={true}/>
         </div>
         <div className="form-group">
-          <input type="text" className="form-control judgment" id="" defaultValue={OPERATOR_DICT[criteria.operator]} disabled={true}/>
+          <input type="text" className="form-control judgment" id="" defaultValue={this.OPERATOR_DICT[criteria.operator]} disabled={true}/>
         </div>
         <div className="form-group">
-          <FieldValue value={criteria.value} field={this.props.refFields[criteria.field_id]} refOptions={this.props.refOptions}/>
+          <input type="text"
+                 className="form-control"
+                 defaultValue={this.value_label}
+                 disabled={true}/>
         </div>
         {(this.props.isPreview)? null: <i className="fa fa-times" aria-hidden="true" onClick={() => {
           // console.log('CriteriaField::onClick::removeCriteria: ', criteria.uuid);
@@ -75,7 +83,33 @@ export default class CriteriaField extends React.PureComponent {
         }}/>}
       </div>
     );
-  }
+  };
+
+  displayTextFormatter(value, field, refOptions) {
+    // console.log('value: ', value);
+    // console.log('field.ref: ', field);
+    // console.log('refOptions: ', refOptions);
+    // console.log('refOptions[field.ref]: ', refOptions[field.ref]);
+    if(!value)
+      return null;
+
+    switch (field.data_type) {
+      case 'number':
+      case 'text':
+        return value;
+      case 'refOption':
+        let refDict = refOptions[field.ref];
+        return value.map((v) => {
+          return '[' + find(refDict, {
+            optCode: v
+          }).label + ']';
+        }).join(', ')
+      case 'date':
+        return moment(value).format('YYYY/MM/DD');
+      default:
+        return value;
+    }
+  };
 };
 
 class FieldValue extends React.PureComponent {
@@ -112,5 +146,5 @@ class FieldValue extends React.PureComponent {
       default:
         return value;
     }
-  }
+  };
 };

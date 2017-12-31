@@ -1,23 +1,29 @@
 import React from 'react';
 import CriteriaBundle from './CriteriaBundle';
-//import {OPERATOR_DICT} from "../utils/criteria-dictionary";
 
+const OPERATOR_OPTIONS =  Object.assign({}, {
+  and: '全部',
+  or: '任一',
+  not: '皆不'
+});
 export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
     super(props, {
       type: 'refDetail',
-      OPERATOR_OPTIONS: ['and', 'or', 'not']
+      ref_label: props.refFolds[props.criteria.ref].label,
+      OPERATOR_OPTIONS: OPERATOR_OPTIONS
     });
   }
 
   componentWillUnmount() {
-    console.log('CriteriaDetailBundle: componentWillUnmount', this.props.uuid);
+    console.log('CriteriaDetailBundle: componentWillUnmount', this.state);
+    super.componentWillUnmount()
   };
-
+/*
   render() {
     return super.render();
   }
-
+*/
   CriteriaHead() {
     return (
       <div className="head">
@@ -28,18 +34,21 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   };
 
   CriteriaHeadTail() {
+    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.props.refFolds);
+    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.state.ref);
     return (
       <div className="sub_conditon">
-        指定參考：<span>{this.props.refFolds[this.state.ref].label}</span>
+        指定參考：<span>{this.state.ref_label}</span>
       </div>
     );
   };
-
-  ChildCriteria(criteria) {
-    return super.ChildCriteria(criteria);
+/*
+  ChildCriteria(criteria, index) {
+    return super.ChildCriteria(criteria, index);
   };
 
   ControlButton() {
     return super.ControlButton();
   };
+  */
 };
