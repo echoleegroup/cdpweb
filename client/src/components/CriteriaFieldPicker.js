@@ -322,7 +322,7 @@ class InputBase extends React.PureComponent {
   render() {
     return (
       <div className="radio">
-        <input type={this.props.criteria.data_type} className="form-control" placeholder="" ref={(e) => {
+        <input type={this.props.criteria.get('data_type')} className="form-control" placeholder="" ref={(e) => {
           this.input = e;
         }}/>
       </div>

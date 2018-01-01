@@ -27,7 +27,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
     };
 
     this.getCriteria = () => {
-      console.log('CriteriaComboBundleList::componentWillMount::getCriteria: ', this.criteriaComponents);
+      // console.log('CriteriaComboBundleList::componentWillMount::getCriteria: ', this.criteriaComponents);
       return reduce(this.criteriaComponents, (collector, comp) => {
         let crite = comp.getCriteria(); //immutable map
         // console.log('CriteriaComboBundleList::componentWillMount::getCriteria::crite ', crite);
@@ -51,7 +51,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
   };
 
   render() {
-    console.log('CriteriaComboBundleList:render::_criteria: ', this.props.criteria);
+    // console.log('CriteriaComboBundleList:render::_criteria: ', this.props.criteria);
     let criteria = isEmpty(this.props.criteria)? [{
       uuid: shortid.generate()
     }]: this.props.criteria;
