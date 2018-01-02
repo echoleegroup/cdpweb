@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 const boom = require('boom');
 const winston = require('winston');
 const DEFAULT_LOGIN_PATH = '/login';
@@ -19,7 +19,7 @@ module.exports.ajaxCheck = () => {
     if (req.isAuthenticated()) {
       return next();
     }
-    next(boom.forbidden('Not Logged In'));
+    next(boom.unauthorized('Not Logged In'));
   };
 };
 

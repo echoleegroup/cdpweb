@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 const boom = require('boom');
 const DEFAULT_MAIN_PATH = '/login';
 

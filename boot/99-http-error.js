@@ -13,6 +13,7 @@ module.exports = (app) => {
   });
   //error handler
   app.use((error, req, res, next) => {
+    winston.info('error handler');
     if (error.isBoom) return res.status(error.output.statusCode).send(error.message);
     next(error);
   });

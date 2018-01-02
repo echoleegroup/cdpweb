@@ -31,36 +31,21 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                     index={index}
                                     removeCriteria={this.removeCriteria}
                                     collectCriteriaComponents={this.collectCriteriaComponents}
-                                    removeCriteriaComponents={this.removeCriteriaComponents}
-                                    /*
-                                    ref={(e) => {
-                                      if(e) this.collectCriteriaComponents(criteria.uuid, e);
-                                      else this.removeCriteriaComponents(criteria.uuid);
-                                    }}*//>;
+                                    removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case 'bundle':
         return <CriteriaBundle key={criteria.uuid} {...this.props}
                                criteria={criteria}
                                index={index}
                                removeCriteria={this.removeCriteria}
                                collectCriteriaComponents={this.collectCriteriaComponents}
-                               removeCriteriaComponents={this.removeCriteriaComponents}
-                               /*
-                               ref={(e) => {
-                                 if(e) this.collectCriteriaComponents(criteria.uuid, e);
-                                 else this.removeCriteria(criteria.uuid);
-                               }}*//>;
+                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case 'refDetails':
         return <CriteriaDetailBundle key={criteria.uuid} {...this.props}
                                      criteria={criteria}
                                      index={index}
                                      removeCriteria={this.removeCriteria}
                                      collectCriteriaComponents={this.collectCriteriaComponents}
-                                     removeCriteriaComponents={this.removeCriteriaComponents}
-                                     /*
-                                     ref={(e) => {
-                                       if(e) this.collectCriteriaComponents(criteria.uuid, e);
-                                       else this.removeCriteriaComponents(criteria.uuid);
-                                     }}*//>;
+                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
         return super.ChildCriteria(criteria, index);
     }

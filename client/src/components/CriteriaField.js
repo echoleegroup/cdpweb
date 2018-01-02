@@ -60,7 +60,7 @@ export default class CriteriaField extends React.PureComponent {
 
   render() {
     let criteria = this.props.criteria;
-    // console.log('this.props.refFields: ', this.props.refFields);
+    // console.log('this.props.fieldDictionary: ', this.props.fieldDictionary);
     // console.log('criteria.id: ', criteria.id);
     // console.log('this.props.refOptions: ', this.props.refOptions);
     return (

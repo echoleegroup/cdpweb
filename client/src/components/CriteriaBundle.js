@@ -165,15 +165,10 @@ export default class CriteriaBundle extends React.PureComponent {
         return <CriteriaField key={criteria.uuid} {...this.props}
                               criteria={criteria}
                               index={index}
-                              field={this.props.refFields[criteria.field_id]}
+                              field={this.props.fieldDictionary[criteria.field_id]}
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
-                              removeCriteriaComponents={this.removeCriteriaComponents}
-                              /*
-                              ref={(e) => {
-                                if(e) this.collectCriteriaComponents(criteria.uuid, e);
-                                else this.removeCriteriaComponents(criteria.uuid);
-                              }}*//>;
+                              removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
         return <div key={criteria.uuid}/>;
     }

@@ -1,18 +1,18 @@
-'user strict'
+'use strict';
 
 const express = require('express');
 const winston = require('winston');
+const auth = require("../../middlewares/login-check");
+const factory = require("../../middlewares/response-factory");
 
 module.exports = (app) => {
-  console.log('[api-model] Creating api-model route.');
+  winston.info('[api-model] Creating api-model route.');
   const router = express.Router();
 
-  router.get('/', (req, res) => {
-    res.json({
-      code: 200,
-      data: {},
-      message: ''
-    });
+  router.get('/', [
+    factory.ajax_response_factory(),
+    auth.ajaxCheck()], (req, res) => {
+    res.json();
   });
 
   return router;

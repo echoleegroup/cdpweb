@@ -6,7 +6,8 @@ import {nfcall, all} from 'q';
 import CriteriaFieldPicker from './CriteriaFieldPicker';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
-import {default as _test} from '../../test/preferred-criteria-test'
+import CriteriaAction from '../actions/criteria-action'
+//import {default as _test} from '../../test/preferred-criteria-test'
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -32,21 +33,23 @@ export default class CriteriaBase extends React.PureComponent {
 
   getPreparingData(options) {
     all([
-      nfcall(getCriteria, options._folding),
-      nfcall(getFoldingFieldData, options._folding)
+      getCriteria(options._folding),
+      getFoldingFieldData(options._folding)
     ]).spread((criteria, foldingFieldsInfo) => {
       this.criteria = criteria;
-      this.foldingFields = foldingFieldsInfo.folding_fields;
-      this.refOptions = foldingFieldsInfo.ref_options;
-      this.refFields = getRefFields(this.foldingFields);
-      this.refFolds = getRefFolders(this.foldingFields);
+      this.foldingFields = foldingFieldsInfo.fields;
+      this.refOptions = foldingFieldsInfo.fieldRefs;
+      this.fieldDictionary = getFieldDictionary(this.foldingFields);
+      this.folderDictionary = getFolderDictionary(this.foldingFields);
+    }).fail((err) => {
+      console.log('fetch necessary data failed: ', err);
     }).finally(() => {
       this.mapToProps = {
         foldingFields: this.foldingFields,
         moduleOptions: this.options,
         refOptions: this.refOptions,
-        refFields: this.refFields,
-        refFolds: this.refFolds,
+        fieldDictionary: this.fieldDictionary,
+        folderDictionary: this.folderDictionary,
         addCriteriaField: (callback) => {
           // console.log('CriteriaBase::addCriteriaField');
           this.fieldPicker.openModal(callback);
@@ -134,15 +137,19 @@ export default class CriteriaBase extends React.PureComponent {
   }
 };
 
-const getCriteria = (_folding, callback) => {
+const getCriteria = (_folding) => {
+  return nfcall(CriteriaAction.getHistory, _folding);
+  //return Q([]);
   //callback(null, _test.criteria[_folding]);
-  callback(null, []);
+  //callback(null, []);
 };
 
 const getFoldingFieldData = (_folding, callback) => {
-  callback(null, {
-    folding_fields: _test.fields[_folding],
-    ref_options: _test.refs
+  return nfcall(CriteriaAction.getFieldsData, _folding).then((data) => {
+    return {
+      fields: data.fields,
+      fieldRefs: data.fieldRefs
+    };
   });
 };
 
@@ -177,7 +184,7 @@ const getFoldingFieldData = (_folding, callback) => {
       }
  ]
  */
-const getRefFields = (folders) => {
+const getFieldDictionary = (folders) => {
   return reduce(folders, (dictionary, data) => {
     if ('field' === data.type) {
       return Object.assign(dictionary, {
@@ -190,12 +197,12 @@ const getRefFields = (folders) => {
         }
       });
     } else if ('folder' === data.type) {
-      return Object.assign(dictionary, getRefFields(data.fields));
+      return Object.assign(dictionary, getFieldDictionary(data.fields));
     }
   }, {});
 };
 
-const getRefFolders = (folders) => {
+const getFolderDictionary = (folders) => {
   return reduce(folders, (dictionary, data) => {
     if ('folder' === data.type) {
       return assign(dictionary, {
@@ -203,7 +210,7 @@ const getRefFolders = (folders) => {
           id: data.id,
           label: data.label
         }
-      }, getRefFolders(data.fields));
+      }, getFolderDictionary(data.fields));
     } else {
       return dictionary;
     }

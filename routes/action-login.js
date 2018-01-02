@@ -6,7 +6,6 @@ const passport = require('passport');
 const winston = require('winston');
 const _ = require("lodash");
 const Q = require('q');
-const db = require("../utils/sql-server-connector").db;
 const menuService = require('../services/menu-service');
 const modelService = require('../services/model-service');
 const userService = require('../services/user-service');
@@ -40,7 +39,7 @@ const getModels = () => {
 };
 
 module.exports = (app) => {
-  console.log('[LoginRoute::create] Creating index route.');
+  winston.info('[LoginRoute::create] Creating index route.');
   var router = express.Router();
 
   router.get('/logout', function (req, res) {

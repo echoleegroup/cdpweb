@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 const Q = require('q');
 const mssql = require('mssql');

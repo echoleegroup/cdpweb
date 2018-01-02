@@ -1,5 +1,6 @@
-import shortid from 'shortid';
-export default {
+const shortid = require('shortid');
+
+module.exports = {
   fields: {
     preferred_target: [
       {

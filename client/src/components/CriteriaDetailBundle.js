@@ -10,7 +10,7 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
     super(props, {
       type: 'refDetail',
-      ref_label: props.refFolds[props.criteria.ref].label,
+      ref_label: props.folderDictionary[props.criteria.ref].label,
       OPERATOR_OPTIONS: OPERATOR_OPTIONS
     });
   }
@@ -34,7 +34,7 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   };
 
   CriteriaHeadTail() {
-    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.props.refFolds);
+    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.props.folderDictionary);
     // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.state.ref);
     return (
       <div className="sub_conditon">

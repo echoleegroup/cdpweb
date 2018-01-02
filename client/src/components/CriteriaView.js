@@ -43,8 +43,8 @@ export default class CriteriaView extends React.PureComponent {
       isPreview: this.props.isPreview,
       criteria: this.props.criteria,
       refOptions: this.props.refOptions,
-      refFields: this.props.refFields,
-      refFolds: this.props.refFolds,
+      fieldDictionary: this.props.fieldDictionary,
+      folderDictionary: this.props.folderDictionary,
       addCriteriaField: this.props.addCriteriaField
     };
     return (
