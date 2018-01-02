@@ -4,7 +4,7 @@ const winston = require('winston');
 const _ = require("lodash");
 const Q = require('q');
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/permission").menucode;
+const permission = require("../utils/constants").menucode;
 const db = require("../utils/sql-server-connector").db;
 const menuService = require('../services/menu-service');
 

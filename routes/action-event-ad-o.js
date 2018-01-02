@@ -6,7 +6,7 @@ const path = require('path');
 const multer = require('multer');
 const xlsx = require("node-xlsx");
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/permission").menucode;
+const permission = require("../utils/constants").menucode;
 const db = require("../utils/sql-server-connector").db;
 
 const storage = path.resolve(__dirname, "../_upload") + path.sep;

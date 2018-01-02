@@ -3,7 +3,7 @@ const express = require('express');
 const winston = require('winston');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/permission").menucode;
+const permission = require("../utils/constants").menucode;
 var java_api_endpoint = require("../config/app-config").get("JAVA_API_ENDPOINT");
 
 module.exports = (app) => {

@@ -1,5 +1,6 @@
 "use strict";
-var MENU_CODE = {
+
+exports.menucode = {
   USER: "_mgrUser",
   USER_ROLE: "_mgrRole",
   CUST_GENE: "_modelChar",
@@ -18,7 +19,5 @@ var MENU_CODE = {
   TA_REACTION_UPLOAD: "__targetTaReaction",
   TAANARPT_RULT: "_taanaRpt"
 };
-
-exports.menucode = MENU_CODE;
 
 //# sourceMappingURL=config.js.map
