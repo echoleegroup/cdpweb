@@ -253,56 +253,6 @@ export default class CriteriaFieldPicker extends React.PureComponent {
   };
 };
 
-class FieldFolder extends React.PureComponent {
-  /*
-  constructor(props) {
-    super(props);
-    this.state = {
-      collapse: true
-    }
-  }*/
-
-  componentWillUpdate() {
-    $('body').addClass('noscroll');
-  }
-
-  render() {
-    const folder = this.props.folder;
-    //let collapse = this.state.collapse;
-    let className = 'fa fa-plus';
-    let style = {display: 'none'};
-    if (!collapse) {
-      className += ' fa-minus';
-      style = {};
-    }
-    return (
-      <li>
-        <a href="#" onClick={() => {
-          this.setState({collapse: !this.state.collapse});
-        }}>{folder.label} <i className={className} aria-hidden={true}/></a>
-        <ul style={style}>
-          {folder.fields.map((field) => {
-            return <FieldPicker key={field.id} {...this.props} field={field} />;
-          })}
-        </ul>
-      </li>
-    );
-  };
-};
-
-class FieldPicker extends React.PureComponent {
-  render() {
-    return (
-      <li className="radio">
-        <label>
-          <input type="radio" name="optradio" onClick={() => {
-            this.props.setCriteria(this.props.field);
-          }}/>{this.props.field.label}</label>
-      </li>
-    );
-  };
-};
-
 class InputBase extends React.PureComponent {
   constructor(props) {
     super(props);
