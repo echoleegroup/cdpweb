@@ -1,0 +1,10 @@
+{
+  "SQL_SERVER_INFO": {
+    "host": "10.201.2.4",
+    "port": 1433,
+    "options": {
+      "encrypt": true
+    }
+  },
+  "JAVA_API_ENDPOINT": "http://127.0.0.1:8080"
+}

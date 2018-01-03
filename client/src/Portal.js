@@ -42,4 +42,3 @@ class PortalRoute extends React.Component {
   };
 })(jQuery);
 
-ReactDOM.render((<PortalRoute />), document.getElementById('Portal'));

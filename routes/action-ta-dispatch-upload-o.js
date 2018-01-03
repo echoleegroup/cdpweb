@@ -8,7 +8,7 @@ const xlsx = require("node-xlsx");
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").menucode;
-const storage = path.resolve(__dirname, "../_upload") + path.sep;
+const storage = path.resolve(__dirname, "../.asserts") + path.sep;
 const upload = multer({ dest: storage });;
 
 module.exports = (app) => {

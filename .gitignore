@@ -53,8 +53,7 @@ public/swagger/mockup-server
 .sass-cache
 
 #uploaeded file
-client/public/upload/*
-_upload
+.asserts
 
 #webpack Output
 #client/public/!js
@@ -62,5 +61,4 @@ _upload
 #file-based session storage
 .sessiondb
 
-package-lock.json
-
+.env

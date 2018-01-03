@@ -2,15 +2,15 @@ const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
 const mssql = require('mssql');
-const db_info = require("../config/app-config").get("SQL_SERVER_INFO");
+const db_info = require("../app-config").get("SQL_SERVER_INFO");
 
 //---mssql
 const config = {
-  user: db_info.USER,
-  password: db_info.PWD,
-  server: db_info.HOST,   //這邊要注意一下!!
-  database: db_info.DATABASE,
-  options: db_info.OPTIONS,
+  user: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  server: db_info.host,   //這邊要注意一下!!
+  options: db_info.options,
   pool: {
     max: 10,
     min: 0,

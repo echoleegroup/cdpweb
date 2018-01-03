@@ -9,7 +9,7 @@ const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").menucode;
 const db = require("../utils/sql-server-connector").db;
 
-const storage = path.resolve(__dirname, "../_upload") + path.sep;
+const storage = path.resolve(__dirname, "../.asserts") + path.sep;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {
@@ -284,7 +284,7 @@ module.exports = (app) => {
       if (issame == 'Y')
         res.end("已新增過");
       else {
-        function addtag(evtadID, newtag, callback) {
+        const addtag = (evtadID, newtag, callback) => {
           db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
             if (err)
               callback(err, null);

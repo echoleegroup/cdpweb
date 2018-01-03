@@ -8,7 +8,7 @@ const multer = require('multer');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").menucode;
-const storage = path.resolve(__dirname, "../_upload") + path.sep;
+const storage = path.resolve(__dirname, "../.asserts") + path.sep;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {
@@ -125,7 +125,7 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
-            function checkdata(mdID, callback) {
+            const checkdata = (mdID, callback) => {
               if (key == 'LISCNO') {
                 db.query("SELECT CustID_u FROM cu_LiscnoIndex where LISCNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
                   if (err)
