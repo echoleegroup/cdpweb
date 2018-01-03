@@ -1,7 +1,6 @@
 'user strict'
 
 const Q = require('q');
-const mssql = require('mssql');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 

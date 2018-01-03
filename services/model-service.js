@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const Q = require('q');
-const mssql = require('mssql');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
@@ -28,33 +27,27 @@ module.exports.getModelBatch = (mdId, batId, callback=() => {}) => {
   //preparedStatement
   /*
   let prepared = _connector.preparedStatement()
-    .setType('mdID', mssql.NVarChar)
-    .setType('batID', mssql.NVarChar);
+    .setType('mdId', _connector.TYPES.NVarChar)
+    .setType('batId', _connector.TYPES.NVarChar);
 
-  Q.nfcall(prepared.execute, modelSql, {
-    mdID: req.query.mdID,
-    batID: req.query.batID
+  Q.nfcall(prepared.execute, sql, {
+    mdId: mdId,
+    batId: batId
   }).then((resultSet) => {
-    winston.info('===resultSet: %j', resultSet);
-    res.render('custom-search', {
-      'id': req.session.userid,
-      'modelInfo': resultSet[0],
-      'modelList': modelList,
-      'navMenuList': navMenuList,
-      'mgrMenuList': mgrMenuList
-    });
+    winston.info('===resultSet: %j', resultSet[0]);
+    callback(null, resultSet[0]);
   }).fail((err) => {
     winston.error('===query model failed:', err);
   });
-*/
   //winston.info('===_connector.execSqlByParams');
+  */
   Q.nfcall(_connector.execSqlByParams, sql, {
-    mdID: {
-      type: mssql.NVarChar,
+    mdId: {
+      type: _connector.TYPES.NVarChar,
       value: mdId
     },
-    batID: {
-      type: mssql.NVarChar,
+    batId: {
+      type: _connector.TYPES.NVarChar,
       value: batId
     }
   }).then((resultSet) => {

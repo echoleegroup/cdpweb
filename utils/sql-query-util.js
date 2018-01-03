@@ -25,6 +25,7 @@ module.exports = (() => {
   winston.info('mssql connection pool established.');
 
   return {
+    TYPES: mssql.TYPES,
     execSql: (sql, callback = (err, resultSet) => { }) => {
       pool.request().query(sql).then((result) => {
         callback(null, result.recordset);
@@ -46,7 +47,7 @@ module.exports = (() => {
     },
     preparedStatement: () => {
       let ps = new mssql.PreparedStatement(pool);
-      return _this = {
+      const _this = {
         setType: (param, type) => {
           ps.input(param, type);
           return _this;
@@ -55,9 +56,9 @@ module.exports = (() => {
           ps.prepare(sql).then(() => {
             return ps.execute(params);
           }).then((result) => {
-            //winston.info('result.recordsets: %j', result.recordsets);
+            // winston.info('result.recordset: %j', result.recordset);
             //ps.prepared && ps.unprepare();
-            callback(null, result.recordsets);
+            callback(null, result.recordset);
           }).catch((err) => {
             //ps.prepared && ps.unprepare();
             callback(err);
@@ -70,7 +71,7 @@ module.exports = (() => {
           ps.prepared && ps.unprepare(callback);
         }
       };
-      //return _this;
+      return _this;
     }
   };
 })();

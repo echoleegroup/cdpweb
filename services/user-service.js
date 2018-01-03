@@ -1,7 +1,6 @@
 'use strict'
 
 const Q = require('q');
-const mssql = require('mssql');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
@@ -13,7 +12,7 @@ module.exports.getUserUgrpMenu = (userId, callback=()=>{}) => {
       'WHERE userId = @userId order by sym.menuId ASC';
   Q.nfcall(_connector.execSqlByParams, sql, {
     userId: {
-      type: mssql.NVarChar,
+      type: _connector.TYPES.NVarChar,
       value: userId
     }
   }).then((resultSet) => {

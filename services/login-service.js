@@ -1,7 +1,6 @@
 'use strict'
 
 const Q = require('q');
-const mssql = require('mssql');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
@@ -9,11 +8,11 @@ module.exports.loginPlatform = (username, password, callback = () => { }) => {
   const sql = 'SELECT * FROM sy_infouser WHERE userId = @username and password = @password';
   Q.nfcall(_connector.execSqlByParams, sql, {
     username: {
-      type: mssql.NVarChar,
+      type: _connector.TYPES.NVarChar,
       value: username
     },
     password: {
-      type: mssql.NVarChar,
+      type: _connector.TYPES.NVarChar,
       value: password
     }
   }).then((resultSet) => {
@@ -35,7 +34,7 @@ module.exports.updateLoginTime = (userId, callback = () => {}) => {
   let sql = "UPDATE sy_infouser set loginTime = GETDATE() where userId = @userId";
   Q.nfcall(_connector.execSqlByParams, sql, {
     userId: {
-      type: mssql.NVarChar,
+      type: _connector.TYPES.NVarChar,
       value: userId
     }
   }).then((resultSet) => {
