@@ -30,6 +30,8 @@
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
             <i class="fa fa-sort" aria-hidden="true"></i> 最後異動時間
           </th>
+          <th>廣告數</th>
+          <th>帶特徵廣告數</th>
           <th>連結</th>
           <th></th>
         </tr>
@@ -45,7 +47,7 @@
 </div>
 <script>
   var x = "";
-  var o = {{{data}}};
+  var o = {{{ data }}};
   for (i in o) {
     x += "<tr>";
     x += "<td>" + o[i].maininfo[0].no + "</td>";
@@ -53,7 +55,9 @@
     x += "<td>" + o[i].maininfo[0].msm_tpc + "</td>";
     x += "<td>" + o[i].maininfo[0].sdt + "~" + o[i].maininfo[0].edt + "</td>";
     x += "<td>" + o[i].maininfo[0].updTime + "</td>";
-    x += "<td><a href='javascript:window.open(\"" + o[i].maininfo[0].url + "\",\"_blank\");'>開啟連結</a></td>";
+    x += "<td>" + o[i].maininfo[0].adCount + "</td>";
+    x += "<td>" + o[i].maininfo[0].adtagcount + "</td>";
+    x += "<td><a href='javascript:urlopen(\"" + o[i].maininfo[0].url + "\");'>開啟連結</a></td>";
     x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
     x += '<tr class="sub_info"><td colspan="7"><h3>標籤內容</h3><div class="tag_block">';
     for (j in o[i].maininfo[1].taginfo) {
@@ -81,4 +85,7 @@
 
   }
   document.getElementById("info").innerHTML = x;
-</script> 
+  function urlopen(url) {
+    window.open(url,"_blank");
+  }
+</script>

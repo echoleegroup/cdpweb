@@ -24,13 +24,17 @@ module.exports = (app) => {
     var total;
     var successnum = 0;
     var errornum = 0;
-    var updtime;
+    var adCount = 0;
+    var updUser;
+    var updTime;
     var errormsg = '錯誤資訊\r\n';
     var allmsg = '';
     var funcCatge;
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
+    var mainInfo = '';
+    var adInfo = '';
     var p1 = new Promise(function (resolve, reject) {
       if (optradio == "cover") {
         db.query("DELETE FROM dm_EvtadMst where evtpgID =" + evtpgID, function (err, recordset) {
@@ -44,7 +48,23 @@ module.exports = (app) => {
       else
         resolve(1);
     });
-    Promise.all([p1]).then(function (results) {
+    var p2 = new Promise(function (resolve, reject) {
+      db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst where evtpgID = " + evtpgID, function (err, recordset) {
+        mainInfo = recordset.recordset[0];
+        resolve(mainInfo);
+      });
+    });
+    var p3 = new Promise(function (resolve, reject) {
+      db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge' order by codeValue desc ", function (err, recordset) {
+        if (err) {
+          console.log(err);
+          reject(2);
+        }
+        funcCatge = recordset.recordset;
+        resolve(1);
+      });
+    });
+    Promise.all([p1, p2, p3]).then(function (results) {
       var file = req.file;
       // 以下代碼得到檔案後綴
       var name = file.originalname;
@@ -104,33 +124,10 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
-              var currentdate = new Date();
-              var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-              res.render('Evtad_upload', {
-                'id': req.session.userid,
-                'modelList': modelList,
-                'navMenuList': navMenuList,
-                'mgrMenuList': mgrMenuList,
-                "successnum": successnum,
-                'errormsg': errormsg,
-                'errornum': errornum,
-                'total': total,
-                'dispaly': 'block',
-                'datetime': datetime
-              });
-            }
-            checkandinsert(i + 1);
-          }
-          else {
-            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES(" + evtpgID + ",'" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
-              if (err) {
-                console.log(err);
-              }
-              successnum++;
-              if (i == list[0].data.length - 1) {
+              db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = " + evtpgID + ") adcount FROM dm_EvtadMst where evtpgID = " + evtpgID + "  order by updTime desc ", function (err, recordset) {
+                updUser = recordset.recordset[0].updUser;
+                updTime = recordset.recordset[0].updTime;
+                adCount = recordset.recordset[0].adcount
                 var currentdate = new Date();
                 var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                   + currentdate.getHours() + ":"
@@ -147,6 +144,44 @@ module.exports = (app) => {
                   'total': total,
                   'dispaly': 'block',
                   'datetime': datetime
+                });
+              });
+            }
+            checkandinsert(i + 1);
+          }
+          else {
+            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES(" + evtpgID + ",'" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
+              if (err) {
+                console.log(err);
+              }
+              successnum++;
+              if (i == list[0].data.length - 1) {
+                db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = " + evtpgID + ") adcount FROM dm_EvtadMst where evtpgID = " + evtpgID + "  order by updTime desc ", function (err, recordset) {
+                  updUser = recordset.recordset[0].updUser;
+                  updTime = recordset.recordset[0].updTime;
+                  adCount = recordset.recordset[0].adcount
+                  var currentdate = new Date();
+                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds();
+                  res.render('Evtad_upload', {
+                    'id': req.session.userid,
+                    'modelList': modelList,
+                    'navMenuList': navMenuList,
+                    'mgrMenuList': mgrMenuList,
+                    "successnum": successnum,
+                    'errormsg': errormsg,
+                    'errornum': errornum,
+                    'total': total,
+                    'dispaly': 'block',
+                    'datetime': datetime,
+                    'mainInfo': mainInfo,
+                    'updUser': updUser,
+                    'updTime': updTime,
+                    'adCount': adCount,
+                    'funcCatge': funcCatge
+                  });
                 });
               }
               checkandinsert(i + 1);
@@ -195,6 +230,7 @@ module.exports = (app) => {
     var datetime = req.query.datetime || '';
     var evtpgID = req.query.evtpgID || '';
     var funcCatge;
+    var mainInfo;
     var adcount = 0;
     var updUser, updTime;
     var modelList = req.session.modelList;
@@ -231,15 +267,30 @@ module.exports = (app) => {
             console.log(err);
             reject(2);
           }
-          updTime = recordset.recordset[0].updTime;
-          updUser = recordset.recordset[0].updUser;
+          if (recordset.rowsAffected > 0) {
+            updTime = recordset.recordset[0].updTime;
+            updUser = recordset.recordset[0].updUser;
+          }
           resolve(1);
         });
       }
       else
         resolve(1);
     });
-    Promise.all([p1, p2, p3]).then(function (results) {
+    var p4 = new Promise(function (resolve, reject) {
+      if (evtpgID != '') {
+        db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst where evtpgID = " + evtpgID, function (err, recordset) {
+          if (recordset.rowsAffected > 0) {
+            mainInfo = recordset.recordset[0];
+          }
+          resolve(mainInfo);
+        });
+      }
+      else {
+        resolve(mainInfo);
+      }
+    });
+    Promise.all([p1, p2, p3, p4]).then(function (results) {
       res.render('Evtad_upload', {
         'id': req.session.userid,
         'modelList': modelList,
@@ -254,7 +305,9 @@ module.exports = (app) => {
         'datetime': datetime,
         'updTime': updTime,
         'updUser': updUser,
-        'adcount': adcount
+        'adcount': adcount,
+        'evtpgID': evtpgID,
+        'mainInfo': mainInfo
       });
     }).catch(function (e) {
       console.log(e);

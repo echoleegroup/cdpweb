@@ -41,6 +41,7 @@
 						<label for="inputName" class="col-sm-3 control-label">活動名稱</label>
 						<div class="col-sm-8">
 							<select id="evtpgID" name="evtpgID" class="form-control custom">
+                <option value ="{{mainInfo.evtpgID}}">{{mainInfo.msm_tpc}}({{mainInfo.sdt}}~{{mainInfo.edt}})</option>
 							</select>
 						</div>
 					</div>
@@ -80,7 +81,7 @@
 							<tbody>
 								<tr>
 									<td>廣告排程總筆數：</td>
-									<td>{{adcount}}</td>
+									<td>{{adCount}}</td>
 								</tr>
 								<tr>
 									<td>最後上傳時間：</td>
@@ -152,29 +153,17 @@
 	});
 </script>
 <script>
-	var c = document.getElementById("client");
-	var client = c.options[c.selectedIndex].value;
+	
 	var f = document.getElementById("funcCatge");
-	var funcCatge = f.options[f.selectedIndex].value;
+  for( var i = 0 ; i < f.options.length ; i++){
+    if(f.options[i].value == "{{mainInfo.funcCatge}}" )
+      f.options[i].selected = true ;
+  }
+
+
+  
 	var x;
-
-	$.ajax({
-		url: "/actad/ad/act_id/search",
-		data: {
-			"client": client,
-			"funcCatge": funcCatge
-		},
-		type: "POST",
-		dataType: 'text',
-		success: function (msg) {
-			var o = JSON.parse(msg);
-			for (i in o) {
-				x += "<option value='" + o[i].value + "'>" + o[i].msm_tpc + "</option>";
-			}
-			document.getElementById("evtpgID").innerHTML = x;
-
-		}
-	});
+	
 	function checkForm() {
 		if (document.getElementById("evtpgID").value == '') {
 			alert("請選擇活動名稱");

@@ -30,6 +30,10 @@ module.exports = (app) => {
     var uniqName = "";
     var anstitle = '';
     var anscontent = '';
+    var canvasID = '';
+    var canvasIDindex = '';
+    var q4_b = '';
+    var q4_b_index = '';
     var total;
     var successnum = 0;
     var errornum = 0;
@@ -41,6 +45,7 @@ module.exports = (app) => {
     var mgrMenuList = req.session.mgrMenuList;
     var ncbsID = 0;
     var uLicsNO = '';
+    var maininfo;
     var file = req.file;
     // 以下代碼得到檔案後綴
     origName = file.originalname;
@@ -59,8 +64,14 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       total = list[0].data.length - 1;
       for (var i = 0; i < list[0].data[0].length; i++) {
-        if (list[0].data[0][i] == "LICSNO") {
+        if (list[0].data[0][i] == "realid") {
           keyIndex = i;
+        }
+        if (list[0].data[0][i] == "CanvasID") {
+          canvasIDindex = i;
+        }
+        if (list[0].data[0][i] == "q4_b") {
+          q4_b_index = i;
         }
         if (i == list[0].data[0].length - 1)
           anstitle += list[0].data[0][i];
@@ -81,11 +92,12 @@ module.exports = (app) => {
           reject(1)
         }
         else {
-          db.query("SELECT TOP 1 ncbsID FROM cu_NCBSMst order by ncbsID desc  ", function (err, recordset) {
+          db.query("SELECT TOP 1 cnm.ncbsID,cnm.ncbsName,cnm.Client,cnm.ncbsYear,cnm.ncbsDesc,cnm.ncbsQus,convert(varchar,cnm.ncbsSdt,111)ncbsSdt,convert(varchar,cnm.ncbsEdt,111)ncbsEdt,convert(varchar,cnm.updTime,120)updTime,cnm.updUser,(select count(*) FROM cu_NCBSDet cnb where cnb.ncbsID = cnm.ncbsID)NSBCcount FROM cu_NCBSMst cnm order by ncbsID desc  ", function (err, recordset) {
             if (err)
               console.log(err);
             ncbsID = recordset.recordset[0].ncbsID;
-            resolve(2);
+            maininfo = recordset.recordset;
+            resolve(ncbsID);
           });
         }
       });
@@ -112,7 +124,20 @@ module.exports = (app) => {
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
-              res.redirect("/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                res.render('NCBSDataEdit', {
+                  'id': req.session.userid,
+                  'modelList': modelList,
+                  'navMenuList': navMenuList,
+                  'mgrMenuList': mgrMenuList,
+                  'maininfo': maininfo,
+                  'ncbsID': ncbsID,
+                  'dispaly': 'block',
+                  'successnum': successnum,
+                  'errormsg': errormsg,
+                  'errornum': errornum,
+                  'total': total,
+                  'datetime': datetime
+                });
             }
             checkandinsert(i + 1);
           }
@@ -130,6 +155,7 @@ module.exports = (app) => {
             checkdata(keyIndex, function (err, data1) {
               anscontent = '';
               uLicsNO = list[0].data[i][keyIndex];
+              canvasID = list[0].data[i][canvasIDindex];
               for (var j = 0; j < list[0].data[i].length; j++) {
                 if (j == list[0].data[i].length - 1)
                   anscontent += list[0].data[i][j];
@@ -154,29 +180,65 @@ module.exports = (app) => {
                     + currentdate.getHours() + ":"
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
-                  res.redirect("/feeddata/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                    res.render('NCBSDataEdit', {
+                      'id': req.session.userid,
+                      'modelList': modelList,
+                      'navMenuList': navMenuList,
+                      'mgrMenuList': mgrMenuList,
+                      'maininfo': maininfo,
+                      'ncbsID': ncbsID,
+                      'dispaly': 'block',
+                      'successnum': successnum,
+                      'errormsg': errormsg,
+                      'errornum': errornum,
+                      'total': total,
+                      'datetime': datetime
+                    });
                 }
                 checkandinsert(i + 1);
               }
               else {
-                db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "')", function (err, recordset) {
-                  if (err) {
-                    console.log(err);
+                if (client == 'TOYOTA' && list[0].data[i][q4_b_index] != '5') {
+                  for (var j = 0; j < list[0].data[i].length; j++) {
+                    if (j == list[0].data[i].length - 1)
+                      errormsg += list[0].data[i][j] + "\r\n";
+                    else
+                      errormsg += list[0].data[i][j] + ",";
                   }
-                  successnum++;
-                  if (i == list[0].data.length - 1) {
-                    var currentdate = new Date();
-                    var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                      + currentdate.getHours() + ":"
-                      + currentdate.getMinutes() + ":"
-                      + currentdate.getSeconds();
-
-                    res.redirect("/feeddata/NCBS/edit?ncbsID=" + ncbsID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
-                  }
-                  checkandinsert(i + 1);
-                });
+                }
+                else {
+                  db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {
+                    if (err) {
+                      console.log(err);
+                    }
+                    successnum++;
+                    if (i == list[0].data.length - 1) {
+                      var currentdate = new Date();
+                      var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                        + currentdate.getHours() + ":"
+                        + currentdate.getMinutes() + ":"
+                        + currentdate.getSeconds();
+                        res.render('NCBSDataEdit', {
+                          'id': req.session.userid,
+                          'modelList': modelList,
+                          'navMenuList': navMenuList,
+                          'mgrMenuList': mgrMenuList,
+                          'maininfo': maininfo,
+                          'ncbsID': ncbsID,
+                          'dispaly': 'block',
+                          'successnum': successnum,
+                          'errormsg': errormsg,
+                          'errornum': errornum,
+                          'total': total,
+                          'datetime': datetime
+                        });
+                    }
+                    checkandinsert(i + 1);
+                  });
+                }
               }
             });
+
           }
         }
       }

@@ -259,7 +259,7 @@ module.exports = (app) => {
 			where += " and dem.msm_tpc like '%" + tpc + "%' ";
 
 		var p1 = new Promise(function (resolve, reject) {
-			db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, evtpgID,client,sc.codeLabel,url,convert(varchar, sdt, 120)sdt,convert(varchar, edt, 120)edt,msm_tpc,convert(varchar, dem.updTime, 120)updTime,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount FROM dm_EvtpgMst dem left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
+			db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, evtpgID,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,convert(varchar, dem.updTime, 120)updTime,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount FROM dm_EvtpgMst dem left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
 				if (err) {
 					console.log(err);
 					reject(2);

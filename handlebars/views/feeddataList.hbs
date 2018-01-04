@@ -99,6 +99,7 @@
 			dataType: 'text',
 			success: function (msg) {
 				alert("刪除成功");
+       
 
 			}
 		});
@@ -118,7 +119,7 @@
 				if (msg == "已新增過")
 					alert(msg);
 				else {
-					$('#mtaglist' + o[i].feeddata[0].ListID).append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + ListID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
+					$('#mtaglist' + ListID).append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + ListID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
 					$(function () {
 						$('.customize a').click(function (event) {
 							$(this).parent('li').hide();

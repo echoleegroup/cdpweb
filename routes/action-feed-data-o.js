@@ -172,7 +172,7 @@ module.exports = (app) => {
     var outerListDesc = req.body.outerListDesc || '';
     var filepath = '';
     var uNameindex, uCustIDindex, uLicsNOindex, uTelindex, uMailindex, uAddindex, uAtNameindex, uAtTelindex, uAtMailindex, uAtAddindex;
-    var keyIndex = 0;
+    var keyIndex = -1;
     var origName = "";
     var uniqName = "";
     var total;
@@ -265,11 +265,15 @@ module.exports = (app) => {
       checkandinsert(i);
       function checkandinsert(i) {
         if (i < list[0].data.length) {
-          if (list[0].data[i][keyIndex] == undefined) {
+          console.log(keyIndex);
+          if (keyIndex === -1 || keyIndex == undefined) {
             errornum++;
             var linenum = i + 1;
             errormsg += 'Line ' + linenum.toString() + ','
-            console.log(errormsg);
+            if (optradio == "uCustID")
+              errormsg += '無法找到身份證字號欄位\r\n';
+            else
+              errormsg += '無法找到車牌欄位\r\n';
             for (var j = 0; j < list[0].data[i].length; j++) {
               if (j == list[0].data[i].length - 1)
                 errormsg += list[0].data[i][j] + "\r\n";
@@ -277,12 +281,56 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
-              var currentdate = new Date();
-              var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-              res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+              if (total == errornum) {
+                db.query("delete from cu_OuterListMst where outerListID = " + outerListID, function (err, recordset) {
+                  var currentdate = new Date();
+                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds();
+                  res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                });
+              }
+              else {
+                var currentdate = new Date();
+                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                  + currentdate.getHours() + ":"
+                  + currentdate.getMinutes() + ":"
+                  + currentdate.getSeconds();
+                res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+              }
+            }
+            checkandinsert(i + 1);
+          }
+          else if (list[0].data[i][keyIndex] == undefined) {
+            errornum++;
+            var linenum = i + 1;
+            errormsg += 'Line ' + linenum.toString() + ','
+            for (var j = 0; j < list[0].data[i].length; j++) {
+              if (j == list[0].data[i].length - 1)
+                errormsg += list[0].data[i][j] + "\r\n";
+              else
+                errormsg += list[0].data[i][j] + ",";
+            }
+            if (i == list[0].data.length - 1) {
+              if (total == errornum) {
+                db.query("delete from cu_OuterListMst where outerListID = " + outerListID, function (err, recordset) {
+                  var currentdate = new Date();
+                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds();
+                  res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                });
+              }
+              else {
+                var currentdate = new Date();
+                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                  + currentdate.getHours() + ":"
+                  + currentdate.getMinutes() + ":"
+                  + currentdate.getSeconds();
+                res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+              }
             }
             checkandinsert(i + 1);
           }
