@@ -4,7 +4,8 @@
     "port": 1433,
     "options": {
       "encrypt": true
-    }
+    },
+    "dialect": "mssql"
   },
   "JAVA_API_ENDPOINT": "http://192.168.1.52:8080"
 }

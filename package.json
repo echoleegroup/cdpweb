@@ -34,7 +34,9 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "q": "^1.5.0",
+    "sequelize": "^4.28.6",
     "serve-favicon": "~2.3.0",
+    "umzug": "^2.1.0",
     "winston": "^2.4.0"
   },
   "devDependencies": {
