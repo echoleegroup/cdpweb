@@ -7,7 +7,7 @@
     "test": "mocha test/**/*.js",
     "start": "node ./bin/www",
     "build-windows": "set NODE_ENV=production&& webpack -p --config ./webpack.config.js",
-    "build": " webpack debug -p --config ./webpack.config.js"
+    "build": "NODE_ENV=production webpack debug -p --config ./webpack.config.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

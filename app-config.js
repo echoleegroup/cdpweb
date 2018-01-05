@@ -7,7 +7,7 @@ const configProduction = require('./config.production.json');
 
 module.exports = {
   set: (setting, val) => {
-    switch (process.env.STAGE) {
+    switch (process.env.NODE_ENV) {
       case 'production':
         configProduction[setting] = val;
         break;
@@ -22,7 +22,7 @@ module.exports = {
     }
   },
   get: (setting) => {
-    switch (process.env.STAGE) {
+    switch (process.env.NODE_ENV) {
       case 'production':
         return configProduction[setting];
       case 'staging':
