@@ -1,21 +1,19 @@
 import React from 'react';
 import {List} from 'immutable';
-import {isEmpty, reduce} from 'lodash';
+import {isEmpty, reduce, assign} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
 
-const OPERATOR_OPTIONS =  Object.assign({}, {
+const OPERATOR_OPTIONS = {
   and: '全部',
   or: '任一'
-});
+};
 
 export default class CriteriaBundle extends React.PureComponent {
   constructor(props, options) {
     super(props);
     this.OPERATOR_OPTIONS = options.OPERATOR_OPTIONS || OPERATOR_OPTIONS;
     this.state = this.getInitialState(options, props.criteria);
-    //this.state = Object.assign({}, this.getInitialState(options), props.criteria);
-    // console.log('CriteriaBundle::constructor: ', this.state.get('uuid'));
   };
 
   getInitialState(options = {}, injection = {}) {
@@ -28,7 +26,7 @@ export default class CriteriaBundle extends React.PureComponent {
       criteria: List()
     };
 
-    return Object.assign({}, state, {
+    return assign({}, state, {
       uuid: injection.uuid || shortid.generate(),
       type: injection.type || options.type || state.type,
       operator: injection.operator || options.operator || state.operator,
@@ -66,7 +64,7 @@ export default class CriteriaBundle extends React.PureComponent {
       }, List());
 
       // console.log('CriteriaBundle::getCriteria::subCrits ', subCrits);
-      return (subCrits.size === 0)? {}: Object.assign({}, this.state, {
+      return (subCrits.size === 0)? {}: assign({}, this.state, {
         criteria: subCrits
       });
     };

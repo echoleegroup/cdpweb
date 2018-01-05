@@ -1,9 +1,9 @@
 import React from 'react';
-import {find} from 'lodash';
+import {find, assign} from 'lodash';
 import moment from 'moment';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
-const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
+const OPERATOR_DICT = assign({}, OPERATOR_DICT_DEFAULT, {
   eq: '=',
   ne: '≠',
   lt: '<',
@@ -17,7 +17,7 @@ const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
 export default class CriteriaField extends React.PureComponent {
   constructor(props) {
     super(props);
-    //this.state = Object.assign({}, props.criteria);
+    //this.state = assign({}, props.criteria);
 
     this.OPERATOR_DICT = OPERATOR_DICT;
     /**
@@ -40,7 +40,7 @@ export default class CriteriaField extends React.PureComponent {
     this.value_label = this.displayTextFormatter(this.props.criteria.value, this.props.field, this.props.refOptions);
 
     this.getCriteria = () => {
-      return Object.assign({}, this.props.criteria, {
+      return assign({}, this.props.criteria, {
         field_label: this.props.field.label,
         value_label: this.value_label
       });

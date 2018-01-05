@@ -1,10 +1,10 @@
 import React from 'react';
 import shortid from "shortid";
 import moment from 'moment';
-import {find} from 'lodash';
+import {find, assign} from 'lodash';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
-const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
+const OPERATOR_DICT = assign({}, OPERATOR_DICT_DEFAULT, {
   eq: '=',
   ne: '≠',
   lt: '<',
@@ -47,7 +47,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
 
   openModal(callback) {
     this.responseCriteria = callback;
-    this.setState(Object.assign({}/*, INITIAL_STATE*/, {
+    this.setState(assign({}/*, INITIAL_STATE*/, {
       uuid: shortid.generate(),
       //TODO: keep current data_type and ref coz the selected filed not be clean yet.
       //data_type: this.state.data_type,
@@ -64,7 +64,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
 
   confirmCriteria() {
     let data = this.fieldInput? this.fieldInput.getInputData(): {};
-    let c = Object.assign({}, this.state, {
+    let c = assign({}, this.state, {
       value: data.value,
       value_label: data.value_label
     });

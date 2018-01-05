@@ -1,11 +1,11 @@
 import React from 'react';
 import shortid from "shortid";
 import moment from 'moment';
-import {find} from 'lodash';
+import {find, assign} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
-const OPERATOR_DICT =  Object.assign({}, OPERATOR_DICT_DEFAULT, {
+const OPERATOR_DICT = assign({}, OPERATOR_DICT_DEFAULT, {
   eq: '=',
   ne: '≠',
   lt: '<',

@@ -2,7 +2,6 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce, isEmpty} from 'lodash';
 import {nfcall, all} from 'q';
-// import {fromJS} from 'immutable';
 import CriteriaFieldPicker from './CriteriaFieldPicker';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
@@ -24,7 +23,7 @@ export default class CriteriaBase extends React.PureComponent {
     //this.fields = _test.fields.preferred_target;
     //this.refOptions = _test.refs;
     //this.criteria = [];
-    this.options = Object.assign({
+    this.options = assign({
       _folding: '',
       main_title: '',
       sub_title: ''
@@ -115,13 +114,13 @@ export default class CriteriaBase extends React.PureComponent {
                                      styleClass={'nocondition'}
                                      controlButtonRender={this.PreviewControlButtonRender}/>
       } else {
-        Object.assign(props, {
+        assign(props, {
           styleClass: 'condition',
           controlButtonRender: this.PreviewControlButtonRender
         });
       }
     } else {  //edit view
-      Object.assign(props, {
+      assign(props, {
         styleClass: 'condition edit',
         controlButtonRender: this.EditControlButtonRender,
         ref: (e) => {
@@ -187,7 +186,7 @@ const getFoldingFieldData = (_folding, callback) => {
 const getFieldDictionary = (folders) => {
   return reduce(folders, (dictionary, data) => {
     if ('field' === data.type) {
-      return Object.assign(dictionary, {
+      return assign(dictionary, {
         [data.id]: {
           id: data.id,
           label: data.label,
@@ -197,7 +196,7 @@ const getFieldDictionary = (folders) => {
         }
       });
     } else if ('folder' === data.type) {
-      return Object.assign(dictionary, getFieldDictionary(data.fields));
+      return assign(dictionary, getFieldDictionary(data.fields));
     }
   }, {});
 };

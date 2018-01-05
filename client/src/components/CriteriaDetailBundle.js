@@ -1,11 +1,11 @@
 import React from 'react';
 import CriteriaBundle from './CriteriaBundle';
 
-const OPERATOR_OPTIONS =  Object.assign({}, {
+const OPERATOR_OPTIONS =  {
   and: '全部',
   or: '任一',
   not: '皆不'
-});
+};
 export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
     super(props, {
