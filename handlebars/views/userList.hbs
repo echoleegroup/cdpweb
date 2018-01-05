@@ -29,7 +29,7 @@
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
             <i class="fa fa-sort" aria-hidden="true"></i> 最後登入時間
           </th>
-          <th>註記</th>
+          <th>刪除註記</th>
         </tr>
       </thead>
       <tbody>
@@ -41,7 +41,7 @@
             <a href="/system/user/edit?userId={{user.userId}}">{{user.username}}</a>
           </td>
           <td>{{user.loginTime}}</td>
-          <td>{{user.isstop}}</td>
+          <td name ="isstop">{{user.isstop}}</td>
         </tr>
         {{/each}}
 
@@ -51,3 +51,10 @@
     <!-- pagination -->
   </div>
 </div>
+<script>
+  var x = document.getElementsByName("isstop") ;
+  for( i in x ) {
+    if(x[i].innerHTML != 'Y') 
+      x[i].innerHTML = '';
+  }
+</script>

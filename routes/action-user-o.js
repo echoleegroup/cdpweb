@@ -159,11 +159,12 @@ module.exports = (app) => {
     var email = req.body.email || '';
     var bookmark = req.body.bookmark || '';
     var isstop = req.body.isstop || '';
+    var password = req.body.pwd || '';
     var where = " where userId ='" + userId + "'";
-    db.query("update sy_infouser set userId = '" + userId + "', username = '" + username + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.session.userid + "',modifyTime=GETDATE() " + where, function (err, recordset) {
+    db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.session.userid + "',modifyTime=GETDATE() " + where, function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
-      res.redirect('/user/UserInfoEdit?userId=' + userId);
+      res.redirect('/system/user/edit?userId=' + userId);
     });
   });
 
