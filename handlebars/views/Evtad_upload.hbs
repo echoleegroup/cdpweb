@@ -159,7 +159,11 @@
     if(f.options[i].value == "{{mainInfo.funcCatge}}" )
       f.options[i].selected = true ;
   }
-
+  var sel = document.getElementById('evtpgID');
+  var opt = sel.options[sel.selectedIndex];
+  
+  if(opt.text == '(~)')
+     upevtpgID();
 
   
 	var x;
