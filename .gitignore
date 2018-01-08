@@ -56,7 +56,7 @@ public/swagger/mockup-server
 .asserts
 
 #webpack Output
-#client/public/!js
+client/public/!js
 
 #file-based session storage
 .sessiondb
