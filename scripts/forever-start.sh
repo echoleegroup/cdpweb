@@ -31,5 +31,5 @@ mkdir -p $LOG_PATH
 
 cd ${PROJECT_PATH}
 
-./node_modules/forever/bin/forever start -a -l {LOG_PATH}/forever.log -o ${LOG_PATH}/out.log -e ${LOG_PATH}/err.log ./bin/www
+./node_modules/forever/bin/forever start -a -l ${LOG_PATH}/forever.log -o ${LOG_PATH}/out.log -e ${LOG_PATH}/err.log ./bin/www
 
