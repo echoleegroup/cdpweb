@@ -47,7 +47,7 @@ echo "PKG_IGNORE: $PKG_IGNORE"
 echo "OUTPUT_PATH: $OUTPUT_PATH"
 #echo "src_file: $SRC_FILE"
 
-DATE=$(date +"%Y%m%d%H%M%S")
+DATE=$(date +"%Y-%m-%d-%H%M%S")
 
 cd ${SOURCE_PATH} && npm install && npm run build && tar -X ${PKG_IGNORE} -Jcvf ${OUTPUT_PATH}/${PREFIX}.${DATE}.tar.xz . && cd ${CURRENT_PATH}
 
