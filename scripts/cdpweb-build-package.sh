@@ -29,9 +29,13 @@ SOURCE_PATH="./cdpweb"
 PREFIX="cdpweb"
 CURRENT_PATH=$(pwd)
 OUTPUT_PATH=$CURRENT_PATH
-PKG_IGNORE="${SOURCE_PATH}/package.ignore"
+PKG_IGNORE=
 
 set_var "$@"
+
+if [ -z "$PKG_IGNORE" ] ; then
+  PKG_IGNORE="${SOURCE_PATH}/package.ignore"
+fi
 
 SOURCE_PATH="$(cd "$(dirname "$SOURCE_PATH")"; pwd)/$(basename "$SOURCE_PATH")"
 PKG_IGNORE="$(cd "$(dirname "$PKG_IGNORE")"; pwd)/$(basename "$PKG_IGNORE")"
