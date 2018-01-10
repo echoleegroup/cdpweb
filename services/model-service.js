@@ -19,7 +19,7 @@ module.exports.getModels = (callback=() => { }) => {
 module.exports.getModel = (mdId, callback=() => {}) => {};
 
 module.exports.getModelBatch = (mdId, batId, callback=() => {}) => {
-  let sql =
+  const sql =
     'SELECT mm.* ' +
     'FROM md_Model mm, md_Batch mb ' +
     'WHERE mm.mdID = mb.mdID and mm.batID = mb.batID and mm.mdID = @mdId and mm.batID = @batId';

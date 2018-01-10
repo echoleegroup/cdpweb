@@ -34,8 +34,8 @@ class PortalRoute extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route path="/target/filter" component={TargetFilterHome}/>
-          <Route path="/consumer/filter/:action" component={Home}/>
+          <Route exact path="/target/filter/:mdId/:batId" component={TargetFilterHome}/>
+          <Route exact path="/consumer/filter/:action" component={Home}/>
         </Switch>
       </Router>
     );

@@ -1,13 +1,8 @@
-const util = require('util');
 const CriteriaAction = {};
 
-const GET_FIELDS_URL = '/api/criteria/fields/%s';
-const GET_HISTORY_LIST = '/api/criteria/history';
-const GET_HISTORY = '/api/criteria/history/%s';
-
-CriteriaAction.getFieldsData = (code, callback) => {
+CriteriaAction.getCriteriaFieldsData = (url, callback) => {
   $.ajax({
-    url: util.format(GET_FIELDS_URL, code),
+    url: url,
     method: 'get'
   }).done((result) => {
     (result.code === 200)?
@@ -18,9 +13,9 @@ CriteriaAction.getFieldsData = (code, callback) => {
   });
 };
 
-CriteriaAction.getHistory = (code, callback) => {
+CriteriaAction.getCriteriaHistory = (url, callback) => {
   $.ajax({
-    url: util.format(GET_HISTORY, code),
+    url: url,
     method: 'get'
   }).done((result) => {
     (result.code === 200)?

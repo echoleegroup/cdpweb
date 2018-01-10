@@ -1,7 +1,7 @@
 import React from 'react';
 import TargetFilterCriteria from './TargetFilterCriteria';
 
-export default class PreferredTargetAction extends React.Component {
+export default class PreferredTargetAction extends React.PureComponent {
   render() {
     return (
       <div>
@@ -18,14 +18,14 @@ export default class PreferredTargetAction extends React.Component {
                   <input type="radio" name="optradio"/>否</label>
               </div>
             </div>
-            <PreferredTargetCount />
+            <PreferredTargetCount/>
           </form>
           <div className="btn-block center-block">
             <button type="submit" className="btn btn-lg btn-default">名單數試算</button>
             <button type="submit" className="btn btn-lg btn-default">自定名單下載</button>
           </div>
         </div>
-        <TargetFilterCriteria/>
+        <TargetFilterCriteria params={this.props.params}/>
       </div>
     );
   };

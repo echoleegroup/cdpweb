@@ -7,7 +7,12 @@ const _ = require('lodash');
 const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
 const criteriaService = require('../../services/criteria-service');
+const codeGroupService = require('../../services/code-group-service');
+const criteriaHelper = require('../../helpers/criteria-helper');
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
+
+const CUSTOMER_FEATURE_SET_ID = 'ModelGene';
+const MODEL_FEATURE_CATEGORY_ID = 'tagene';
 
 module.exports = (app) => {
   winston.info('[api-model] Creating api-model route.');
@@ -24,39 +29,29 @@ module.exports = (app) => {
   /**
    * get available fields (and folds), that user able to set filter criteria.
    * */
-  router.get('/fields/:ref_code', middlewares, (req, res) => {
-    winston.info('/criteria/fields: ', req.params.ref_code);
-    //get fields
-    Q.nfcall(criteriaService.getFilterFields, req.params.ref_code).then((fields) => {
-      //scan all fields and collect all the ref tags, instead of fetch ref data directly
-      // because one tag may be referenced by more than one field.
-      const getFieldRefPromise = (fields) => {
-        return fields.reduce((collector, field) => {
-          if ('field' === field.type && 'refOption' === field.data_type) {
-            //fetch options by ref code
-            collector.push(field.ref);
-          } else if ('folder' === field.type) {
-            collector = collector.concat(getFieldRefPromise(field.fields));
-          }
-          return collector;
-        }, []);
-      };
+  router.get('/:mdId/:batId/target/fields', middlewares, (req, res) => {
+    let mdId = req.params.mdId;
+    let batId = req.params.batId;
+    winston.info('/criteria/fields(mdId=%s, batId=%s)', mdId, batId);
 
-      let refPromises = _.uniq(getFieldRefPromise(fields)).map((ref) => {
-        return Q.nfcall(criteriaService.getFieldReference, ref).then((refData) => {
-          return {
-            [ref]: refData
-          };
-        });
-      });
-      return [fields, Q.all(refPromises)];
-    }).spread((fields, refDictionary) => {
-      res.json({
+    Q.all([
+      Q.nfcall(criteriaService.getModelBatchCategWithCustomFeatures, mdId, batId, MODEL_FEATURE_CATEGORY_ID, CUSTOMER_FEATURE_SET_ID),
+      Q.nfcall(criteriaService.getFieldFoldingTree, CUSTOMER_FEATURE_SET_ID)
+    ]).spread((rawFields, foldingTree) => {
+      // get code group from rawFields
+      // ** IMPORTANT: get code group before getCriteriaFields **
+      // ** because getCriteriaFields is a mutated function, which move folded fields out of rawFields **
+      let refCodeGroups = _.uniq(_.reject(_.map(rawFields, 'codeGroup'), _.isEmpty));
+      let fields = criteriaHelper.criteriaFeaturesToFields(rawFields, foldingTree);
+      return Q.nfcall(codeGroupService.getSysCodeGroups, refCodeGroups).then(codeGroupResSet => ({
         fields: fields,
-        fieldRefs: refDictionary
-      });
-    }).fail((err) => {
-      winston.error('===api-criteria.getFilterFields error: ', err);
+        fieldRefs: criteriaHelper.codeGroupToRefFields(codeGroupResSet)
+      }));
+    }).then(resSet => {
+      res.json(resSet);
+    }).fail(err => {
+      winston.error('===/%s/%s/target/fields internal server error: %j', mdId, batId, err);
+      res.json(null, 500, 'internal service error');
     });
   });
 
@@ -64,7 +59,7 @@ module.exports = (app) => {
     Q.nfcall(criteriaService.getCriteriaHistory, req.params.id).then((criteria) => {
       res.json(criteria);
     }).fail((err) => {
-      winston.error('===api-criteria.getFilterFields error: ', err);
+      winston.error('===api-criteria.getCriteriaHistory error: ', err);
     });
   });
 

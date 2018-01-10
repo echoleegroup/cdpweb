@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class PreferredTargetIllustration extends React.Component {
+export default class PreferredTargetIllustration extends React.PureComponent {
   render() {
     return (
       <div className="table_block table-responsive">

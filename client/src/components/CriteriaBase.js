@@ -23,17 +23,14 @@ export default class CriteriaBase extends React.PureComponent {
     //this.fields = _test.fields.preferred_target;
     //this.refOptions = _test.refs;
     //this.criteria = [];
-    this.options = assign({
-      _folding: '',
-      main_title: '',
-      sub_title: ''
-    }, options);
+    this.options = assign({}, options);
   };
 
   getPreparingData(options) {
+    console.log('===PreferredTargetCriteria::getPreparingData::props: ', this.props);
     all([
-      getCriteria(options._folding),
-      getFoldingFieldData(options._folding)
+      nfcall(this.getHistory, options),
+      nfcall(this.getFoldingFieldData, options)
     ]).spread((criteria, foldingFieldsInfo) => {
       this.criteria = criteria;
       this.foldingFields = foldingFieldsInfo.fields;
@@ -45,7 +42,10 @@ export default class CriteriaBase extends React.PureComponent {
     }).finally(() => {
       this.mapToProps = {
         foldingFields: this.foldingFields,
-        moduleOptions: this.options,
+        displayOptions: {
+          main_title: this.getMainTitle(),
+          sub_title: this.getSubTitle()
+        },
         refOptions: this.refOptions,
         fieldDictionary: this.fieldDictionary,
         folderDictionary: this.folderDictionary,
@@ -62,7 +62,7 @@ export default class CriteriaBase extends React.PureComponent {
   }
 
   componentWillMount() {
-    this.getPreparingData(this.options);
+    this.getPreparingData(Object.assign({}, this.props.params, this.options));
 
     this.PreviewControlButtonRender = () => {
       return (
@@ -133,23 +133,26 @@ export default class CriteriaBase extends React.PureComponent {
                          {...props}
                          isPreview={this.state.isPreview}
                          criteria={this.criteria}/>
-  }
-};
+  };
 
-const getCriteria = (_folding) => {
-  return nfcall(CriteriaAction.getHistory, _folding);
-  //return Q([]);
-  //callback(null, _test.criteria[_folding]);
-  //callback(null, []);
-};
+  getMainTitle() {
+    return '';
+  };
 
-const getFoldingFieldData = (_folding, callback) => {
-  return nfcall(CriteriaAction.getFieldsData, _folding).then((data) => {
-    return {
-      fields: data.fields,
-      fieldRefs: data.fieldRefs
-    };
-  });
+  getSubTitle() {
+    return '';
+  };
+
+  getHistory(options, callback) {
+    callback(null, []);
+  };
+
+  getFoldingFieldData(options, callback) {
+    callback(null, {
+      fields: [],
+      fieldRefs: {}
+    });
+  };
 };
 
 /**

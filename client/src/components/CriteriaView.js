@@ -61,16 +61,16 @@ export default class CriteriaView extends React.PureComponent {
   }
 
   MainTitle() {
-    if (this.props.moduleOptions.main_title) {
-      return <h2>{this.props.moduleOptions.main_title}</h2>
+    if (this.props.displayOptions.main_title) {
+      return <h2>{this.props.displayOptions.main_title}</h2>
     } else {
       return null;
     }
   }
 
   SubTitle() {
-    if (this.props.moduleOptions.sub_title) {
-      return <h3>{this.props.moduleOptions.sub_title}</h3>
+    if (this.props.displayOptions.sub_title) {
+      return <h3>{this.props.displayOptions.sub_title}</h3>
     } else {
       return null;
     }
