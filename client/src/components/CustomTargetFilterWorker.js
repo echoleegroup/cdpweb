@@ -1,7 +1,7 @@
 import React from 'react';
-import TargetFilterCriteria from './CustomTargetFilterCriteria';
+import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
 
-export default class PreferredTargetAction extends React.PureComponent {
+export default class CustomTargetFilterWorker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,14 +60,14 @@ export default class PreferredTargetAction extends React.PureComponent {
                   <input type="radio" name="optradio" value={false} onClick={this.setExcludeModelTarget}/>否</label>
               </div>
             </div>
-            <PreferredTargetCount prediction={this.state.prediction}/>
+            <CustomTargetFilterPreview prediction={this.state.prediction}/>
           </form>
           <div className="btn-block center-block">
             <button type="submit" className="btn btn-lg btn-default" onClick={this.filterResultPreview}>名單數試算</button>
             <button type="submit" className="btn btn-lg btn-default" onClick={this.doFiltering}>自定名單下載</button>
           </div>
         </div>
-        <TargetFilterCriteria params={this.props.params} ref={(e) => {
+        <CustomTargetFilterCriteria params={this.props.params} ref={(e) => {
           this.criteriaComp = e;
         }}/>
       </div>
@@ -75,7 +75,7 @@ export default class PreferredTargetAction extends React.PureComponent {
   };
 }
 
-class PreferredTargetCount extends React.PureComponent {
+class CustomTargetFilterPreview extends React.PureComponent {
   constructor(props) {
     super();
     this.state = {
@@ -97,11 +97,5 @@ class PreferredTargetCount extends React.PureComponent {
         </div>
       </div>
     );
-  };
-
-  updateData(totalCount, modelCount) {
-    this.setState({
-      model_target_count: modelCount
-    });
   };
 }
