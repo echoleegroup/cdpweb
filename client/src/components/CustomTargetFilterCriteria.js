@@ -1,10 +1,7 @@
 import React from 'react';
-import {format} from 'util';
+import Rx from 'rxjs/Rx';
 import CriteriaBase from './CriteriaBase';
-import {nfcall} from 'q';
 import CriteriaAction from '../actions/criteria-action';
-
-const GET_CRITERIA_FIELDS_URL = '/api/criteria/%s/%s/target/fields';
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -21,16 +18,16 @@ export default class PreferredTargetCriteria extends CriteriaBase {
 
   getHistory(options, callback) {
     callback(null, []);
-    //nfcall(CriteriaAction.getHistory, _folding);
-    //return Q([]);
-    //callback(null, _test.criteria[_folding]);
-    //callback(null, []);
   };
 
   getFoldingFieldData(options, callback) {
-    let url = format(GET_CRITERIA_FIELDS_URL, options.mdId, options.batId);
-    nfcall(CriteriaAction.getCriteriaFieldsData, url).then((data) => {
-      callback(null, data);
-    });
+    (Rx.Observable.bindNodeCallback(CriteriaAction.getCriteriaFieldsData)(options.mdId, options.batId))
+      .subscribe(
+        data => callback(null, data),
+        err => console.log('===getFoldingFieldData failed: ', err));
+
+    // nfcall(CriteriaAction.getCriteriaFieldsData, options.mdId, options.batId).then((data) => {
+    //   callback(null, data);
+    // });
   };
 };

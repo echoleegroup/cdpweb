@@ -2,7 +2,7 @@ import React  from 'react';
 import ReactDOM  from 'react-dom';
 import url from 'url';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import TargetFilterHome from './components/TargetFilterHome';
+import CustomTargetFilterHome from './components/CustomTargetFilterHome';
 
 (function ($) {
   let internalAjax = $.ajax;
@@ -34,7 +34,7 @@ class PortalRoute extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route exact path="/target/filter/:mdId/:batId" component={TargetFilterHome}/>
+          <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetFilterHome}/>
           <Route exact path="/consumer/filter/:action" component={Home}/>
         </Switch>
       </Router>

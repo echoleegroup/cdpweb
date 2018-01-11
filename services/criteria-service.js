@@ -37,15 +37,9 @@ module.exports.getModelBatchCategWithCustomFeatures = (mdId, batId, category, se
   Q.nfcall(getCriteriaAllFeatureId, mdId, batId, category, setId).then(featureIds => {
     const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup ' +
       'FROM ft_Feature feature ' +
-      'WHERE feature.featID in (@features) AND feature.isDel is not NULL';
-    let params = {
-      features: {
-        type: _connector.TYPES.NVarChar,
-        value: featureIds
-      }
-    };
+      'WHERE feature.featID in (\'' + featureIds.join() + '\') AND feature.isDel is not NULL';
 
-    return Q.nfcall(_connector.execSqlByParams, sql, params).then((result) => {
+    return Q.nfcall(_connector.execSqlByParams, sql, {}).then((result) => {
       callback(null, result);
     });
   }).fail((err) => {

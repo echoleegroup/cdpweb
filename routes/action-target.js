@@ -10,7 +10,7 @@ module.exports = (app) => {
   console.log('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
-  router.get('/filter/:mdId/:batId', middleware.check(), function (req, res, next) {
+  router.get('/custom/filter/:mdId/:batId', middleware.check(), function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;

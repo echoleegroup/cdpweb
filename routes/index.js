@@ -34,7 +34,7 @@ module.exports = (app) => {
   app.use('/taanarpt_rult', require('./action-taanarpt-rult-o')(app));
   //hook for restful api
   app.use('/api/model', require('./api/api-model')(app));
-  app.use('/api/criteria', require('./api/api-criteria')(app));
+  app.use('/api/target', require('./api/api-target')(app));
 
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));

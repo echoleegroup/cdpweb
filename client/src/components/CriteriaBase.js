@@ -2,6 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce, isEmpty} from 'lodash';
 import {nfcall, all} from 'q';
+import Rx from 'rxjs';
 import CriteriaFieldPicker from './CriteriaFieldPicker';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
@@ -24,22 +25,23 @@ export default class CriteriaBase extends React.PureComponent {
     //this.refOptions = _test.refs;
     //this.criteria = [];
     this.options = assign({}, options);
+    this.criteria = props.criteria || [];
   };
 
   getPreparingData(options) {
-    console.log('===PreferredTargetCriteria::getPreparingData::props: ', this.props);
-    all([
-      nfcall(this.getHistory, options),
-      nfcall(this.getFoldingFieldData, options)
-    ]).spread((criteria, foldingFieldsInfo) => {
-      this.criteria = criteria;
-      this.foldingFields = foldingFieldsInfo.fields;
-      this.refOptions = foldingFieldsInfo.fieldRefs;
+
+    Rx.Observable.zip(
+      Rx.Observable.bindNodeCallback(this.getHistory)(options),
+      Rx.Observable.bindNodeCallback(this.getFoldingFieldData)(options)
+    ).subscribe(data => {
+      this.criteria = data[0];
+      this.foldingFields = data[1].fields;
+      this.refOptions = data[1].fieldRefs;
       this.fieldDictionary = getFieldDictionary(this.foldingFields);
       this.folderDictionary = getFolderDictionary(this.foldingFields);
-    }).fail((err) => {
+    }, err => {
       console.log('fetch necessary data failed: ', err);
-    }).finally(() => {
+    }, () => {
       this.mapToProps = {
         foldingFields: this.foldingFields,
         displayOptions: {
@@ -59,6 +61,38 @@ export default class CriteriaBase extends React.PureComponent {
         isLoaded: true
       });
     });
+    //
+    // all([
+    //   nfcall(this.getHistory, options),
+    //   nfcall(this.getFoldingFieldData, options)
+    // ]).spread((criteria, foldingFieldsInfo) => {
+    //   this.criteria = criteria;
+    //   this.foldingFields = foldingFieldsInfo.fields;
+    //   this.refOptions = foldingFieldsInfo.fieldRefs;
+    //   this.fieldDictionary = getFieldDictionary(this.foldingFields);
+    //   this.folderDictionary = getFolderDictionary(this.foldingFields);
+    // }).fail((err) => {
+    //   console.log('fetch necessary data failed: ', err);
+    // }).finally(() => {
+    //   this.mapToProps = {
+    //     foldingFields: this.foldingFields,
+    //     displayOptions: {
+    //       main_title: this.getMainTitle(),
+    //       sub_title: this.getSubTitle()
+    //     },
+    //     refOptions: this.refOptions,
+    //     fieldDictionary: this.fieldDictionary,
+    //     folderDictionary: this.folderDictionary,
+    //     addCriteriaField: (callback) => {
+    //       // console.log('CriteriaBase::addCriteriaField');
+    //       this.fieldPicker.openModal(callback);
+    //     }
+    //   };
+    //
+    //   this.setState({
+    //     isLoaded: true
+    //   });
+    // });
   }
 
   componentWillMount() {
@@ -84,6 +118,10 @@ export default class CriteriaBase extends React.PureComponent {
           })
         }}>完成編輯</button>
       );
+    };
+
+    this.getCriteria = () => {
+      return this.criteria;
     };
   };
 

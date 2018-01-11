@@ -12,7 +12,7 @@ const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&t
 
 let webpackEntries = {
     'react.bundle': ['./client/src/Portal.js']
-    //'react.bundle.custom.search': ['./client/src/TargetFilterHome.js']
+    //'react.bundle.custom.search': ['./client/src/CustomTargetFilterHome.js']
 };
 let webpackIncludes = [path.join(__dirname, 'client/src')];
 /*

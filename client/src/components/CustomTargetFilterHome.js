@@ -1,6 +1,6 @@
 import React  from 'react';
-import TargetFilterPrediction from './TargetFilterPrediction';
-import TargetFilterIllustration from './TargetFilterIllustration';
+import TargetFilterPrediction from './CustomTargetFilterPrediction';
+import TargetFilterIllustration from './CustomTargetFilterIllustration';
 
 export default class PreferredTargetHome extends React.PureComponent {
   constructor(props) {
