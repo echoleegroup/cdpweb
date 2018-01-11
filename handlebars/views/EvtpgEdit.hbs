@@ -1,270 +1,308 @@
 {{> title title='活動頁面註冊'}}
 <div class="container">
-	<!-- row div 於需要分兩欄才需要 -->
-	<div class="row">
-		<!-- 左欄 Start -->
-		<div class="col-md-8 col-sm-7 col-xs-12">
-			<!-- form set Start -->
-			<div class="form_block">
-				<h2>活動頁面設定</h2>
-				<form id="reg" action="/actad/act/edit_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
-					<input type="hidden" value="{{evtpgID}}" id="evtpgID" />
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">品牌</label>
-						<div class="col-sm-7">
-							<select class="form-control custom" name="client" id="client" disabled>
-								<option value="TOYOTA">TOYOTA</option>
-								<option value="LEXUS">LEXUS</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">屬性類別</label>
-						<div class="col-sm-8">
-							<select class="form-control custom" id="funcCatge" name="funcCatge" disabled>
-								<option value="">{{maininfo.[0].codeLabel}}</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">名單名稱</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control " id="msm_tpc" name="msm_tpc" value="{{maininfo.[0].msm_tpc}}" disabled>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">登陸目標頁</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control " id="url" name="url" value="{{maininfo.[0].url}}" disabled>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">活動頁面露出時間
-						</label>
-						<div class="col-sm-8">
-							<!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
-							<div class="radio">
-								<div class="form-inline">
-									<input type="text" class="form-control" id="sdt" name="sdt" placeholder="" value="{{maininfo.[0].sdt}}" disabled> ~
-									<input type="text" class="form-control" id="edt" name="edt" placeholder="" value="{{maininfo.[0].edt}}" disabled>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">成效報表追蹤時間
-						</label>
-						<div class="col-sm-8">
-							<!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
-							<div class="radio">
-								<div class="form-inline">
-									<input type="text" class="form-control" id="trkSdt" name="trkSdt" placeholder="" value="{{maininfo.[0].trkSdt}}" disabled> ~
-									<input type="text" class="form-control" id="trkEdt" name="trkEdt" placeholder="" value="{{maininfo.[0].trkEdt}}" disabled>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">停用註記</label>
-						<div class="col-sm-8">
-							<div class="form-check form-check-inline">
-								<label class="form-check-label">
-									<input class="form-check-input" type="checkbox" id="isDel" name="isDel" disabled> 停用
-								</label>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">註記</label>
-						<div class="col-sm-8">
-							<textarea class="form-control" rows="5" id="evtpgDesc" name="evtpgDesc" disabled>{{maininfo.[0].evtpgDesc}}</textarea>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="form_block">
-				<h2>活動標籤設定</h2>
-				<form class="form-horizontal">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">標籤內容－自訂</label>
-						<div class="col-sm-8">
-							<div class="tag customize">
-								<ul id="mtaglist">
-									{{#each mtag as |tag|}}
-									<li class="tag_item">{{tag.tagLabel}}
-										<a href="javascript:deltag({{evtpgID}},{{tag.tagID}})">
-											<i class="fa fa-times"></i>
-										</a>
-									</li>
-									{{/each}}
-								</ul>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">新增</label>
-						<div class="col-sm-8">
-							<div class="form-inline">
-								<input type="text" class="form-control" id="newtag" name="newtag" placeholder="">
-								<button type="button" onclick="addtag({{evtpgID}})" class="btn btn-default fa fa-plus" aria-hidden="true"></button>
-							</div>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="table_block">
-				<h2>活動廣告資訊</h2>
-				<div class="table-responsive">
-					<table class="table table-hover table-sprite">
-						<tbody>
-							<tr>
-								<td>廣告排程數</td>
-								<td>{{maininfo.[0].adCount}}</td>
-							</tr>
-							<tr>
-								<td>帶特徵廣告數</td>
-								<td>{{maininfo.[0].adtagcount}}</td>
-							</tr>
-							<tr>
-								<td>最後更新日期</td>
-								<td>{{maininfo.[0].adudtime}}</td>
-							</tr>
-							<tr>
-								<td>最後更新人員</td>
-								<td>{{maininfo.[0].aduduser}}</td>
-							</tr>
-						</tbody>
+  <!-- row div 於需要分兩欄才需要 -->
+  <div class="row">
+    <!-- 左欄 Start -->
+    <div class="col-md-8 col-sm-7 col-xs-12">
+      <!-- form set Start -->
+      <div class="form_block">
+        <h2>活動頁面設定</h2>
+        <form id="reg" action="/actad/act/edit_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
+          <input type="hidden" value="{{evtpgID}}" id="evtpgID" name="evtpgID" />
+          <input type="hidden" value="{{maininfo.[0].sno}}" id="sno" name="sno" />
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">品牌</label>
+            <div class="col-sm-7">
+              <select class="form-control custom" name="client" id="client" Readonly>
+                <option value="{{maininfo.[0].client}}">{{maininfo.[0].client}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">屬性類別</label>
+            <div class="col-sm-8">
+              <select class="form-control custom" id="funcCatge" name="funcCatge" disabled>
+                {{#each funcCatge as |Categ|}}
+                <option value="{{Categ.codeValue}}">{{Categ.codeLabel}}</option>
+                {{/each}}
 
-					</table>
-					<div class="btn-block center-block">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">名單名稱</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control " id="msm_tpc" name="msm_tpc" value="{{maininfo.[0].msm_tpc}}" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">登陸目標頁</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control " id="url" name="url" value="{{maininfo.[0].url}}" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">活動頁面露出時間
+            </label>
+            <div class="col-sm-8">
+              <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
+              <div class="radio">
+                <div class="form-inline">
+                  <input type="text" class="form-control" id="sdt" name="sdt" placeholder="" value="{{maininfo.[0].sdt}}" disabled> ~
+                  <input type="text" class="form-control" id="edt" name="edt" placeholder="" value="{{maininfo.[0].edt}}" disabled>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">成效報表追蹤時間
+            </label>
+            <div class="col-sm-8">
+              <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
+              <div class="radio">
+                <div class="form-inline">
+                  <input type="text" class="form-control" id="trkSdt" name="trkSdt" placeholder="" value="{{maininfo.[0].trkSdt}}" disabled> ~
+                  <input type="text" class="form-control" id="trkEdt" name="trkEdt" placeholder="" value="{{maininfo.[0].trkEdt}}" disabled>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">停用註記</label>
+            <div class="col-sm-8">
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" id="isDel" name="isDel" disabled> 停用
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">註記</label>
+            <div class="col-sm-8">
+              <textarea class="form-control" rows="5" id="evtpgDesc" name="evtpgDesc" disabled>{{maininfo.[0].evtpgDesc}}</textarea>
+            </div>
+          </div>
+          <div class="btn-block center-block">
+            <div id="mod">
+              <input id="modify" class="btn btn-lg btn-default" type="button" value="修改" onclick="clickModify();" />
+            </div>
+            <div id="mod2" style="display:none">
+              <input id="submit" class="btn btn-lg btn-default" type="submit" value="儲存修改" />
+              <input id="cancel" class="btn btn-lg btn-default" type="button" value="取消" onclick="clickcancel();" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="form_block">
+        <h2>活動標籤設定</h2>
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">標籤內容－自訂</label>
+            <div class="col-sm-8">
+              <div class="tag customize">
+                <ul id="mtaglist">
+                  {{#each mtag as |tag|}}
+                  <li class="tag_item">{{tag.tagLabel}}
+                    <a href="javascript:deltag({{evtpgID}},{{tag.tagID}})">
+                      <i class="fa fa-times"></i>
+                    </a>
+                  </li>
+                  {{/each}}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">新增</label>
+            <div class="col-sm-8">
+              <div class="form-inline">
+                <input type="text" class="form-control" id="newtag" name="newtag" placeholder="">
+                <button type="button" onclick="addtag('{{evtpgID}}')" class="btn btn-default fa fa-plus" aria-hidden="true"></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="table_block">
+        <h2>活動廣告資訊</h2>
+        <div class="table-responsive">
+          <table class="table table-hover table-sprite">
+            <tbody>
+              <tr>
+                <td>廣告排程數</td>
+                <td>{{maininfo.[0].adCount}}</td>
+              </tr>
+              <tr>
+                <td>帶特徵廣告數</td>
+                <td>{{maininfo.[0].adtagcount}}</td>
+              </tr>
+              <tr>
+                <td>最後更新日期</td>
+                <td>{{maininfo.[0].adudtime}}</td>
+              </tr>
+              <tr>
+                <td>最後更新人員</td>
+                <td>{{maininfo.[0].aduduser}}</td>
+              </tr>
+            </tbody>
 
-						<a href="/actad/ad/upload?evtpgID={{evtpgID}}">
-							<button type="button" class="btn btn-lg btn-default">廣告排程上傳</button>
-						</a>
-						<a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].msm_tpc}}">
-							<button type="button" class="btn btn-lg btn-default">廣告清單</button>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4 col-sm-5 col-xs-12">
-			<div class="table_block">
-				<h2>活動資料</h2>
-				<div class="info">
-					<div class="table-responsive">
-						<table class="table">
-							<tbody>
-								<tr>
-									<td>活動新增時間：</td>
-									<td>{{maininfo.[0].crtTime}}</td>
-								</tr>
-								<tr>
-									<td>最後設定時間：</td>
-									<td>{{maininfo.[0].updTime}}</td>
-								</tr>
-								<tr>
-									<td>最後設定人員：</td>
-									<td>{{maininfo.[0].updUser}}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          </table>
+          <div class="btn-block center-block">
+
+            <a href="/actad/ad/upload?evtpgID={{evtpgID}}">
+              <button type="button" class="btn btn-lg btn-default">廣告排程上傳</button>
+            </a>
+            <a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].msm_tpc}}">
+              <button type="button" class="btn btn-lg btn-default">廣告清單</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-5 col-xs-12">
+      <div class="table_block">
+        <h2>活動資料</h2>
+        <div class="info">
+          <div class="table-responsive">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>活動新增時間：</td>
+                  <td>{{maininfo.[0].crtTime}}</td>
+                </tr>
+                <tr>
+                  <td>最後設定時間：</td>
+                  <td>{{maininfo.[0].updTime}}</td>
+                </tr>
+                <tr>
+                  <td>最後設定人員：</td>
+                  <td>{{maininfo.[0].updUser}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
-	function deltag(evtpgID, tagID) {
-		$.ajax({
-			url: "/actad/act/tag/del",
-			data: {
-				"evtpgID": evtpgID,
-				"tagID": tagID
-			},
-			type: "POST",
-			dataType: 'text',
-			success: function (msg) {
-				alert("刪除成功");
+  var f = document.getElementById("funcCatge");
+  for (var i = 0; i < f.options.length; i++) {
+    if (f.options[i].value == "{{mainInfo.[0].funcCatge}}")
+      f.options[i].selected = true;
+  }
+  function deltag(evtpgID, tagID) {
+    $.ajax({
+      url: "/actad/act/tag/del",
+      data: {
+        "evtpgID": evtpgID,
+        "tagID": tagID
+      },
+      type: "POST",
+      dataType: 'text',
+      success: function (msg) {
+        alert("刪除成功");
 
-			}
-		});
-	}
-	function addtag(evtpgID) {
-		var evtpgID = document.getElementById("evtpgID").value;
-		var newtag = document.getElementById("newtag").value;
-		$.ajax({
-			url: "/actad/act/tag/add",
-			data: {
-				"evtpgID": evtpgID,
-				"newtag": newtag
-			},
-			type: "POST",
-			dataType: 'text',
-			success: function (msg) {
-				if (msg == "已新增過")
-					alert(msg);
-				else {
-					$('#mtaglist').append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + evtpgID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
-					$(function () {
-						$('.customize a').click(function (event) {
-							$(this).parent('li').hide();
-						});
-					});
-				}
-			}
-		});
-	}
+      }
+    });
+  }
+  function addtag(evtpgID) {
+    var evtpgID = document.getElementById("evtpgID").value;
+    var newtag = document.getElementById("newtag").value;
+    $.ajax({
+      url: "/actad/act/tag/add",
+      data: {
+        "evtpgID": evtpgID,
+        "newtag": newtag
+      },
+      type: "POST",
+      dataType: 'text',
+      success: function (msg) {
+        if (msg == "已新增過")
+          alert(msg);
+        else {
+          $('#mtaglist').append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + evtpgID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
+          $(function () {
+            $('.customize a').click(function (event) {
+              $(this).parent('li').hide();
+            });
+          });
+        }
+      }
+    });
+  }
 </script>
 <script>
-	$('#sdt').datepicker({
-		locale: "zh-tw"
-	});
-	$('#edt').datepicker({
-		locale: "zh-tw"
-	});
-	$('#trkSdt').datepicker({
-		locale: "zh-tw"
-	});
-	$('#trkEdt').datepicker({
-		locale: "zh-tw"
-	});
-	function checkForm() {
-		if (document.getElementById("client").value == '') {
-			alert("請選擇品牌");
-			document.getElementById("client").focus();
-			return false;
-		}
-		if (document.getElementById("funcCatge").value == '') {
-			alert("請選擇屬性類別");
-			document.getElementById("funcCatge").focus();
-			return false;
-		}
-		if (document.getElementById("msm_tpc").value == '') {
-			alert("請輸入名單名稱");
-			document.getElementById("msm_tpc").focus();
-			return false;
-		}
-		if (document.getElementById("url").value == '') {
-			alert("請輸入登陸目標頁");
-			document.getElementById("url").focus();
-			return false;
-		}
-		if (document.getElementById("sdt").value == '') {
-			alert("請輸入活動頁面露出時間(起)");
-			document.getElementById("sdt").focus();
-			return false;
-		}
-		if (document.getElementById("trkSdt").value == '') {
-			document.getElementById("trkSdt").value = document.getElementById("sdt").value;
-		}
-		if (document.getElementById("trkEdt").value == '') {
-			if (document.getElementById("edt").value != '')
-				document.getElementById("trkEdt").value = document.getElementById("edt").value;
-			else
-				document.getElementById("trkEdt").value = document.getElementById("trkSdt").value;
-		}
-		return true;
-	}
+  $('#sdt').datepicker({
+    locale: "zh-tw"
+  });
+  $('#edt').datepicker({
+    locale: "zh-tw"
+  });
+  $('#trkSdt').datepicker({
+    locale: "zh-tw"
+  });
+  $('#trkEdt').datepicker({
+    locale: "zh-tw"
+  });
+  function clickcancel() {
+    document.getElementById("mod").style.display = "block";
+    document.getElementById("mod2").style.display = "none";
+    document.getElementById("funcCatge").disabled = true;
+    document.getElementById("msm_tpc").disabled = true;
+    document.getElementById("url").disabled = true;
+    document.getElementById("sdt").disabled = true;
+    document.getElementById("edt").disabled = true;
+    document.getElementById("trkSdt").disabled = true;
+    document.getElementById("trkEdt").disabled = true;
+    document.getElementById("isDel").disabled = true;
+    document.getElementById("evtpgDesc").disabled = true;
+  }
+  function clickModify() {
+    document.getElementById("mod").style.display = "none";
+    document.getElementById("mod2").style.display = "block";
+    document.getElementById("funcCatge").disabled = false;
+    document.getElementById("msm_tpc").disabled = false;
+    document.getElementById("url").disabled = false;
+    document.getElementById("sdt").disabled = false;
+    document.getElementById("edt").disabled = false;
+    document.getElementById("trkSdt").disabled = false;
+    document.getElementById("trkEdt").disabled = false;
+    document.getElementById("isDel").disabled = false;
+    document.getElementById("evtpgDesc").disabled = false;
+  }
+  function checkForm() {
+    if (document.getElementById("funcCatge").value == '') {
+      alert("請選擇屬性類別");
+      document.getElementById("funcCatge").focus();
+      return false;
+    }
+    if (document.getElementById("msm_tpc").value == '') {
+      alert("請輸入名單名稱");
+      document.getElementById("msm_tpc").focus();
+      return false;
+    }
+    if (document.getElementById("url").value == '') {
+      alert("請輸入登陸目標頁");
+      document.getElementById("url").focus();
+      return false;
+    }
+    if (document.getElementById("sdt").value == '') {
+      alert("請輸入活動頁面露出時間(起)");
+      document.getElementById("sdt").focus();
+      return false;
+    }
+    if (document.getElementById("trkSdt").value == '') {
+      document.getElementById("trkSdt").value = document.getElementById("sdt").value;
+    }
+    if (document.getElementById("trkEdt").value == '') {
+      if (document.getElementById("edt").value != '')
+        document.getElementById("trkEdt").value = document.getElementById("edt").value;
+      else
+        document.getElementById("trkEdt").value = document.getElementById("trkSdt").value;
+    }
+    return true;
+  }
 </script>

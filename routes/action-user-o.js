@@ -45,7 +45,7 @@ module.exports = (app) => {
     var checked = 'N';
     if (isstop == 'on')
       checked = 'Y';
-    db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,loginTime,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + userId + "',GETDATE(),'" + checked + "')", function (err, recordset) {
+    db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.session.userid + "','" + checked + "')", function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
       res.redirect('/user/UserInfoEdit?userId=' + userId);

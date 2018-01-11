@@ -37,7 +37,7 @@ module.exports = (app) => {
     var adInfo = '';
     var p1 = new Promise(function (resolve, reject) {
       if (optradio == "cover") {
-        db.query("DELETE FROM dm_EvtadMst where evtpgID =" + evtpgID, function (err, recordset) {
+        db.query("DELETE FROM dm_EvtadMst where evtpgID ='" + evtpgID + "'", function (err, recordset) {
           if (err) {
             console.log(err);
             reject(2);
@@ -49,7 +49,7 @@ module.exports = (app) => {
         resolve(1);
     });
     var p2 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst where evtpgID = " + evtpgID, function (err, recordset) {
+      db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst_View where evtpgID = '" + evtpgID + "'", function (err, recordset) {
         mainInfo = recordset.recordset[0];
         resolve(mainInfo);
       });
@@ -124,7 +124,7 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
-              db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = " + evtpgID + ") adcount FROM dm_EvtadMst where evtpgID = " + evtpgID + "  order by updTime desc ", function (err, recordset) {
+              db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
                 updUser = recordset.recordset[0].updUser;
                 updTime = recordset.recordset[0].updTime;
                 adCount = recordset.recordset[0].adcount
@@ -150,13 +150,13 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
-            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES(" + evtpgID + ",'" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
+            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
               if (err) {
                 console.log(err);
               }
               successnum++;
               if (i == list[0].data.length - 1) {
-                db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = " + evtpgID + ") adcount FROM dm_EvtadMst where evtpgID = " + evtpgID + "  order by updTime desc ", function (err, recordset) {
+                db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
                   updUser = recordset.recordset[0].updUser;
                   updTime = recordset.recordset[0].updTime;
                   adCount = recordset.recordset[0].adcount
@@ -200,7 +200,7 @@ module.exports = (app) => {
     var client = req.body.client;
     var data = [];
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID,msm_tpc,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt FROM dm_EvtpgMst where client = '" + client + "'  and funcCatge = '" + funcCatge + "' order by msm_tpc asc ", function (err, recordset) {
+      db.query("SELECT evtpgID,msm_tpc,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt FROM dm_EvtpgMst_View where client = '" + client + "'  and funcCatge = '" + funcCatge + "' order by msm_tpc asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -248,7 +248,7 @@ module.exports = (app) => {
     });
     var p2 = new Promise(function (resolve, reject) {
       if (evtpgID != '') {
-        db.query("SELECT count(*)adcount FROM dm_EvtadMst where evtpgID = " + evtpgID, function (err, recordset) {
+        db.query("SELECT count(*)adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (err) {
             console.log(err);
             reject(2);
@@ -262,7 +262,7 @@ module.exports = (app) => {
     });
     var p3 = new Promise(function (resolve, reject) {
       if (evtpgID != '') {
-        db.query("SELECT TOP 1 convert(varchar, updTime, 120)updTime,updUser FROM dm_EvtadMst where evtpgID = " + evtpgID + " order by updTime desc ", function (err, recordset) {
+        db.query("SELECT TOP 1 convert(varchar, updTime, 120)updTime,updUser FROM dm_EvtadMst where evtpgID = '" + evtpgID + "' order by updTime desc ", function (err, recordset) {
           if (err) {
             console.log(err);
             reject(2);
@@ -279,7 +279,7 @@ module.exports = (app) => {
     });
     var p4 = new Promise(function (resolve, reject) {
       if (evtpgID != '') {
-        db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst where evtpgID = " + evtpgID, function (err, recordset) {
+        db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst_View where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (recordset.rowsAffected > 0) {
             mainInfo = recordset.recordset[0];
           }
@@ -411,7 +411,7 @@ module.exports = (app) => {
     var adlist = [];
     var ad = [];
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.evtadID,a.evtpgID,a.url,a.adChannel,a.adSource,a.adPos,a.adSize,a.updUser,convert(varchar, a.adSdt, 111)adSdt,convert(varchar, a.adEdt, 111)adEdt,convert(varchar, a.updTime, 120)updTime, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID) sumtag FROM dm_EvtadMst a where a.evtpgID =" + evtpgID + " order by a.adSdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.evtadID,a.evtpgID,a.url,a.adChannel,a.adSource,a.adPos,a.adSize,a.updUser,convert(varchar, a.adSdt, 111)adSdt,convert(varchar, a.adEdt, 111)adEdt,convert(varchar, a.updTime, 120)updTime, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID) sumtag FROM dm_EvtadMst a where a.evtpgID ='" + evtpgID + "' order by a.adSdt asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -444,7 +444,7 @@ module.exports = (app) => {
       });
     });
     Promise.all([p1]).then(function (results) {
-      db.query("SELECT deat.*  FROM dm_EvtadTag deat where deat.evtadID in ( select dem.evtadID from dm_EvtadMst dem where dem.evtpgID = " + evtpgID + " )", function (err, recordset) {
+      db.query("SELECT deat.*  FROM dm_EvtadTag deat where deat.evtadID in ( select dem.evtadID from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "' )", function (err, recordset) {
         if (err)
           console.log(err);
         for (var i = 0; i < adlist.length; i++) {
