@@ -63,7 +63,7 @@ module.exports = (app) => {
   router.post('/act/tag/del', function (req, res) {
     var evtpgID = req.body.evtpgID;
     var tagID = req.body.tagID;
-    db.query("DELETE FROM dm_EvtpgTag where evtpgID ='" + evtpgID + "' and tagID = " + tagID, function (err, recordset) {
+    db.query("UPDATE dm_EvtpgTag set isDel = 'Y' where evtpgID ='" + evtpgID + "' and tagID = " + tagID, function (err, recordset) {
       if (err) console.log(err);
       res.end('ok');
     });
@@ -190,7 +190,6 @@ module.exports = (app) => {
     var datasource = '';
     values += "'" + evtpgID + "',";
     var client = req.body.client || '';
-    console.log(client);
     values += "'" + client + "',";
     var sno = req.body.sno || '';
     values += sno + ",";
@@ -224,9 +223,7 @@ module.exports = (app) => {
     values += "'" + evtpgDesc + "',"
     values += "getdate(),getdate(),'" + req.session.userid + "')";
     var p1 = new Promise(function (resolve, reject) {
-      console.log(sno);
       if (sno != '') {
-        console.log("SELECT sno FROM dm_EvtpgMst where sno = " + sno);
         db.query("SELECT sno FROM dm_EvtpgMst where sno is not null and sno = " + sno, function (err, recordset) {
           if (err)
             reject(err);

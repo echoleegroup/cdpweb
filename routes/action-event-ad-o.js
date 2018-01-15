@@ -368,7 +368,7 @@ module.exports = (app) => {
   router.post('/ad/tag/del', function (req, res) {
     var evtadID = req.body.evtadID;
     var tagID = req.body.tagID;
-    db.query("DELETE FROM dm_EvtadTag where evtadID =" + evtadID + " and tagID = " + tagID, function (err, recordset) {
+    db.query("UPDATE dm_EvtadTag set isDel = 'Y' where evtadID =" + evtadID + " and tagID = " + tagID, function (err, recordset) {
       if (err) console.log(err);
       res.end('ok');
     });
@@ -444,7 +444,7 @@ module.exports = (app) => {
       });
     });
     Promise.all([p1]).then(function (results) {
-      db.query("SELECT deat.*  FROM dm_EvtadTag deat where deat.evtadID in ( select dem.evtadID from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "' )", function (err, recordset) {
+      db.query("SELECT deat.* FROM dm_EvtadTag deat where deat.evtadID in ( select dem.evtadID from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "' )", function (err, recordset) {
         if (err)
           console.log(err);
         for (var i = 0; i < adlist.length; i++) {
