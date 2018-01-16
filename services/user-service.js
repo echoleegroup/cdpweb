@@ -10,12 +10,8 @@ module.exports.getUserUgrpMenu = (userId, callback=()=>{}) => {
       'LEFT JOIN sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId ' +
       'LEFT JOIN sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null ' +
       'WHERE userId = @userId order by sym.menuId ASC';
-  Q.nfcall(_connector.execParameterizedSql, sql, {
-    userId: {
-      type: _connector.TYPES.NVarChar,
-      value: userId
-    }
-  }).then((resultSet) => {
+  let request = _connector.queryRequest().setInput('userId', _connector.TYPES.NVarChar, userId);
+  Q.nfcall(request.executeQuery, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail(err => {
     winston.error('====[getUserUgrpMenu] get user group menu failed: : ', err);

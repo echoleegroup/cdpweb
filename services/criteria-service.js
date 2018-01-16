@@ -49,36 +49,6 @@ const RDB_DATATYPE = (datatype) => {
   return t;
 };
 
-const getCriteriaAllFeatureId = (mdId, batId, mdFeatCateg, setId, callback) => {
-  const sqlFetchFeatureId = 'SELECT featID FROM cu_CustomFeat WHERE setID = @setId ' +
-    'UNION ' +
-    'SELECT featID FROM md_FeatDet WHERE mdFeatCateg = @mdFeatCateg AND mdID = @mdId AND batID = @batId';
-  let params = {
-    setId: {
-      type: _connector.TYPES.NVarChar,
-      value: setId
-    },
-    mdFeatCateg: {
-      type: _connector.TYPES.NVarChar,
-      value: mdFeatCateg
-    },
-    mdId: {
-      type: _connector.TYPES.NVarChar,
-      value: mdId
-    },
-    batId: {
-      type: _connector.TYPES.NVarChar,
-      value: batId
-    }
-  };
-
-  Q.nfcall(_connector.execParameterizedSql, sqlFetchFeatureId, params).then((result) => {
-    callback(null, result);
-  }).fail((err) => {
-    callback(err);
-  });
-};
-
 module.exports.getCustomCriteriaFeatures = (mdId, batId, mdFeatCateg, setId, callback) => {
   const sql = 'SELECT featID FROM cu_CustomFeat WHERE setID = @setId ' +
     'UNION ' +
@@ -105,14 +75,10 @@ module.exports.getFieldFoldingTree = (treeId, callback) => {
     'FROM ft_CategTree ' +
     'WHERE treeID = @treeId ' +
     'ORDER BY treeLevel, treeSeq';
-  let params = {
-    treeId: {
-      type: _connector.TYPES.NVarChar,
-      value: treeId
-    }
-  };
-
-  Q.nfcall(_connector.execParameterizedSql, sql, params).then((result) => {
+  Q.nfcall(_connector
+    .queryRequest()
+    .setInput('treeId', _connector.TYPES.NVarChar, treeId)
+    .executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
     winston.error('===criteria-service::' +

@@ -23,24 +23,25 @@ const pool = new mssql.ConnectionPool(config).connect((err) => {
 });
 winston.info('mssql connection pool established.');
 
+const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => { }) => {
+  let request = pool.request();
+  _.reduce(params || {}, (_request, value, key) => {
+    return _request.input(key, value.type, value.value);
+  }, request)
+    .query(sql)
+    .then((result) => {
+      callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
+    }).catch((err) => {
+    callback(err);
+  });
+};
+
 const _that = {
   TYPES: mssql.TYPES,
   execSql: (sql, callback = (err, resultSet) => { }) => {
     pool.request().query(sql).then((result) => {
       callback(null, result.recordset);
     }).catch(err => {
-      callback(err);
-    });
-  },
-  execParameterizedSql: (sql, params = {}, callback = (err, resultSet) => { }) => {
-    let request = pool.request();
-    _.reduce(params || {}, (_request, value, key) => {
-      return _request.input(key, value.type, value.value);
-    }, request)
-      .query(sql)
-      .then((result) => {
-        callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
-      }).catch((err) => {
       callback(err);
     });
   },
@@ -52,7 +53,7 @@ const _that = {
         return _this;
       },
       executeQuery: (sql, callback) => {
-        _that.execParameterizedSql(sql, inputs, callback);
+        execParameterizedSql(sql, inputs, callback);
       }
     };
     return _this;
@@ -88,65 +89,3 @@ const _that = {
 };
 
 module.exports = _that;
-
-
-
-/*
-//---tedious
-const connectionConfig = {
-    userName: db_info.USER,
-    password: db_info.PWD,
-    server: db_info.HOST,   //這邊要注意一下!!
-    //database: db_info.DATABASE,
-    options: Object.assign({}, db_info.OPTIONS, {
-        database: db_info.DATABASE,
-        rowCollectionOnRequestCompletion: true})
-};
-const ConnectionPool = require('tedious-connection-pool');
-const Request = require('tedious').Request;
-
-const poolConfig = {
-    min: 2,
-    max: 4,
-    log: true
-};
-
-module.exports = (() => {
-    //create the pool
-    let pool = new ConnectionPool(poolConfig, connectionConfig);
-    pool.on('error', function(err) {
-        winston.error('create connection pool failed: %s', err);
-        throw err;
-    });
-
-    return {    
-        connect: (callback=()=>{}) => {
-            pool.acquire(callback);
-        },
-        execSql: (sql, callback=(err, resultSet)=>{}) => {
-            let connector = Q.nfcall(pool.acquire);
-            connector.then(connection => {
-                let request = new Request(sql, (err, eowCount, resultSet) => {
-                    connection.release();
-                    callback(err, resultSet);
-                });
-                connection.execSql(request);
-            });
-        },
-        execParameterizedSql: (sql, params={}, callback=(err, resultSet)=>{}) => {
-            pool.acquire((err, connection) => {
-                let request = new Request(sql, (err, rowCount, resultSet) => {
-                    connection.release();
-                    callback(err, resultSet);
-                });
-                for(let key in params) {
-                    let p = params[key];
-                    console.log('parameter: key=%s, type=%s, value=%s', key, p.type, p.value);
-                    request.addParameter(key, p.type, p.value);
-                }
-                connection.execSql(request); 
-            });
-        }
-    };
-})();
-*/

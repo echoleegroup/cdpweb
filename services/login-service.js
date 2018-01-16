@@ -6,16 +6,10 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.loginPlatform = (username, password, callback = () => { }) => {
   const sql = 'SELECT * FROM sy_infouser WHERE userId = @username and password = @password';
-  Q.nfcall(_connector.execParameterizedSql, sql, {
-    username: {
-      type: _connector.TYPES.NVarChar,
-      value: username
-    },
-    password: {
-      type: _connector.TYPES.NVarChar,
-      value: password
-    }
-  }).then((resultSet) => {
+  let request = _connector.queryRequest()
+    .setInput('username', _connector.TYPES.NVarChar, username)
+    .setInput('password', _connector.TYPES.NVarChar, password);;
+  Q.nfcall(request.executeQuery, sql).then((resultSet) => {
     if (resultSet.length === 1) {
       return callback(null, resultSet[0]);
     } else if (resultSet.length === 0) {
@@ -32,12 +26,9 @@ module.exports.loginPlatform = (username, password, callback = () => { }) => {
 
 module.exports.updateLoginTime = (userId, callback = () => {}) => {
   let sql = "UPDATE sy_infouser set loginTime = GETDATE() where userId = @userId";
-  Q.nfcall(_connector.execParameterizedSql, sql, {
-    userId: {
-      type: _connector.TYPES.NVarChar,
-      value: userId
-    }
-  }).then((resultSet) => {
+  Q.nfcall(_connector.queryRequest()
+    .setInput('userId', _connector.TYPES.NVarChar, userId)
+    .executeQuery, sql).then((resultSet) => {
     return callback(null, resultSet);
   }).fail(err => {
     return callback(err);

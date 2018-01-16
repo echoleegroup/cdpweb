@@ -15,7 +15,10 @@ module.exports.getDownloadFeatures = (setId, callback) => {
       value: setId
     }
   };
-  Q.nfcall(_connector.execParameterizedSql, sql, params).then((resultSet) => {
+  Q.nfcall(_connector
+    .queryRequest()
+    .setInput('setID', _connector.TYPES.NVarChar, setId)
+    .executeQuery, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail((err) => {
     winston.error('===getDownloadFeatures failed:', err);

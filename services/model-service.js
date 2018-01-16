@@ -8,7 +8,7 @@ const _connector = require('../utils/sql-query-util');
 module.exports.getModels = (callback=() => { }) => {
   let sql = 'SELECT mdID,mdName,batID FROM md_Model ORDER BY updTime desc';
 
-  Q.nfcall(_connector.execParameterizedSql, sql, {}).then((resultSet) => {
+  Q.nfcall(_connector.execSql, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail(err => {
     winston.error('====[getModels] get all models failed: ', err);
@@ -34,7 +34,6 @@ module.exports.getModel = (mdId, callback=() => {}) => {
   }).fail((err) => {
     winston.error('===query model failed:', err);
   });
-  //winston.info('===_connector.execParameterizedSql');
   */
   let request = _connector.queryRequest().setInput('mdId', _connector.TYPES.NVarChar, mdId);
   Q.nfcall(request.executeQuery, sql).then((resultSet) => {
@@ -50,7 +49,7 @@ module.exports.getBatchCategoryFeatures = (mdId, batId, featureIds, callback) =>
     'FROM ft_Feature feature ' +
     'WHERE feature.featID in (\'' + featureIds.join('\',\'') + '\') ';
 
-  Q.nfcall(_connector.execParameterizedSql, sql, {}).then((result) => {
+  Q.nfcall(_connector.execSql, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
     winston.error('===model-service::' +
@@ -64,7 +63,7 @@ module.exports.getBatchCategoryFeatures = (mdId, batId, featureIds, callback) =>
   //     'FROM ft_Feature feature ' +
   //     'WHERE feature.featID in (\'' + featureIds.join('\',\'') + '\') AND feature.isDel is not NULL';
   //
-  //   return Q.nfcall(_connector.execParameterizedSql, sql, {}).then((result) => {
+  //   return Q.nfcall(_connector.execSql, sql).then((result) => {
   //     callback(null, result);
   //   });
   // }).fail((err) => {
@@ -80,22 +79,12 @@ module.exports.getBatchTargetInfoOfCategory = (mdId, batId, mdListCateg, callbac
     'FROM md_Model md, md_ListMst mdList ' +
     'WHERE md.mdID = mdList.mdID AND md.batID = mdList.batID ' +
     'AND mdList.mdListCateg = @mdListCateg AND md.mdID = @mdId and md.batID = @batId';
-  let params = {
-    mdId: {
-      type: _connector.TYPES.NVarChar,
-      value: mdId
-    },
-    batId: {
-      type: _connector.TYPES.NVarChar,
-      value: batId
-    },
-    mdListCateg: {
-      type: _connector.TYPES.NVarChar,
-      value: mdListCateg
-    }
-  };
+  let request = _connector.queryRequest()
+    .setInput('mdId', _connector.TYPES.NVarChar, mdId)
+    .setInput('batId', _connector.TYPES.NVarChar, batId)
+    .setInput('mdListCateg', _connector.TYPES.NVarChar, mdListCateg);
 
-  Q.nfcall(_connector.execParameterizedSql, sql, params).then((resultSet) => {
+  Q.nfcall(request.executeQuery, sql).then((resultSet) => {
     callback(null, resultSet[0]);
   }).fail((err) => {
     winston.error('===getBatchTargetInfoOfCategory failed:', err);

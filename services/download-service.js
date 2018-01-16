@@ -11,7 +11,7 @@ module.exports.getFilePath = (listid, datasource, callback = () => { }) => {
   else if (datasource === 'outdata')
     sql += 'FROM cu_OuterListMst WHERE outerListID =' + listid;
   winston.info(sql);
-  Q.nfcall(_connector.execParameterizedSql, sql, {}).then((resultSet) => {
+  Q.nfcall(_connector.execSql, sql).then((resultSet) => {
     callback(null, resultSet[0]);
   }).fail(err => {
     winston.error('====[download] get  downloadvalue failed: ', err);

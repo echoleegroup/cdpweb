@@ -6,8 +6,6 @@ const winston = require('winston');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-const loginService = require('../services/login-service');
-
 module.exports = () => {
   passport.serializeUser((user, done) => {
     // winston.info('serializeUser: %j', user);
