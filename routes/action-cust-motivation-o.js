@@ -12,7 +12,7 @@ module.exports = (app) => {
   console.log('[custmotivationRoute::create] Creating custmotivation route.');
   const router = express.Router();
 
-  router.get('/cust/pred/cp/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.CUST_MOTIVATION)], function (req, res) {
+  router.get('/cust/bhv/cp/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.CUST_MOTIVATION)], function (req, res) {
     var mdID = req.params.mdID || '';
     var batID = req.params.batID || '';
     var where = " where mdID = '" + mdID + "' and batID = '" + batID + "' ";
