@@ -124,12 +124,12 @@
 
 <script>
 	$.ajax({
-		url: "{{api}}/jsoninfo/custGene.do",
+		url: "/model/cust/char/getInfo",
 		data: {
 			"mdID": '{{ modelInfo.mdID }}',
 			"batID": '{{ modelInfo.batID }}'
 		},
-		type: "GET",
+		type: "POST",
 		dataType: "json",
 		success: function (Jdata) {
 			var myObj, i, j, k, x = "";
@@ -200,13 +200,13 @@
 <script>
 	function getinfo(mdID, batID, featID) {
 		$.ajax({
-			url: "{{api}}/jsoninfo/custfeat.do",
+			url: "/model/cust/char/getFeat",
 			data: {
 				"mdID": encodeURI(mdID),
 				"batID": encodeURI(batID),
 				"featID": encodeURI(featID)
 			},
-			type: "GET",
+			type: "POST",
 			dataType: "json",
 			success: function (Jdata) {
 				var myObj, i, j, k, x = "";

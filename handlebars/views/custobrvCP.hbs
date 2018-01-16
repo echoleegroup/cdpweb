@@ -133,12 +133,12 @@
 
 <script>
 	$.ajax({
-		url: "{{api}}/jsoninfo/custObrv.do",
+		url: "/model/cust/pred/getInfo",
 		data: {
 			"mdID": '{{ modelInfo.mdID }}',
 			"batID": '{{ modelInfo.batID }}'
 		},
-		type: "GET",
+		type: "POST",
 		dataType: "json",
 		success: function (Jdata) {
 			var myObj, i, j, k, x = "";
@@ -208,13 +208,13 @@
 <script>
 	function getinfo(mdID, batID, featID) {
 		$.ajax({
-			url: "{{api}}/jsoninfo/custfeat.do",
+			url: "/model/cust/pred/getFeat",
 			data: {
 				"mdID": mdID,
 				"batID": batID,
 				"featID": featID
 			},
-			type: "GET",
+			type: "POST",
 			dataType: "json",
 			success: function (Jdata) {
 				var myObj, i, j, k, x = "";

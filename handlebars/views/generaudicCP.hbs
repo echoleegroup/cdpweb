@@ -129,12 +129,12 @@
 </script>
 <script>
   $.ajax({
-    url: "{{api}}/jsoninfo/generaudic.do",
+    url: "/target/cal/getInfo",
     data: {
       "mdID": encodeURI("{{mdID}}"),
       "batID": encodeURI("{{batID}}")
     },
-    type: "GET",
+    type: "POST",
     dataType: "json",
     success: function (Jdata) {
       var myObj, i, j, k, x = "";
@@ -201,13 +201,13 @@
 <script>
   function getinfo(mdID, batID, featID) {
     $.ajax({
-      url: "{{api}}/jsoninfo/generaudicfeat.do",
+      url: "/target/cal/getFeat",
       data: {
         "mdID": encodeURI(mdID),
         "batID": encodeURI(batID),
         "featID": encodeURI(featID)
       },
-      type: "GET",
+      type: "POST",
       dataType: "json",
       success: function (Jdata) {
         var myObj, i, j, k, x = "";

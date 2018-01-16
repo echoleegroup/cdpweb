@@ -131,7 +131,7 @@
 
 <script>
 	$.ajax({
-		url: "{{api}}/jsoninfo/custMotivation.do",
+		url: "/model/cust/bhv/getInfo",
 		data: {
 			"mdID": '{{modelInfo.mdID}}',
 			"batID": '{{modelInfo.batID}}'
@@ -206,7 +206,7 @@
 <script>
 	function getinfo(mdID, batID, featID) {
 		$.ajax({
-			url: "{{api}}/jsoninfo/custfeat.do",
+			url: "/model/cust/bhv/getFeat",
 			data: {
 				"mdID": mdID,
 				"batID": batID,
