@@ -1,45 +1,93 @@
 import React from 'react';
 import shortid from "shortid";
 import moment from 'moment';
-import {find, assign} from 'lodash';
+import {find, assign, pick} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
-const OPERATOR_DICT = assign({}, OPERATOR_DICT_DEFAULT, {
-  eq: '=',
-  ne: '≠',
-  lt: '<',
-  le: '<=',
-  gt: '>',
-  ge: '>=',
-  in: '無資料',
-  nn: '有資料'
+const INPUT_CRITERIA_OPERATOR = {
+  eq: {
+    label: OPERATOR_DICT_DEFAULT.eq,
+    dataProcessor: value => value
+  },
+  ne: {
+    label: OPERATOR_DICT_DEFAULT.ne,
+    dataProcessor: value => value
+  },
+  lt: {
+    label: OPERATOR_DICT_DEFAULT.lt,
+    dataProcessor: value => value
+  },
+  le: {
+    label: OPERATOR_DICT_DEFAULT.le,
+    dataProcessor: value => value
+  },
+  gt: {
+    label: OPERATOR_DICT_DEFAULT.gt,
+    dataProcessor: value => value
+  },
+  ge: {
+    label: OPERATOR_DICT_DEFAULT.ge,
+    dataProcessor: value => value
+  },
+  in: {
+    label: OPERATOR_DICT_DEFAULT.in,
+    dataProcessor: value => value
+  },
+  nn: {
+    label: OPERATOR_DICT_DEFAULT.nn,
+    dataProcessor: value => value
+  }
+};
+
+const DATE_CRITERIA_OPERATOR = assign(pick(INPUT_CRITERIA_OPERATOR, ['eq', 'ne', 'le', 'ge', 'in', 'nn']), {
+  le: {
+    label: OPERATOR_DICT_DEFAULT.le,
+    dataProcessor: timestamp => moment(timestamp).endOf('day').valueOf()
+  },
+  ge: {
+    label: OPERATOR_DICT_DEFAULT.ge,
+    dataProcessor: timestamp => moment(timestamp).startOf('day').valueOf()
+  }
 });
-const DATA_TYPE_OPERATOR_OPTIONS = (dataType) => {
+
+const DATETIME_CRITERIA_OPERATOR = assign(pick(INPUT_CRITERIA_OPERATOR, ['eq', 'ne', 'le', 'ge', 'in', 'nn']), {
+  le: {
+    label: OPERATOR_DICT_DEFAULT.le,
+    dataProcessor: timestamp => moment(timestamp).endOf('minute').valueOf()
+  },
+  ge: {
+    label: OPERATOR_DICT_DEFAULT.ge,
+    dataProcessor: timestamp => moment(timestamp).startOf('minute').valueOf()
+  }
+});
+
+const REF_OPTION_CRITERIA_OPERATOR = pick(INPUT_CRITERIA_OPERATOR, ['eq', 'ne', 'in', 'nn']);
+
+const GetOperatorSet = (dataType) => {
   switch (dataType) {
     case 'number':
     case 'text':
+      return INPUT_CRITERIA_OPERATOR;
     case 'date':
-      return ['eq', 'ne', 'lt', 'le', 'gt', 'ge', 'in', 'nn'];
+      return DATE_CRITERIA_OPERATOR;
+    case 'datetime':
+      return DATETIME_CRITERIA_OPERATOR;
     case 'refOption':
-      return ['eq', 'ne', 'in', 'nn'];
+      return REF_OPTION_CRITERIA_OPERATOR;
   }
 };
-const INITIAL_CRITERIA = () => {
-  const state = {
-    uuid: undefined,
-    type: undefined,
-    field_id: undefined,
-    field_label: undefined,
-    data_type: undefined,
-    ref: undefined,
-    value: undefined,
-    value_label: undefined,
-    operator: 'eq'  //for default value
-  };
-
-  return Map(state);
-}
+const INITIAL_CRITERIA = Map({
+  uuid: undefined,
+  type: undefined,
+  field_id: undefined,
+  field_label: undefined,
+  data_type: undefined,
+  ref: undefined,
+  value: undefined,
+  value_label: undefined,
+  operator: 'eq'  //for default value
+});
 
 export default class CriteriaFieldPicker extends React.PureComponent {
   constructor(props) {
@@ -47,7 +95,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
     this.state = {
       isOpen: false,
       collapse: true,
-      criteria: INITIAL_CRITERIA()
+      criteria: INITIAL_CRITERIA
     };
   };
 
@@ -57,7 +105,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
       this.responseCriteria = callback;
       this.setState({
         isOpen: true,
-        criteria: INITIAL_CRITERIA().merge({
+        criteria: INITIAL_CRITERIA.merge({
           uuid: shortid.generate()
         })
       });
@@ -73,8 +121,11 @@ export default class CriteriaFieldPicker extends React.PureComponent {
 
     this.confirmCriteria = () => {
       let data = this.fieldInput? this.fieldInput.getInputData(): {};
+      console.log('confirmCriteria this.state.criteria.operator: ', this.state.criteria.get('operator'));
+      console.log('confirmCriteria this.operatorSet[this.state.criteria.operator]: ', this.operatorSet[this.state.criteria.get('operator')]);
+      let dataProcessor = this.operatorSet[this.state.criteria.get('operator')].dataProcessor;
       let c = this.state.criteria.merge({
-        value: data.value,
+        value: dataProcessor(data.value),
         value_label: data.value_label
       });
       // console.log('CriteriaFieldPicker::confirmCriteria: ', c);
@@ -195,6 +246,9 @@ export default class CriteriaFieldPicker extends React.PureComponent {
   CriteriaOperatorBlock(criteria) {
     // console.log('CriteriaFieldPicker::CriteriaOperatorBlock: ', criteria);
     if (criteria.get('data_type')) {
+      let dataType = criteria.get('data_type');
+      let operatorSet = this.operatorSet = GetOperatorSet(dataType);
+      console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
       return (
         <div>
           <h3>條件</h3>
@@ -206,9 +260,9 @@ export default class CriteriaFieldPicker extends React.PureComponent {
               };
             });
           }} value={criteria.get('operator')}>
-            {DATA_TYPE_OPERATOR_OPTIONS(criteria.get('data_type')).map((operator) => {
+            {Object.keys(operatorSet).map((key) => {
               return (
-                <option key={operator} value={operator}>{OPERATOR_DICT[operator]}</option>
+                <option key={key} value={key}>{operatorSet[key].label}</option>
               );
             })}
           </select>

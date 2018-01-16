@@ -38,5 +38,5 @@ mkdir -p $DEST_PATH
 #  mkdir -p $DEST_PATH
 #fi
 
-tar -C ${DEST_PATH} -Jxvf ${SRC_FILE}
+tar -C ${DEST_PATH} -xvf ${SRC_FILE}
 

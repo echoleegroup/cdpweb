@@ -1,15 +1,14 @@
 "use strict";
 const express = require('express');
-const path = require("path");
-const fs = require('fs');
 const multer = require('multer');
 const winston = require('winston');
 const xlsx = require("node-xlsx");
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/constants").menucode;
 const downloadService = require('../services/download-service');
-const storage = path.resolve(__dirname, "../.asserts") + path.sep;
+const constants = require("../utils/constants");
+const permission = constants.menucode;
+const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {

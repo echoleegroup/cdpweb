@@ -11,7 +11,7 @@ module.exports.getMenuTree = (callback=() => {}) => {
       'FROM sy_menu sm ' +
       'LEFT JOIN sy_menu pym on sm.parentId = pym.menuId ' +
       'WHERE sm.parentId is not null';
-  Q.nfcall(_connector.execSqlByParams, sql, {}).then((resultSet) => {
+  Q.nfcall(_connector.execParameterizedSql, sql, {}).then((resultSet) => {
     callback(null, resultSet);
   }).fail(err => {
     winston.error('====[getMenuTree] get all menu failed: ', err);

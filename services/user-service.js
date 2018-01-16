@@ -10,7 +10,7 @@ module.exports.getUserUgrpMenu = (userId, callback=()=>{}) => {
       'LEFT JOIN sy_ugrpcode syu on syu.ugrpId = syuw.ugrpId ' +
       'LEFT JOIN sy_menu sym on sym.menuId = syu.menuId and sym.parentId is not null ' +
       'WHERE userId = @userId order by sym.menuId ASC';
-  Q.nfcall(_connector.execSqlByParams, sql, {
+  Q.nfcall(_connector.execParameterizedSql, sql, {
     userId: {
       type: _connector.TYPES.NVarChar,
       value: userId

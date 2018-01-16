@@ -18,63 +18,76 @@ const config = {
   }
 };
 
-module.exports = (() => {
-  const pool = new mssql.ConnectionPool(config).connect((err) => {
-    err && winston.error('connect db failed: %j', err);
-  });
-  winston.info('mssql connection pool established.');
+const pool = new mssql.ConnectionPool(config).connect((err) => {
+  err && winston.error('connect db failed: %j', err);
+});
+winston.info('mssql connection pool established.');
 
-  return {
-    TYPES: mssql.TYPES,
-    execSql: (sql, callback = (err, resultSet) => { }) => {
-      pool.request().query(sql).then((result) => {
-        callback(null, result.recordset);
-      }).catch(err => {
-        callback(err);
-      });
-    },
-    execSqlByParams: (sql, params = {}, callback = (err, resultSet) => { }) => {
-      let request = pool.request();
-      _.reduce(params || {}, (_request, value, key) => {
-        return _request.input(key, value.type, value.value);
-      }, request)
+const _that = {
+  TYPES: mssql.TYPES,
+  execSql: (sql, callback = (err, resultSet) => { }) => {
+    pool.request().query(sql).then((result) => {
+      callback(null, result.recordset);
+    }).catch(err => {
+      callback(err);
+    });
+  },
+  execParameterizedSql: (sql, params = {}, callback = (err, resultSet) => { }) => {
+    let request = pool.request();
+    _.reduce(params || {}, (_request, value, key) => {
+      return _request.input(key, value.type, value.value);
+    }, request)
       .query(sql)
       .then((result) => {
-        callback(null, result.recordset);
+        callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
       }).catch((err) => {
-        callback(err);
-      });
-    },
-    preparedStatement: () => {
-      let ps = new mssql.PreparedStatement(pool);
-      const _this = {
-        setType: (param, type) => {
-          ps.input(param, type);
-          return _this;
-        },
-        execute: (sql, params, callback = (err, resultSet) => { }) => {
-          ps.prepare(sql).then(() => {
-            return ps.execute(params);
-          }).then((result) => {
-            // winston.info('result.recordset: %j', result.recordset);
-            //ps.prepared && ps.unprepare();
-            callback(null, result.recordset);
-          }).catch((err) => {
-            //ps.prepared && ps.unprepare();
-            callback(err);
-          }).then(() => {
-            winston.info('===finally');
-            ps.prepared && ps.unprepare();
-          });
-        },
-        release: (callback = (err) => { }) => {
-          ps.prepared && ps.unprepare(callback);
-        }
-      };
-      return _this;
-    }
-  };
-})();
+      callback(err);
+    });
+  },
+  queryRequest: () => {
+    let inputs = {};
+    const _this = {
+      setInput: (name, type, value) => {
+        inputs[name] = {type, value};
+        return _this;
+      },
+      executeQuery: (sql, callback) => {
+        _that.execParameterizedSql(sql, inputs, callback);
+      }
+    };
+    return _this;
+  },
+  preparedStatement: () => {
+    let ps = new mssql.PreparedStatement(pool);
+    const _this = {
+      setType: (param, type) => {
+        ps.input(param, type);
+        return _this;
+      },
+      execute: (sql, params, callback = (err, resultSet) => { }) => {
+        ps.prepare(sql).then(() => {
+          return ps.execute(params);
+        }).then((result) => {
+          // winston.info('result.recordset: %j', result.recordset);
+          //ps.prepared && ps.unprepare();
+          callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
+        }).catch((err) => {
+          //ps.prepared && ps.unprepare();
+          callback(err);
+        }).then(() => {
+          winston.info('===finally');
+          ps.prepared && ps.unprepare();
+        });
+      },
+      release: (callback = (err) => { }) => {
+        ps.prepared && ps.unprepare(callback);
+      }
+    };
+    return _this;
+  }
+};
+
+module.exports = _that;
 
 
 
@@ -120,7 +133,7 @@ module.exports = (() => {
                 connection.execSql(request);
             });
         },
-        execSqlByParams: (sql, params={}, callback=(err, resultSet)=>{}) => {
+        execParameterizedSql: (sql, params={}, callback=(err, resultSet)=>{}) => {
             pool.acquire((err, connection) => {
                 let request = new Request(sql, (err, rowCount, resultSet) => {
                     connection.release();

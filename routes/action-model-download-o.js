@@ -161,8 +161,6 @@ module.exports = (app) => {
         msg += chunk;
       });
       resp.on('end', function () {
-        const fs = require('fs');
-        const path = require('path');
         res.setHeader('Content-Type', 'application/vnd.openxmlformats');
         res.setHeader("Content-Disposition", "attachment; filename=file.xls");
         res.sendFile(JSON.parse(msg).jsonOutput.data);

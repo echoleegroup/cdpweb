@@ -6,7 +6,7 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.loginPlatform = (username, password, callback = () => { }) => {
   const sql = 'SELECT * FROM sy_infouser WHERE userId = @username and password = @password';
-  Q.nfcall(_connector.execSqlByParams, sql, {
+  Q.nfcall(_connector.execParameterizedSql, sql, {
     username: {
       type: _connector.TYPES.NVarChar,
       value: username
@@ -32,7 +32,7 @@ module.exports.loginPlatform = (username, password, callback = () => { }) => {
 
 module.exports.updateLoginTime = (userId, callback = () => {}) => {
   let sql = "UPDATE sy_infouser set loginTime = GETDATE() where userId = @userId";
-  Q.nfcall(_connector.execSqlByParams, sql, {
+  Q.nfcall(_connector.execParameterizedSql, sql, {
     userId: {
       type: _connector.TYPES.NVarChar,
       value: userId

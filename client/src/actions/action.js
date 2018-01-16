@@ -1,5 +1,8 @@
+import Rx from 'rxjs';
+
 const Action = {};
 const _AJAX = (options, callback) => {
+  //console.log('_AJAX options: ', options);
   $.ajax(options).done((result) => {
     (result.code < 300)?
       callback(null, result.data):
@@ -9,28 +12,39 @@ const _AJAX = (options, callback) => {
   });
 };
 
-Action.get = (url, options, callback) => {
+Action.ajaxGet = (url, data = {}, options = {}, callback) => {
   _AJAX(Object.assign(options, {
     url: url,
-    method: 'get',
-    dataType: options.dataType || 'json'
+    type: 'GET',
+    dataType: options.dataType || 'json',
+    data: data
   }), callback);
 };
 
-Action.put = (url, options, callback) => {
+Action.ajaxGetObservable = Rx.Observable.bindNodeCallback(Action.ajaxGet);
+
+Action.ajaxPut = (url, data = {}, options = {}, callback) => {
   _AJAX(Object.assign(options, {
     url: url,
-    method: 'put',
-    dataType: options.dataType || 'json'
+    type: 'PUT',
+    contentType: options.contentType || "application/json",
+    dataType: options.dataType || 'json',
+    data: data
   }), callback);
 };
 
-Action.post = (url, options, callback) => {
+Action.ajaxPutObservable = Rx.Observable.bindNodeCallback(Action.ajaxPut);
+
+Action.ajaxPost = (url, data = {}, options = {}, callback) => {
   _AJAX(Object.assign(options, {
     url: url,
-    method: 'post',
-    dataType: options.dataType || 'json'
+    type: 'POST',
+    contentType: options.contentType || "application/json",
+    dataType: options.dataType || 'json',
+    data: JSON.stringify(data)
   }), callback);
 };
+
+Action.ajaxPostObservable = Rx.Observable.bindNodeCallback(Action.ajaxPost);
 
 export default Action;

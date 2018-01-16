@@ -2,13 +2,12 @@
 const express = require('express');
 const winston = require('winston');
 const xlsx = require("node-xlsx");
-const fs = require('fs');
-const path = require('path');
 const multer = require('multer');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/constants").menucode;
-const storage = path.resolve(__dirname, "../.asserts") + path.sep;
+const constants = require("../utils/constants");
+const permission = constants.menucode;
+const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {

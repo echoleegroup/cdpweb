@@ -11,11 +11,13 @@ module.exports = (app) => {
   const router = express.Router();
 
   router.get('/custom/filter/:mdId/:batId', middleware.check(), function (req, res, next) {
+    let mdId = req.params.mdId;
+    let batId = req.params.batId;
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
 
-    Q.nfcall(modelService.getModelBatch, req.params.mdId, req.params.batId).then((result) => {
+    Q.nfcall(modelService.getModel, mdId).then((result) => {
       res.render('target-filter', {
         'id': req.user.userName,
         'modelInfo': result,
@@ -24,7 +26,7 @@ module.exports = (app) => {
         'mgrMenuList': mgrMenuList
       });
     }).fail((err) => {
-      winston.error('===query model failed:', err);
+      winston.error('===/custom/filter/%s/%s failed:', mdId, batId,  err);
       next(boom.internal());
     });
   });

@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const Q = require('q');
+const moment = require('moment');
 const shortid = require('shortid');
+const winston = require('winston');
+const _connector = require('../utils/sql-query-util');
 
 const FOLDER_MODEL_TEMPLATE = {
   type: 'folder',
@@ -26,20 +29,74 @@ const FIELD_REF_OPTIONS_TEMPLATE = {
 };
 
 const FEATURE_DATATYPE_TO_INPUT_TYPE = {
-  char: "text",
-  int: "number",
-  float: "number",
-  date: "date",
-  datetime: "date"
+  //digit
+  bigint: 'number',
+  bit: 'number',
+  decimal: 'number',
+  int: 'number',
+  money: 'number',
+  numeric: 'number',
+  smallint: 'number',
+  smallmoney: 'number',
+  tinyint: 'number',
+  //float
+  float: 'number',
+  real: 'number',
+  //date
+  date: 'date',
+  datetime2: 'date',
+  datetime: 'date',
+  datetimeoffset: 'date',
+  smalldatetime: 'date',
+  time: 'date',
+  //literal
+  char: 'text',
+  text: 'text',
+  varchar: 'text',
+  //string
+  nchar: 'text',
+  ntext: 'text',
+  nvarchar: 'text'
 };
 
-const REF_FIELD_DATA_TYPE = 'refOption';
-const LABEL_UNFOLDED= '未分類';
+const SQL_OPERATOR_DICT = {
+  and: 'AND',
+  or: 'OR',
+  not: 'AND NOT',
+  gt: '>',
+  ge: '>=',
+  lt: '<',
+  le: '<=',
+  eq: '=',
+  ne: '!=',
+  nn: 'IS NOT NULL',
+  in: 'IS NULL'
+};
 
-const FieldModeWrapper = (rawField) => {
+const FIELD_REF_DATA_TYPE = 'refOption';
+const FIELD_DATE_DATA_TYPE = 'date';
+const FIELD_DATETIME_DATA_TYPE = 'datetime';
+const FIELD_NUMBER_DATA_TYPE = 'number';
+const FIELD_TEXT_DATA_TYPE = 'text';
+
+const CRITERIA_COMBO_BUNDLE_TYPE = 'combo';
+const CRITERIA_BUNDLE_TYPE = 'bundle';
+const CRITERIA_REF_DETAIL_TYPE = 'refDetails';
+const CRITERIA_FIELD_TYPE = 'field';
+
+const LABEL_UNFOLDED= '未分類';
+//const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
+//const MAX_MODEL_KEYS = 6;
+//const TABLE_MODEL_LIST_DETAIL = 'md_ListDet';
+
+const CUSTOMER_FEATURE_SET_ID = 'ModelGene';
+const MODEL_FEATURE_CATEGORY_ID = 'tagene';
+const MODEL_LIST_CATEGORY = 'tapop';
+
+const FieldModelWrapper = (rawField) => {
   // set data_type properties
   let dataTypeProperties = {
-    data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[rawField.codeGroup]
+    data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[rawField.dataType]
   };
   if (!_.isEmpty(rawField.codeGroup)) {
     dataTypeProperties = {
@@ -57,7 +114,117 @@ const FieldModeWrapper = (rawField) => {
   });
 };
 
+const RefFieldHandler = (criteria, fieldDef) => {
+  const REF_FIELD_COMPARE_OPERATOR_DICT = Object.assign({}, SQL_OPERATOR_DICT, {
+    eq: 'IN',
+    ne: 'NOT IN'
+  });
+  let query_value_list = _.isEmpty(criteria.value)? '': `('${criteria.value.join('\',\'')}')`;
+  let query = `${fieldDef.featID} ${REF_FIELD_COMPARE_OPERATOR_DICT[criteria.operator]} ${query_value_list}`;
+  return query;
+};
+
+const ChildSqlCriteriaExpressionHandler = ({sqlExpressions}, {operator}) => {
+  let sql = null;
+  if (sqlExpressions.length > 0) {
+    if (sqlExpressions.length === 1) {
+      //only on express. return it.
+      sql = sqlExpressions[0];
+    } else {
+      //multi-criteria. join all by operator of current criteria.
+      //**IMPORTANT: add space word in the front and rear of the operator!!
+      let delimiter = ` ${SQL_OPERATOR_DICT[operator]} `;
+      sql = `( ${sqlExpressions.join(delimiter)} )`;
+    }
+    //collector.paramsIndex = paramsIndex;
+    //collector.params = Object.assign(collector.params, params);
+  }
+  return sql;
+};
+
+/**
+ *
+ * @param criteriaList
+ * @param fieldDict
+ * @param paramIndex
+ * @constructor
+ * expect return {query: ['', ''], params: [], paramIndex: ${number}}
+ */
+const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
+  let collector = {
+    sqlExpressions: [],
+    params: [],
+    paramsIndex
+  };
+  return statements.reduce((collector, criteria) => {
+    let criteriaType = criteria.type;
+    let fieldDef = fieldDict[criteria.field_id];
+    let fieldDataType = criteria.data_type;
+    let fieldValue = criteria.value;
+    let fieldOperator = criteria.operator;
+
+    if (CRITERIA_FIELD_TYPE === criteriaType) { //type === field
+      if (CRITERIA_FIELD_TYPE === fieldDataType) {  //data_type === refOption
+        let query = RefFieldHandler(criteria, fieldDef);
+        collector.sqlExpressions.push(query);
+      } else {
+        let paramValue = undefined;
+        let query = `${fieldDef.featID} ${SQL_OPERATOR_DICT[fieldOperator]}`;
+
+        if (fieldValue) {
+          try {
+            if (FIELD_DATE_DATA_TYPE === fieldDataType) { //data_type === date
+              paramValue = new Date(fieldValue);
+              // paramValue = ('le' === fieldOperator)?
+              //   moment(fieldValue).endOf('day'):
+              //   moment(fieldValue).startOf('day');
+            } else if (FIELD_DATETIME_DATA_TYPE === fieldDataType) { //data_type === datetime
+              paramValue = new Date(fieldValue);
+              // paramValue = ('le' === fieldOperator)?
+              //   moment(fieldValue).endOf('minute'):
+              //   moment(fieldValue).startOf('minute');
+            } else if (FIELD_TEXT_DATA_TYPE === fieldDataType) {  //data_type === text
+              paramValue = fieldDataType + '';
+            } else if (FIELD_NUMBER_DATA_TYPE === fieldDataType) {  //data_type === number
+              paramValue = fieldDataType * 1;
+            }
+
+            let paramVariable = `${fieldDef.featID}_${collector.paramsIndex++}`;
+            query = `${query} @${paramVariable}`;
+            collector.params.push({
+              name: paramVariable,
+              type: fieldDef.dataType,
+              value: paramValue
+            });
+          } catch (e) {
+            winston.error('convert input value to sql parameter value failed!');
+          }
+        }
+        collector.query.push(query);
+      } //end of data_type handler
+    } else {
+      let childCriteria = ChildSqlCriteriaComposer(criteria.criteria, fieldDict, collector.paramsIndex);
+      let childSql = ChildSqlCriteriaExpressionHandler(childCriteria, criteria);
+      winston.info('ChildSqlCriteriaComposer::ChildSqlCriteriaExpressionHandler: %s', childSql);
+      if (childSql) {
+        collector.sqlExpressions.push(childSql);
+        collector.params = collector.params.concat(childCriteria.params);
+        collector.paramsIndex = childCriteria.paramsIndex;
+      }
+    } //end of component 'field'
+
+    return collector;
+  }, collector);
+};
+
 module.exports = {
+  CUSTOMER_FEATURE_SET_ID: CUSTOMER_FEATURE_SET_ID,
+  MODEL_FEATURE_CATEGORY_ID: MODEL_FEATURE_CATEGORY_ID,
+  MODEL_LIST_CATEGORY: MODEL_LIST_CATEGORY,
+  //MODEL_COLUMN_PREFIX_BIGTABLEKEY: MODEL_COLUMN_PREFIX_BIGTABLEKEY,
+  //MAX_MODEL_KEYS: MAX_MODEL_KEYS,
+  //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
+
   criteriaFeaturesToFields: (rawFields, foldingTree) => {
     let foldingFields = foldingTree.reduce((foldingFields, node) => {
       if ('ROOT' === node.parentID) { // virtual node: folder
@@ -75,7 +242,7 @@ module.exports = {
             parentID: node.nodeID
           }) > -1;
         }).reduce((fieldSet, rawField) => {
-          let wrappedField = FieldModeWrapper(rawField); //produce wrapped field via rawField.
+          let wrappedField = FieldModelWrapper(rawField); //produce wrapped field via rawField.
           fieldSet.push(wrappedField);  //push wrapped field to the current folder filed set.
 
           return fieldSet;
@@ -103,6 +270,7 @@ module.exports = {
 
     return foldingFields;
   },
+
   codeGroupToRefFields: (codeGroupDict) => {
     //rename code group properties for frontend
     return _.reduce(codeGroupDict, (fieldRefs, codeGroupBody, key) => {
@@ -114,6 +282,17 @@ module.exports = {
       });
       return fieldRefs;
     }, {});
+  },
+
+  inputCriteriaToSqlWhere: (statements, fieldDict) => {
+    let operator = 'and';
+    let childCriteria = ChildSqlCriteriaComposer(statements, fieldDict);
+    let sqlWhere = ChildSqlCriteriaExpressionHandler(childCriteria, {operator});
+    winston.info('inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);
+    return {
+      sqlWhere: sqlWhere,
+      paramsDynamic: childCriteria.params
+    };
   }
 };
 

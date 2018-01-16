@@ -1,5 +1,7 @@
 "use strict";
 
+const path = require('path');
+
 exports.menucode = {
   USER: "_mgrUser",
   USER_ROLE: "_mgrRole",
@@ -19,5 +21,7 @@ exports.menucode = {
   TA_REACTION_UPLOAD: "__targetTaReaction",
   TAANARPT_RULT: "_taanaRpt"
 };
+
+exports.ASSERTS_ABSOLUTE_PATH = path.resolve(__dirname, "../.asserts");
 
 //# sourceMappingURL=config.js.map

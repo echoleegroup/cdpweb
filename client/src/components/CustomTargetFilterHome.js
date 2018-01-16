@@ -2,7 +2,7 @@ import React  from 'react';
 import CustomTargetFilterWorker from './CustomTargetFilterWorker';
 import CustomTargetFilterIllustration from './CustomTargetFilterIllustration';
 
-export default class PreferredTargetHome extends React.PureComponent {
+export default class CustomTargetFilterHome extends React.PureComponent {
   constructor(props) {
     super(props);
     this.params = this.props.match.params;

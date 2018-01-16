@@ -23,7 +23,7 @@ module.exports.getSysCodeGroups = (codeGroupList = [], callback) => {
     // [{$codeGroupKey1: [{code1}, {code2}, {code3}]}, {$codeGroupKey2: [{code1}, {code2}, {code3}]}]
     callback(null, Object.assign({}, ...codeGroupRes));
   }).fail((err) => {
-    winston.error('===query model failed:', err);
+    winston.error('===getSysCodeGroups failed:', err);
     callback(err, null);
   });
 };
