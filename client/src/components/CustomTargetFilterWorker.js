@@ -1,6 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader';
 import numeral from 'numeral';
+import {format} from 'util';
 import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
 import CriteriaAction from '../actions/criteria-action';
 
@@ -41,13 +42,14 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
     };
 
     this.filterResultPreview = () => {
+      let criteria = this.getCriteria();
       this.setState({
-        isLoaded: false
+        //isLoaded: false,
+        criteria
       });
 
-      let postData = this.getCriteria();
-      console.log('CustomTargetFilterWorker::filterResultPreview: ', postData);
-      CriteriaAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, postData, data => {
+      console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
+      CriteriaAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
         this.setState({
           isLoaded: true,
           prediction: {
@@ -59,17 +61,20 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
     };
 
     this.filterResultExport = () => {
+      let criteria = this.getCriteria();
       this.setState({
-        isLoaded: false
+        //isLoaded: false,
+        criteria
       });
 
-      let postData = this.getCriteria();
-      // console.log('CustomTargetFilterWorker::filterResultExport: ', postData);
-      CriteriaAction.getCustomTargetFilterExport(this.props.params.mdId, this.props.params.batId, postData, data => {
-        this.setState({
-          isLoaded: true
-        });
-      });
+      $(this.inputCriteria).val(JSON.stringify(criteria));
+      $(this.formComponent).submit();
+
+      // CriteriaAction.getCustomTargetFilterExport(this.props.params.mdId, this.props.params.batId, criteria, data => {
+      //   this.setState({
+      //     isLoaded: true
+      //   });
+      // });
     };
 
     this.getHistory = () => {
@@ -78,7 +83,6 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
       });
 
       CriteriaAction.getCriteriaHistory(this.props.params.mdId, this.props.params.batId, data => {
-        // console.log('getCriteriaHistory: ', data);
         this.setState(prevState => ({
           isLoaded: true,
           criteria: {
@@ -86,10 +90,10 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
             expression: data
           }
         }));
-      })
+      });
     };
 
-    this.getHistory();
+    //this.getHistory();
   };
 
   componentWillUpdate() {
@@ -102,7 +106,12 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
         {/*<!-- table set Start -->*/}
         <div className="table_block">
           <h2>自定名單試算與下載</h2>
-          <form className="form-horizontal">
+          <form className="form-horizontal"
+                method="POST"
+                target="_blank"
+                action={format(CriteriaAction.FILTER_RESULT_EXPORT, this.props.params.mdId, this.props.params.batId)}
+                ref={e => {this.formComponent = e;}}>
+            <input type="hidden" name="criteria" ref={e => this.inputCriteria = e}/>
             <div className="form-group">
               <label htmlFor="inputName" className="col-sm-3 control-label">是否包含模型受眾</label>
               <div className="col-sm-8">

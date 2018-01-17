@@ -91,7 +91,6 @@ module.exports.getFieldFoldingTree = (treeId, callback) => {
 module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, rawFields, downloadFeatureIds=[], callback) => {
   const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
   const MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY = 'mdListKey';
-  const MAX_MODEL_KEYS = 6;
 
   //create a dictionary via rawFields with key in 'featID'
   let fieldDict = _.keyBy(rawFields, 'featID');
@@ -123,10 +122,10 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, ra
   }
   //set customized criteria
   //transfer input criteria to sql expression
-  let {criteriaSql, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements, fieldDict);
-  winston.info('queryTargetByCustomCriteria::inputCriteriaToSqlWhere: %s', criteriaSql);
-  if(criteriaSql) {
-    sqlWhere = `${sqlWhere} AND ${criteriaSql}`;
+  let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements, fieldDict);
+  winston.info('queryTargetByCustomCriteria::customCriteriaSqlWhere: %s', customCriteriaSqlWhere);
+  if(customCriteriaSqlWhere) {
+    sqlWhere = `${sqlWhere} AND ${customCriteriaSqlWhere}`;
     request = _.reduce(paramsDynamic, (request, {name, type, value}) => {
       return request.setInput(name, RDB_DATATYPE(type), value);
     }, request);
@@ -138,11 +137,12 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, ra
 
   //execute query
   Q.nfcall(request.executeQuery, sql).then((result) => {
+    winston.info('===queryTargetByCustomCriteria::executeQuery::result: ', result);
     callback(null, result);
   }).fail((err) => {
     winston.error('===criteria-service::' +
       'queryTargetByCustomCriteria(%j) failed: %j',
-      {mdId, batId, statements, model, rawFields, downloadFeatures}, err);
+      {mdId, batId, statements, model, rawFields, downloadFeatureIds}, err);
     callback(err);
   });
 };

@@ -8,7 +8,7 @@ const storage = constants.ASSERTS_ABSOLUTE_PATH;
 
 module.exports.sendZipArchivedExcel = ({
                                      res, xlsxDataSet=[[]],
-                                     ext='.xlsx',
+                                     ext='xlsx',
                                      sheetName='模型名單',
                                      fileName=Date.now(),
                                      password,
@@ -16,22 +16,31 @@ module.exports.sendZipArchivedExcel = ({
   const xlsx = require('node-xlsx');
   const Minizip = require('minizip-asm.js');
   //const xlsxContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';  // For Excel2007 and above .xlsx files
-  const zipContentType = 'application/zip';
+  const zipContentType = 'application/octet-stream';
+  // const zipContentType = 'application/zip';
 
+  let xlsxFileName = `${fileName}.${ext}`;
+  let xlsxFileAbsolutePath = path.join(storage, `${xlsxFileName}`);
   let xlsxBuffer = xlsx.build([{name: sheetName, data: xlsxDataSet}]);
   let archiveOptions = {};
   if (password) {
-    archiveOptions.password = password
+    archiveOptions.password = password;
   }
 
   let mz = new Minizip();
-  let zipBuffer = mz.append(`${fileName}.${ext}`, xlsxBuffer, archiveOptions);
+  mz.append(`${xlsxFileName}`, xlsxBuffer, archiveOptions);
+  let zipBuffer = mz.zip();
+
+  //fs.writeFileSync(path.join(storage, `${fileName}.zip`), zipBuffer, {'flag':'w'});
 
   //this is for backup
-  fs.writeFile(path.join(storage, `${Date.now()}.${xlsx}`), zipBuffer, {'flag':'w'}).then(() => {  // 如果文件存在，覆盖
+  Q.nfcall(fs.writeFile, xlsxFileAbsolutePath , xlsxBuffer, {'flag':'w'}).then(() => {  // 如果文件存在，覆盖
     res.setHeader('Content-Type', zipContentType);
     res.setHeader('Content-Disposition', `attachment; filename=${fileName}.zip`);
-    res.writeHead(200);
-    res.end(zipBuffer);
+    res.setHeader('Content-Transfer-Encoding', 'binary');
+    //res.setHeader('Content-Length', zipBuffer.length);
+    res.end(new Buffer(zipBuffer, 'binary'));
+  }).fail(err => {
+    throw err;
   });
 };

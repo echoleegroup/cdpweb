@@ -7,7 +7,7 @@ const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const downloadService = require('../services/download-service');
 const constants = require("../utils/constants");
-const permission = constants.menucode;
+const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });
 

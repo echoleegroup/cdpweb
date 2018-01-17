@@ -49,10 +49,12 @@ const _that = {
     let inputs = {};
     const _this = {
       setInput: (name, type, value) => {
+        winston.info('sql-query-util.queryRequest.setInput: ', {name, type, value});
         inputs[name] = {type, value};
         return _this;
       },
       executeQuery: (sql, callback) => {
+        winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
         execParameterizedSql(sql, inputs, callback);
       }
     };

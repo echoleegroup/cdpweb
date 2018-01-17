@@ -40,7 +40,8 @@
     "serve-favicon": "~2.3.0",
     "shortid": "^2.2.8",
     "umzug": "^2.1.0",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "winston-daily-rotate-file": "^1.7.2"
   },
   "devDependencies": {
     "@types/bookshelf": "^0.8.34",

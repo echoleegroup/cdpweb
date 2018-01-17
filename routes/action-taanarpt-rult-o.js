@@ -5,7 +5,7 @@ const express = require('express');
 const winston = require('winston');
 const appConfig = require("../app-config");
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/constants").menucode;
+const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
 const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
 module.exports = (app) => {

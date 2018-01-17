@@ -2,8 +2,7 @@ import Rx from 'rxjs';
 
 const Action = {};
 const _AJAX = (options, callback) => {
-  //console.log('_AJAX options: ', options);
-  $.ajax(options).done((result) => {
+  $.ajax(options).done(result => {
     (result.code < 300)?
       callback(null, result.data):
       callback(result.message);

@@ -75,18 +75,28 @@ export default class CriteriaBase extends React.PureComponent {
           this.setState({
             isPreview: true,
             criteria: this.editView.getCriteria()
-          })
+          });
         }}>完成編輯</button>
       );
     };
 
     this.getCriteria = () => {
-      return this.state.criteria;
+      let criteria = this.state.criteria;
+      if (this.editView) {  //edit mode
+        //fetch all criteria tree
+        criteria = this.editView.getCriteria();
+        this.setState({criteria});
+      }
+      return criteria;
     };
   };
 
   componentWillUpdate() {
-    // console.log('CriteriaBase::componentWillUpdate: ');
+    console.log('CriteriaBase::componentWillUpdate: ');
+  };
+
+  componentWillUnmount() {
+    console.log('CriteriaBase::componentWillUnmount: ');
   };
 
   render() {

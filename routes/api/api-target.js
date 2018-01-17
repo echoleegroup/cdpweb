@@ -43,7 +43,7 @@ module.exports = (app) => {
     }).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/fields internal server error: %j', mdId, batId, err);
+      winston.error('===/%s/%s/criteria/fields internal server error: ', mdId, batId, err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -55,7 +55,7 @@ module.exports = (app) => {
     let statements = req.body.statements;
 
     winston.info('/criteria/preview: mdId=%s, batId=%s', mdId, batId);
-    winston.info('/criteria/preview: isIncludeModelTarget=%j', isIncludeModelTarget);
+    winston.info('/criteria/preview: isIncludeModelTarget=%s', isIncludeModelTarget);
     winston.info('/criteria/preview: statements=%j', statements);
 
     Q.all([
@@ -64,24 +64,17 @@ module.exports = (app) => {
       //Q.nfcall(modelService.getDownloadFeature, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
     ]).spread((model, rawFields, downloadFeatures) => {
       //downloadFeatures = _.map(downloadFeatures, 'featID');
-      winston.info('/%s/%s/criteria/preview :: downloadFeatures: ', mdId, batId, downloadFeatures);
-      model = {
-        mdID: 'model10',
-        mdName: '2017汰舊換新',
-        batID: 'bat_1',
-        bigtbName: '_test_bigtbName',
-        bigtbKey1: '_key1',
-        bigtbKey2: '_key2',
-        bigtbKey3: '_key3',
-        bigtbKey4: '_key4',
-        bigtbKey5: '_key5',
-        bigtbKey6: '_key6'
-      };
-      return Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, rawFields, []);
-    }).then(results => {
+      winston.info('/%s/%s/criteria/preview :: model: ', mdId, batId, model);
+
+      return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, rawFields, []), model];
+    }).spread((results, model) => {
+      winston.info('/%s/%s/criteria/preview :: queryTargetByCustomCriteria: ', mdId, batId, results);
+      winston.info('/%s/%s/criteria/preview :: model.batListThold: ', mdId, batId, model.batListThold);
       let [resultsInTarget, resultsExcludeTarget] = _.partition(results, (obj) => {
         return (obj['_mdListScore'] >= model.batListThold);
       });
+      winston.info('/%s/%s/criteria/preview :: resultsInTarget: ', mdId, batId, resultsInTarget.length);
+      winston.info('/%s/%s/criteria/preview :: resultsExcludeTarget: ', mdId, batId, resultsExcludeTarget.length);
       let sizeOfResultsInTarget = resultsInTarget.length;
       let sizeOfResultsExcludeTarget = resultsExcludeTarget.length;
       let size = sizeOfResultsInTarget + sizeOfResultsExcludeTarget;
@@ -96,11 +89,13 @@ module.exports = (app) => {
   router.post('/:mdId/:batId/criteria/export', middlewares, (req, res) => {
     let mdId = req.params.mdId;
     let batId = req.params.batId;
-    let isIncludeModelTarget = req.body.criteria.isIncludeModelTarget;
-    let statements = req.body.criteria.statements;
+    let criteria = JSON.parse(req.body.criteria);
+    winston.info('/criteria/preview: criteria=%j', criteria);
+    let isIncludeModelTarget = criteria.isIncludeModelTarget;
+    let statements = criteria.statements;
 
     winston.info('/criteria/preview: mdId=%s, batId=%s', mdId, batId);
-    winston.info('/criteria/preview: isIncludeModelTarget=%j', isIncludeModelTarget);
+    winston.info('/criteria/preview: isIncludeModelTarget=%s', isIncludeModelTarget);
     winston.info('/criteria/preview: statements=%j', statements);
 
     Q.all([
@@ -112,14 +107,15 @@ module.exports = (app) => {
       let downloadFeatureLabels = [];
       _.forEach(downloadFeatures, feature => {
         downloadFeatureIds.push(feature.featID);
-        downloadFeatureLabels.push(feature.featNameAbbr);
+        downloadFeatureLabels.push(feature.featName);
       });
       winston.info('/%s/%s/criteria/preview :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
       return [
+        model,
         downloadFeatureIds,
         downloadFeatureLabels,
         Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, rawFields, downloadFeatureIds)];
-    }).spread((downloadFeatureIds, downloadFeatureLabels, resultSet) => {
+    }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet) => {
       let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, (row) => {
         return (row['_mdListScore'] >= model.batListThold);
       });
@@ -134,9 +130,12 @@ module.exports = (app) => {
       }));
 
       //TODO: export as xlsx file
-      fileHelper.sendExcel({res, xlsxDataSet:exportDateSet});
+      fileHelper.sendZipArchivedExcel({res,
+        xlsxDataSet: exportDateSet,
+        password: req.user.userId.toLowerCase()
+      });
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/export internal server error: %j', mdId, batId, err);
+      winston.error('===/%s/%s/criteria/export internal server error: ', mdId, batId, err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -148,7 +147,7 @@ module.exports = (app) => {
     Q.nfcall(modelService.getBatchTargetSummaryOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY).then(summary => {
       res.json(_.pick(summary, ['popName', 'popDesc', 'categCount', 'lastTimeBatch']));
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/fields internal server error: %j', mdId, batId, err);
+      winston.error('===/%s/%s/criteria/fields internal server error: ', mdId, batId, err);
       res.json(null, 500, 'internal service error');
     });
   });

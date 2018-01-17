@@ -51,7 +51,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
   };
 
   render() {
-    // console.log('CriteriaComboBundleList:render::_criteria: ', this.props.criteria);
+    console.log('CriteriaComboBundleList:render::_criteria: ', this.props.criteria);
     let criteria = isEmpty(this.props.criteria)? [{
       uuid: shortid.generate()
     }]: this.props.criteria;
@@ -62,8 +62,6 @@ export default class CriteriaComboBundleList extends React.PureComponent {
           return <CriteriaComboBundle {...this.props}
                                       key={_criteria.uuid}
                                       criteria={_criteria}
-                                      index={index}
-                                      removeCriteria={this.removeCriteria}
                                       collectCriteriaComponents={this.collectCriteriaComponents}
                                       removeCriteriaComponents={this.removeCriteriaComponents}
                                       /*

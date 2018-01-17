@@ -85,11 +85,8 @@ const CRITERIA_REF_DETAIL_TYPE = 'refDetails';
 const CRITERIA_FIELD_TYPE = 'field';
 
 const LABEL_UNFOLDED= '未分類';
-//const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
-//const MAX_MODEL_KEYS = 6;
-//const TABLE_MODEL_LIST_DETAIL = 'md_ListDet';
 
-const CUSTOMER_FEATURE_SET_ID = 'ModelGene';
+const CUSTOMER_FEATURE_SET_ID = 'CUSTGENE';
 const MODEL_FEATURE_CATEGORY_ID = 'tagene';
 const MODEL_LIST_CATEGORY = 'tapop';
 
@@ -100,7 +97,7 @@ const FieldModelWrapper = (rawField) => {
   };
   if (!_.isEmpty(rawField.codeGroup)) {
     dataTypeProperties = {
-      data_type: REF_FIELD_DATA_TYPE,
+      data_type: FIELD_REF_DATA_TYPE,
       ref: rawField.codeGroup
     };
     //save ref to fetch options latter
@@ -125,6 +122,8 @@ const RefFieldHandler = (criteria, fieldDef) => {
 };
 
 const ChildSqlCriteriaExpressionHandler = ({sqlExpressions}, {operator}) => {
+  winston.info('ChildSqlCriteriaExpressionHandler::sqlExpressions ', sqlExpressions);
+  winston.info('ChildSqlCriteriaExpressionHandler::operator ', operator);
   let sql = null;
   if (sqlExpressions.length > 0) {
     if (sqlExpressions.length === 1) {
@@ -184,9 +183,9 @@ const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
               //   moment(fieldValue).endOf('minute'):
               //   moment(fieldValue).startOf('minute');
             } else if (FIELD_TEXT_DATA_TYPE === fieldDataType) {  //data_type === text
-              paramValue = fieldDataType + '';
+              paramValue = fieldValue + '';
             } else if (FIELD_NUMBER_DATA_TYPE === fieldDataType) {  //data_type === number
-              paramValue = fieldDataType * 1;
+              paramValue = fieldValue * 1;
             }
 
             let paramVariable = `${fieldDef.featID}_${collector.paramsIndex++}`;
@@ -200,7 +199,7 @@ const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
             winston.error('convert input value to sql parameter value failed!');
           }
         }
-        collector.query.push(query);
+        collector.sqlExpressions.push(query);
       } //end of data_type handler
     } else {
       let childCriteria = ChildSqlCriteriaComposer(criteria.criteria, fieldDict, collector.paramsIndex);
@@ -226,29 +225,33 @@ module.exports = {
   //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
 
   criteriaFeaturesToFields: (rawFields, foldingTree) => {
+    winston.info('===criteriaFeaturesToFields: ', rawFields);
     let foldingFields = foldingTree.reduce((foldingFields, node) => {
+      winston.info('===criteriaFeaturesToFields::foldingTree ', node);
       if ('ROOT' === node.parentID) { // virtual node: folder
-        //create a folder model
-        let folderModel = Object.assign({}, FOLDER_MODEL_TEMPLATE, {
-          id: node.nodeID,
-          label: node.nodeName
-        });
 
         // extract all the raw fields, who's featID is referenced to node's nodeID
         // and its parentID references to current folder node
-        _.remove(rawFields, (rawField) => {
+        let childRawFields = _.remove(rawFields, (rawField) => {
           return _.findIndex(foldingTree, {
             nodeID: rawField.featID,
             parentID: node.nodeID
           }) > -1;
-        }).reduce((fieldSet, rawField) => {
-          let wrappedField = FieldModelWrapper(rawField); //produce wrapped field via rawField.
-          fieldSet.push(wrappedField);  //push wrapped field to the current folder filed set.
+        });
 
-          return fieldSet;
-        }, folderModel.fields);
+        if (childRawFields.length > 0) {
+          //create a folder model
+          let folderModel = Object.assign({}, FOLDER_MODEL_TEMPLATE, {
+            id: node.nodeID,
+            label: node.nodeName
+          });
 
-        foldingFields.push(folderModel);  //push current folder model to result set
+          folderModel.fields = childRawFields.map(rawField => {
+            return FieldModelWrapper(rawField);
+          });
+
+          foldingFields.push(folderModel);  //push current folder model to result set
+        }
       } else {
         // ignore fields
       }
@@ -258,13 +261,15 @@ module.exports = {
     //put all un-folded field to an virtual node
     if(rawFields.length > 0) {
       //create a folder model
-      let folderModel = Object.assign({}, FIELD_MODEL_TEMPLATE, {
+      let folderModel = Object.assign({}, FOLDER_MODEL_TEMPLATE, {
         id: shortid.generate(),
         label: LABEL_UNFOLDED
       });
       //push all un-folded field in this virtual node.
       //** use ... to spread the rawFields array
-      folderModel.fields.push(...rawFields);
+      folderModel.fields = rawFields.map(rawField => {
+        return FieldModelWrapper(rawField);
+      });
       foldingFields.push(folderModel);
     }
 
@@ -287,10 +292,11 @@ module.exports = {
   inputCriteriaToSqlWhere: (statements, fieldDict) => {
     let operator = 'and';
     let childCriteria = ChildSqlCriteriaComposer(statements, fieldDict);
+    winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaComposer: ', childCriteria);
     let sqlWhere = ChildSqlCriteriaExpressionHandler(childCriteria, {operator});
-    winston.info('inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);
+    winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);
     return {
-      sqlWhere: sqlWhere,
+      customCriteriaSqlWhere: sqlWhere,
       paramsDynamic: childCriteria.params
     };
   }
