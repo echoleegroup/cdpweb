@@ -1,4 +1,5 @@
 import Rx from 'rxjs';
+import {assign} from 'lodash';
 
 const Action = {};
 const _AJAX = (options, callback) => {
@@ -12,7 +13,7 @@ const _AJAX = (options, callback) => {
 };
 
 Action.ajaxGet = (url, data = {}, options = {}, callback) => {
-  _AJAX(Object.assign(options, {
+  _AJAX(assign(options, {
     url: url,
     type: 'GET',
     dataType: options.dataType || 'json',
@@ -23,7 +24,7 @@ Action.ajaxGet = (url, data = {}, options = {}, callback) => {
 Action.ajaxGetObservable = Rx.Observable.bindNodeCallback(Action.ajaxGet);
 
 Action.ajaxPut = (url, data = {}, options = {}, callback) => {
-  _AJAX(Object.assign(options, {
+  _AJAX(assign(options, {
     url: url,
     type: 'PUT',
     contentType: options.contentType || "application/json",
@@ -35,7 +36,7 @@ Action.ajaxPut = (url, data = {}, options = {}, callback) => {
 Action.ajaxPutObservable = Rx.Observable.bindNodeCallback(Action.ajaxPut);
 
 Action.ajaxPost = (url, data = {}, options = {}, callback) => {
-  _AJAX(Object.assign(options, {
+  _AJAX(assign(options, {
     url: url,
     type: 'POST',
     contentType: options.contentType || "application/json",

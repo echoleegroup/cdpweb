@@ -30,7 +30,7 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   getPreparingData() {
-    this.getFoldingFieldData(Object.assign({}, this.props.params, this.options), data => {
+    this.getFoldingFieldData(assign({}, this.props.params, this.options), data => {
       let foldingFields = data.fields;
       let fieldRefs = data.fieldRefs;
       this.mapToProps = {
