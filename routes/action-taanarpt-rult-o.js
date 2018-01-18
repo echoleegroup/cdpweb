@@ -12,11 +12,12 @@ module.exports = (app) => {
   console.log('[taanarptRoute::create] Creating taanarpt route.');
   const router = express.Router();
 
-  router.get('/TAAnaRpt_Rult', [middleware.check(), middleware.checkViewPermission(permission.TAANARPT_RULT)], function (req, res) {
+  router.get('/taanarpt_rult/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.TAANARPT_RULT)], function (req, res) {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
-    var mdID = req.query.mdID || '';
+    let mdID = req.params.mdID || '';
+    let batID = req.params.batID || '';
     res.render('TAAnaRpt_Rult',
       {
         'id': req.session.userid,
