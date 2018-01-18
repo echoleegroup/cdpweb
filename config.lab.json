@@ -7,5 +7,5 @@
     },
     "dialect": "mssql"
   },
-  "JAVA_API_ENDPOINT": "http://192.168.1.52:8080"
+  "JAVA_API_ENDPOINT": "http://192.168.1.247:8080"
 }
