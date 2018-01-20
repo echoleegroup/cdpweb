@@ -32,6 +32,8 @@ module.exports = (app) => {
   app.use('/feeddata', require('./action-ncbs-data-o')(app));
   
   app.use('/taanarpt_rult', require('./action-taanarpt-rult-o')(app));
+  //顧客數據導出
+  app.use('/integration', require('./action-integration')(app));
   //hook for restful api
   app.use('/api/model', require('./api/api-model')(app));
   app.use('/api/target', require('./api/api-target')(app));
