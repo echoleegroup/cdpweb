@@ -22,23 +22,23 @@ module.exports = (app) => {
   /**
    * get available fields (and folds), that user able to set filter criteria.
    * */
-  router.get('/:mdId/:batId/criteria/fields', middlewares, (req, res) => {
+  router.get('/:mdId/:batId/criteria/features', middlewares, (req, res) => {
     let mdId = req.params.mdId;
     let batId = req.params.batId;
-    winston.info('/criteria/fields(mdId=%s, batId=%s)', mdId, batId);
+    winston.info('/criteria/features(mdId=%s, batId=%s)', mdId, batId);
 
     Q.all([
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       Q.nfcall(criteriaService.getFieldFoldingTree, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
-    ]).spread((rawFields, foldingTree) => {
-      // get code group from rawFields
-      // ** IMPORTANT: get code group before getCriteriaFields **
-      // ** because getCriteriaFields is a mutated function, which move folded fields out of rawFields **
-      let refCodeGroups = _.uniq(_.reject(_.map(rawFields, 'codeGroup'), _.isEmpty));
-      let fields = criteriaHelper.criteriaFeaturesToFields(rawFields, foldingTree);
+    ]).spread((features, foldingTree) => {
+      // get code group from features
+      // ** IMPORTANT: get code group before transforming features to tree nodes **
+      // ** because criteriaFeaturesToTreeNodes is a mutated function, which move folded fields out of features **
+      let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
+      let fields = criteriaHelper.criteriaFeaturesToTreeNodes(features, foldingTree);
       return Q.nfcall(codeGroupService.getSysCodeGroups, refCodeGroups).then(codeGroupResSet => ({
-        fields: fields,
-        fieldRefs: criteriaHelper.codeGroupToRefFields(codeGroupResSet)
+        features: fields,
+        featureRefCodeMap: criteriaHelper.codeGroupToFeatureRef(codeGroupResSet)
       }));
     }).then(resSet => {
       res.json(resSet);
@@ -62,11 +62,11 @@ module.exports = (app) => {
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       //Q.nfcall(modelService.getDownloadFeature, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
-    ]).spread((model, rawFields, downloadFeatures) => {
+    ]).spread((model, features, downloadFeatures) => {
       //downloadFeatures = _.map(downloadFeatures, 'featID');
       winston.info('/%s/%s/criteria/preview :: model: ', mdId, batId, model);
 
-      return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, rawFields, []), model];
+      return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, []), model];
     }).spread((results, model) => {
       winston.info('/%s/%s/criteria/preview :: queryTargetByCustomCriteria: ', mdId, batId, results);
       winston.info('/%s/%s/criteria/preview :: model.batListThold: ', mdId, batId, model.batListThold);
@@ -102,7 +102,7 @@ module.exports = (app) => {
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       Q.nfcall(exportService.getDownloadFeatures, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
-    ]).spread((model, rawFields, downloadFeatures) => {
+    ]).spread((model, features, downloadFeatures) => {
       let downloadFeatureIds = [];
       let downloadFeatureLabels = [];
       _.forEach(downloadFeatures, feature => {
@@ -114,7 +114,7 @@ module.exports = (app) => {
         model,
         downloadFeatureIds,
         downloadFeatureLabels,
-        Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, rawFields, downloadFeatureIds)];
+        Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, downloadFeatureIds)];
     }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet) => {
       let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, (row) => {
         return (row['_mdListScore'] >= model.batListThold);
@@ -168,57 +168,61 @@ module.exports = (app) => {
     });
   });
 
+<<<<<<< HEAD
   router.get('/:mdId/:batId/criteria/fields/test', middlewares, (req, res) => {
+=======
+  router.get('/:mdId/:batId/criteria/features/test', factory.ajax_response_factory(), (req, res) => {
+>>>>>>> ff5f52b... refactory for Criteria Picker
     res.json({
-      fields: [
+      features: [
         {
-          type: 'field',
+          type: 'tail',
           id: 'last_visit_date',
           label: '最後訪問日',
           data_type: 'date',
           default_value: Date.now()
         }, {
-          type: 'folder',
+          type: 'branch',
           id: 'customer_profile',
           label: '客戶屬性',
-          fields: [{
-            type: 'field',
+          children: [{
+            type: 'tail',
             id: 'gender',
             label: '性別',
             data_type: 'refOption',
             ref: 'gender',
             default_value: ['M']
           }, {
-            type: 'field',
+            type: 'tail',
             id: 'gender2',
             label: '性別2',
             data_type: 'refOption',
             ref: 'booleanYN',
             default_value: ['M']
           }, {
-            type: 'field',
+            type: 'tail',
             id: 'age',
             label: '年紀',
             data_type: 'number'
           }]
         }, {
-          type: 'folder',
+          type: 'branch',
           id: 'inter_action',
           label: '互動狀態',
-          fields: [{
-            type: 'field',
+          children: [{
+            type: 'tail',
             id: 'lexus',
             label: 'LEXUS保有台數',
             data_type: 'number'
           }, {
-            type: 'field',
+            type: 'tail',
             id: 'toyota',
             label: 'TOYOTA保有台數',
             data_type: 'number'
           }]
         }
       ],
-      fieldRefs: {
+      featureRefCodeMap: {
         product: [{
           refCode: 'product',
           optCode: 'abc',
@@ -277,7 +281,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/:mdId/:batId/criteria/history/:id/test', middlewares, (req, res) => {
+  router.get('/:mdId/:batId/criteria/history/:id/test', factory.ajax_response_factory(), (req, res) => {
     res.json([
       { //自訂名單下載
         uuid: shortid.generate(),

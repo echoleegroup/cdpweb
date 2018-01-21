@@ -4,46 +4,46 @@ module.exports = {
   fields: {
     preferred_target: [
       {
-        type: 'field',
+        type: 'tail',
         id: 'last_visit_date',
         label: '最後訪問日',
         data_type: 'date',
         default_value: Date.now()
       }, {
-        type: 'folder',
+        type: 'branch',
         id: 'customer_profile',
         label: '客戶屬性',
-        fields: [{
-          type: 'field',
+        nodes: [{
+          type: 'node',
           id: 'gender',
           label: '性別',
           data_type: 'refOption',
           ref: 'gender',
           default_value: ['M']
         }, {
-          type: 'field',
+          type: 'tail',
           id: 'gender2',
           label: '性別2',
           data_type: 'refOption',
           ref: 'booleanYN',
           default_value: ['M']
         }, {
-          type: 'field',
+          type: 'tail',
           id: 'age',
           label: '年紀',
           data_type: 'number'
         }]
       }, {
-        type: 'folder',
+        type: 'branch',
         id: 'inter_action',
         label: '互動狀態',
         fields: [{
-          type: 'field',
+          type: 'tail',
           id: 'lexus',
           label: 'LEXUS保有台數',
           data_type: 'number'
         }, {
-          type: 'field',
+          type: 'tail',
           id: 'toyota',
           label: 'TOYOTA保有台數',
           data_type: 'number'

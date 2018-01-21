@@ -1,7 +1,8 @@
 import {format} from 'util';
 import action from './action';
 
-const CRITERIA_FIELDS_URL = '/api/target/%s/%s/criteria/fields';
+const CRITERIA_FEATURES_URL = '/api/target/%s/%s/criteria/features';
+const CRITERIA_FEATURES_URL_TEST = '/api/target/%s/%s/criteria/features/test';
 const CRITERIA_HISTORY_URL = '/api/target/%s/%s/criteria/history';
 const FILTER_RESULT_PREVIEW = '/api/target/%s/%s/criteria/preview';
 const FILTER_RESULT_EXPORT = '/api/target/%s/%s/criteria/export';
@@ -12,12 +13,12 @@ const CriteriaAction = {
   FILTER_RESULT_EXPORT
 };
 
-CriteriaAction.getCriteriaFieldsData = (mdId, batId, success, fail) => {
-  let url = format(CRITERIA_FIELDS_URL, mdId, batId);
+CriteriaAction.getCustomCriteriaFeatures = (mdId, batId, success, fail) => {
+  let url = format(CRITERIA_FEATURES_URL, mdId, batId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
-    console.log('===getCriteriaFieldsData failed: ', err);
+    console.log('===getCustomCriteriaFeatures failed: ', err);
     fail && fail(err);
   });
 };

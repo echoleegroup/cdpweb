@@ -55,22 +55,22 @@ export default class CriteriaBundle extends React.PureComponent {
       // console.log('CriteriaBundle::removeCriteriaComponents: ', this.criteriaComponents);
     };
 
-    this.getCriteria = () => {
-      // console.log('CriteriaBundle::getCriteria: ', this.state.type, this.criteriaComponents);
+    this.criteriaGathering = () => {
+      // console.log('CriteriaBundle::criteriaGathering: ', this.state.type, this.criteriaComponents);
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
-        let crite = comp.getCriteria(); //immutable Map
-        // console.log('CriteriaBundle::getCriteria::crite ', crite);
+        let crite = comp.criteriaGathering(); //immutable Map
+        // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
         return isEmpty(crite)? collector: collector.push(crite);
       }, List());
 
-      // console.log('CriteriaBundle::getCriteria::subCrits ', subCrits);
+      // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
       return (subCrits.size === 0)? {}: assign({}, this.state, {
         criteria: subCrits
       });
     };
 
     this.setCriteria = (criteria) => {
-      // console.log('CriteriaBundle:setCriteria: ', criteria);
+      console.log('CriteriaBundle:setCriteria: ', criteria);
       this.setState((prevState) => {
         return {
           criteria: prevState.criteria.push(criteria)
@@ -163,7 +163,6 @@ export default class CriteriaBundle extends React.PureComponent {
         return <CriteriaField key={criteria.uuid} {...this.props}
                               criteria={criteria}
                               index={index}
-                              field={this.props.fieldDictionary[criteria.field_id]}
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}/>;

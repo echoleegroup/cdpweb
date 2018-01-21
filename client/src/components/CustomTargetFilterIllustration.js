@@ -1,8 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
 import ModelAction from '../actions/model-action';
-import Rx from "rxjs/Rx";
-import moment from "moment/moment";
 
 export default class PreferredTargetIllustration extends React.PureComponent {
   constructor(props) {

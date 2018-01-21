@@ -1,9 +1,12 @@
 import React from 'react';
-import shortid from "shortid";
+import Loader from 'react-loader';
+import shortid from 'shortid';
 import moment from 'moment';
 import {find, assign, pick} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
+// import CriteriaAction from '../actions/criteria-action';
+import Picker from './Picker'
 
 const INPUT_CRITERIA_OPERATOR = {
   eq: {
@@ -63,6 +66,8 @@ const DATETIME_CRITERIA_OPERATOR = assign(pick(INPUT_CRITERIA_OPERATOR, ['eq', '
 });
 
 const REF_OPTION_CRITERIA_OPERATOR = pick(INPUT_CRITERIA_OPERATOR, ['eq', 'ne', 'in', 'nn']);
+REF_OPTION_CRITERIA_OPERATOR.eq.label = '為';
+REF_OPTION_CRITERIA_OPERATOR.ne.label = '不為';
 
 const GetOperatorSet = (dataType) => {
   switch (dataType) {
@@ -77,9 +82,9 @@ const GetOperatorSet = (dataType) => {
       return REF_OPTION_CRITERIA_OPERATOR;
   }
 };
-const INITIAL_CRITERIA = Map({
+const INITIAL_CRITERIA = Object.freeze({
   uuid: undefined,
-  type: undefined,
+  type: 'field',
   field_id: undefined,
   field_label: undefined,
   data_type: undefined,
@@ -89,26 +94,29 @@ const INITIAL_CRITERIA = Map({
   operator: 'eq'  //for default value
 });
 
-export default class CriteriaFieldPicker extends React.PureComponent {
+export default class CriteriaSetter extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      isLoaded: true,
       isOpen: false,
       collapse: true,
-      criteria: INITIAL_CRITERIA
+      // features: props.features,
+      // featureRefCodeMap: props.featureRefCodeMap,
+      criteria: Map(INITIAL_CRITERIA)
     };
   };
 
   componentWillMount() {
     this.openModal = (callback) => {
-      // console.log('CriteriaFieldPicker::openModal');
+      // console.log('CriteriaSetter::openModal');
       this.responseCriteria = callback;
-      this.setState({
+      this.setState(prevState => ({
         isOpen: true,
-        criteria: INITIAL_CRITERIA.merge({
+        criteria: prevState.criteria.merge({
           uuid: shortid.generate()
         })
-      });
+      }));
       $('body').addClass('noscroll');
     };
 
@@ -128,20 +136,21 @@ export default class CriteriaFieldPicker extends React.PureComponent {
         value: dataProcessor(data.value),
         value_label: data.value_label
       });
-      // console.log('CriteriaFieldPicker::confirmCriteria: ', c);
+      // console.log('CriteriaSetter::confirmCriteria: ', c);
       this.responseCriteria(c.toJSON());
       this.closeModal();
     };
 
-    this.setCriteria = (field) => {
+    this.branchClickHandler = (node) => {};
+
+    this.tailClickHandler = (node) => {
       this.setState((prevState) => {
         return {
           criteria: prevState.criteria.merge({
-            type: field.type,
-            field_id: field.id,
-            field_label: field.label,
-            data_type: field.data_type,
-            ref: field.ref,
+            field_id: node.id,
+            field_label: node.label,
+            data_type: node.data_type,
+            ref: node.ref,
             //value: 'Y',
             //value_label: '是',
             operator: 'eq'  //for default value
@@ -149,102 +158,61 @@ export default class CriteriaFieldPicker extends React.PureComponent {
         }
       });
     };
+
+    // this.dataPreparing(this.props, this, data => {
+    //   this.setState({
+    //     isLoaded: true,
+    //     nodes: data.features,
+    //     featureRefCodeMap: data.featureRefCodeMap
+    //   });
+    // });
   };
+
+  // dataPreparing(props, _this, callback) {
+  //   CriteriaAction.getCustomCriteriaFeatures(props.mdId, props.batId, (data) => {
+  //     callback(data);
+  //   });
+  // };
 
   render() {
     let display = (this.state.isOpen)? '': 'none';
     return (
-      <div className="modal" style={{display: display}} ref={(e) => {
-        this.fieldPicker = e;
-      }}>
-        <div className="table_block">
-          <h2>新增條件</h2>
-          <div className="row">
-            <div className="col-md-6">
-              <h3>挑選欄位條件</h3>
-              <form className="addCondition">
-                <ul>
-                  {this.props.foldingFields.map((ff) => {
-                    if ('field' === ff.type) {
-                      return this.FieldPicker(ff);
-                    } else {
-                      return this.FieldFolder(ff);
-                    }
-                  })}
-                </ul>
-              </form>
+      <div className="modal" style={{display: display}}>
+        <Loader loaded={this.state.isLoaded}>
+          <div className="table_block">
+            <h2>新增條件</h2>
+            <div className="row">
+              <div className="col-md-6">
+                <h3>挑選欄位條件</h3>
+                <Picker nodes={this.props.features}
+                        branchClickHandler={this.branchClickHandler}
+                        tailClickHandler={this.tailClickHandler}/>
+              </div>
+              <div className="col-md-2">
+                {this.CriteriaOperatorBlock(this.state.criteria)}
+              </div>
+              <div className="col-md-4">
+                {this.CriteriaInputBlock(this.state.criteria)}
+              </div>
             </div>
-            <div className="col-md-2">
-              {this.CriteriaOperatorBlock(this.state.criteria)}
-            </div>
-            <div className="col-md-4">
-              {this.CriteriaInputBlock(this.state.criteria)}
+            <div className="btn-block center-block">
+              <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
+              <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
             </div>
           </div>
-          <div className="btn-block center-block">
-            <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
-            <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
-          </div>
-        </div>
-        <div className="overlay" onClick={() => {
-          this.setState({
-            isOpen: false
-          });
-          $('body').removeClass('noscroll');
-        }}/>
+          <div className="overlay" onClick={() => {
+            this.setState({
+              isOpen: false
+            });
+            $('body').removeClass('noscroll');
+          }}/>
+        </Loader>
       </div>
     );
   };
 
-  FieldFolder(folder) {
-    // console.log('CriteriaFieldPicker::FieldFolder: ');
-    let collapse = true;  //this.state.collapse;
-    let className = 'fa fa-plus';
-    let style = {display: 'none'};
-    let iconDom, itemDom = null;
-    /*
-    if (!collapse) {
-      className += ' fa-minus';
-      style = {};
-    }*/
-    return (
-      <li key={folder.id}>
-        <a href="#" onClick={() => {
-          $(itemDom).toggle();
-          $(iconDom).toggleClass('fa-minus');
-        }}>{folder.label}
-          <i className={className} aria-hidden={collapse} ref={(e) => {
-            iconDom = e;
-          }}/>
-        </a>
-        <ul style={style} ref={(e) => {
-          itemDom = e;
-        }}>
-          {folder.fields.map((field) => {
-            return this.FieldPicker(field)
-          })}
-        </ul>
-      </li>
-    );
-  };
-
-  FieldPicker(field) {
-    // console.log('field.id: ', field.id);
-    // console.log('this.state.criteria: ', this.state.criteria);
-    // console.log('this.state.criteria.field_id: ', this.state.criteria.get('field_id'));
-    return (
-      <li className="radio" key={field.id}>
-        <label>
-          <input type="radio" name="optradio" checked={field.id === this.state.criteria.get('field_id')}
-                 onClick={(e) => {
-                   this.setCriteria(field);
-                 }}/>{field.label}</label>
-      </li>
-    );
-  };
-
   CriteriaOperatorBlock(criteria) {
-    // console.log('CriteriaFieldPicker::CriteriaOperatorBlock: ', criteria);
+    // console.log('CriteriaSetter::CriteriaOperatorBlock: ', criteria);
     if (criteria.get('data_type')) {
       let dataType = criteria.get('data_type');
       let operatorSet = this.operatorSet = GetOperatorSet(dataType);
@@ -300,7 +268,7 @@ export default class CriteriaFieldPicker extends React.PureComponent {
           this.fieldInput = e;
         }}/>;
       case 'refOption':
-        return <RefOptionInput criteria={criteria} refOptions={this.props.refOptions[this.state.criteria.get('ref')]} ref={(e) => {
+        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
           this.fieldInput = e;
         }}/>;
     }
@@ -308,18 +276,11 @@ export default class CriteriaFieldPicker extends React.PureComponent {
 };
 
 class InputBase extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    // console.log('CriteriaInputBase::constructor: ', this.props.criteria.data_type);
-  }
-
-  componentWillUpdate() {
-    // console.log('InputBase::componentWillUpdate');
-  };
-
   getInputData() {
+    let value = $(this.input).val();
     return {
-      value: $(this.input).val()
+      value,
+      value_label: value
     };
   }
 
@@ -341,22 +302,29 @@ class TextInput extends InputBase {}
 class DateInput extends InputBase {
   getInputData() {
     let d = $(this.input).datepicker('getDate');
+    let value, value_label = null;
+    if (d) {
+      let m = moment(d);
+      value = m.utc().valueOf();
+      value_label = m.format('YYYY/MM/DD')
+    }
     // console.log('DateInput::getInputData: ', d);
     return {
-      value: d? moment(d).utc().valueOf(): null
+      value,
+      value_label
     };
   }
 
   componentDidMount() {
     this.datepicker = $(this.input).datepicker({
-      dateFormat: "yy-mm-dd"
+      format: 'yyyy/mm/dd'
     });
   };
 
   render() {
     return (
       <div className="radio">
-        <input type="text" className="form-control" placeholder="" ref={(e) => {
+        <input type="text" className="form-control" placeholder="" readOnly={true} ref={(e) => {
           this.input = e;
         }}/>
       </div>

@@ -34,15 +34,15 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
       });
     };
 
-    this.getCriteria = () => {
+    this.criteriaGathering = () => {
       return {
         isIncludeModelTarget: this.state.criteria.isIncludeModelTarget,
-        statements: this.criteriaComp.getCriteria()
+        statements: this.criteriaComp.criteriaGathering()
       };
     };
 
     this.filterResultPreview = () => {
-      let criteria = this.getCriteria();
+      let criteria = this.criteriaGathering();
       this.setState({
         //isLoaded: false,
         criteria
@@ -61,7 +61,7 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
     };
 
     this.filterResultExport = () => {
-      let criteria = this.getCriteria();
+      let criteria = this.criteriaGathering();
       this.setState({
         //isLoaded: false,
         criteria
@@ -116,9 +116,9 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
               <label htmlFor="inputName" className="col-sm-3 control-label">是否包含模型受眾</label>
               <div className="col-sm-8">
                 <label className="radio-inline">
-                  <input type="radio" name="optradio" value={true} defaultChecked={this.state.criteria.isIncludeModelTarget} onChange={this.setIncludeModelTarget}/>是</label>
+                  <input type="radio" name="optradio" value={true} defaultChecked={this.state.criteria.isIncludeModelTarget} onClick={this.setIncludeModelTarget}/>是</label>
                 <label className="radio-inline">
-                  <input type="radio" name="optradio" value={false} defaultChecked={!this.state.criteria.isIncludeModelTarget} onChange={this.setExcludeModelTarget}/>否</label>
+                  <input type="radio" name="optradio" value={false} defaultChecked={!this.state.criteria.isIncludeModelTarget} onClick={this.setExcludeModelTarget}/>否</label>
               </div>
             </div>
             <CustomTargetFilterPreview prediction={this.state.prediction}/>

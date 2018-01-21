@@ -88,12 +88,12 @@ module.exports.getFieldFoldingTree = (treeId, callback) => {
   });
 };
 
-module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, rawFields, downloadFeatureIds=[], callback) => {
+module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, features, downloadFeatureIds=[], callback) => {
   const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
   const MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY = 'mdListKey';
 
-  //create a dictionary via rawFields with key in 'featID'
-  let fieldDict = _.keyBy(rawFields, 'featID');
+  //create a dictionary via features with key in 'featID'
+  let fieldDict = _.keyBy(features, 'featID');
   //let bigTable = model.bigtbName;
   let bigTable = model.bigtbName;
 
@@ -142,7 +142,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, ra
   }).fail((err) => {
     winston.error('===criteria-service::' +
       'queryTargetByCustomCriteria(%j) failed: %j',
-      {mdId, batId, statements, model, rawFields, downloadFeatureIds}, err);
+      {mdId, batId, statements, model, features, downloadFeatureIds}, err);
     callback(err);
   });
 };

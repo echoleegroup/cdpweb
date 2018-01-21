@@ -10,7 +10,6 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
     super(props, {
       type: 'refDetail',
-      ref_label: props.folderDictionary[props.criteria.ref].label,
       OPERATOR_OPTIONS: OPERATOR_OPTIONS
     });
   }
@@ -38,7 +37,7 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
     // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.state.ref);
     return (
       <div className="sub_conditon">
-        指定參考：<span>{this.state.ref_label}</span>
+        指定參考：<span>點數明細</span>
       </div>
     );
   };

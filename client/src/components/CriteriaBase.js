@@ -2,8 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce, isEmpty} from 'lodash';
 //import {nfcall, all} from 'q';
-import Rx from 'rxjs';
-import CriteriaFieldPicker from './CriteriaFieldPicker';
+import CriteriaSetter from './CriteriaSetter';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
 //import CriteriaAction from '../actions/criteria-action'
@@ -29,34 +28,33 @@ export default class CriteriaBase extends React.PureComponent {
     //this.criteria = props.criteria || [];
   };
 
-  getPreparingData() {
-    this.getFoldingFieldData(assign({}, this.props.params, this.options), data => {
-      let foldingFields = data.fields;
-      let fieldRefs = data.fieldRefs;
-      this.mapToProps = {
-        foldingFields: foldingFields,
-        displayOptions: {
-          main_title: this.getMainTitle(),
-          sub_title: this.getSubTitle()
-        },
-        refOptions: fieldRefs,
-        fieldDictionary: getFieldDictionary(foldingFields),
-        folderDictionary: getFolderDictionary(foldingFields),
-        addCriteriaField: (callback) => {
-          // console.log('CriteriaBase::addCriteriaField');
-          this.fieldPicker.openModal(callback);
-        }
-      };
-
-      this.setState({
-        isLoaded: true
-      });
-    });
+  dataPreparing(props, _this, callback) {
+    callback();
+    // this.getFoldingFieldData(assign({}, this.props.params, this.options), data => {
+    //   let foldingFields = data.fields;
+    //   let fieldRefs = data.fieldRefs;
+    //   this.mapToProps = {
+    //     foldingFields: foldingFields,
+    //     displayOptions: {
+    //       main_title: this.getMainTitle(),
+    //       sub_title: this.getSubTitle()
+    //     },
+    //     refOptions: fieldRefs,
+    //     fieldDictionary: getFieldDictionary(foldingFields),
+    //     folderDictionary: getFolderDictionary(foldingFields),
+    //     addCriteriaField: (callback) => {
+    //       // console.log('CriteriaBase::addCriteriaField');
+    //       this.fieldPicker.openModal(callback);
+    //     }
+    //   };
+    //
+    //   this.setState({
+    //     isLoaded: true
+    //   });
+    // });
   };
 
   componentWillMount() {
-    this.getPreparingData();
-
     this.PreviewControlButtonRender = () => {
       return (
         <button type="button" className="btn btn-lg btn-default" onClick={() => {
@@ -74,21 +72,38 @@ export default class CriteriaBase extends React.PureComponent {
           // console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
           this.setState({
             isPreview: true,
-            criteria: this.editView.getCriteria()
+            criteria: this.editView.criteriaGathering()
           });
         }}>完成編輯</button>
       );
     };
 
-    this.getCriteria = () => {
+    this.criteriaGathering = () => {
       let criteria = this.state.criteria;
       if (this.editView) {  //edit mode
         //fetch all criteria tree
-        criteria = this.editView.getCriteria();
+        criteria = this.editView.criteriaGathering();
         this.setState({criteria});
       }
       return criteria;
     };
+
+    this.mapToProps = {
+      displayOptions: {
+        main_title: this.getMainTitle(),
+        sub_title: this.getSubTitle()
+      },
+      addCriteriaField: (callback) => {
+        // console.log('CriteriaBase::addCriteriaField');
+        this.fieldPicker.openModal(callback);
+      }
+    };
+
+    this.dataPreparing(this.props, this, (data) => {
+      this.setState(assign({
+        isLoaded: true
+      }, data));
+    });
   };
 
   componentWillUpdate() {
@@ -99,7 +114,17 @@ export default class CriteriaBase extends React.PureComponent {
     console.log('CriteriaBase::componentWillUnmount: ');
   };
 
+  getPickerProps(props, state) {
+    return {
+      mdId: props.params.mdId,
+      batId: props.params.batId,
+      features: [],
+      featureRefCodeMap: {}
+    };
+  };
+
   render() {
+    let pickerProps = this.getPickerProps(this.props, this.state);
     if (!this.state.isLoaded) {
       return (<Loader loaded={false}/>);
     } else {
@@ -107,7 +132,7 @@ export default class CriteriaBase extends React.PureComponent {
         <div>
           {this.ContentView()}
           {/*<!-- 新增條件組合 -->*/}
-          <CriteriaFieldPicker foldingFields={this.mapToProps.foldingFields} refOptions={this.mapToProps.refOptions} ref={(e) => {
+          <CriteriaSetter {...pickerProps} ref={(e) => {
             this.fieldPicker = e;
           }}/>
         </div>
@@ -159,12 +184,12 @@ export default class CriteriaBase extends React.PureComponent {
   //   callback(null, []);
   // };
 
-  getFoldingFieldData(options, callback) {
-    callback({
-      fields: [],
-      fieldRefs: {}
-    });
-  };
+  // getFoldingFieldData(options, callback) {
+  //   callback({
+  //     fields: [],
+  //     fieldRefs: {}
+  //   });
+  // };
 };
 
 /**

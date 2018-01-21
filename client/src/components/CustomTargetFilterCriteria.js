@@ -1,4 +1,5 @@
 import React from 'react';
+import {assign} from 'lodash';
 import CriteriaBase from './CriteriaBase';
 import CriteriaAction from '../actions/criteria-action';
 
@@ -15,7 +16,14 @@ export default class CustomTargetFilterCriteria extends CriteriaBase {
     return '名單條件設定';
   };
 
-  getFoldingFieldData(options, callback) {
-    CriteriaAction.getCriteriaFieldsData(options.mdId, options.batId, callback);
+  dataPreparing(props, _this, callback) {
+    CriteriaAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
+  };
+
+  getPickerProps(props, state) {
+    return assign(super.getPickerProps(props, state), {
+      features: state.features,
+      featureRefCodeMap: state.featureRefCodeMap
+    });
   };
 };

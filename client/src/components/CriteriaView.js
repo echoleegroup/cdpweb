@@ -9,9 +9,9 @@ export default class CriteriaView extends React.PureComponent {
 
   componentWillMount() {
     // console.log('CriteriaView::componentWillMount');
-    this.getCriteria = () => {
-      let c = this.criteriaWrapper.getCriteria();
-      // console.log('CriteriaView::getCriteria: ', c);
+    this.criteriaGathering = () => {
+      let c = this.criteriaWrapper.criteriaGathering();
+      // console.log('CriteriaView::criteriaGathering: ', c);
       return c;
     }
   }
@@ -42,9 +42,9 @@ export default class CriteriaView extends React.PureComponent {
     const mapToProps = {
       isPreview: this.props.isPreview,
       criteria: this.props.criteria,
-      refOptions: this.props.refOptions,
-      fieldDictionary: this.props.fieldDictionary,
-      folderDictionary: this.props.folderDictionary,
+      // refOptions: this.props.refOptions,
+      // fieldDictionary: this.props.fieldDictionary,
+      // folderDictionary: this.props.folderDictionary,
       addCriteriaField: this.props.addCriteriaField
     };
     return (

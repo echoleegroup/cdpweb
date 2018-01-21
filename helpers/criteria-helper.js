@@ -1,19 +1,16 @@
 const _ = require('lodash');
-const Q = require('q');
-const moment = require('moment');
 const shortid = require('shortid');
 const winston = require('winston');
-const _connector = require('../utils/sql-query-util');
 
-const FOLDER_MODEL_TEMPLATE = {
-  type: 'folder',
+const BRANCH_MODEL_TEMPLATE = {
+  type: 'branch',
   id: undefined,
   label: undefined,
-  fields: []
+  nodes: []
 };
 
-const FIELD_MODEL_TEMPLATE = {
-  type: 'field',
+const TAIL_MODEL_TEMPLATE = {
+  type: 'tail',
   id: undefined,
   label: undefined,
   data_type: 'text', //num, text, date, refOption
@@ -90,24 +87,24 @@ const CUSTOMER_FEATURE_SET_ID = 'CUSTGENE';
 const MODEL_FEATURE_CATEGORY_ID = 'tagene';
 const MODEL_LIST_CATEGORY = 'tapop';
 
-const FieldModelWrapper = (rawField) => {
+const TailModelWrapper = (feature) => {
   // set data_type properties
   let dataTypeProperties = {
-    data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[rawField.dataType]
+    data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[feature.dataType]
   };
-  if (!_.isEmpty(rawField.codeGroup)) {
+  if (!_.isEmpty(feature.codeGroup)) {
     dataTypeProperties = {
       data_type: FIELD_REF_DATA_TYPE,
-      ref: rawField.codeGroup
+      ref: feature.codeGroup
     };
     //save ref to fetch options latter
     //fieldRefs.push(rawField.codeGroup);
   }
 
   // to complete field model
-  return Object.assign({}, FIELD_MODEL_TEMPLATE, dataTypeProperties, {
-    id: rawField.featID,
-    label: rawField.featName
+  return Object.assign({}, TAIL_MODEL_TEMPLATE, dataTypeProperties, {
+    id: feature.featID,
+    label: feature.featName
   });
 };
 
@@ -224,59 +221,59 @@ module.exports = {
   //MAX_MODEL_KEYS: MAX_MODEL_KEYS,
   //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
 
-  criteriaFeaturesToFields: (rawFields, foldingTree) => {
-    winston.info('===criteriaFeaturesToFields: ', rawFields);
-    let foldingFields = foldingTree.reduce((foldingFields, node) => {
-      winston.info('===criteriaFeaturesToFields::foldingTree ', node);
+  criteriaFeaturesToTreeNodes: (features, foldingTree) => {
+    winston.info('===criteriaFeaturesToTreeNodes: ', features);
+    let foldingNodes = foldingTree.reduce((foldingNodes, node) => {
+      winston.info('===criteriaFeaturesToTreeNodes::foldingTree ', node);
       if ('ROOT' === node.parentID) { // virtual node: folder
 
-        // extract all the raw fields, who's featID is referenced to node's nodeID
+        // extract all the raw features, who's featID is referenced to node's nodeID
         // and its parentID references to current folder node
-        let childRawFields = _.remove(rawFields, (rawField) => {
+        let childFeatures = _.remove(features, (feature) => {
           return _.findIndex(foldingTree, {
-            nodeID: rawField.featID,
+            nodeID: feature.featID,
             parentID: node.nodeID
           }) > -1;
         });
 
-        if (childRawFields.length > 0) {
+        if (childFeatures.length > 0) {
           //create a folder model
-          let folderModel = Object.assign({}, FOLDER_MODEL_TEMPLATE, {
+          let branchModel = Object.assign({}, BRANCH_MODEL_TEMPLATE, {
             id: node.nodeID,
             label: node.nodeName
           });
 
-          folderModel.fields = childRawFields.map(rawField => {
-            return FieldModelWrapper(rawField);
+          branchModel.children = childFeatures.map(feature => {
+            return TailModelWrapper(feature);
           });
 
-          foldingFields.push(folderModel);  //push current folder model to result set
+          foldingNodes.push(branchModel);  //push current folder model to result set
         }
       } else {
-        // ignore fields
+        // ignore features
       }
-      return foldingFields; //return and reduce to next node
+      return foldingNodes; //return and reduce to next node
     }, []);
 
     //put all un-folded field to an virtual node
-    if(rawFields.length > 0) {
+    if(features.length > 0) {
       //create a folder model
-      let folderModel = Object.assign({}, FOLDER_MODEL_TEMPLATE, {
+      let branchModel = Object.assign({}, BRANCH_MODEL_TEMPLATE, {
         id: shortid.generate(),
         label: LABEL_UNFOLDED
       });
       //push all un-folded field in this virtual node.
-      //** use ... to spread the rawFields array
-      folderModel.fields = rawFields.map(rawField => {
-        return FieldModelWrapper(rawField);
+      //** use ... to spread the features array
+      branchModel.children = features.map(feature => {
+        return TailModelWrapper(feature);
       });
-      foldingFields.push(folderModel);
+      foldingNodes.push(branchModel);
     }
 
-    return foldingFields;
+    return foldingNodes;
   },
 
-  codeGroupToRefFields: (codeGroupDict) => {
+  codeGroupToFeatureRef: (codeGroupDict) => {
     //rename code group properties for frontend
     return _.reduce(codeGroupDict, (fieldRefs, codeGroupBody, key) => {
       fieldRefs[key] = Object.assign({}, FIELD_REF_OPTIONS_TEMPLATE, {

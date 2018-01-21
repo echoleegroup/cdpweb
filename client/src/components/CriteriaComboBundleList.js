@@ -26,11 +26,11 @@ export default class CriteriaComboBundleList extends React.PureComponent {
       // console.log('CriteriaComboBundleList::removeCriteriaComponents: ', this.criteriaComponents);
     };
 
-    this.getCriteria = () => {
-      // console.log('CriteriaComboBundleList::componentWillMount::getCriteria: ', this.criteriaComponents);
+    this.criteriaGathering = () => {
+      // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering: ', this.criteriaComponents);
       return reduce(this.criteriaComponents, (collector, comp) => {
-        let crite = comp.getCriteria(); //immutable map
-        // console.log('CriteriaComboBundleList::componentWillMount::getCriteria::crite ', crite);
+        let crite = comp.criteriaGathering(); //immutable map
+        // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
         return isEmpty(crite)? collector: collector.concat(crite);
       }, []);
     };
