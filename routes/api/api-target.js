@@ -168,11 +168,7 @@ module.exports = (app) => {
     });
   });
 
-<<<<<<< HEAD
-  router.get('/:mdId/:batId/criteria/fields/test', middlewares, (req, res) => {
-=======
   router.get('/:mdId/:batId/criteria/features/test', factory.ajax_response_factory(), (req, res) => {
->>>>>>> ff5f52b... refactory for Criteria Picker
     res.json({
       features: [
         {
