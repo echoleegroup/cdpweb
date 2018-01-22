@@ -31,9 +31,7 @@ export default class CriteriaView extends React.PureComponent {
         <div className={this.props.styleClass}>
           {this.CriteriaBody()}
         </div>
-        <div className="btn-block center-block">
-          {this.props.controlButtonRender()}
-        </div>
+        {this.props.controlButtonRender()}
       </div>
     );
   };

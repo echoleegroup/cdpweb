@@ -43,6 +43,12 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         step: step
       })
     };
+
+    this.stepTo = (targetStep) => {
+      return () => {
+        this.setStep(targetStep);
+      };
+    };
   };
 
   ContentComponent() {
@@ -50,31 +56,36 @@ export default class IntegratedAnalysisHome extends BodyLayout {
       case STEP.step1:
         return <IntegratedAnalysisCriteriaClient params={this.params}
                                                  step={STEP.step1}
-        />;
+                                                 stepNext={this.stepTo(STEP.step2)}/>;
       case STEP.step2:
         return <IntegratedAnalysisCriteriaVehicle params={this.params}
                                                   step={STEP.step2}
-        />;
+                                                  stepPrev={this.stepTo(STEP.step1)}
+                                                  stepNext={this.stepTo(STEP.step3)}/>;
       case STEP.step3:
         return <IntegratedAnalysisCriteriaTransaction params={this.params}
                                                       step={STEP.step3}
-        />;
+                                                      stepPrev={this.stepTo(STEP.step2)}
+                                                      stepNext={this.stepTo(STEP.step4)}/>;
       case STEP.step4:
         return <IntegratedAnalysisCriteriaTag params={this.params}
                                               step={STEP.step4}
-        />;
+                                              stepPrev={this.stepTo(STEP.step3)}
+                                              stepNext={this.stepTo(STEP.step5)}/>;
       case STEP.step5:
         return <IntegratedAnalysisCriteriaTrail params={this.params}
                                                 step={STEP.step5}
-        />;
+                                                stepPrev={this.stepTo(STEP.step4)}
+                                                stepNext={this.stepTo(STEP.step6)}/>;
       case STEP.step6:
         return <IntegratedAnalysisCriteriaPreview params={this.params}
                                                   step={STEP.step6}
-        />;
+                                                  stepPrev={this.stepTo(STEP.step5)}
+                                                  stepNext={this.stepTo(STEP.step7)}/>;
       case STEP.step7:
         return <IntegratedAnalysisFeaturePicker params={this.params}
                                                 step={STEP.step7}
-        />
+                                                stepPrev={this.stepTo(STEP.step6)}/>;
 
     }
   };

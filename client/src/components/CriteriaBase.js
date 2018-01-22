@@ -55,27 +55,17 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.PreviewControlButtonRender = () => {
-      return (
-        <button type="button" className="btn btn-lg btn-default" onClick={() => {
-          this.setState({
-            isPreview: false
-          });
-        }}>編輯條件</button>
-      );
+    this.toPreview = () => {
+      this.setState({
+        isPreview: true,
+        criteria: this.editView.criteriaGathering()
+      });
     };
 
-    this.EditControlButtonRender = () => {
-      return (
-        <button type="button" className="btn btn-lg btn-default" onClick={() => {
-          // this.criteria = this.editView.getCriteria();
-          // console.log('CriteriaBase::CriteriaConfirm::onClick: ', this.criteria);
-          this.setState({
-            isPreview: true,
-            criteria: this.editView.criteriaGathering()
-          });
-        }}>完成編輯</button>
-      );
+    this.toEdit = () => {
+      this.setState({
+        isPreview: false
+      });
     };
 
     this.criteriaGathering = () => {
@@ -130,7 +120,7 @@ export default class CriteriaBase extends React.PureComponent {
     } else {
       return (
         <div>
-          {this.ContentView()}
+          {this.ComponentContentView()}
           {/*<!-- 新增條件組合 -->*/}
           <CriteriaSetter {...pickerProps} ref={(e) => {
             this.fieldPicker = e;
@@ -140,7 +130,7 @@ export default class CriteriaBase extends React.PureComponent {
     }
   };
 
-  ContentView() {
+  ComponentContentView() {
     if (!this.state.isLoaded)
       return null;
 
@@ -149,17 +139,17 @@ export default class CriteriaBase extends React.PureComponent {
       if (isEmpty(this.state.criteria)) {
         return <CriteriaPreviewEmpty {...this.mapToProps}
                                      styleClass={'nocondition'}
-                                     controlButtonRender={this.PreviewControlButtonRender}/>
+                                     controlButtonRender={this.ComponentPreviewControlButton.bind(this)}/>
       } else {
         assign(props, {
           styleClass: 'condition',
-          controlButtonRender: this.PreviewControlButtonRender
+          controlButtonRender: this.ComponentPreviewControlButton.bind(this)
         });
       }
     } else {  //edit view
       assign(props, {
         styleClass: 'condition edit',
-        controlButtonRender: this.EditControlButtonRender,
+        controlButtonRender: this.ComponentEditControlButton.bind(this),
         ref: (e) => {
           this.editView = e;
         }
@@ -178,6 +168,22 @@ export default class CriteriaBase extends React.PureComponent {
 
   getSubTitle() {
     return '';
+  };
+
+  ComponentPreviewControlButton() {
+    return (
+      <div className="btn-block center-block">
+        <button type="button" className="btn btn-lg btn-default" onClick={this.toEdit}>編輯條件</button>
+      </div>
+    );
+  };
+
+  ComponentEditControlButton() {
+    return (
+      <div className="btn-block center-block">
+        <button type="button" className="btn btn-lg btn-default" onClick={this.toPreview}>完成編輯</button>
+      </div>
+    );
   };
 
   // getHistory(options, callback) {
@@ -223,35 +229,35 @@ export default class CriteriaBase extends React.PureComponent {
       }
  ]
  */
-const getFieldDictionary = (folders) => {
-  return reduce(folders, (dictionary, data) => {
-    if ('field' === data.type) {
-      return assign(dictionary, {
-        [data.id]: {
-          id: data.id,
-          label: data.label,
-          data_type: data.data_type,
-          default_value: data.default_value,
-          ref: data.ref
-        }
-      });
-    } else if ('folder' === data.type) {
-      return assign(dictionary, getFieldDictionary(data.fields));
-    }
-  }, {});
-};
-
-const getFolderDictionary = (folders) => {
-  return reduce(folders, (dictionary, data) => {
-    if ('folder' === data.type) {
-      return assign(dictionary, {
-        [data.id]: {
-          id: data.id,
-          label: data.label
-        }
-      }, getFolderDictionary(data.fields));
-    } else {
-      return dictionary;
-    }
-  }, {});
-};
+// const getFieldDictionary = (folders) => {
+//   return reduce(folders, (dictionary, data) => {
+//     if ('field' === data.type) {
+//       return assign(dictionary, {
+//         [data.id]: {
+//           id: data.id,
+//           label: data.label,
+//           data_type: data.data_type,
+//           default_value: data.default_value,
+//           ref: data.ref
+//         }
+//       });
+//     } else if ('folder' === data.type) {
+//       return assign(dictionary, getFieldDictionary(data.fields));
+//     }
+//   }, {});
+// };
+//
+// const getFolderDictionary = (folders) => {
+//   return reduce(folders, (dictionary, data) => {
+//     if ('folder' === data.type) {
+//       return assign(dictionary, {
+//         [data.id]: {
+//           id: data.id,
+//           label: data.label
+//         }
+//       }, getFolderDictionary(data.fields));
+//     } else {
+//       return dictionary;
+//     }
+//   }, {});
+// };
