@@ -31,6 +31,8 @@ module.exports = (app) => {
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       Q.nfcall(criteriaService.getFieldFoldingTree, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
     ]).spread((features, foldingTree) => {
+      winston.info('getCustomCriteriaFeatures: ', features);
+      winston.info('getFieldFoldingTree: ', foldingTree);
       // get code group from features
       // ** IMPORTANT: get code group before transforming features to tree nodes **
       // ** because criteriaFeaturesToTreeNodes is a mutated function, which move folded fields out of features **

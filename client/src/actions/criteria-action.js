@@ -7,7 +7,7 @@ const CRITERIA_HISTORY_URL = '/api/target/%s/%s/criteria/history';
 const FILTER_RESULT_PREVIEW = '/api/target/%s/%s/criteria/preview';
 const FILTER_RESULT_EXPORT = '/api/target/%s/%s/criteria/export';
 const CriteriaAction = {
-  CRITERIA_FIELDS_URL,
+  CRITERIA_FEATURES_URL,
   CRITERIA_HISTORY_URL,
   FILTER_RESULT_PREVIEW,
   FILTER_RESULT_EXPORT

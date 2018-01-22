@@ -17,25 +17,14 @@ module.exports = (app) => {
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
 
-<<<<<<< HEAD
-=======
-    res.render('container', {
-      id: 'vvv',
-      menuTitle: '自訂名單下載',
-      modelInfo: {},
-      modelList: [],
-      navMenuList: [],
-      mgrMenuList: []
-    });
-/*
->>>>>>> eb262f3... Initialize IntegratedAnalysis layout and components
     Q.nfcall(modelService.getModel, mdId).then((result) => {
-      res.render('target-filter', {
-        'id': req.user.userName,
-        'modelInfo': result,
-        'modelList': modelList,
-        'navMenuList': navMenuList,
-        'mgrMenuList': mgrMenuList
+      res.render('container', {
+        id: req.user.userName,
+        menuTitle: '自訂名單下載',
+        modelInfo: result,
+        modelList: modelList,
+        navMenuList: navMenuList,
+        mgrMenuList: mgrMenuList
       });
     }).fail((err) => {
       winston.error('===/custom/filter/%s/%s failed:', mdId, batId,  err);
