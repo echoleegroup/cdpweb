@@ -7,7 +7,7 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.getDownloadFeatures = (setId, callback) => {
   const sql = 'SELECT feat.featID, feat.featName, feat.featNameAbbr ' +
-    'FROM cu_DnldConfig dwn, ft_feature feat ' +
+    'FROM cu_DnldFeat dwn, ft_feature feat ' +
     'WHERE setID = @setId AND dwn.featID = feat.featID ORDER BY seqNO';
 
   Q.nfcall(_connector
