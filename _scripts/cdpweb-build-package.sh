@@ -49,7 +49,7 @@ echo "OUTPUT_PATH: $OUTPUT_PATH"
 
 DATE=$(date +"%Y-%m-%d-%H%M%S")
 
-cd ${SOURCE_PATH} && npm install && npm run build && tar -X ${PKG_IGNORE} -cvf ${OUTPUT_PATH}/${PREFIX}.${DATE}.tar . && cd ${CURRENT_PATH}
+cd ${SOURCE_PATH} && npm install && npm run build && tar -X ${PKG_IGNORE} -z ${OUTPUT_PATH}/${PREFIX}.${DATE}.xz . && cd ${CURRENT_PATH}
 
 
 
