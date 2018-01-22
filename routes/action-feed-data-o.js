@@ -32,7 +32,7 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       res.render('FeedDataSearch', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -149,7 +149,7 @@ module.exports = (app) => {
           });
         }
         res.render('feeddataList', {
-          'id': req.session.userid,
+          'user': req.user,
           'modelList': modelList,
           'navMenuList': navMenuList,
           'mgrMenuList': mgrMenuList,
@@ -199,7 +199,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       total = list[0].data.length - 1;
       function insertMst(origName, uniqName, callback) {
-        db.query("INSERT INTO cu_OuterListMst(outerListName,Client,funcCatge,outerListDesc,origName,uniqName,outerListSdt,outerListEdt,updTime,updUser)VALUES('" + outerListName + "','" + client + "','" + funcCatge + "','" + outerListDesc + "','" + origName + "','" + uniqName + "','" + outerListSdt + "','" + outerListEdt + "',GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
+        db.query("INSERT INTO cu_OuterListMst(outerListName,Client,funcCatge,outerListDesc,origName,uniqName,outerListSdt,outerListEdt,updTime,updUser)VALUES('" + outerListName + "','" + client + "','" + funcCatge + "','" + outerListDesc + "','" + origName + "','" + uniqName + "','" + outerListSdt + "','" + outerListEdt + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
           if (err)
             callback(err, null);
           else
@@ -384,7 +384,7 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       res.render('FeedDataEdit', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -420,7 +420,7 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       res.render('FeedData_upload', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -455,7 +455,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         const addtag = (ListID, newtag, callback) => {
-          db.query("INSERT INTO cu_OuterListTag(outerListID,tagLabel,updTime,updUser) VALUES(" + ListID + ",'" + newtag + "',GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
+          db.query("INSERT INTO cu_OuterListTag(outerListID,tagLabel,updTime,updUser) VALUES(" + ListID + ",'" + newtag + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else

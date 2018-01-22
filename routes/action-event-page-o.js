@@ -34,7 +34,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         function addtag(evtpgID, newtag, callback) {
-          db.query("INSERT INTO dm_EvtpgTag(evtpgID,tagLabel,tagSource,updTime,updUser) VALUES('" + evtpgID + "','" + newtag + "','m',GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
+          db.query("INSERT INTO dm_EvtpgTag(evtpgID,tagLabel,tagSource,updTime,updUser) VALUES('" + evtpgID + "','" + newtag + "','m',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
@@ -78,7 +78,7 @@ module.exports = (app) => {
       if (err) console.log(err);
       funcCatge = recordset.recordset;
       res.render('EvtpgAdd', {
-        'id': req.session.userid,
+        'user': req.user,
         'funcCatge': funcCatge,
         'modelList': modelList,
         'navMenuList': navMenuList,
@@ -106,7 +106,7 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       res.render('EvtpgSearch', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -169,7 +169,7 @@ module.exports = (app) => {
     });
     Promise.all([p1, p2, p3, p4]).then(function (results) {
       res.render('EvtpgEdit', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -221,7 +221,7 @@ module.exports = (app) => {
     values += "'" + isDel + "',";
     var evtpgDesc = req.body.evtpgDesc || '';
     values += "'" + evtpgDesc + "',"
-    values += "getdate(),getdate(),'" + req.session.userid + "')";
+    values += "getdate(),getdate(),'" + req.user.userId + "')";
     var p1 = new Promise(function (resolve, reject) {
       if (sno != '') {
         db.query("SELECT sno FROM dm_EvtpgMst where sno is not null and sno = " + sno, function (err, recordset) {
@@ -249,7 +249,7 @@ module.exports = (app) => {
         });
       }
       else {
-        db.query("UPDATE dm_EvtpgMst set client ='" + client + "',funcCatge = '" + funcCatge + "',msm_tpc = '" + msm_tpc + "',url = '" + url + "',sdt = '" + sdt + "',edt = '" + edt + "',trkSdt = '" + trkSdt + "',trkEdt = '" + trkEdt + "',isDel = '" + isDel + "',evtpgDesc = '" + evtpgDesc + "',updTime =GETDATE(),updUser = '" + req.session.userid + "' where evtpgID = '" + evtpgID + "'", function (err, recordset) {
+        db.query("UPDATE dm_EvtpgMst set client ='" + client + "',funcCatge = '" + funcCatge + "',msm_tpc = '" + msm_tpc + "',url = '" + url + "',sdt = '" + sdt + "',edt = '" + edt + "',trkSdt = '" + trkSdt + "',trkEdt = '" + trkEdt + "',isDel = '" + isDel + "',evtpgDesc = '" + evtpgDesc + "',updTime =GETDATE(),updUser = '" + req.user.userId + "' where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (err) {
             console.log(err);
           }
@@ -298,7 +298,7 @@ module.exports = (app) => {
     values += "'" + isDel + "',";
     var evtpgDesc = req.body.evtpgDesc || '';
     values += "'" + evtpgDesc + "',"
-    values += "getdate(),getdate(),'" + req.session.userid + "')";
+    values += "getdate(),getdate(),'" + req.user.userId + "')";
     var evtpgID = '';
     var p1 = new Promise(function (resolve, reject) {
       db.query("INSERT INTO dm_EvtpgMst(evtpgID,client,funcCatge,msm_tpc,url,sdt,edt,trkSdt,trkEdt,isDel,evtpgDesc,crtTime,updTime,updUser)" + values, function (err, recordset) {
@@ -430,7 +430,7 @@ module.exports = (app) => {
           });
         }
         res.render('EvtpgList', {
-          'id': req.session.userid,
+          'user': req.user,
           'items': recordset.recordset,
           'modelList': modelList,
           'navMenuList': navMenuList,

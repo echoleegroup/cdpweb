@@ -72,7 +72,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('generaudicCP', {
-        'id': req.session.userid,
+        'user': req.user,
         'tacount': tacount,
         'mdListCategCount': JSON.stringify(mdListCategCount),
         'mdID': mdID,

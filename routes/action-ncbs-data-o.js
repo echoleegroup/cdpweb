@@ -78,7 +78,7 @@ module.exports = (app) => {
           anstitle += list[0].data[0][i] + ",";
       }
       function insertMst(origName, uniqName, callback) {
-        db.query("INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) VALUES('" + ncbsName + "','" + client + "','" + ncbsYear + "','" + ncbsDesc + "','" + ncbsQus + "','" + origName + "','" + uniqName + "','" + ncbsSdt + "','" + ncbsEdt + "','" + anstitle + "',GETDATE(),GETDATE(),'" + req.session.userid + "','NCBS')", function (err, recordset) {
+        db.query("INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) VALUES('" + ncbsName + "','" + client + "','" + ncbsYear + "','" + ncbsDesc + "','" + ncbsQus + "','" + origName + "','" + uniqName + "','" + ncbsSdt + "','" + ncbsEdt + "','" + anstitle + "',GETDATE(),GETDATE(),'" + req.user.userId + "','NCBS')", function (err, recordset) {
           if (err)
             callback(err, null);
           else
@@ -124,7 +124,7 @@ module.exports = (app) => {
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
                 res.render('NCBSDataEdit', {
-                  'id': req.session.userid,
+                  'user': req.user,
                   'modelList': modelList,
                   'navMenuList': navMenuList,
                   'mgrMenuList': mgrMenuList,
@@ -180,7 +180,7 @@ module.exports = (app) => {
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
                     res.render('NCBSDataEdit', {
-                      'id': req.session.userid,
+                      'user': req.user,
                       'modelList': modelList,
                       'navMenuList': navMenuList,
                       'mgrMenuList': mgrMenuList,
@@ -218,7 +218,7 @@ module.exports = (app) => {
                         + currentdate.getMinutes() + ":"
                         + currentdate.getSeconds();
                         res.render('NCBSDataEdit', {
-                          'id': req.session.userid,
+                          'user': req.user,
                           'modelList': modelList,
                           'navMenuList': navMenuList,
                           'mgrMenuList': mgrMenuList,
@@ -271,7 +271,7 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       res.render('NCBSDataEdit', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -294,7 +294,7 @@ module.exports = (app) => {
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
     res.render('NCBSData_upload', {
-      'id': req.session.userid,
+      'user': req.user,
       'modelList': modelList,
       'navMenuList': navMenuList,
       'mgrMenuList': mgrMenuList,

@@ -28,7 +28,7 @@ module.exports = (app) => {
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
     res.render('userAdd', {
-      'id': req.session.userid,
+      'user': req.user,
       'ugrpClass': '',
       'modelList': modelList,
       'navMenuList': navMenuList,
@@ -45,7 +45,7 @@ module.exports = (app) => {
     var checked = 'N';
     if (isstop == 'on')
       checked = 'Y';
-    db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.session.userid + "','" + checked + "')", function (err, recordset) {
+    db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.user.userId + "','" + checked + "')", function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
       res.redirect('/user/UserInfoEdit?userId=' + userId);
@@ -59,7 +59,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('userSearch', {
-        'id': req.session.userid,
+        'user': req.user,
         'ugrpClass': recordset.recordset,
         'modelList': modelList,
         'navMenuList': navMenuList,
@@ -106,7 +106,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('userList', {
-        'id': req.session.userid,
+        'user': req.user,
         'items': recordset.recordset,
         'modelList': modelList,
         'navMenuList': navMenuList,
@@ -144,7 +144,7 @@ module.exports = (app) => {
       else if (data != 0)
         res.end('已新增過');
       else {
-        db.query("insert into sy_userWithUgrp(userId,ugrpId,modifyDate,modifyName) VALUES('" + userId + "'," + ucid + ",GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
+        db.query("insert into sy_userWithUgrp(userId,ugrpId,modifyDate,modifyName) VALUES('" + userId + "'," + ucid + ",GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
           if (err) console.log(err);
           //send records as a response
           res.end('新增完成');
@@ -161,7 +161,7 @@ module.exports = (app) => {
     var isstop = req.body.isstop || '';
     var password = req.body.pwd || '';
     var where = " where userId ='" + userId + "'";
-    db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.session.userid + "',modifyTime=GETDATE() " + where, function (err, recordset) {
+    db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.user.userId + "',modifyTime=GETDATE() " + where, function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
       res.redirect('/system/user/edit?userId=' + userId);
@@ -281,7 +281,7 @@ module.exports = (app) => {
       var mgrMenuList = req.session.mgrMenuList;
       console.log(JSON.stringify(aduglist));
       res.render('UserInfoEdit', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelInfo': items[0],
         'funcName': '帳號管理',
         'ugrpClass': ugrpClass,

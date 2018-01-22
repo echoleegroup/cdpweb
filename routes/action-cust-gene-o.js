@@ -44,7 +44,7 @@ module.exports = (app) => {
         var navMenuList = req.session.navMenuList;
         var mgrMenuList = req.session.mgrMenuList;
         res.render('custGeneCP', {
-          'id': req.session.userid,
+          'user': req.user,
           'modelInfo': items[0],
           'popNum': popNum,
           'splNum': splNum,

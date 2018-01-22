@@ -20,7 +20,7 @@ module.exports = (app) => {
     //console.log('====navMenuList: ', JSON.stringify(navMenuList));
     //console.log('====mgrMenuList: ', JSON.stringify(mgrMenuList));
     res.render('main', {
-      'id': req.user.userId,
+      'user': req.user,
       'modelList': modelList,
       'navMenuList': navMenuList,
       'mgrMenuList': mgrMenuList

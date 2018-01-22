@@ -48,7 +48,7 @@ module.exports = (app) => {
     /*
     var userId = req.body.userId || '';
     var password = req.body.password || '';
-    req.session.userid = "";
+    req.user.userId = "";
     res.redirect('/');
     */
 
@@ -68,7 +68,7 @@ module.exports = (app) => {
     failureFlash: true
   }), (req, res, next) => {
     let user = req.user;
-    let userId = req.session.userid = user.userId;
+    let userId = user.userId;
 
     winston.info('===get user: %j', user);
     let promises = [

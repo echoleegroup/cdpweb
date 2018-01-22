@@ -43,7 +43,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('commonList', {
-        'id': req.session.userid,
+        'user': req.user,
         'items': recordset.recordset,
         'condition': JSON.stringify(condition),
         'modelList': modelList,
@@ -93,7 +93,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('modelCP', {
-        'id': req.session.userid,
+        'user': req.user,
         'batID': batID,
         'modelInfo': modelInfo,
         'batcharray': batcharray,

@@ -45,7 +45,7 @@ module.exports = (app) => {
     var mgrMenuList = req.session.mgrMenuList;
     var p1 = new Promise(function (resolve, reject) {
       function getnewindex(mdID, callback) {
-        db.query("INSERT INTO cu_SentListMst(mdID,batID,sentListName,sentListCateg,sentListChannel,sentListDesc,sentListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListCateg + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
+        db.query("INSERT INTO cu_SentListMst(mdID,batID,sentListName,sentListCateg,sentListChannel,sentListDesc,sentListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListCateg + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
           if (err) {
             reject(err);
           }
@@ -230,7 +230,7 @@ module.exports = (app) => {
         var mgrMenuList = req.session.mgrMenuList;
         items = recordset.recordset;
         res.render('talist_putupload_add', {
-          'id': req.session.userid,
+          'user': req.user,
           'modelInfo': items[0],
           'funcName': '投放名單上傳',
           'modelList': modelList,
@@ -263,7 +263,7 @@ module.exports = (app) => {
       var mgrMenuList = req.session.mgrMenuList;
       sentInfo = recordset.recordset;
       res.render('talist_putupload_Edit', {
-        'id': req.session.userid,
+        'user': req.user,
         'sentInfo': sentInfo,
         'funcName': '投放名單上傳',
         'modelList': modelList,

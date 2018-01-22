@@ -44,7 +44,7 @@ module.exports = (app) => {
         var mgrMenuList = req.session.mgrMenuList;
         items = recordset.recordset;
         res.render('custmotivationCP', {
-          'id': req.session.userid,
+          'user': req.user,
           'modelInfo': items[0],
           'popNum': popNum,
           'splNum': splNum,

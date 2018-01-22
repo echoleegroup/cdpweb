@@ -18,7 +18,7 @@ module.exports = (app) => {
     let mgrMenuList = req.session.mgrMenuList;
 
     res.render('container', {
-      id: 'vvv',
+      user: req.user,
       menuTitle: '顧客數據導出',
       modelInfo: {},
       modelList: [],
@@ -28,11 +28,11 @@ module.exports = (app) => {
     /*
         Q.nfcall(modelService.getModel, mdId).then((result) => {
           res.render('target-filter', {
-            'id': req.user.userName,
-            'modelInfo': result,
-            'modelList': modelList,
-            'navMenuList': navMenuList,
-            'mgrMenuList': mgrMenuList
+            user: req.user,
+            modelInfo: result,
+            modelList: modelList,
+            navMenuList: navMenuList,
+            mgrMenuList: mgrMenuList
           });
         }).fail((err) => {
           winston.error('===/custom/filter/%s/%s failed:', mdId, batId,  err);

@@ -19,7 +19,7 @@ module.exports = (app) => {
 
     Q.nfcall(modelService.getModel, mdId).then((result) => {
       res.render('container', {
-        id: req.user.userName,
+        user: req.user,
         menuTitle: '自訂名單下載',
         modelInfo: result,
         modelList: modelList,

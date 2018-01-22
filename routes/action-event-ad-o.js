@@ -132,7 +132,7 @@ module.exports = (app) => {
                   + currentdate.getMinutes() + ":"
                   + currentdate.getSeconds();
                 res.render('Evtad_upload', {
-                  'id': req.session.userid,
+                  'user': req.user,
                   'modelList': modelList,
                   'navMenuList': navMenuList,
                   'mgrMenuList': mgrMenuList,
@@ -148,7 +148,7 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
-            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
+            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
               if (err) {
                 console.log(err);
               }
@@ -164,7 +164,7 @@ module.exports = (app) => {
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
                   res.render('Evtad_upload', {
-                    'id': req.session.userid,
+                    'user': req.user,
                     'modelList': modelList,
                     'navMenuList': navMenuList,
                     'mgrMenuList': mgrMenuList,
@@ -290,7 +290,7 @@ module.exports = (app) => {
     });
     Promise.all([p1, p2, p3, p4]).then(function (results) {
       res.render('Evtad_upload', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
@@ -336,7 +336,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         const addtag = (evtadID, newtag, callback) => {
-          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + req.session.userid + "') ", function (err, recordset) {
+          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
@@ -462,7 +462,7 @@ module.exports = (app) => {
         }
         console.log(JSON.stringify(adlist));
         res.render('EvadList', {
-          'id': req.session.userid,
+          'user': req.user,
           'items': recordset.recordset,
           'modelList': modelList,
           'navMenuList': navMenuList,

@@ -41,7 +41,7 @@ module.exports = (app) => {
     var keyindex = 0;
     var p1 = new Promise(function (resolve, reject) {
       function getnewindex(mdID, callback) {
-        db.query("INSERT INTO cu_RespListMst(mdID,batID,respListName,respListChannel,respListDesc,respListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.session.userid + "')", function (err, recordset) {
+        db.query("INSERT INTO cu_RespListMst(mdID,batID,respListName,respListChannel,respListDesc,respListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
           if (err) {
             console.log(err);
             reject(err);
@@ -231,7 +231,7 @@ module.exports = (app) => {
         var mgrMenuList = req.session.mgrMenuList;
         items = recordset.recordset;
         res.render('talist_rspupload_add', {
-          'id': req.session.userid,
+          'user': req.user,
           'modelInfo': items[0],
           'modelList': modelList,
           'navMenuList': navMenuList,
@@ -262,7 +262,7 @@ module.exports = (app) => {
       var mgrMenuList = req.session.mgrMenuList;
       resInfo = recordset.recordset;
       res.render('talist_rspupload_Edit', {
-        'id': req.session.userid,
+        'user': req.user,
         'resInfo': resInfo,
         'modelList': modelList,
         'navMenuList': navMenuList,

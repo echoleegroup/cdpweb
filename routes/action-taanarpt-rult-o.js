@@ -20,7 +20,7 @@ module.exports = (app) => {
     let batID = req.params.batID || '';
     res.render('TAAnaRpt_Rult',
       {
-        'id': req.session.userid,
+        'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,

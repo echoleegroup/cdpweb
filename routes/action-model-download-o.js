@@ -113,7 +113,7 @@ module.exports = (app) => {
         var navMenuList = req.session.navMenuList;
         var mgrMenuList = req.session.mgrMenuList;
         res.render('modelDownload', {
-          'id': req.session.userid,
+          'user': req.user,
           'chartData': JSON.stringify(chartData),
           'tacount': tacount,
           'mdListCategCount': JSON.stringify(mdListCategCount),

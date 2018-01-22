@@ -13,7 +13,7 @@ module.exports = (app) => {
   const router = express.Router();
 
   router.post('/user/role/add_act', [middleware.check(), middleware.checkEditPermission(permission.USER_ROLE)], function (req, res) {
-    if (req.session.userid && req.session.userid != '') {
+    if (req.user && req.user.userId != '') {
       if (req.session.userRole_Edit == 'Y') {
         var ugrpId;
         var ugrpClass = req.body.ugrpClass || '';
@@ -24,7 +24,7 @@ module.exports = (app) => {
         if (isstop == 'on')
           checked = 'Y';
         var p1 = new Promise(function (resolve, reject) {
-          db.query("INSERT INTO sy_ugrp(ugrpClass,ugrpName,remark,regdate,modifyDate,signer,isStop) values('" + ugrpClass + "','" + ugrpName + "','" + remark + "',GETDATE(),GETDATE(),'" + req.session.userid + "','" + checked + "')", function (err, recordset) {
+          db.query("INSERT INTO sy_ugrp(ugrpClass,ugrpName,remark,regdate,modifyDate,signer,isStop) values('" + ugrpClass + "','" + ugrpName + "','" + remark + "',GETDATE(),GETDATE(),'" + req.user.userId + "','" + checked + "')", function (err, recordset) {
             if (err) {
               console.log(err);
               reject(2);
@@ -45,7 +45,7 @@ module.exports = (app) => {
       }
     }
     else {
-      res.render('index', { 'title': req.session.userid, 'items': "" });
+      res.render('index', { 'title': req.user.userId, 'items': "" });
     }
   });
 
@@ -56,7 +56,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('userRoleAdd', {
-        'id': req.session.userid,
+        'user': req.user,
         'ugrpClass': recordset.recordset,
         'modelList': modelList,
         'navMenuList': navMenuList,
@@ -71,7 +71,7 @@ module.exports = (app) => {
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
     res.render('userRoleSearch', {
-      'id': req.session.userid,
+      'user': req.user,
       'modelList': modelList,
       'navMenuList': navMenuList,
       'mgrMenuList': mgrMenuList
@@ -90,7 +90,7 @@ module.exports = (app) => {
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
       res.render('userRoleList', {
-        'id': req.session.userid,
+        'user': req.user,
         'items': recordset.recordset,
         'modelList': modelList,
         'navMenuList': navMenuList,
@@ -161,14 +161,14 @@ module.exports = (app) => {
           console.log("ERROR : ", err);
         else if (data != 0) {
           var where = " where ugrpId = " + ugrpId + " and menuId =" + menuId;
-          db.query("update sy_ugrpcode set isAll = '" + all + "',isRead = '" + Read + "',isEdit = '" + Edit + "',isDownload = '" + Download + "',modifyDate = GETDATE(),modifyUser ='" + req.session.userid + "'" + where, function (err, recordset) {
+          db.query("update sy_ugrpcode set isAll = '" + all + "',isRead = '" + Read + "',isEdit = '" + Edit + "',isDownload = '" + Download + "',modifyDate = GETDATE(),modifyUser ='" + req.user.userId + "'" + where, function (err, recordset) {
             if (err)
               console.log("ERROR : ", err);
             res.end('更新成功');
           });
         }
         else {
-          var values = "VALUES(" + ugrpId + "," + menuId + ",GETDATE(),GETDATE(),'" + req.session.userid + "','" + all + "','" + Read + "','" + Edit + "','" + Download + "')"
+          var values = "VALUES(" + ugrpId + "," + menuId + ",GETDATE(),GETDATE(),'" + req.user.userId + "','" + all + "','" + Read + "','" + Edit + "','" + Download + "')"
           db.query("INSERT INTO sy_ugrpcode(ugrpId,menuId,modifyDate,regDate,modifyUser,isAll,isRead,isEdit,isDownload)" + values, function (err, recordset) {
             if (err)
               console.log("ERROR : ", err);
@@ -191,7 +191,7 @@ module.exports = (app) => {
     if (isstop == 'on')
       checked = 'Y';
     var where = " where ugrpId ='" + ugrpId + "'";
-    db.query("update sy_ugrp set ugrpClass = '" + ugrpClass + "', ugrpName = '" + ugrpName + "', remark = '" + remark + "', signer ='" + req.session.userid + "',modifyDate=GETDATE(),isStop = '" + checked + "'" + where, function (err, recordset) {
+    db.query("update sy_ugrp set ugrpClass = '" + ugrpClass + "', ugrpName = '" + ugrpName + "', remark = '" + remark + "', signer ='" + req.user.userId + "',modifyDate=GETDATE(),isStop = '" + checked + "'" + where, function (err, recordset) {
       if (err) console.log(err);
       //send records as a respons
       res.redirect('/system/user/role/edit?ugrpId=' + ugrpId);
@@ -274,7 +274,7 @@ module.exports = (app) => {
       var mgrMenuList = req.session.mgrMenuList;
       var allMenuList = menuList;
       res.render('UserGroupInfoEdit', {
-        'id': req.session.userid,
+        'user': req.user,
         'modelInfo': items[0],
         'checked': checked,
         'ugrpClass': ugrpClass,
