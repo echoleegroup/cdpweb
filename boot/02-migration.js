@@ -36,7 +36,7 @@ module.exports = (app) => {
     migrations: {
       params: [
         sequelize.getQueryInterface(),
-        sequelize.constructor,
+        sequelize.constructor.DataTypes,
         () => {
           throw new Error('Migration failed');
         }
