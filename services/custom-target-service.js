@@ -70,7 +70,7 @@ module.exports.getCustomCriteriaFeatures = (mdId, batId, mdFeatCateg, setId, cal
   });
 };
 
-module.exports.getFieldFoldingTree = (treeId, callback) => {
+module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
   const sql = 'SELECT nodeID, parentID, treeLevel, nodeName ' +
     'FROM ft_CategTree ' +
     'WHERE treeID = @treeId ' +
@@ -82,7 +82,7 @@ module.exports.getFieldFoldingTree = (treeId, callback) => {
     callback(null, result);
   }).fail((err) => {
     winston.error('===criteria-service::' +
-      'getFieldFoldingTree(treeId=%s) failed: %j',
+      'getCustomCriteriaFeatureTree(treeId=%s) failed: %j',
       treeId, err);
     callback(err);
   });

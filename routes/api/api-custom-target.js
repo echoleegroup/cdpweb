@@ -7,7 +7,7 @@ const _ = require('lodash');
 const shortid = require('shortid');
 const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
-const criteriaService = require('../../services/criteria-service');
+const criteriaService = require('../../services/custom-target-service');
 const codeGroupService = require('../../services/code-group-service');
 const exportService = require('../../services/export-service');
 const modelService = require('../../services/model-service');
@@ -29,10 +29,10 @@ module.exports = (app) => {
 
     Q.all([
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
-      Q.nfcall(criteriaService.getFieldFoldingTree, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
+      Q.nfcall(criteriaService.getCustomCriteriaFeatureTree, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
     ]).spread((features, foldingTree) => {
       winston.info('getCustomCriteriaFeatures: ', features);
-      winston.info('getFieldFoldingTree: ', foldingTree);
+      winston.info('getCustomCriteriaFeatureTree: ', foldingTree);
       // get code group from features
       // ** IMPORTANT: get code group before transforming features to tree nodes **
       // ** because criteriaFeaturesToTreeNodes is a mutated function, which move folded fields out of features **
