@@ -44,7 +44,7 @@ module.exports.getModel = (mdId, callback=() => {}) => {
   });
 };
 
-module.exports.getBatchCategoryFeatures = (mdId, batId, featureIds, callback) => {
+module.exports.getBatchCategoryFeatures = (featureIds, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup ' +
     'FROM ft_Feature feature ' +
     'WHERE feature.featID in (\'' + featureIds.join('\',\'') + '\') ';
@@ -52,26 +52,9 @@ module.exports.getBatchCategoryFeatures = (mdId, batId, featureIds, callback) =>
   Q.nfcall(_connector.execSql, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===model-service::' +
-      'getBatchCategoryFeatures(mdId=%s, batId=%s, featureIds=%j) failed: %j',
-      mdId, batId, featureIds, err);
+    winston.error('===model-service::getBatchCategoryFeatures(featureIds=%j) failed: %j', featureIds, err);
     callback(err);
   });
-
-  // Q.nfcall(getCriteriaAllFeatureId, mdId, batId, category, setId).then(featureIds => {
-  //   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup ' +
-  //     'FROM ft_Feature feature ' +
-  //     'WHERE feature.featID in (\'' + featureIds.join('\',\'') + '\') AND feature.isDel is not NULL';
-  //
-  //   return Q.nfcall(_connector.execSql, sql).then((result) => {
-  //     callback(null, result);
-  //   });
-  // }).fail((err) => {
-  //   winston.error('===criteria-service::' +
-  //     'getBatchCategoryFeatures(mdId=%s, batId=%s, category=%s, setID=%s) failed: %j',
-  //     mdId, batId,category, setId, err);
-  //   callback(err);
-  // });
 };
 
 module.exports.getBatchTargetInfoOfCategory = (mdId, batId, mdListCateg, callback) => {

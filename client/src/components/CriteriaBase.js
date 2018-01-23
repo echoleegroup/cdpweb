@@ -5,7 +5,7 @@ import {assign, reduce, isEmpty} from 'lodash';
 import CriteriaSetter from './CriteriaSetter';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
-//import CriteriaAction from '../actions/criteria-action'
+//import CustomFilterAction from '../actions/criteria-action'
 //import {default as _test} from '../../test/preferred-criteria-test'
 
 /**

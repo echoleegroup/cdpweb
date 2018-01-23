@@ -16,11 +16,11 @@ const fileHelper = require('../../helpers/file-helper');
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 module.exports = (app) => {
-  winston.info('[api-model] Creating api-model route.');
+  winston.info('[api-model] Creating api-custom-target route.');
   const router = express.Router();
 
   /**
-   * get available fields (and folds), that user able to set filter criteria.
+   * get available features (and folds), that user able to set filter criteria.
    * */
   router.get('/:mdId/:batId/criteria/features', middlewares, (req, res) => {
     let mdId = req.params.mdId;
@@ -35,9 +35,9 @@ module.exports = (app) => {
       winston.info('getCustomCriteriaFeatureTree: ', foldingTree);
       // get code group from features
       // ** IMPORTANT: get code group before transforming features to tree nodes **
-      // ** because criteriaFeaturesToTreeNodes is a mutated function, which move folded fields out of features **
+      // ** because featuresToTreeNodes is a mutated function, which move folded fields out of features **
       let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
-      let fields = criteriaHelper.criteriaFeaturesToTreeNodes(features, foldingTree);
+      let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
         features: fields,
         featureRefCodeMap: criteriaHelper.codeGroupToFeatureRef(codeGroupResSet)
@@ -70,13 +70,13 @@ module.exports = (app) => {
 
       return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, []), model];
     }).spread((results, model) => {
-      winston.info('/%s/%s/criteria/preview :: queryTargetByCustomCriteria: ', mdId, batId, results);
-      winston.info('/%s/%s/criteria/preview :: model.batListThold: ', mdId, batId, model.batListThold);
+      // winston.info('/%s/%s/criteria/preview :: queryTargetByCustomCriteria: ', mdId, batId, results);
+      // winston.info('/%s/%s/criteria/preview :: model.batListThold: ', mdId, batId, model.batListThold);
       let [resultsInTarget, resultsExcludeTarget] = _.partition(results, (obj) => {
         return (obj['_mdListScore'] >= model.batListThold);
       });
-      winston.info('/%s/%s/criteria/preview :: resultsInTarget: ', mdId, batId, resultsInTarget.length);
-      winston.info('/%s/%s/criteria/preview :: resultsExcludeTarget: ', mdId, batId, resultsExcludeTarget.length);
+      // winston.info('/%s/%s/criteria/preview :: resultsInTarget: ', mdId, batId, resultsInTarget.length);
+      // winston.info('/%s/%s/criteria/preview :: resultsExcludeTarget: ', mdId, batId, resultsExcludeTarget.length);
       let sizeOfResultsInTarget = resultsInTarget.length;
       let sizeOfResultsExcludeTarget = resultsExcludeTarget.length;
       let size = sizeOfResultsInTarget + sizeOfResultsExcludeTarget;
@@ -111,7 +111,7 @@ module.exports = (app) => {
         downloadFeatureIds.push(feature.featID);
         downloadFeatureLabels.push(feature.featName);
       });
-      winston.info('/%s/%s/criteria/preview :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
+      // winston.info('/%s/%s/criteria/preview :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
       return [
         model,
         downloadFeatureIds,

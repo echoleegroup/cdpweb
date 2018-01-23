@@ -1,7 +1,7 @@
 import React from 'react';
 import {assign} from 'lodash';
-import CriteriaAction from "../actions/criteria-action";
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
+import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 
 export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAnalysisCriteriaBase {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
   };
 
   dataPreparing(props, _this, callback) {
-    CriteriaAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
+    IntegratedAnalysisAction.getTransactionCriteriaFeatures(callback);
   };
 
   getPickerProps(props, state) {

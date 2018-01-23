@@ -3,7 +3,7 @@ import Loader from 'react-loader';
 import numeral from 'numeral';
 import {format} from 'util';
 import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
-import CriteriaAction from '../actions/criteria-action';
+import CustomFilterAction from '../actions/custom-filter-action';
 
 export default class CustomTargetFilterWorker extends React.PureComponent {
   constructor(props) {
@@ -49,7 +49,7 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
       });
 
       console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
-      CriteriaAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
+      CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
         this.setState({
           isLoaded: true,
           prediction: {
@@ -70,7 +70,7 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
       $(this.inputCriteria).val(JSON.stringify(criteria));
       $(this.formComponent).submit();
 
-      // CriteriaAction.getCustomTargetFilterExport(this.props.params.mdId, this.props.params.batId, criteria, data => {
+      // CustomFilterAction.getCustomTargetFilterExport(this.props.params.mdId, this.props.params.batId, criteria, data => {
       //   this.setState({
       //     isLoaded: true
       //   });
@@ -82,7 +82,7 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
         isLoaded: false
       });
 
-      CriteriaAction.getCriteriaHistory(this.props.params.mdId, this.props.params.batId, data => {
+      CustomFilterAction.getCriteriaHistory(this.props.params.mdId, this.props.params.batId, data => {
         this.setState(prevState => ({
           isLoaded: true,
           criteria: {
@@ -109,7 +109,7 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
           <form className="form-horizontal"
                 method="POST"
                 target="_blank"
-                action={format(CriteriaAction.FILTER_RESULT_EXPORT, this.props.params.mdId, this.props.params.batId)}
+                action={format(CustomFilterAction.FILTER_RESULT_EXPORT, this.props.params.mdId, this.props.params.batId)}
                 ref={e => {this.formComponent = e;}}>
             <input type="hidden" name="criteria" ref={e => this.inputCriteria = e}/>
             <div className="form-group">

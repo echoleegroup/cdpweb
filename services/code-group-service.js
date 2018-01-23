@@ -4,7 +4,7 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
   const sql = 'SELECT codeGroup, codeValue, codeLabel ' +
-    'FROM ft_CodeTable ' +
+    'FROM ft_CodeGroup_View ' +
     'WHERE codeGroup = @codeGroup';
 
   let prepared = _connector.preparedStatement()

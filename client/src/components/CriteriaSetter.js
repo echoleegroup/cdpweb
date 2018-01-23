@@ -5,7 +5,7 @@ import moment from 'moment';
 import {find, assign, pick} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
-// import CriteriaAction from '../actions/criteria-action';
+// import CustomFilterAction from '../actions/criteria-action';
 import Picker from './Picker'
 
 const INPUT_CRITERIA_OPERATOR = {
@@ -169,7 +169,7 @@ export default class CriteriaSetter extends React.PureComponent {
   };
 
   // dataPreparing(props, _this, callback) {
-  //   CriteriaAction.getCustomCriteriaFeatures(props.mdId, props.batId, (data) => {
+  //   CustomFilterAction.getCustomCriteriaFeatures(props.mdId, props.batId, (data) => {
   //     callback(data);
   //   });
   // };

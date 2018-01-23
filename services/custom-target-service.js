@@ -61,7 +61,7 @@ module.exports.getCustomCriteriaFeatures = (mdId, batId, mdFeatCateg, setId, cal
 
   Q.nfcall(request.executeQuery, sql).then(results => {
     let featureIds = _.map(results, 'featID');
-    return Q.nfcall(modelService.getBatchCategoryFeatures, mdId, batId, featureIds);
+    return Q.nfcall(modelService.getBatchCategoryFeatures, featureIds);
   }).then((result) => {
     callback(null, result);
   }).fail(err => {

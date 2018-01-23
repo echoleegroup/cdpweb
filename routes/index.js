@@ -37,6 +37,7 @@ module.exports = (app) => {
   //hook for restful api
   app.use('/api/model', require('./api/api-model')(app));
   app.use('/api/target', require('./api/api-custom-target')(app));
+  app.use('/api/integration', require('./api/api-integration-analysis')(app));
 
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));

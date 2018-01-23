@@ -1,7 +1,7 @@
 import React from 'react';
 import {assign} from 'lodash';
 import CriteriaBase from './CriteriaBase';
-import CriteriaAction from '../actions/criteria-action';
+import CustomFilterAction from '../actions/custom-filter-action';
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -17,7 +17,7 @@ export default class CustomTargetFilterCriteria extends CriteriaBase {
   };
 
   dataPreparing(props, _this, callback) {
-    CriteriaAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
+    CustomFilterAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
   };
 
   getPickerProps(props, state) {

@@ -221,10 +221,10 @@ module.exports = {
   //MAX_MODEL_KEYS: MAX_MODEL_KEYS,
   //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
 
-  criteriaFeaturesToTreeNodes: (features, foldingTree) => {
-    winston.info('===criteriaFeaturesToTreeNodes: ', features);
+  featuresToTreeNodes: (features, foldingTree) => {
+    winston.info('===featuresToTreeNodes: ', features);
     let foldingNodes = foldingTree.reduce((foldingNodes, node) => {
-      winston.info('===criteriaFeaturesToTreeNodes::foldingTree ', node);
+      winston.info('===featuresToTreeNodes::foldingTree ', node);
       if ('ROOT' === node.parentID) { // virtual node: folder
 
         // extract all the raw features, who's featID is referenced to node's nodeID
