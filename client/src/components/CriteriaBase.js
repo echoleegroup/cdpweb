@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce, isEmpty} from 'lodash';
 //import {nfcall, all} from 'q';
-import CriteriaSetter from './CriteriaSetter';
+import CriteriaSetter from './CriteriaAssignment';
 import CriteriaView from './CriteriaView';
 import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
 //import CustomFilterAction from '../actions/criteria-action'
