@@ -8,6 +8,7 @@ const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
 const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
+const java_api_service = require('../services/java-api-service');
 module.exports = (app) => {
   console.log('[taanarptRoute::create] Creating taanarpt route.');
   const router = express.Router();
@@ -24,9 +25,25 @@ module.exports = (app) => {
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
-        'mdID': mdID,
-        'api': java_api_endpoint
+        'mdID': mdID
       });
+  });
+  router.post('/getReport', [middleware.check(), middleware.checkViewPermission(permission.TAANARPT_RULT)], function (req, res) {
+    let mdID = req.body.mdID || '';
+    let path = "/jsoninfo/getReport.do?mdID=" + mdID;
+    java_api_service.api(path, req, res, function (err, result) {
+      res.json(result);
+    });
+
+  });
+  router.post('/getReportDetail', [middleware.check(), middleware.checkViewPermission(permission.TAANARPT_RULT)], function (req, res) {
+    let mdID = req.body.mdID || '';
+    let batID = req.body.batID || '';
+    let path = "/jsoninfo/getReportDetail.do?mdID=" + mdID+"&batID="+batID;
+    java_api_service.api(path, req, res, function (err, result) {
+      res.json(result);
+    });
+
   });
   return router;
 };

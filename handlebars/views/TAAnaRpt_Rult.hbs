@@ -30,10 +30,10 @@
 
 $.ajax({
 
-  url: "{{api}}/jsoninfo/getReport.do",
+  url: "/taanarpt_rult/getReport",
   data: {"mdID" : encodeURI("{{mdID}}")
 		},
-  type: "GET",
+  type: "POST",
   dataType: "json",
   success: function(Jdata) {
     var myObj, x,batchHtml,status = "";
@@ -153,10 +153,10 @@ $.ajax({
 <script>
 function getDeatil(index,batID,mdID) {
 	$.ajax({
-		url: "{{api}}/jsoninfo/getReportDetail.do",
+		url: "/taanarpt_rult/getReportDetail",
 		data: {"mdID" : encodeURI(mdID),
 				"batID" : encodeURI(batID) },
-		type: "GET",
+		type: "POST",
 		dataType: "json",
 		success: function(Jdata) {
 			var myObj,batchObj ,x,batchHtml = "";

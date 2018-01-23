@@ -7,5 +7,8 @@
     },
     "dialect": "mssql"
   },
-  "JAVA_API_ENDPOINT": "http://10.201.1.130:8080"
+  "JAVA_API_ENDPOINT": "http://10.201.1.130:8080",
+  "JAVA_API_PROTOCOL": "http:",
+  "JAVA_API_HOST": "10.201.1.130",
+  "JAVA_API_PORT":8080
 }

@@ -90,7 +90,7 @@ module.exports = (app) => {
     var mdID = req.body.mdID || '';
     var batID = req.body.batID || '';
     var featID = req.body.featID || '';
-    var path = "/jsoninfo/custfeat.do?mdID=" + mdID + "&batID=" + batID+"&featID=" +featID;
+    var path = "/jsoninfo/custfeat.do?mdID=" + mdID + "&batID=" + batID + "&featID=" + featID;
     var urlPaser = url.parse(java_api_endpoint);
     var options = {
       protocol: urlPaser.protocol,
