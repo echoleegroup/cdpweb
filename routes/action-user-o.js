@@ -48,7 +48,7 @@ module.exports = (app) => {
     db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.user.userId + "','" + checked + "')", function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
-      res.redirect('/user/UserInfoEdit?userId=' + userId);
+      res.redirect('/system/user/edit?userId=' + userId);
     });
 
   });
