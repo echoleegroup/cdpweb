@@ -129,7 +129,7 @@ module.exports = (app) => {
     var funcCatgeList;
 
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID,sno,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,convert(varchar, trkSdt, 111)trkSdt,convert(varchar, trkEdt, 111)trkEdt,evtpgDesc,isDel,convert(varchar, crtTime, 120)crtTime,convert(varchar, dem.updTime, 120)updTime,dem.updUser,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount,(select top 1 convert(varchar, deam.updTime, 120)  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )adudtime,(select top 1 deam.updUser  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )aduduser FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup ='funcCatge' and sc.codeValue = dem.funcCatge where evtpgID ='" + evtpgID + "'", function (err, recordset) {
+      db.query("SELECT evtpgID,sno,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,convert(varchar, trkSdt, 111)trkSdt,convert(varchar, trkEdt, 111)trkEdt,evtpgDesc,isDel,convert(varchar, crtTime, 120)crtTime,convert(varchar, dem.updTime, 120)updTime,dem.updUser,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount,(select top 1 convert(varchar, deam.updTime, 120)  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )adudtime,(select top 1 deam.updUser  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )aduduser FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup ='funcCatge' and sc.codeValue = dem.funcCatge where evtpgID ='" + evtpgID + "'", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -242,14 +242,14 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       if (datasource == "news") {
-        db.query("INSERT INTO dm_EvtpgMst(evtpgID,client,sno,funcCatge,msm_tpc,url,sdt,edt,trkSdt,trkEdt,isDel,evtpgDesc,crtTime,updTime,updUser)" + values, function (err, recordset) {
+        db.query("INSERT INTO dm_EvtpgMst(evtpgID,client,sno,funcCatge,tpc,url,sdt,edt,trkSdt,trkEdt,isDel,evtpgDesc,crtTime,updTime,updUser)" + values, function (err, recordset) {
           if (err) {
             console.log(err);
           }
         });
       }
       else {
-        db.query("UPDATE dm_EvtpgMst set client ='" + client + "',funcCatge = '" + funcCatge + "',msm_tpc = '" + msm_tpc + "',url = '" + url + "',sdt = '" + sdt + "',edt = '" + edt + "',trkSdt = '" + trkSdt + "',trkEdt = '" + trkEdt + "',isDel = '" + isDel + "',evtpgDesc = '" + evtpgDesc + "',updTime =GETDATE(),updUser = '" + req.user.userId + "' where evtpgID = '" + evtpgID + "'", function (err, recordset) {
+        db.query("UPDATE dm_EvtpgMst set client ='" + client + "',funcCatge = '" + funcCatge + "',tpc = '" + msm_tpc + "',url = '" + url + "',sdt = '" + sdt + "',edt = '" + edt + "',trkSdt = '" + trkSdt + "',trkEdt = '" + trkEdt + "',isDel = '" + isDel + "',evtpgDesc = '" + evtpgDesc + "',updTime =GETDATE(),updUser = '" + req.user.userId + "' where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (err) {
             console.log(err);
           }
@@ -301,7 +301,7 @@ module.exports = (app) => {
     values += "getdate(),getdate(),'" + req.user.userId + "')";
     var evtpgID = '';
     var p1 = new Promise(function (resolve, reject) {
-      db.query("INSERT INTO dm_EvtpgMst(evtpgID,client,funcCatge,msm_tpc,url,sdt,edt,trkSdt,trkEdt,isDel,evtpgDesc,crtTime,updTime,updUser)" + values, function (err, recordset) {
+      db.query("INSERT INTO dm_EvtpgMst(evtpgID,client,funcCatge,tpc,url,sdt,edt,trkSdt,trkEdt,isDel,evtpgDesc,crtTime,updTime,updUser)" + values, function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -349,7 +349,7 @@ module.exports = (app) => {
       where += " and dem.msm_tpc like '%" + tpc + "%' ";
 
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, evtpgID,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,convert(varchar, dem.updTime, 120)updTime,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, evtpgID,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,convert(varchar, dem.updTime, 120)updTime,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -363,7 +363,7 @@ module.exports = (app) => {
             codeLabel: recordset.recordset[i].codeLabel,
             sdt: recordset.recordset[i].sdt,
             edt: recordset.recordset[i].edt,
-            msm_tpc: recordset.recordset[i].msm_tpc,
+            msm_tpc: recordset.recordset[i].tpc,
             adCount: recordset.recordset[i].adCount,
             adtagcount: recordset.recordset[i].adtagcount,
             updTime: recordset.recordset[i].updTime,
@@ -495,11 +495,10 @@ module.exports = (app) => {
     if (edt != '')
       where += " and dem.edt <= '" + edt + " 23:59:59' ";
     if (tpc != '')
-      where += " and dem.msm_tpc like '%" + tpc + "%' ";
+      where += " and dem.tpc like '%" + tpc + "%' ";
 
     let p1 = new Promise(function (resolve, reject) {
-      console.log("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc");
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
         if (err) {
           reject(err);
         }
@@ -511,7 +510,7 @@ module.exports = (app) => {
             codeLabel: recordset.recordset[i].codeLabel,
             sdt: recordset.recordset[i].sdt,
             edt: recordset.recordset[i].edt,
-            msm_tpc: recordset.recordset[i].msm_tpc,
+            msm_tpc: recordset.recordset[i].tpc,
             browseCount: recordset.recordset[i].browseCount,
             cookieCount: recordset.recordset[i].cookieCount,
             dxidCount: recordset.recordset[i].dxidCount,
