@@ -441,9 +441,143 @@ module.exports = (app) => {
     }).catch(function (e) {
       console.log(e);
     });
+  });
+  router.get('/act/analysis/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+    let funcCatge;
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+
+    let p1 = new Promise(function (resolve, reject) {
+      db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge' order by codeValue desc ", function (err, recordset) {
+        if (err) {
+          reject(err);
+        }
+        funcCatge = recordset.recordset;
+        resolve(funcCatge);
+      });
+    });
+    Promise.all([p1]).then(function (results) {
+      res.render('evtpg-analysis-search', {
+        'user': req.user,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList,
+        'funcCatge': funcCatge
+      });
+    }).catch(function (e) {
+      console.log(e);
+    });
 
 
+  });
+  router.post('/act/analysis/list', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+    let client = req.body.client || '';
+    let funcCatge = req.body.funcCatge || '';
+    let sdt = req.body.sdt || '';
+    let edt = req.body.edt || '';
+    let tpc = req.body.tpc || '';
+    let sql = '';
+    let maininfo = [];
+    let data = [];
+    let mainifolist = [];
+    let taginfo = [];
+    let adlist = [];
+    let ad = [];
+    let where = " where 1 = 1 and dem.client = '" + client + "' ";
+    if (funcCatge != '')
+      where += " and dem.funcCatge = '" + funcCatge + "' ";
+    if (sdt != '')
+      where += " and dem.sdt >= '" + sdt + " 00:00:00' ";
+    if (edt != '')
+      where += " and dem.edt <= '" + edt + " 23:59:59' ";
+    if (tpc != '')
+      where += " and dem.msm_tpc like '%" + tpc + "%' ";
 
+    let p1 = new Promise(function (resolve, reject) {
+      console.log("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc");
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,msm_tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
+        if (err) {
+          reject(err);
+        }
+        for (var i = 0; i < recordset.rowsAffected; i++) {
+          maininfo = [];
+          maininfo.push({
+            no: recordset.recordset[i].no,
+            evtpgID: recordset.recordset[i].evtpgID,
+            codeLabel: recordset.recordset[i].codeLabel,
+            sdt: recordset.recordset[i].sdt,
+            edt: recordset.recordset[i].edt,
+            msm_tpc: recordset.recordset[i].msm_tpc,
+            browseCount: recordset.recordset[i].browseCount,
+            cookieCount: recordset.recordset[i].cookieCount,
+            dxidCount: recordset.recordset[i].dxidCount,
+            canvasCount: recordset.recordset[i].canvasCount,
+            url: recordset.recordset[i].url
+          });
+          data.push({
+            maininfo: maininfo
+          });
+        }
+        resolve(1);
+      });
+    });
+    let p2 = new Promise(function (resolve, reject) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.*,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtadMst a left join dm_EvtadMst_statistic dems on dems.evtadID = a.evtadID order by a.adSdt asc ", function (err, recordset) {
+        if (err) {
+          reject(2);
+        }
+        for (var i = 0; i < recordset.rowsAffected; i++) {
+          ad.push({
+            no: recordset.recordset[i].no,
+            evtadID: recordset.recordset[i].evtadID,
+            evtpgID: recordset.recordset[i].evtpgID,
+            adSource: recordset.recordset[i].adSource,
+            adChannel: recordset.recordset[i].adChannel,
+            adPos: recordset.recordset[i].adPos,
+            adSize: recordset.recordset[i].adSize,
+            browseCount: recordset.recordset[i].browseCount,
+            cookieCount: recordset.recordset[i].cookieCount,
+            dxidCount: recordset.recordset[i].dxidCount,
+            canvasCount: recordset.recordset[i].canvasCount
+
+          });
+        }
+        resolve(1);
+      });
+    });
+    Promise.all([p1, p2]).then(function (results) {
+
+      for (var i = 0; i < data.length; i++) {
+        adlist = [];
+        let count = 1 ;
+        for (var j = 0; j < ad.length; j++) {
+          if (data[i].maininfo[0].evtpgID == ad[j].evtpgID) {
+            ad[j].no = count ;
+            count++ ;
+            adlist.push({
+              ad: ad[j]
+            });
+          }
+        }
+        data[i].maininfo.push({
+          adlist: adlist
+        });
+      }
+      res.render('event-analysis-list', {
+        'user': req.user,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList,
+        'data': JSON.stringify(data)
+      });
+
+    }).catch(function (e) {
+      console.log(e);
+    });
   });
 
   return router;

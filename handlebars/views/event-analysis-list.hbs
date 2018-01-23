@@ -1,0 +1,80 @@
+{{> title title='數位媒體成效報表'}}
+<!--
+<div class="title">
+  <div class="container">
+    <h1>活動頁面清單</h1>
+  </div>
+</div>
+-->
+<div class="container">
+  <!-- table set Start -->
+  <div class="table_block table-responsive">
+    <h2>數位媒體成效報表</h2>
+    <a href="/actad/act/analysis/search" title="重新查詢">
+      <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
+    </a>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+            <i class="fa fa-sort" aria-hidden="true"></i> 類別
+          </th>
+          <th>活動名稱</th>
+          <th>
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
+            <i class="fa fa-sort" aria-hidden="true"></i> 報表計算期間
+          </th>
+          <th>頁面訪問數</th>
+          <th>cookie ID追蹤數</th>
+          <th>DXID追蹤數</th>
+          <th>車主追蹤數</th>
+        </tr>
+      </thead>
+      <tbody id="info">
+
+
+
+      </tbody>
+    </table>
+    <!-- pagination -->
+  </div>
+</div>
+<script>
+  var x = "";
+  var o = {{{ data }}};
+  for (i in o) {
+    x += "<tr>";
+    x += "<td>" + o[i].maininfo[0].no + "</td>";
+    x += "<td>" + o[i].maininfo[0].codeLabel + "</td>";
+    x += "<td>" + o[i].maininfo[0].msm_tpc + "</td>";
+    x += "<td>" + o[i].maininfo[0].sdt + "~" + o[i].maininfo[0].edt + "</td>";
+    x += "<td>" + o[i].maininfo[0].browseCount + "</td>";
+    x += "<td>" + o[i].maininfo[0].cookieCount + "</td>";
+    x += "<td>" + o[i].maininfo[0].dxidCount + "</td>";
+    x += "<td>" + o[i].maininfo[0].canvasCount + "</td>";
+    x += "<td><a href='javascript:urlopen(\"" + o[i].maininfo[0].url + "\");'>開啟連結</a></td>";
+    x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
+    x += '<tr class="sub_info"><td colspan="7">';
+    x += '<h3>廣告資訊</h3><table class="table table-hover table-striped"><thead><tr><th>#</th><th>網站</th><th>頻道</th><th>版位</th><th>頁面訪問數</th><th>cookie ID追蹤數</th><th>車主追蹤數</th></tr></thead><tbody>';
+    for (j in o[i].maininfo[1].adlist) {
+      x += '<tr>'
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.no + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.adSource + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.adChannel + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.adPos + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.browseCount + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.cookieCount + '</td>';
+      x += '<td>' + o[i].maininfo[1].adlist[j].ad.canvasCount + '</td>';
+      x += '</tr>'
+    }
+    x += "</tbody></table>";
+    x += "</td></tr>";
+
+  }
+  document.getElementById("info").innerHTML = x;
+  function urlopen(url) {
+    window.open(url, "_blank");
+  }
+</script>

@@ -23,7 +23,8 @@ module.exports = Object.freeze({
     MODEL_LIST: "_modelOvv",
     TA_DISPATCH_UPLOAD: "__targetTaDispach",
     TA_REACTION_UPLOAD: "__targetTaReaction",
-    TAANARPT_RULT: "_taanaRpt"
+    TAANARPT_RULT: "_taanaRpt",
+    EVENT_PAGE_Analysis:"actad_actAnalysis"
   }
 });
 
