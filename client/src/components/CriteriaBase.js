@@ -23,43 +23,30 @@ export default class CriteriaBase extends React.PureComponent {
     //this.criteria = _test.criteria.preferred_target || [];
     //this.fields = _test.fields.preferred_target;
     //this.refOptions = _test.refs;
-    //this.criteria = [];
-    this.options = assign({}, options);
-    //this.criteria = props.criteria || [];
   };
 
   dataPreparing(props, _this, callback) {
-    callback();
-    // this.getFoldingFieldData(assign({}, this.props.params, this.options), data => {
-    //   let foldingFields = data.fields;
-    //   let fieldRefs = data.fieldRefs;
-    //   this.mapToProps = {
-    //     foldingFields: foldingFields,
-    //     displayOptions: {
-    //       main_title: this.getMainTitle(),
-    //       sub_title: this.getSubTitle()
-    //     },
-    //     refOptions: fieldRefs,
-    //     fieldDictionary: getFieldDictionary(foldingFields),
-    //     folderDictionary: getFolderDictionary(foldingFields),
-    //     addCriteriaField: (callback) => {
-    //       // console.log('CriteriaBase::addCriteriaField');
-    //       this.fieldPicker.openModal(callback);
-    //     }
-    //   };
-    //
-    //   this.setState({
-    //     isLoaded: true
-    //   });
-    // });
+    callback({});
+  };
+
+  isReadyToLeave() {
+    return this.state.isPreview;
+  };
+
+  validate() {
+    return true;
   };
 
   componentWillMount() {
+    //inner properties definition
     this.toPreview = () => {
-      this.setState({
-        isPreview: true,
-        criteria: this.editView.criteriaGathering()
-      });
+      let valid = this.validate();
+      if(valid) {
+        this.setState({
+          isPreview: true,
+          criteria: this.editView.criteriaGathering()
+        });
+      }
     };
 
     this.toEdit = () => {
@@ -78,6 +65,7 @@ export default class CriteriaBase extends React.PureComponent {
       return criteria;
     };
 
+    //set init data
     this.mapToProps = {
       displayOptions: {
         main_title: this.getMainTitle(),
@@ -89,6 +77,7 @@ export default class CriteriaBase extends React.PureComponent {
       }
     };
 
+    //init work
     this.dataPreparing(this.props, this, (data) => {
       this.setState(assign({
         isLoaded: true

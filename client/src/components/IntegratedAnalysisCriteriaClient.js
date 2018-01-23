@@ -1,5 +1,4 @@
 import React from 'react';
-import {assign} from 'lodash';
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 
@@ -8,23 +7,12 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     super(props);
   };
 
-  getMainTitle() {
-    return '查詢條件';
-  };
-
   getSubTitle() {
     return '第一步 挑選顧客屬性資料';
   };
 
   dataPreparing(props, _this, callback) {
     IntegratedAnalysisAction.getClientCriteriaFeatures(callback);
-  };
-
-  getPickerProps(props, state) {
-    return assign(super.getPickerProps(props, state), {
-      features: state.features,
-      featureRefCodeMap: state.featureRefCodeMap
-    });
   };
 
   ComponentPreviewControlButton() {

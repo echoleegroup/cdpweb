@@ -1,7 +1,19 @@
 import React from 'react';
+import {assign} from 'lodash';
 import CriteriaBase from "./CriteriaBase";
 
 export default class IntegratedAnalysisCriteriaBase extends CriteriaBase {
+  getMainTitle() {
+    return '查詢條件';
+  };
+
+  getPickerProps(props, state) {
+    return assign(super.getPickerProps(props, state), {
+      features: state.features,
+      featureRefCodeMap: state.featureRefCodeMap
+    });
+  };
+
   ComponentPreviewControlButton() {
     return (
       <div className="btn-block center-block">

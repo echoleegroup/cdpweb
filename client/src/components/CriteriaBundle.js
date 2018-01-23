@@ -61,10 +61,10 @@ export default class CriteriaBundle extends React.PureComponent {
         let crite = comp.criteriaGathering(); //immutable Map
         // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
         return isEmpty(crite)? collector: collector.push(crite);
-      }, List());
+      }, []);
 
       // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
-      return (subCrits.size === 0)? {}: assign({}, this.state, {
+      return (subCrits.length === 0)? {}: assign({}, this.state, {
         criteria: subCrits
       });
     };

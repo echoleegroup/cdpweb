@@ -42,39 +42,41 @@ export default class CustomTargetFilterWorker extends React.PureComponent {
     };
 
     this.filterResultPreview = () => {
-      let criteria = this.criteriaGathering();
-      this.setState({
-        //isLoaded: false,
-        criteria
-      });
+      let isReady = this.criteriaComp.isReadyToLeave();
 
-      console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
-      CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
+      if (isReady) {
+        let criteria = this.criteriaGathering();
         this.setState({
-          isLoaded: true,
-          prediction: {
-            sizeOfResults: data.size,
-            sizeOfResultsInTarget: data.sizeOfResultsInTarget
-          }
+          //isLoaded: false,
+          criteria
         });
-      });
+
+        console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
+        CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
+          this.setState({
+            isLoaded: true,
+            prediction: {
+              sizeOfResults: data.size,
+              sizeOfResultsInTarget: data.sizeOfResultsInTarget
+            }
+          });
+        });
+      }
     };
 
     this.filterResultExport = () => {
-      let criteria = this.criteriaGathering();
-      this.setState({
-        //isLoaded: false,
-        criteria
-      });
+      let isReady = this.criteriaComp.isReadyToLeave();
 
-      $(this.inputCriteria).val(JSON.stringify(criteria));
-      $(this.formComponent).submit();
+      if (isReady) {
+        let criteria = this.criteriaGathering();
+        this.setState({
+          //isLoaded: false,
+          criteria
+        });
 
-      // CustomFilterAction.getCustomTargetFilterExport(this.props.params.mdId, this.props.params.batId, criteria, data => {
-      //   this.setState({
-      //     isLoaded: true
-      //   });
-      // });
+        $(this.inputCriteria).val(JSON.stringify(criteria));
+        $(this.formComponent).submit();
+      }
     };
 
     this.getHistory = () => {
