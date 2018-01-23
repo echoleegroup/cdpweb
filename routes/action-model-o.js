@@ -61,7 +61,7 @@ module.exports = (app) => {
     var newBatchName = "";
     var newBatchLastTime = "";
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT mm.mdID,mm.mdName,sc.codeLabel,mm.mdClient,mm.batBinded,mm.taDesc,convert(varchar,mm.exeDateFrom,111)exeDateFrom,convert(varchar,mm.exeDateTo,111)exeDateTo,mm.isClosed,convert(varchar,mm.updTime,120)updTime,convert(varchar,mm.crtTime,120)crtTime,convert(varchar,mm.mdRptCalTime,120)mdRptCalTime,mm.updUser "
+      db.query("SELECT mm.mdID,mm.mdName,sc.codeLabel,mm.mdClient,mm.batID,mm.taDesc,convert(varchar,mm.exeDateFrom,111)exeDateFrom,convert(varchar,mm.exeDateTo,111)exeDateTo,mm.isClosed,convert(varchar,mm.updTime,120)updTime,convert(varchar,mm.crtTime,120)crtTime,convert(varchar,mm.mdRptCalTime,120)mdRptCalTime,mm.updUser "
         + " FROM md_Model mm "
         + " left join sy_CodeTable sc on mm.mdGoal = sc.codeValue and sc.codeGroup = 'mdGoal' "
         + " where mm.mdID = '" + mdID + "'", function (err, recordset) {

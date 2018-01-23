@@ -77,13 +77,13 @@
                   <a href="#" onclick="sentDetail('{{../modelInfo.mdID}}','{{batch.batID}}','{{batch.batName}}')">{{batch.sentcount}}</a>
                 </td>
                 <td>
-                  <a href="/talist_putupload/talist_putuploadAdd?mdID={{../modelInfo.mdID}}">投放名單上傳</a>
+                  <a href="/target/ta/send/upload/{{../modelInfo.mdID}}/{{batch.batID}}">投放名單上傳</a>
                 </td>
                 <td>
                   <a href="#" onclick="respDetail('{{../modelInfo.mdID}}','{{batch.batID}}','{{batch.batName}}')">{{batch.respcount}}</a>
                 </td>
                 <td>
-                  <a href="/talist_rspupload/talist_rspuploadAdd?mdID={{../modelInfo.mdID}}">回應名單上傳</a>
+                  <a href="/target/ta/rsp/upload/{{../modelInfo.mdID}}/{{batch.batID}}">回應名單上傳</a>
                 </td>
                 <td></td>
               </tr>
@@ -135,15 +135,15 @@
             </table>
           </div>
           <div class="btn-block">
-            <a class="btn btn-default btn-lg" href="/custGene/custGeneCP?mdID={{modelInfo.mdID}}&batID={{batID}}">
+            <a class="btn btn-default btn-lg" href="/model/cust/char/cp/{{modelInfo.mdID}}/{{batID}}">
               客戶顯著特徵</a>
-            <a class="btn btn-default btn-lg" href="/generaudic/generaudicCP?mdID={{modelInfo.mdID}}&batID={{batID}}">
+            <a class="btn btn-default btn-lg" href="/target/cal/cp/{{modelInfo.mdID}}/{{batID}}">
               模型名單計算</a>
-            <a class="btn btn-default btn-lg" href="/custobrv/custObrvCP?mdID={{modelInfo.mdID}}&batID={{batID}}">
+            <a class="btn btn-default btn-lg" href="/model/cust/bhv/cp/{{modelInfo.mdID}}/{{batID}}">
               客戶行為軌跡</a>
-            <a class="btn btn-default btn-lg" href="/modelDownload/modelDownload?mdID={{modelInfo.mdID}}&batID={{batID}}">
+            <a class="btn btn-default btn-lg" href="/target/model/download/{{modelInfo.mdID}}/{{batID}}">
               模型名單下載</a>
-            <a class="btn btn-default btn-lg" href="/custMotivation/custMotivationCP?mdID={{modelInfo.mdID}}&batID={{batID}}">
+            <a class="btn btn-default btn-lg" href="/model/cust/pred/cp/{{modelInfo.mdID}}/{{batID}}">
               消費先期指標</a>
           </div>
         </div>
@@ -161,7 +161,7 @@
               </tbody>
             </table>
             <div class="btn-block">
-              <a class="btn btn-default btn-lg fa fa-bar-chart" href="/TAAnaRpt_Rult/TAAnaRpt_Rult?mdID={{modelInfo.mdID}}">成效報表</a>
+              <a class="btn btn-default btn-lg fa fa-bar-chart" href="/TAAnaRpt_Rult/TAAnaRpt_Rult/{{modelInfo.mdID}}/{{batID}}">成效報表</a>
             </div>
           </div>
         </div>
