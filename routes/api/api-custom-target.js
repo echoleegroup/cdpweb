@@ -38,7 +38,7 @@ module.exports = (app) => {
       // ** because criteriaFeaturesToTreeNodes is a mutated function, which move folded fields out of features **
       let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
       let fields = criteriaHelper.criteriaFeaturesToTreeNodes(features, foldingTree);
-      return Q.nfcall(codeGroupService.getSysCodeGroups, refCodeGroups).then(codeGroupResSet => ({
+      return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
         features: fields,
         featureRefCodeMap: criteriaHelper.codeGroupToFeatureRef(codeGroupResSet)
       }));

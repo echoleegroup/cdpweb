@@ -2,7 +2,7 @@ const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
-module.exports.getSysCodeGroups = (codeGroupList = [], callback) => {
+module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
   const sql = 'SELECT codeGroup, codeValue, codeLabel ' +
     'FROM ft_CodeTable ' +
     'WHERE codeGroup = @codeGroup';
@@ -23,7 +23,7 @@ module.exports.getSysCodeGroups = (codeGroupList = [], callback) => {
     // [{$codeGroupKey1: [{code1}, {code2}, {code3}]}, {$codeGroupKey2: [{code1}, {code2}, {code3}]}]
     callback(null, Object.assign({}, ...codeGroupRes));
   }).fail((err) => {
-    winston.error('===getSysCodeGroups failed:', err);
+    winston.error('===getFeatureCodeGroups failed:', err);
     callback(err, null);
   });
 };
