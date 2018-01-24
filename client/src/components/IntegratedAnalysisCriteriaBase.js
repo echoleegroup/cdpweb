@@ -3,7 +3,7 @@ import {assign} from 'lodash';
 import CriteriaBase from "./CriteriaBase";
 
 export default class IntegratedAnalysisCriteriaBase extends CriteriaBase {
-  getMainTitle() {
+  headlineText() {
     return '查詢條件';
   };
 

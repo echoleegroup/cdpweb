@@ -67,10 +67,12 @@ export default class CriteriaBase extends React.PureComponent {
 
     //set init data
     this.mapToProps = {
-      displayOptions: {
-        main_title: this.getMainTitle(),
-        sub_title: this.getSubTitle()
-      },
+      ComponentHeadline: this.ComponentHeadline(),
+      ComponentSideHead: this.ComponentSideHead(),
+      // displayOptions: {
+      //   main_title: this.getMainTitle(),
+      //   sub_title: this.getSubTitle()
+      // },
       addCriteriaField: (callback) => {
         // console.log('CriteriaBase::addCriteriaField');
         this.fieldPicker.openModal(callback);
@@ -128,17 +130,17 @@ export default class CriteriaBase extends React.PureComponent {
       if (isEmpty(this.state.criteria)) {
         return <CriteriaPreviewEmpty {...this.mapToProps}
                                      styleClass={'nocondition'}
-                                     controlButtonRender={this.ComponentPreviewControlButton.bind(this)}/>
+                                     ComponentControlButton={this.ComponentPreviewControlButton()}/>
       } else {
         assign(props, {
           styleClass: 'condition',
-          controlButtonRender: this.ComponentPreviewControlButton.bind(this)
+          ComponentControlButton: this.ComponentPreviewControlButton()
         });
       }
     } else {  //edit view
       assign(props, {
         styleClass: 'condition edit',
-        controlButtonRender: this.ComponentEditControlButton.bind(this),
+        ComponentControlButton: this.ComponentEditControlButton(),
         ref: (e) => {
           this.editView = e;
         }
@@ -151,11 +153,19 @@ export default class CriteriaBase extends React.PureComponent {
                          criteria={this.state.criteria}/>
   };
 
-  getMainTitle() {
+  ComponentHeadline() {
+    return <h2>{this.headlineText()}</h2>
+  };
+
+  ComponentSideHead() {
+    return <h3>{this.subheadText()}</h3>;
+  };
+
+  headlineText() {
     return '';
   };
 
-  getSubTitle() {
+  subheadText() {
     return '';
   };
 

@@ -1,12 +1,12 @@
 import React  from 'react';
 import BodyLayout from './BodyLayout';
-import CustomTargetFilterWorker from './CustomTargetFilterWorker';
+import CustomTargetFilterPrimaryContent from './CustomTargetFilterPrimaryContent';
 import CustomTargetFilterIllustration from './CustomTargetFilterIllustration';
 
 export default class CustomTargetFilterHome extends BodyLayout {
 
   ContentComponent() {
-    return <CustomTargetFilterWorker params={this.params}/>
+    return <CustomTargetFilterPrimaryContent params={this.params}/>
   };
 
   SideBarComponent() {

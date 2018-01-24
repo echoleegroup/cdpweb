@@ -5,7 +5,7 @@ import {format} from 'util';
 import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
 import CustomFilterAction from '../actions/custom-filter-action';
 
-export default class CustomTargetFilterWorker extends React.PureComponent {
+export default class CustomTargetFilterPrimaryContent extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

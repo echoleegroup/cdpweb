@@ -12,7 +12,7 @@ export default class CustomTargetFilterCriteria extends CriteriaBase {
     super(props);
   };
 
-  getMainTitle() {
+  headlineText() {
     return '名單條件設定';
   };
 

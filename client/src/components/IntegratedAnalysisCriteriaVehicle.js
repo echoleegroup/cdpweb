@@ -7,7 +7,7 @@ export default class IntegratedAnalysisCriteriaVehicle extends IntegratedAnalysi
     super(props);
   };
 
-  getSubTitle() {
+  subheadText() {
     return '第二步 挑選車輛屬性資料';
   };
 

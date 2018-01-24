@@ -7,7 +7,7 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     super(props);
   };
 
-  getSubTitle() {
+  subheadText() {
     return '第一步 挑選顧客屬性資料';
   };
 

@@ -21,17 +21,20 @@ export default class CriteriaView extends React.PureComponent {
   };
 
   render() {
+    let ComponentHeadline = this.props.ComponentHeadline;
+    let ComponentSideHead = this.props.ComponentSideHead;
+    let ComponentControlButton = this.props.ComponentControlButton;
     /**
      * DO NOT user functional component, which would enforce unmount/re-mount the component
      */
     return (
       <div className="table_block">
-        {this.MainTitle()}
-        {this.SubTitle()}
+        {ComponentHeadline}
+        {ComponentSideHead}
         <div className={this.props.styleClass}>
           {this.CriteriaBody()}
         </div>
-        {this.props.controlButtonRender()}
+        {ComponentControlButton}
       </div>
     );
   };
@@ -56,21 +59,5 @@ export default class CriteriaView extends React.PureComponent {
         </div>
       </form>
     );
-  }
-
-  MainTitle() {
-    if (this.props.displayOptions.main_title) {
-      return <h2>{this.props.displayOptions.main_title}</h2>
-    } else {
-      return null;
-    }
-  }
-
-  SubTitle() {
-    if (this.props.displayOptions.sub_title) {
-      return <h3>{this.props.displayOptions.sub_title}</h3>
-    } else {
-      return null;
-    }
   }
 }
