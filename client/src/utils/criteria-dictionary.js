@@ -10,4 +10,13 @@ exports.OPERATOR_DICT = {
   ge: '>=',
   in: '無資料',
   nn: '有資料'
-}
+};
+
+exports.CRITERIA_COMPONENT_DICT = {
+  COMBO: 'combo',
+  BUNDLE: 'bundle',
+  TRANSACTION: 'refTransaction',
+  TAG: 'tag',
+  TRAIL: 'trail',
+  FIELD: 'field'
+};

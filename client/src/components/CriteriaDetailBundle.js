@@ -8,21 +8,19 @@ const OPERATOR_OPTIONS =  {
 };
 export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
-    super(props, {
-      type: 'refDetail',
-      OPERATOR_OPTIONS: OPERATOR_OPTIONS
-    });
-  }
+    super(props);
+    this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
+  };
+
+  componentWillMount() {
+    super.componentWillMount();
+  };
 
   componentWillUnmount() {
     console.log('CriteriaDetailBundle: componentWillUnmount', this.state);
     super.componentWillUnmount()
   };
-/*
-  render() {
-    return super.render();
-  }
-*/
+
   CriteriaHead() {
     return (
       <div className="head">
@@ -33,8 +31,6 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   };
 
   CriteriaHeadTail() {
-    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.props.folderDictionary);
-    // console.log('CriteriaDetailBundle::CriteriaHeadTail: ', this.state.ref);
     return (
       <div className="sub_conditon">
         指定參考：<span>點數明細</span>

@@ -7,8 +7,8 @@ export default class IntegratedAnalysisCriteriaBase extends CriteriaBase {
     return '查詢條件';
   };
 
-  getPickerProps(props, state) {
-    return assign(super.getPickerProps(props, state), {
+  getCriteriaAssignmentProps(props, state) {
+    return assign(super.getCriteriaAssignmentProps(props, state), {
       features: state.features,
       featureRefCodeMap: state.featureRefCodeMap
     });

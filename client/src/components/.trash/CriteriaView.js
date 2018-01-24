@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CriteriaComboBundleList from './CriteriaComboBundleList';
+import CriteriaComboBundleList from '../CriteriaComboBundleList';
 
 export default class CriteriaView extends React.PureComponent {
   constructor(props) {
@@ -46,7 +46,7 @@ export default class CriteriaView extends React.PureComponent {
       // refOptions: this.props.refOptions,
       // fieldDictionary: this.props.fieldDictionary,
       // folderDictionary: this.props.folderDictionary,
-      addCriteriaField: this.props.addCriteriaField
+      assignCriteria: this.props.assignCriteria
     };
     return (
       <form className="form-horizontal">

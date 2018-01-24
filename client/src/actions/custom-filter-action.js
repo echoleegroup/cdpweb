@@ -6,15 +6,10 @@ const CRITERIA_FEATURES_URL_TEST = '/api/target/%s/%s/criteria/features/test';
 const CRITERIA_HISTORY_URL = '/api/target/%s/%s/criteria/history';
 const FILTER_RESULT_PREVIEW = '/api/target/%s/%s/criteria/preview';
 const FILTER_RESULT_EXPORT = '/api/target/%s/%s/criteria/export';
-const FilterAction = {
-  CRITERIA_FEATURES_URL,
-  CRITERIA_HISTORY_URL,
-  FILTER_RESULT_PREVIEW,
-  FILTER_RESULT_EXPORT
-};
+const FilterAction = {};
 
 FilterAction.getCustomCriteriaFeatures = (mdId, batId, success, fail) => {
-  let url = format(CRITERIA_FEATURES_URL, mdId, batId);
+  let url = format(CRITERIA_FEATURES_URL_TEST, mdId, batId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {

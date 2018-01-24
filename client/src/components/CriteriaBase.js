@@ -2,9 +2,11 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign, reduce, isEmpty} from 'lodash';
 //import {nfcall, all} from 'q';
-import CriteriaSetter from './CriteriaAssignment';
-import CriteriaView from './CriteriaView';
-import CriteriaPreviewEmpty from './CriteriaPreviewEmpty';
+import CriteriaAssignment from './CriteriaAssignment';
+// import CriteriaView from './CriteriaView';
+import CriteriaComboBundleList from './CriteriaComboBundleList';
+import CriteriaContentContainer from "./CriteriaContentContainer";
+import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 //import CustomFilterAction from '../actions/criteria-action'
 //import {default as _test} from '../../test/preferred-criteria-test'
 
@@ -41,10 +43,10 @@ export default class CriteriaBase extends React.PureComponent {
     //inner properties definition
     this.toPreview = () => {
       let valid = this.validate();
-      if(valid) {
+      if (valid) {
         this.setState({
           isPreview: true,
-          criteria: this.editView.criteriaGathering()
+          criteria: this.criteriaWrapper.criteriaGathering()
         });
       }
     };
@@ -57,26 +59,12 @@ export default class CriteriaBase extends React.PureComponent {
 
     this.criteriaGathering = () => {
       let criteria = this.state.criteria;
-      if (this.editView) {  //edit mode
+      if (!this.state.isPreview) {  //edit mode
         //fetch all criteria tree
-        criteria = this.editView.criteriaGathering();
-        this.setState({criteria});
+        criteria = this.criteriaWrapper.criteriaGathering();
+        //this.setState({criteria});
       }
       return criteria;
-    };
-
-    //set init data
-    this.mapToProps = {
-      ComponentHeadline: this.ComponentHeadline(),
-      ComponentSideHead: this.ComponentSideHead(),
-      // displayOptions: {
-      //   main_title: this.getMainTitle(),
-      //   sub_title: this.getSubTitle()
-      // },
-      addCriteriaField: (callback) => {
-        // console.log('CriteriaBase::addCriteriaField');
-        this.fieldPicker.openModal(callback);
-      }
     };
 
     //init work
@@ -95,7 +83,7 @@ export default class CriteriaBase extends React.PureComponent {
     console.log('CriteriaBase::componentWillUnmount: ');
   };
 
-  getPickerProps(props, state) {
+  getCriteriaAssignmentProps(props, state) {
     return {
       mdId: props.params.mdId,
       batId: props.params.batId,
@@ -105,7 +93,7 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   render() {
-    let pickerProps = this.getPickerProps(this.props, this.state);
+    let assignmentProps = this.getCriteriaAssignmentProps(this.props, this.state);
     if (!this.state.isLoaded) {
       return (<Loader loaded={false}/>);
     } else {
@@ -113,8 +101,8 @@ export default class CriteriaBase extends React.PureComponent {
         <div>
           {this.ComponentContentView()}
           {/*<!-- 新增條件組合 -->*/}
-          <CriteriaSetter {...pickerProps} ref={(e) => {
-            this.fieldPicker = e;
+          <CriteriaAssignment {...assignmentProps} ref={(e) => {
+            this.criteriaAssignment = e;
           }}/>
         </div>
       );
@@ -125,32 +113,15 @@ export default class CriteriaBase extends React.PureComponent {
     if (!this.state.isLoaded)
       return null;
 
-    let props = {};
     if(this.state.isPreview) {
       if (isEmpty(this.state.criteria)) {
-        return <CriteriaPreviewEmpty {...this.mapToProps}
-                                     styleClass={'nocondition'}
-                                     ComponentControlButton={this.ComponentPreviewControlButton()}/>
+        return this.ComponentPreviewEmpty();
       } else {
-        assign(props, {
-          styleClass: 'condition',
-          ComponentControlButton: this.ComponentPreviewControlButton()
-        });
+        return this.ComponentPreviewContent();
       }
     } else {  //edit view
-      assign(props, {
-        styleClass: 'condition edit',
-        ComponentControlButton: this.ComponentEditControlButton(),
-        ref: (e) => {
-          this.editView = e;
-        }
-      });
+      return this.ComponentEditContent();
     }
-
-    return <CriteriaView {...this.mapToProps}
-                         {...props}
-                         isPreview={this.state.isPreview}
-                         criteria={this.state.criteria}/>
   };
 
   ComponentHeadline() {
@@ -167,6 +138,70 @@ export default class CriteriaBase extends React.PureComponent {
 
   subheadText() {
     return '';
+  };
+
+  ComponentContentBody() {
+    const assignCriteria = (callback) => {
+      // console.log('CriteriaBase::assignCriteria');
+      this.criteriaAssignment.openModal(callback);
+    };
+    return (
+      <form className="form-horizontal">
+        <div className="level form-inline">
+          <CriteriaComboBundleList
+            isPreview={this.state.isPreview}
+            criteria={this.state.criteria}
+            assignCriteria={assignCriteria}
+            bundle={CRITERIA_COMPONENT_DICT.BUNDLE}
+            ref={(e) => {
+              this.criteriaWrapper = e;
+            }}/>
+        </div>
+      </form>
+    );
+  };
+
+  ComponentPreviewEmpty() {
+    const Body = <p>無條件設定</p>;
+    let props = {
+      styleClass: 'nocondition',
+      ComponentHeadline: this.ComponentHeadline(),
+      ComponentSideHead: this.ComponentSideHead(),
+      ComponentCriteriaBody: Body,
+      ComponentControlButton: this.ComponentPreviewControlButton()
+    };
+
+    return <CriteriaContentContainer {...props}/>
+  };
+
+  ComponentEditContent() {
+    let props = {
+      styleClass: 'condition edit',
+      ComponentHeadline: this.ComponentHeadline(),
+      ComponentSideHead: this.ComponentSideHead(),
+      ComponentCriteriaBody: this.ComponentContentBody(),
+      ComponentControlButton: this.ComponentEditControlButton(),
+      assignCriteria: (callback) => {
+        // console.log('CriteriaBase::assignCriteria');
+        this.criteriaAssignment.openModal(callback);
+      }
+    };
+    return <CriteriaContentContainer {...props}/>
+  };
+
+  ComponentPreviewContent() {
+    let props = {
+      styleClass: 'condition',
+      ComponentHeadline: this.ComponentHeadline(),
+      ComponentSideHead: this.ComponentSideHead(),
+      ComponentCriteriaBody: this.ComponentContentBody(),
+      ComponentControlButton: this.ComponentPreviewControlButton(),
+      assignCriteria: (callback) => {
+        // console.log('CriteriaBase::assignCriteria');
+        this.criteriaAssignment.openModal(callback);
+      }
+    };
+    return <CriteriaContentContainer {...props}/>
   };
 
   ComponentPreviewControlButton() {

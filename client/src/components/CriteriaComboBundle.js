@@ -1,17 +1,30 @@
 import React from 'react';
+import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
 import CriteriaDetailBundle from './CriteriaDetailBundle';
+import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
-    super(props, {
-      type: 'combo'
-    });
+    super(props);
   }
+
+  getBundleProperties(criteria) {
+    // console.log('getBundleProperties:criteria: ', criteria);
+    return super.getBundleProperties(assign({}, criteria, {type: CRITERIA_COMPONENT_DICT.COMBO}))
+  };
 
   componentWillMount() {
     // console.log('CriteriaComboBundle::componentWillMount: ', this.state);
     super.componentWillMount();
+
+    this.assignCriteriaBundle = () => {
+      this.setState({
+        criteria: this.state.criteria.push(super.getBundleProperties({
+          type: this.props.bundle
+        }))
+      });
+    };
   };
 
   componentWillUpdate(nextProps, nextState) {
@@ -25,21 +38,21 @@ export default class CriteriaComboBundle extends CriteriaBundle {
 
   ChildCriteria(criteria, index) {
     switch(criteria.type) {
-      case 'combo':
+      case CRITERIA_COMPONENT_DICT.COMBO:
         return <CriteriaComboBundle key={criteria.uuid} {...this.props}
                                     criteria={criteria}
                                     index={index}
                                     removeCriteria={this.removeCriteria}
                                     collectCriteriaComponents={this.collectCriteriaComponents}
                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
-      case 'bundle':
+      case CRITERIA_COMPONENT_DICT.BUNDLE:
         return <CriteriaBundle key={criteria.uuid} {...this.props}
                                criteria={criteria}
                                index={index}
                                removeCriteria={this.removeCriteria}
                                collectCriteriaComponents={this.collectCriteriaComponents}
                                removeCriteriaComponents={this.removeCriteriaComponents}/>;
-      case 'refDetails':
+      case CRITERIA_COMPONENT_DICT.TRANSACTION:
         return <CriteriaDetailBundle key={criteria.uuid} {...this.props}
                                      criteria={criteria}
                                      index={index}
@@ -55,14 +68,12 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={() => {
-            this.props.addCriteriaField(this.setCriteria);
-          }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
-          <button type="button" className="btn btn-warning" onClick={() => {
-            this.setState({
-              criteria: this.state.criteria.push(this.getInitialState())
-            });
-          }}><i className="fa fa-plus" aria-hidden="true"/>加條件組合</button>
+          <button type="button" className="btn btn-warning" onClick={this.assignCriteria}>
+            <i className="fa fa-plus" aria-hidden="true"/>加條件
+          </button>
+          <button type="button" className="btn btn-warning" onClick={this.assignCriteriaBundle}>
+            <i className="fa fa-plus" aria-hidden="true"/>加條件組合
+          </button>
         </div>
       );
     }

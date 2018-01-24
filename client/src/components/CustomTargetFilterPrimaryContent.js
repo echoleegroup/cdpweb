@@ -61,6 +61,8 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
             }
           });
         });
+      } else {
+        window.alert('Please confirm your criteria before submit request.');
       }
     };
 
@@ -76,6 +78,8 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
 
         $(this.inputCriteria).val(JSON.stringify(criteria));
         $(this.formComponent).submit();
+      } else {
+        window.alert('Please confirm your criteria before submit request.');
       }
     };
 

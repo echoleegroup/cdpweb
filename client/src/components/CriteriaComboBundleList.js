@@ -1,7 +1,17 @@
 import React from 'react';
 import CriteriaComboBundle from './CriteriaComboBundle';
-import {reduce, isEmpty} from 'lodash';
+import {reduce, isEmpty, assign} from 'lodash';
 import shortid from 'shortid';
+import {List} from "immutable";
+
+const DEFAULT_BUNDLE_PROPS = {
+  uuid: shortid.generate()
+  //type: 'combo',  //combo, ref, field
+  //operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
+  //ref: null,
+  //ref_label: null,
+  //criteria: List()
+};
 
 export default class CriteriaComboBundleList extends React.PureComponent {
   constructor(props) {
@@ -30,7 +40,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
       // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering: ', this.criteriaComponents);
       return reduce(this.criteriaComponents, (collector, comp) => {
         let crite = comp.criteriaGathering(); //immutable map
-        // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
+        console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
         return isEmpty(crite)? collector: collector.concat(crite);
       }, []);
     };
@@ -44,6 +54,11 @@ export default class CriteriaComboBundleList extends React.PureComponent {
         };
       });
     };
+
+    this.getDefaultBundleProps = () => {
+      // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);
+      return assign({}, DEFAULT_BUNDLE_PROPS);
+    };
   }
 
   componentWillUnmount() {
@@ -51,24 +66,18 @@ export default class CriteriaComboBundleList extends React.PureComponent {
   };
 
   render() {
-    console.log('CriteriaComboBundleList:render::_criteria: ', this.props.criteria);
-    let criteria = isEmpty(this.props.criteria)? [{
-      uuid: shortid.generate()
-    }]: this.props.criteria;
+    let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;
+    // console.log('CriteriaComboBundleList:render::_criteria: ', criteria);
     return (
       <div>
         {criteria.map((_criteria, index) => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <CriteriaComboBundle {...this.props}
                                       key={_criteria.uuid}
+                                      bundle={this.props.bundle}
                                       criteria={_criteria}
                                       collectCriteriaComponents={this.collectCriteriaComponents}
-                                      removeCriteriaComponents={this.removeCriteriaComponents}
-                                      /*
-                                      ref={(e) => {
-                                        if(e) this.collectCriteriaComponents(_criteria.uuid, e);
-                                        else this.removeCriteriaComponents(_criteria.uuid);
-                                      }}*//>
+                                      removeCriteriaComponents={this.removeCriteriaComponents}/>
         })}
       </div>
     );

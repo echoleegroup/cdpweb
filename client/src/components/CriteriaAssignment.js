@@ -94,7 +94,7 @@ const INITIAL_CRITERIA = Object.freeze({
   operator: 'eq'  //for default value
 });
 
-export default class CriteriaSetter extends React.PureComponent {
+export default class CriteriaAssignment extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -109,7 +109,7 @@ export default class CriteriaSetter extends React.PureComponent {
 
   componentWillMount() {
     this.openModal = (callback) => {
-      // console.log('CriteriaSetter::openModal');
+      // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
       this.setState(prevState => ({
         isOpen: true,
@@ -136,7 +136,7 @@ export default class CriteriaSetter extends React.PureComponent {
         value: dataProcessor(data.value),
         value_label: data.value_label
       });
-      // console.log('CriteriaSetter::confirmCriteria: ', c);
+      // console.log('CriteriaAssignment::confirmCriteria: ', c);
       this.responseCriteria(c.toJSON());
       this.closeModal();
     };
@@ -212,7 +212,7 @@ export default class CriteriaSetter extends React.PureComponent {
   };
 
   CriteriaOperatorBlock(criteria) {
-    // console.log('CriteriaSetter::CriteriaOperatorBlock: ', criteria);
+    // console.log('CriteriaAssignment::CriteriaOperatorBlock: ', criteria);
     if (criteria.get('data_type')) {
       let dataType = criteria.get('data_type');
       let operatorSet = this.operatorSet = GetOperatorSet(dataType);

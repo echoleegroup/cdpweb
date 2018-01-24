@@ -92,13 +92,13 @@ module.exports = (app) => {
     let mdId = req.params.mdId;
     let batId = req.params.batId;
     let criteria = JSON.parse(req.body.criteria);
-    winston.info('/criteria/preview: criteria=%j', criteria);
+    winston.info('/criteria/export: criteria=%j', criteria);
     let isIncludeModelTarget = criteria.isIncludeModelTarget;
     let statements = criteria.statements;
 
-    winston.info('/criteria/preview: mdId=%s, batId=%s', mdId, batId);
-    winston.info('/criteria/preview: isIncludeModelTarget=%s', isIncludeModelTarget);
-    winston.info('/criteria/preview: statements=%j', statements);
+    winston.info('/criteria/export: mdId=%s, batId=%s', mdId, batId);
+    winston.info('/criteria/export: isIncludeModelTarget=%s', isIncludeModelTarget);
+    winston.info('/criteria/export: statements=%j', statements);
 
     Q.all([
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
@@ -111,7 +111,7 @@ module.exports = (app) => {
         downloadFeatureIds.push(feature.featID);
         downloadFeatureLabels.push(feature.featName);
       });
-      // winston.info('/%s/%s/criteria/preview :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
+      // winston.info('/%s/%s/criteria/export :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
       return [
         model,
         downloadFeatureIds,

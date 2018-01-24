@@ -3,6 +3,7 @@ import {List} from 'immutable';
 import {isEmpty, reduce, assign} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
+import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 
 const OPERATOR_OPTIONS = {
   and: '全部',
@@ -10,30 +11,22 @@ const OPERATOR_OPTIONS = {
 };
 
 export default class CriteriaBundle extends React.PureComponent {
-  constructor(props, options) {
+  constructor(props) {
     super(props);
-    this.OPERATOR_OPTIONS = options.OPERATOR_OPTIONS || OPERATOR_OPTIONS;
-    this.state = this.getInitialState(options, props.criteria);
+    this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
+    this.state = this.getBundleProperties(props.criteria);
   };
 
-  getInitialState(options = {}, injection = {}) {
-    // console.log('CriteriaBundle::getInitialState::injection.criteria: ', injection);
-    const state = {
-      type: 'bundle',  //combo, ref, field
-      operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
-      ref: null,
-      ref_label: null,
-      criteria: List()
+  getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
+    // console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, criteria=%s)', uuid, type, operator, criteria);
+    return {
+      uuid: uuid || shortid.generate(),
+      type: type || CRITERIA_COMPONENT_DICT.BUNDLE, //combo, ref, field
+      operator: operator || 'and',   //and, or, eq, ne, lt, le, gt, ge, not
+      ref: ref || null,
+      ref_label: ref_label || null,
+      criteria: List(criteria)
     };
-
-    return assign({}, state, {
-      uuid: injection.uuid || shortid.generate(),
-      type: injection.type || options.type || state.type,
-      operator: injection.operator || options.operator || state.operator,
-      ref: injection.ref || options.ref || state.ref,
-      ref_label: injection.ref_label || options.ref_label || state.ref_label,
-      criteria: state.criteria.concat(options.criteria || [], injection.criteria || [])
-    });
   };
 
   componentWillMount() {
@@ -60,7 +53,9 @@ export default class CriteriaBundle extends React.PureComponent {
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.criteriaGathering(); //immutable Map
         // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
-        return isEmpty(crite)? collector: collector.push(crite);
+        if (!isEmpty(crite))
+          collector.push(crite);
+        return collector
       }, []);
 
       // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
@@ -69,8 +64,12 @@ export default class CriteriaBundle extends React.PureComponent {
       });
     };
 
-    this.setCriteria = (criteria) => {
-      console.log('CriteriaBundle:setCriteria: ', criteria);
+    this.assignCriteria = () => {
+      this.props.assignCriteria(this.insertCriteria);
+    };
+
+    this.insertCriteria = (criteria) => {
+      console.log('CriteriaBundle:insertCriteria: ', criteria);
       this.setState((prevState) => {
         return {
           criteria: prevState.criteria.push(criteria)
@@ -159,7 +158,7 @@ export default class CriteriaBundle extends React.PureComponent {
   ChildCriteria(criteria, index) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
     switch(criteria.type) {
-      case 'field':
+      case CRITERIA_COMPONENT_DICT.FIELD:
         return <CriteriaField key={criteria.uuid} {...this.props}
                               criteria={criteria}
                               index={index}
@@ -175,9 +174,9 @@ export default class CriteriaBundle extends React.PureComponent {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={() => {
-            this.props.addCriteriaField(this.setCriteria);
-          }}><i className="fa fa-plus" aria-hidden="true"/>加條件</button>
+          <button type="button" className="btn btn-warning" onClick={this.assignCriteria}>
+            <i className="fa fa-plus" aria-hidden="true"/>加條件
+          </button>
         </div>
       );
     }
