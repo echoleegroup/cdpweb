@@ -4,9 +4,9 @@ import {assign, reduce, isEmpty} from 'lodash';
 //import {nfcall, all} from 'q';
 import CriteriaAssignment from './CriteriaAssignment';
 // import CriteriaView from './CriteriaView';
+import CriteriaComboBundle from './CriteriaComboBundle';
 import CriteriaComboBundleList from './CriteriaComboBundleList';
 import CriteriaContentContainer from "./CriteriaContentContainer";
-import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 //import CustomFilterAction from '../actions/criteria-action'
 //import {default as _test} from '../../test/preferred-criteria-test'
 
@@ -145,6 +145,7 @@ export default class CriteriaBase extends React.PureComponent {
       // console.log('CriteriaBase::assignCriteria');
       this.criteriaAssignment.openModal(callback);
     };
+
     return (
       <form className="form-horizontal">
         <div className="level form-inline">
@@ -152,7 +153,7 @@ export default class CriteriaBase extends React.PureComponent {
             isPreview={this.state.isPreview}
             criteria={this.state.criteria}
             assignCriteria={assignCriteria}
-            bundle={CRITERIA_COMPONENT_DICT.BUNDLE}
+            ComponentCriteriaBundleContainer={CriteriaComboBundle}
             ref={(e) => {
               this.criteriaWrapper = e;
             }}/>

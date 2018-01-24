@@ -14,6 +14,10 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     return super.getBundleProperties(assign({}, criteria, {type: CRITERIA_COMPONENT_DICT.COMBO}))
   };
 
+  getAssignCriteriaBundleType() {
+    return CRITERIA_COMPONENT_DICT.BUNDLE
+  };
+
   componentWillMount() {
     // console.log('CriteriaComboBundle::componentWillMount: ', this.state);
     super.componentWillMount();
@@ -21,7 +25,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     this.assignCriteriaBundle = () => {
       this.setState({
         criteria: this.state.criteria.push(super.getBundleProperties({
-          type: this.props.bundle
+          type: this.getAssignCriteriaBundleType()
         }))
       });
     };

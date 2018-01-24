@@ -1,8 +1,8 @@
 import React from 'react';
-import CriteriaComboBundle from './CriteriaComboBundle';
+// import CriteriaComboBundle from './CriteriaComboBundle';
 import {reduce, isEmpty, assign} from 'lodash';
 import shortid from 'shortid';
-import {List} from "immutable";
+// import {List} from "immutable";
 
 const DEFAULT_BUNDLE_PROPS = {
   uuid: shortid.generate()
@@ -67,12 +67,13 @@ export default class CriteriaComboBundleList extends React.PureComponent {
 
   render() {
     let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;
+    let ComponentCriteriaBundleContainer = this.props.ComponentCriteriaBundleContainer;
     // console.log('CriteriaComboBundleList:render::_criteria: ', criteria);
     return (
       <div>
         {criteria.map((_criteria, index) => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
-          return <CriteriaComboBundle {...this.props}
+          return <ComponentCriteriaBundleContainer {...this.props}
                                       key={_criteria.uuid}
                                       bundle={this.props.bundle}
                                       criteria={_criteria}
