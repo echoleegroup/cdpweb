@@ -5,7 +5,7 @@ import CriteriaComboBundle from './CriteriaComboBundle';
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
-import IntegratedAnalysisFeatureSetPicker from "./IntegratedAnalysisFeatureSetPicker";
+import IntegratedAnalysisFeatureSetPicker from "./CriteriaTransactionSetPicker";
 
 export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAnalysisCriteriaBase {
 
@@ -65,7 +65,7 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
       console.log(`get setID=${setId} and label=${setLabel}`);
       let criteriaType = this.getInsertCriteriaBundleType();
       console.log(`toPickCriteriaBundle: ${criteriaType}`);
-      let newCriteria = super.getBundleProperties({
+      let newCriteria = this.getBundleProperties({
         type: this.getInsertCriteriaBundleType(),
         ref: setId,
         ref_label: setLabel

@@ -1,5 +1,6 @@
 import React from 'react';
 import CriteriaBundle from './CriteriaBundle';
+import CriteriaAssignment from './CriteriaAssignment';
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
@@ -37,13 +38,18 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
       </div>
     );
   };
-/*
-  ChildCriteria(criteria, index) {
-    return super.ChildCriteria(criteria, index);
-  };
 
-  ComponentButtonInsertCriteria() {
-    return super.ComponentButtonInsertCriteria();
+  ComponentCustomized() {
+    let mapTpprops = {
+      // mdId: props.params.mdId,
+      // batId: props.params.batId,
+      features: this.state.features || [],
+      featureRefCodeMap: this.state.featureRefCodeMap || {}
+    };
+    return (
+      <CriteriaAssignment {...mapTpprops} ref={(e) => {
+        this.criteriaAssignmentModal = e;
+      }}/>
+    );
   };
-  */
 };

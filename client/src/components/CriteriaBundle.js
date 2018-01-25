@@ -107,9 +107,14 @@ export default class CriteriaBundle extends React.PureComponent {
         {/*<!-- 第二層 -->*/}
         {this.ComponentChildCriteriaBlock()}
         {this.ComponentButtonInsertCriteria()}
+        {this.ComponentCustomized()}
       </div>
     );
   }
+
+  ComponentCustomized() {
+    return (<div/>);
+  };
 
   ComponentCriteriaBody() {
     // console.log('CriteriaBundle::ComponentCriteriaBody');

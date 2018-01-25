@@ -9,13 +9,13 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     super(props);
   }
 
-  getBundleProperties(criteria) {
-    console.log('getBundleProperties:criteria: ', criteria);
-    return super.getBundleProperties(assign({}, {type: CRITERIA_COMPONENT_DICT.COMBO}, criteria));
-  };
+  // getBundleProperties(criteria) {
+  //   console.log('getBundleProperties:criteria: ', criteria);
+  //   return super.getBundleProperties(assign({}, {type: CRITERIA_COMPONENT_DICT.COMBO}, criteria));
+  // };
 
   getInsertCriteriaBundleType() {
-    console.log('getInsertCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.BUNDLE);
+    // console.log('getInsertCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.BUNDLE);
     return CRITERIA_COMPONENT_DICT.BUNDLE
   };
 
@@ -65,7 +65,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   toInsertCriteriaBundle() {
     // console.log('toInsertCriteriaBundle: ', this.state.criteria.toJS());
     this.setState({
-      criteria: this.state.criteria.push(super.getBundleProperties({
+      criteria: this.state.criteria.push(this.getBundleProperties({
         type: this.getInsertCriteriaBundleType()
       }))
     });
