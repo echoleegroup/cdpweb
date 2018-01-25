@@ -175,6 +175,7 @@ export default class CriteriaAssignment extends React.PureComponent {
   // };
 
   render() {
+    console.log('this.props.features: ', this.props.features);
     let display = (this.state.isOpen)? '': 'none';
     return (
       <div className="modal" style={{display: display}}>
@@ -184,7 +185,7 @@ export default class CriteriaAssignment extends React.PureComponent {
             <div className="row">
               <div className="col-md-6">
                 <h3>挑選欄位條件</h3>
-                <Picker nodes={this.props.treeNodes}
+                <Picker nodes={this.props.features}
                         branchClickHandler={this.branchClickHandler}
                         tailClickHandler={this.tailClickHandler}/>
               </div>

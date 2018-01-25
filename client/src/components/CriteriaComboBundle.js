@@ -21,14 +21,6 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   componentWillMount() {
     // console.log('CriteriaComboBundle::componentWillMount: ', this.state);
     super.componentWillMount();
-
-    this.assignCriteriaBundle = () => {
-      this.setState({
-        criteria: this.state.criteria.push(super.getBundleProperties({
-          type: this.getAssignCriteriaBundleType()
-        }))
-      });
-    };
   };
 
   componentWillUpdate(nextProps, nextState) {
@@ -68,14 +60,22 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     }
   };
 
-  ControlButton() {
+  assignCriteriaBundle() {
+    this.setState({
+      criteria: this.state.criteria.push(super.getBundleProperties({
+        type: this.getAssignCriteriaBundleType()
+      }))
+    });
+  };
+
+  ComponentButtonInsertCriteria() {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
           <button type="button" className="btn btn-warning" onClick={this.assignCriteria}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
-          <button type="button" className="btn btn-warning" onClick={this.assignCriteriaBundle}>
+          <button type="button" className="btn btn-warning" onClick={this.assignCriteriaBundle.bind(this)}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件組合
           </button>
         </div>

@@ -1,7 +1,8 @@
 import React from 'react';
-import CriteriaTransactionBundle from './CriteriaTransactionBundle';
+import CriteriaComboBundle from './CriteriaComboBundle';
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
+import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
 export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAnalysisCriteriaBase {
 
@@ -10,6 +11,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
   };
 
   dataPreparing(props, _this, callback) {
+    // IntegratedAnalysisAction.getVehicleCriteriaFeatures(callback);
     IntegratedAnalysisAction.getTransactionFeatureSets(data => {
       callback({
         transactionSets: data
@@ -17,13 +19,29 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
     });
   };
 
-  getCriteriaAssignmentProps(props, state) {
-    return {
-      treeNodes: state.transactionSets
-    };
-  };
+  // getCriteriaAssignmentProps(props, state) {
+  //   return {
+  //     transactionSets: state.transactionSets || []
+  //   };
+  // };
 
   ComponentCriteriaBundleContainer(props) {
-    return <CriteriaTransactionBundle {...props}/>
+    return <CriteriaTransactionComboBundle {...props}/>
   };
 };
+
+class CriteriaTransactionComboBundle extends CriteriaComboBundle {
+  getAssignCriteriaBundleType() {
+    return CRITERIA_COMPONENT_DICT.TRANSACTION
+  };
+
+  assignCriteriaBundle() {
+    //TODO: open feature set picker
+    //TODO: get criteria feature by setId
+    // this.setState({
+    //   criteria: this.state.criteria.push(super.getBundleProperties({
+    //     type: this.getAssignCriteriaBundleType()
+    //   }))
+    // });
+  };
+}

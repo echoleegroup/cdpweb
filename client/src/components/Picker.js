@@ -58,6 +58,7 @@ const NODE_TYPE = {
 };
 
 const Tree = (props) => {
+  console.log('Tree nodes: ', props.nodes);
   return <ul>
     {props.nodes.map(node => {
       return <Node key={node.id}

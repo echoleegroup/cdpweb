@@ -50,7 +50,7 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
         <Loader loaded={this.state.isLoaded}>
           <div className="table_block">
             <h2>挑選指定明細資訊</h2>
-            <Picker nodes={this.props.treeNodes}
+            <Picker nodes={this.props.features}
                     branchClickHandler={this.branchClickHandler}
                     tailClickHandler={this.tailClickHandler}/>
             <div className="btn-block center-block">

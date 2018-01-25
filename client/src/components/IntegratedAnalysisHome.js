@@ -7,7 +7,7 @@ import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaT
 import IntegratedAnalysisCriteriaTag from "./IntegratedAnalysisCriteriaTag";
 import IntegratedAnalysisCriteriaTrail from "./IntegratedAnalysisCriteriaTrail";
 import IntegratedAnalysisCriteriaPreview from "./IntegratedAnalysisCriteriaPreview";
-import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisFeaturePicker";
+import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisOutputFeaturePicker";
 
 const STEP = Object.freeze({
   step1: 'client',

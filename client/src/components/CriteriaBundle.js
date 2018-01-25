@@ -103,25 +103,25 @@ export default class CriteriaBundle extends React.PureComponent {
     return (
       <div>
         {/*<!-- head -->*/}
-        {this.CriteriaHead()}
+        {this.ComponentCriteriaBody()}
         {/*<!-- 第二層 -->*/}
-        {this.ChildCriteriaBlock()}
-        {this.ControlButton()}
+        {this.ComponentChildCriteriaBlock()}
+        {this.ComponentButtonInsertCriteria()}
       </div>
     );
   }
 
-  CriteriaHead() {
-    // console.log('CriteriaBundle::CriteriaHead');
+  ComponentCriteriaBody() {
+    // console.log('CriteriaBundle::ComponentCriteriaBody');
     return (
       <div className="head">
         以下條件{this.CriteriaOperatorSelector()}符合
-        {this.CriteriaHeadTail()}
+        {this.ComponentCriteriaBodyTail()}
       </div>
     );
   };
 
-  CriteriaHeadTail() {
+  ComponentCriteriaBodyTail() {
     return null;
   };
 
@@ -145,17 +145,17 @@ export default class CriteriaBundle extends React.PureComponent {
     );
   };
 
-  ChildCriteriaBlock() {
+  ComponentChildCriteriaBlock() {
     return (
       <div className="level form-inline">
         {this.state.criteria.map((_criteria, index) => {
-          return this.ChildCriteria(_criteria, index);
+          return this.ComponentChildCriteria(_criteria, index);
         })}
       </div>
     );
   };
 
-  ChildCriteria(criteria, index) {
+  ComponentChildCriteria(criteria, index) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.FIELD:
@@ -170,7 +170,7 @@ export default class CriteriaBundle extends React.PureComponent {
     }
   };
 
-  ControlButton() {
+  ComponentButtonInsertCriteria() {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}

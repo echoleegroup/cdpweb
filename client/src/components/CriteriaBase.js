@@ -67,6 +67,15 @@ export default class CriteriaBase extends React.PureComponent {
       return criteria;
     };
 
+    this.getCriteriaAssignmentProps = (props, state) => {
+      return {
+        mdId: props.params.mdId,
+        batId: props.params.batId,
+        features: state.features || [],
+        featureRefCodeMap: state.featureRefCodeMap || {}
+      };
+    };
+
     //init work
     this.dataPreparing(this.props, this, (data) => {
       this.setState(assign({
@@ -83,17 +92,7 @@ export default class CriteriaBase extends React.PureComponent {
     console.log('CriteriaBase::componentWillUnmount: ');
   };
 
-  getCriteriaAssignmentProps(props, state) {
-    return {
-      mdId: props.params.mdId,
-      batId: props.params.batId,
-      treeNodes: state.treeNodes,
-      nodeRefCodeMap: state.nodeRefCodeMap
-    };
-  };
-
   render() {
-    let assignmentProps = this.getCriteriaAssignmentProps(this.props, this.state);
     if (!this.state.isLoaded) {
       return (<Loader loaded={false}/>);
     } else {
@@ -101,12 +100,19 @@ export default class CriteriaBase extends React.PureComponent {
         <div>
           {this.ComponentContentView()}
           {/*<!-- 新增條件組合 -->*/}
-          <CriteriaAssignment {...assignmentProps} ref={(e) => {
-            this.criteriaAssignment = e;
-          }}/>
+          {this.ComponentModals()}
         </div>
       );
     }
+  };
+
+  ComponentModals() {
+    let assignmentProps = this.getCriteriaAssignmentProps(this.props, this.state);
+    return (
+      <CriteriaAssignment {...assignmentProps} ref={(e) => {
+        this.criteriaAssignment = e;
+      }}/>
+    );
   };
 
   ComponentContentView() {

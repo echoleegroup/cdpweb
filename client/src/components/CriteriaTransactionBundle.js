@@ -21,16 +21,16 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
     super.componentWillUnmount()
   };
 
-  CriteriaHead() {
+  ComponentCriteriaBody() {
     return (
       <div className="head">
         以下條件的明細記錄{this.CriteriaOperatorSelector()}符合
-        {this.CriteriaHeadTail()}
+        {this.ComponentCriteriaBodyTail()}
       </div>
     );
   };
 
-  CriteriaHeadTail() {
+  ComponentCriteriaBodyTail() {
     return (
       <div className="sub_conditon">
         指定參考：<span>點數明細</span>
@@ -42,8 +42,8 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
     return super.ChildCriteria(criteria, index);
   };
 
-  ControlButton() {
-    return super.ControlButton();
+  ComponentButtonInsertCriteria() {
+    return super.ComponentButtonInsertCriteria();
   };
   */
 };
