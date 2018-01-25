@@ -1,4 +1,5 @@
 import React from 'react';
+import CriteriaTransactionBundle from './CriteriaTransactionBundle';
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 
@@ -9,6 +10,20 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
   };
 
   dataPreparing(props, _this, callback) {
-    IntegratedAnalysisAction.getTransactionCriteriaFeatures(callback);
+    IntegratedAnalysisAction.getTransactionFeatureSets(data => {
+      callback({
+        transactionSets: data
+      });
+    });
+  };
+
+  getCriteriaAssignmentProps(props, state) {
+    return {
+      treeNodes: state.transactionSets
+    };
+  };
+
+  ComponentCriteriaBundleContainer(props) {
+    return <CriteriaTransactionBundle {...props}/>
   };
 };

@@ -10,12 +10,15 @@ const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
 const codeGroupService = require('../../services/code-group-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
+const integratedHelper = require('../../helpers/integrated-analysis-helper');
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 const CLIENT_CRITERIA_FEATURE_SET_ID = 'COMMCUST';
 const VEHICLE_CRITERIA_FEATURE_SET_ID = 'COMMCAR';
 
 const INTEGRATION_ANALYSIS_TREE_ID = 'COMM';
+
+const TRANSACTION_SET_ID = 'COMMTARGETSET';
 
 const criteriaFeaturePromise = (setId, treeId) => {
   return Q.all([
@@ -67,6 +70,18 @@ module.exports = (app) => {
       res.json(resSet);
     }).fail(err => {
       winston.error('===/transaction/criteria/features/%s internal server error: ', setId, err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/transaction/feature/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, TRANSACTION_SET_ID).then(resSet => {
+      winston.info('/transaction/feature/sets  getFeatureSets: %j', resSet);
+      let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
+      winston.info('/transaction/feature/sets  featureSetsToTreeNodes: ', nodes);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/transaction/feature/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });

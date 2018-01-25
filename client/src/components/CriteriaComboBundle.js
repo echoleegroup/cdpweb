@@ -1,7 +1,7 @@
 import React from 'react';
 import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
-import CriteriaDetailBundle from './CriteriaDetailBundle';
+import CriteriaDetailBundle from './CriteriaTransactionBundle';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 
 export default class CriteriaComboBundle extends CriteriaBundle {

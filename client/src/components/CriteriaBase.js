@@ -87,8 +87,8 @@ export default class CriteriaBase extends React.PureComponent {
     return {
       mdId: props.params.mdId,
       batId: props.params.batId,
-      features: [],
-      featureRefCodeMap: {}
+      treeNodes: state.treeNodes,
+      nodeRefCodeMap: state.nodeRefCodeMap
     };
   };
 
@@ -153,12 +153,18 @@ export default class CriteriaBase extends React.PureComponent {
             isPreview={this.state.isPreview}
             criteria={this.state.criteria}
             assignCriteria={assignCriteria}
-            ComponentCriteriaBundleContainer={CriteriaComboBundle}
+            ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer}
             ref={(e) => {
               this.criteriaWrapper = e;
             }}/>
         </div>
       </form>
+    );
+  };
+
+  ComponentCriteriaBundleContainer(props) {
+    return (
+      <CriteriaComboBundle {...props}/>
     );
   };
 

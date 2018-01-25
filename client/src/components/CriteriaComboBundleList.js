@@ -75,7 +75,6 @@ export default class CriteriaComboBundleList extends React.PureComponent {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <ComponentCriteriaBundleContainer {...this.props}
                                       key={_criteria.uuid}
-                                      bundle={this.props.bundle}
                                       criteria={_criteria}
                                       collectCriteriaComponents={this.collectCriteriaComponents}
                                       removeCriteriaComponents={this.removeCriteriaComponents}/>

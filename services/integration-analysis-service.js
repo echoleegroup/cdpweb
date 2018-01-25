@@ -37,3 +37,19 @@ module.exports.getCriteriaFeatureTree = (treeId, callback) => {
     callback(err);
   });
 };
+
+module.exports.getFeatureSets = (transSetId, callback) => {
+  const sql = 'SELECT transFeatSetID, transFeatSetName ' +
+    'FROM cd_TransFeatSet ' +
+    'WHERE transSetID = @transSetID';
+
+  Q.nfcall(_connector
+    .queryRequest()
+    .setInput('transSetID', _connector.TYPES.NVarChar, transSetId)
+    .executeQuery, sql).then((result) => {
+    callback(null, result);
+  }).fail((err) => {
+    winston.error('===integrated-analysis-service::getFeatureSets(transSetId=%s) failed: %j', transSetId, err);
+    callback(err);
+  });
+};

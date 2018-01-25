@@ -10,8 +10,11 @@ const FilterAction = {};
 
 FilterAction.getCustomCriteriaFeatures = (mdId, batId, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL_TEST, mdId, batId);
-  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
-    success && success(data);
+  action.ajaxGetObservable(url, undefined, undefined).subscribe(({features, featureRefCodeMap}) => {
+    success && success({
+      treeNodes: features,
+      nodeRefCodeMap: featureRefCodeMap
+    });
   }, err => {
     console.log('===getCustomCriteriaFeatures failed: ', err);
     fail && fail(err);

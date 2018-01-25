@@ -184,7 +184,7 @@ export default class CriteriaAssignment extends React.PureComponent {
             <div className="row">
               <div className="col-md-6">
                 <h3>挑選欄位條件</h3>
-                <Picker nodes={this.props.features}
+                <Picker nodes={this.props.treeNodes}
                         branchClickHandler={this.branchClickHandler}
                         tailClickHandler={this.tailClickHandler}/>
               </div>
@@ -200,12 +200,7 @@ export default class CriteriaAssignment extends React.PureComponent {
               <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
             </div>
           </div>
-          <div className="overlay" onClick={() => {
-            this.setState({
-              isOpen: false
-            });
-            $('body').removeClass('noscroll');
-          }}/>
+          <div className="overlay" onClick={this.closeModal}/>
         </Loader>
       </div>
     );
@@ -268,7 +263,7 @@ export default class CriteriaAssignment extends React.PureComponent {
           this.fieldInput = e;
         }}/>;
       case 'refOption':
-        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
+        return <RefOptionInput criteria={criteria} refOptions={this.props.nodeRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
           this.fieldInput = e;
         }}/>;
     }
