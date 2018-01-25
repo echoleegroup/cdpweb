@@ -33,7 +33,7 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   ComponentCriteriaBodyTail() {
     return (
       <div className="sub_conditon">
-        指定參考：<span>點數明細</span>
+        指定參考：<span>{this.state.ref_label}</span>
       </div>
     );
   };

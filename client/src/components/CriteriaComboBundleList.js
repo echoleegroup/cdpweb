@@ -74,10 +74,10 @@ export default class CriteriaComboBundleList extends React.PureComponent {
         {criteria.map((_criteria, index) => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <ComponentCriteriaBundleContainer {...this.props}
-                                      key={_criteria.uuid}
-                                      criteria={_criteria}
-                                      collectCriteriaComponents={this.collectCriteriaComponents}
-                                      removeCriteriaComponents={this.removeCriteriaComponents}/>
+                                                   key={_criteria.uuid}
+                                                   criteria={_criteria}
+                                                   collectCriteriaComponents={this.collectCriteriaComponents}
+                                                   removeCriteriaComponents={this.removeCriteriaComponents}/>
         })}
       </div>
     );

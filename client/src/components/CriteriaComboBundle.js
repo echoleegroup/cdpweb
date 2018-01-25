@@ -10,11 +10,12 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   }
 
   getBundleProperties(criteria) {
-    // console.log('getBundleProperties:criteria: ', criteria);
-    return super.getBundleProperties(assign({}, criteria, {type: CRITERIA_COMPONENT_DICT.COMBO}))
+    console.log('getBundleProperties:criteria: ', criteria);
+    return super.getBundleProperties(assign({}, {type: CRITERIA_COMPONENT_DICT.COMBO}, criteria));
   };
 
-  getAssignCriteriaBundleType() {
+  getInsertCriteriaBundleType() {
+    console.log('getInsertCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.BUNDLE);
     return CRITERIA_COMPONENT_DICT.BUNDLE
   };
 
@@ -24,15 +25,16 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   };
 
   componentWillUpdate(nextProps, nextState) {
-    // console.log('CriteriaBundle: componentWillUpdate: ', nextState);
+    console.log('CriteriaBundle: componentWillUpdate: ', nextState.criteria.toJS());
   };
 
   componentWillUnmount() {
-    console.log('CriteriaComboBundle: componentWillUnmount', this.state);
+    // console.log('CriteriaComboBundle: componentWillUnmount', this.state);
     super.componentWillUnmount();
   };
 
-  ChildCriteria(criteria, index) {
+  ComponentChildCriteria(criteria, index) {
+    console.log('ComponentChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.COMBO:
         return <CriteriaComboBundle key={criteria.uuid} {...this.props}
@@ -56,14 +58,15 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                      collectCriteriaComponents={this.collectCriteriaComponents}
                                      removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
-        return super.ChildCriteria(criteria, index);
+        return super.ComponentChildCriteria(criteria, index);
     }
   };
 
-  assignCriteriaBundle() {
+  toInsertCriteriaBundle() {
+    // console.log('toInsertCriteriaBundle: ', this.state.criteria.toJS());
     this.setState({
       criteria: this.state.criteria.push(super.getBundleProperties({
-        type: this.getAssignCriteriaBundleType()
+        type: this.getInsertCriteriaBundleType()
       }))
     });
   };
@@ -72,10 +75,10 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.assignCriteria}>
+          <button type="button" className="btn btn-warning" onClick={this.toAssignCriteria}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
-          <button type="button" className="btn btn-warning" onClick={this.assignCriteriaBundle.bind(this)}>
+          <button type="button" className="btn btn-warning" onClick={this.toInsertCriteriaBundle.bind(this)}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件組合
           </button>
         </div>

@@ -57,6 +57,12 @@ export default class CriteriaBase extends React.PureComponent {
       });
     };
 
+    this.toLoad = () => {
+      this.setState({
+        isLoaded: false
+      });
+    };
+
     this.criteriaGathering = () => {
       let criteria = this.state.criteria;
       if (!this.state.isPreview) {  //edit mode
@@ -65,15 +71,6 @@ export default class CriteriaBase extends React.PureComponent {
         //this.setState({criteria});
       }
       return criteria;
-    };
-
-    this.getCriteriaAssignmentProps = (props, state) => {
-      return {
-        mdId: props.params.mdId,
-        batId: props.params.batId,
-        features: state.features || [],
-        featureRefCodeMap: state.featureRefCodeMap || {}
-      };
     };
 
     //init work
@@ -107,10 +104,15 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   ComponentModals() {
-    let assignmentProps = this.getCriteriaAssignmentProps(this.props, this.state);
+    let mapTpprops = {
+      // mdId: props.params.mdId,
+      // batId: props.params.batId,
+      features: this.state.features || [],
+      featureRefCodeMap: this.state.featureRefCodeMap || {}
+    };
     return (
-      <CriteriaAssignment {...assignmentProps} ref={(e) => {
-        this.criteriaAssignment = e;
+      <CriteriaAssignment {...mapTpprops} ref={(e) => {
+        this.criteriaAssignmentModal = e;
       }}/>
     );
   };
@@ -148,8 +150,8 @@ export default class CriteriaBase extends React.PureComponent {
 
   ComponentContentBody() {
     const assignCriteria = (callback) => {
-      // console.log('CriteriaBase::assignCriteria');
-      this.criteriaAssignment.openModal(callback);
+      console.log('CriteriaBase::assignCriteria');
+      this.criteriaAssignmentModal.openModal(callback);
     };
 
     return (
@@ -159,7 +161,7 @@ export default class CriteriaBase extends React.PureComponent {
             isPreview={this.state.isPreview}
             criteria={this.state.criteria}
             assignCriteria={assignCriteria}
-            ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer}
+            ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
             ref={(e) => {
               this.criteriaWrapper = e;
             }}/>
@@ -168,10 +170,8 @@ export default class CriteriaBase extends React.PureComponent {
     );
   };
 
-  ComponentCriteriaBundleContainer(props) {
-    return (
-      <CriteriaComboBundle {...props}/>
-    );
+  ComponentCriteriaBundleContainer() {
+    return CriteriaComboBundle;
   };
 
   ComponentPreviewEmpty() {
@@ -194,10 +194,6 @@ export default class CriteriaBase extends React.PureComponent {
       ComponentSideHead: this.ComponentSideHead(),
       ComponentCriteriaBody: this.ComponentContentBody(),
       ComponentControlButton: this.ComponentEditControlButton(),
-      assignCriteria: (callback) => {
-        // console.log('CriteriaBase::assignCriteria');
-        this.criteriaAssignment.openModal(callback);
-      }
     };
     return <CriteriaContentContainer {...props}/>
   };
@@ -208,11 +204,7 @@ export default class CriteriaBase extends React.PureComponent {
       ComponentHeadline: this.ComponentHeadline(),
       ComponentSideHead: this.ComponentSideHead(),
       ComponentCriteriaBody: this.ComponentContentBody(),
-      ComponentControlButton: this.ComponentPreviewControlButton(),
-      assignCriteria: (callback) => {
-        // console.log('CriteriaBase::assignCriteria');
-        this.criteriaAssignment.openModal(callback);
-      }
+      ComponentControlButton: this.ComponentPreviewControlButton()
     };
     return <CriteriaContentContainer {...props}/>
   };

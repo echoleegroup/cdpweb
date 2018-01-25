@@ -64,13 +64,13 @@ export default class CriteriaBundle extends React.PureComponent {
       });
     };
 
-    this.assignCriteria = () => {
-      this.props.assignCriteria(this.insertCriteria);
+    this.toAssignCriteria = () => {
+      this.props.assignCriteria(this.insertCriteriaState);
     };
 
-    this.insertCriteria = (criteria) => {
+    this.insertCriteriaState = (criteria) => {
       console.log('CriteriaBundle:insertCriteria: ', criteria);
-      this.setState((prevState) => {
+      this.setState(prevState => {
         return {
           criteria: prevState.criteria.push(criteria)
         };
@@ -174,7 +174,7 @@ export default class CriteriaBundle extends React.PureComponent {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.assignCriteria}>
+          <button type="button" className="btn btn-warning" onClick={this.toAssignCriteria}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
         </div>

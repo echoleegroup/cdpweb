@@ -7,13 +7,6 @@ export default class IntegratedAnalysisCriteriaBase extends CriteriaBase {
     return '查詢條件';
   };
 
-  getCriteriaAssignmentProps(props, state) {
-    return assign(super.getCriteriaAssignmentProps(props, state), {
-      features: state.features,
-      featureRefCodeMap: state.featureRefCodeMap
-    });
-  };
-
   ComponentPreviewControlButton() {
     return (
       <div className="btn-block center-block">

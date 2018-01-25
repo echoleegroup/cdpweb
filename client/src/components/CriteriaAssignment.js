@@ -98,7 +98,6 @@ export default class CriteriaAssignment extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: true,
       isOpen: false,
       collapse: true,
       // features: props.features,
@@ -179,30 +178,28 @@ export default class CriteriaAssignment extends React.PureComponent {
     let display = (this.state.isOpen)? '': 'none';
     return (
       <div className="modal" style={{display: display}}>
-        <Loader loaded={this.state.isLoaded}>
-          <div className="table_block">
-            <h2>新增條件</h2>
-            <div className="row">
-              <div className="col-md-6">
-                <h3>挑選欄位條件</h3>
-                <Picker nodes={this.props.features}
-                        branchClickHandler={this.branchClickHandler}
-                        tailClickHandler={this.tailClickHandler}/>
-              </div>
-              <div className="col-md-2">
-                {this.CriteriaOperatorBlock(this.state.criteria)}
-              </div>
-              <div className="col-md-4">
-                {this.CriteriaInputBlock(this.state.criteria)}
-              </div>
+        <div className="table_block">
+          <h2>新增條件</h2>
+          <div className="row">
+            <div className="col-md-6">
+              <h3>挑選欄位條件</h3>
+              <Picker nodes={this.props.features}
+                      branchClickHandler={this.branchClickHandler}
+                      tailClickHandler={this.tailClickHandler}/>
             </div>
-            <div className="btn-block center-block">
-              <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
-              <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
+            <div className="col-md-2">
+              {this.CriteriaOperatorBlock(this.state.criteria)}
+            </div>
+            <div className="col-md-4">
+              {this.CriteriaInputBlock(this.state.criteria)}
             </div>
           </div>
-          <div className="overlay" onClick={this.closeModal}/>
-        </Loader>
+          <div className="btn-block center-block">
+            <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
+            <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
+          </div>
+        </div>
+        <div className="overlay" onClick={this.closeModal}/>
       </div>
     );
   };

@@ -57,18 +57,6 @@ const NODE_TYPE = {
   Tail: 'tail'
 };
 
-const Tree = (props) => {
-  console.log('Tree nodes: ', props.nodes);
-  return <ul>
-    {props.nodes.map(node => {
-      return <Node key={node.id}
-                   node={node}
-                   branchClickHandler={props.branchClickHandler}
-                   tailClickHandler={props.tailClickHandler}/>
-    })}
-  </ul>
-};
-
 const Node = (props) => {
   console.log('props.node.type: ', props.node.type);
   switch (props.node.type) {
@@ -92,6 +80,37 @@ export default class Picker extends React.PureComponent {
     );
   };
 };
+
+class Tree extends React.PureComponent {
+
+  componentWillMount() {
+    this.nodeDispatcher = (node) => {
+      console.log('props.node.type: ', node.type);
+      switch (node.type) {
+        case NODE_TYPE.Branch:
+          return <Branch key={node.id}
+                         node={node}
+                         branchClickHandler={this.props.branchClickHandler}
+                         tailClickHandler={this.props.tailClickHandler}/>
+        case NODE_TYPE.Tail:
+          return <Tail key={node.id}
+                       node={node}
+                       tailClickHandler={this.props.tailClickHandler}/>
+      }
+    }
+  };
+
+  render() {
+    let props = this.props;
+    return (
+      <ul>
+        {props.nodes.map(node => {
+          return this.nodeDispatcher(node);
+        })}
+      </ul>
+    );
+  };
+}
 
 class Branch extends React.PureComponent {
   componentWillMount() {

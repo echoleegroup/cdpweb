@@ -19,11 +19,4 @@ export default class CustomTargetFilterCriteria extends CriteriaBase {
   dataPreparing(props, _this, callback) {
     CustomFilterAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
   };
-
-  getCriteriaAssignmentProps(props, state) {
-    return assign(super.getCriteriaAssignmentProps(props, state), {
-      features: state.features,
-      featureRefCodeMap: state.featureRefCodeMap
-    });
-  };
 };
