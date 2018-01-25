@@ -124,6 +124,26 @@
 </div>
 <script>
   $("#ex12c").bootstrapSlider({ id: "slider12c", min: 0, max: 1, range: true, value: [{{ batListThold }}, 1] });
+  $("#ex12c").bootstrapSlider().on('slide', function (event) {
+    $.ajax({
+
+      url: "/target/model/download/update",
+      data: {
+        "mdID": "{{mdID}}",
+        "batID": "{{batID}}",
+        "scope": document.getElementById("ex12c").value
+      },
+      type: "POST",
+      dataType: "json",
+      success: function (Jdata) {
+        document.getElementById("tapopcount").value = Jdata.total;
+      },
+
+      error: function () {
+        alert("ERROR!!!");
+      }
+    });
+  });
 </script>
 
 <input id="mdListCategCount" type="hidden" value='{{mdListCategCount}}' />

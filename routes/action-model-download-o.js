@@ -1,4 +1,5 @@
 "use strict";
+const _ = require('lodash');
 const http = require('http');
 const url = require('url');
 const express = require('express');
@@ -7,6 +8,8 @@ const appConfig = require("../app-config");
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
+const _connector = require('../utils/sql-query-util');
+const Q = require('q');
 
 module.exports = (app) => {
   console.log('[modelDownloadRoute::create] Creating modelDownload route.');
@@ -168,5 +171,30 @@ module.exports = (app) => {
     }).end();
   });
 
-  return router;
-};
+  router.post('/model/download/update', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
+    let mdID = req.body.mdID || '';
+    let batID = req.body.batID || '';
+    let scope = req.body.scope || '';
+    let min = scope.split(",")[0];
+    let max = scope.split(",")[1];
+    let sql = "SELECT count(*) total " +
+      " FROM md_ListDet mld " +
+      " left join md_Model mm on mm.mdID = mld.mdID and mm.batID = mld.batID " +
+      " where mld.mdID = @mdID  and mld.batID = @batID " +
+      " and mld.mdListCateg ='tapop' and mld.mdListScore >= @min " +
+      " and mld.mdListScore <= @max ";
+    let request = _connector.queryRequest()
+      .setInput('mdID', _connector.TYPES.NVarChar, mdID)
+      .setInput('batID', _connector.TYPES.NVarChar, batID)
+      .setInput('min', _connector.TYPES.Float, parseFloat(min))
+      .setInput('max', _connector.TYPES.Float, parseFloat(max));
+    Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+      res.json(resultSet[0]);
+    }).fail((err) => {
+      winston.error('====[modelUpload] query modelUpload failed: ', err);
+      res.send(err);
+    });
+
+    });
+    return router;
+  };

@@ -279,7 +279,6 @@ module.exports = (app) => {
       var modelList = req.session.modelList;
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
-      console.log(JSON.stringify(aduglist));
       res.render('UserInfoEdit', {
         'user': req.user,
         'modelInfo': items[0],

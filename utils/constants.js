@@ -21,8 +21,8 @@ module.exports = Object.freeze({
     GENE_RAUDIC: "_targetCal",
     MODEL_DOWNLOAD: "_targetDao",
     MODEL_LIST: "_modelOvv",
-    TA_DISPATCH_UPLOAD: "__targetTaDispach",
-    TA_REACTION_UPLOAD: "__targetTaReaction",
+    TA_DISPATCH_UPLOAD: "_targetTaDispach",
+    TA_REACTION_UPLOAD: "_targetTaReaction",
     TAANARPT_RULT: "_taanaRpt",
     EVENT_PAGE_Analysis:"actad_actAnalysis"
   }
