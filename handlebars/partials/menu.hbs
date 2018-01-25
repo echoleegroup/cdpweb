@@ -2,41 +2,37 @@
   <div class="container">
     <ul id="menu">
       {{#each navMenuList as |menu|}}
-        <li>
-          <a href="#">{{menu.mainMenu}}</a>
-          {{#if menu._model}}
-            <div class="submenu big_submenu" style="display: none;">
-              <h3>模型：
-                <span></span>
-              </h3>
-              <div class="choose">
-                <ul>
-                  {{#each ../modelList as |model|}}
-                    <li>
-                      <a href="#" title="{{model.mdName}}"
-                         onclick="ThisMenu.setModel('{{model.mdID}}', '{{model.batID}}')">{{model.mdName}}
-                      </a>
-                    </li>
-                  {{/each}}
-                </ul>
-              </div>
-              {{#each menu.childMenu as |item|}}
-                {{#if item.sticky}}
-                  <a href="{{item.url}}" class="btn-menu {{item.sticky}}">{{item.menuName}}</a>
-                {{else}}
-                  <a href="#" class="btn-menu"
-                     onclick="ThisMenu.goTo('{{item.url}}')">{{item.menuName}}</a>
-                {{/if}}
+      <li>
+        <a href="#">{{menu.mainMenu}}</a>
+        {{#if menu._model}}
+        <div class="submenu">
+          <h3>模型：
+            <span></span>
+          </h3>
+          <div class="choose">
+            <ul>
+              {{#each ../modelList as |model|}}
+              <li>
+                <a href="#" title="{{model.mdName}}" 
+                onclick="ThisMenu.setModel('{{model.mdID}}', '{{model.batID}}')">{{model.mdName}}</a>
+              </li>
               {{/each}}
-            </div>
+            </ul>
+          </div>
+          {{#each menu.childMenu as |item|}} {{#if item.sticky}}
+          <a href="{{item.url}}" class="btn-menu {{item.sticky}}">{{item.menuName}}</a>
           {{else}}
-            <div class="submenu" style="display: none;">
-              {{#each menu.childMenu as |item|}}
-                <a href="{{item.url}}" class="btn-menu">{{item.menuName}}</a>
-              {{/each}}
-            </div>
-          {{/if}}
-        </li>
+          <a href="#" class="btn-menu" onclick="ThisMenu.goTo('{{item.url}}')">{{item.menuName}}</a>
+          {{/if}} {{/each}}
+        </div>
+        {{else}}
+        <div class="submenu">
+          {{#each menu.childMenu as |item|}}
+          <a href="{{item.url}}" class="btn-menu">{{item.menuName}}</a>
+          {{/each}}
+        </div>
+        {{/if}}
+      </li>
       {{/each}}
     </ul>
   </div>
