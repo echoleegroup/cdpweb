@@ -10,7 +10,7 @@ const OPERATOR_OPTIONS =  {
   or: '任一',
   not: '皆不'
 };
-export default class CriteriaDetailBundle extends CriteriaBundle {
+export default class CriteriaTransactionBundle extends CriteriaBundle {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;

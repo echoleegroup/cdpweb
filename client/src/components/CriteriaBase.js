@@ -6,7 +6,7 @@ import CriteriaAssignment from './CriteriaAssignment';
 // import CriteriaView from './CriteriaView';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import CriteriaComboBundleList from './CriteriaComboBundleList';
-import CriteriaContentContainer from "./CriteriaContentContainer";
+import CriteriaBaseContainer from "./CriteriaBaseContainer";
 //import CustomFilterAction from '../actions/criteria-action'
 //import {default as _test} from '../../test/preferred-criteria-test'
 
@@ -182,7 +182,7 @@ export default class CriteriaBase extends React.PureComponent {
       ComponentControlButton: this.ComponentPreviewControlButton()
     };
 
-    return <CriteriaContentContainer {...props}/>
+    return <CriteriaBaseContainer {...props}/>
   };
 
   ComponentEditContent() {
@@ -193,7 +193,7 @@ export default class CriteriaBase extends React.PureComponent {
       ComponentCriteriaBody: this.ComponentContentBody(),
       ComponentControlButton: this.ComponentEditControlButton(),
     };
-    return <CriteriaContentContainer {...props}/>
+    return <CriteriaBaseContainer {...props}/>
   };
 
   ComponentPreviewContent() {
@@ -204,7 +204,7 @@ export default class CriteriaBase extends React.PureComponent {
       ComponentCriteriaBody: this.ComponentContentBody(),
       ComponentControlButton: this.ComponentPreviewControlButton()
     };
-    return <CriteriaContentContainer {...props}/>
+    return <CriteriaBaseContainer {...props}/>
   };
 
   ComponentPreviewControlButton() {

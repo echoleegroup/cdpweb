@@ -1,6 +1,6 @@
 import React  from 'react';
 import BodyLayout from "./BodyLayout";
-import {Map} from 'immutable';
+import {OrderedMap} from 'immutable';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
 import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehicle";
 import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
@@ -9,27 +9,27 @@ import IntegratedAnalysisCriteriaTrail from "./IntegratedAnalysisCriteriaTrail";
 import IntegratedAnalysisCriteriaPreview from "./IntegratedAnalysisCriteriaPreview";
 import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisOutputFeaturePicker";
 
-const STEP = Object.freeze({
+const STEPS = Object.freeze({
   step1: 'client',
   step2: 'vehicle',
   step3: 'transaction',
   step4: 'tag',
   step5: 'trail',
-  step6: 'step6',
-  step7: 'step7'
+  step6: 'preview',
+  step7: 'feature'
 });
 
 export default class IntegratedAnalysisHome extends BodyLayout {
   constructor(props) {
     super(props);
     this.state = {
-      step: STEP.step1,
-      criteria: Map({
-        [STEP.step1]: [],
-        [STEP.step2]: [],
-        [STEP.step3]: [],
-        [STEP.step4]: [],
-        [STEP.step5]: []
+      step: STEPS.step1,
+      criteria: OrderedMap({
+        [STEPS.step1]: [],
+        [STEPS.step2]: [],
+        [STEPS.step3]: [],
+        [STEPS.step4]: [],
+        [STEPS.step5]: []
       })
     };
     // this.state = {
@@ -81,52 +81,53 @@ export default class IntegratedAnalysisHome extends BodyLayout {
 
   ComponentContent() {
     switch (this.state.step) {
-      case STEP.step1:
+      case STEPS.step1:
         return <IntegratedAnalysisCriteriaClient ref={this.storeCurrentStepComponent}
-                                                 criteria={this.state.criteria.get(STEP.step1)}
+                                                 criteria={this.state.criteria.get(STEPS.step1)}
                                                  params={this.params}
-                                                 step={STEP.step1}
-                                                 stepNext={this.stepToHandler(STEP.step2)}/>;
-      case STEP.step2:
+                                                 step={STEPS.step1}
+                                                 stepNext={this.stepToHandler(STEPS.step2)}/>;
+      case STEPS.step2:
         return <IntegratedAnalysisCriteriaVehicle ref={this.storeCurrentStepComponent}
-                                                  criteria={this.state.criteria.get(STEP.step2)}
+                                                  criteria={this.state.criteria.get(STEPS.step2)}
                                                   params={this.params}
-                                                  step={STEP.step2}
-                                                  stepPrev={this.stepToHandler(STEP.step1)}
-                                                  stepNext={this.stepToHandler(STEP.step3)}/>;
-      case STEP.step3:
+                                                  step={STEPS.step2}
+                                                  stepPrev={this.stepToHandler(STEPS.step1)}
+                                                  stepNext={this.stepToHandler(STEPS.step3)}/>;
+      case STEPS.step3:
         return <IntegratedAnalysisCriteriaTransaction ref={this.storeCurrentStepComponent}
-                                                      criteria={this.state.criteria.get(STEP.step3)}
+                                                      criteria={this.state.criteria.get(STEPS.step3)}
                                                       params={this.params}
-                                                      step={STEP.step3}
-                                                      stepPrev={this.stepToHandler(STEP.step2)}
-                                                      stepNext={this.stepToHandler(STEP.step4)}/>;
-      case STEP.step4:
+                                                      step={STEPS.step3}
+                                                      stepPrev={this.stepToHandler(STEPS.step2)}
+                                                      stepNext={this.stepToHandler(STEPS.step4)}/>;
+      case STEPS.step4:
         return <IntegratedAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
-                                              criteria={this.state.criteria.get(STEP.step4)}
+                                              criteria={this.state.criteria.get(STEPS.step4)}
                                               params={this.params}
-                                              step={STEP.step4}
-                                              stepPrev={this.stepToHandler(STEP.step3)}
-                                              stepNext={this.stepToHandler(STEP.step5)}/>;
-      case STEP.step5:
+                                              step={STEPS.step4}
+                                              stepPrev={this.stepToHandler(STEPS.step3)}
+                                              stepNext={this.stepToHandler(STEPS.step5)}/>;
+      case STEPS.step5:
         return <IntegratedAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
-                                                criteria={this.state.criteria.get(STEP.step5)}
+                                                criteria={this.state.criteria.get(STEPS.step5)}
                                                 params={this.params}
-                                                step={STEP.step5}
-                                                stepPrev={this.stepToHandler(STEP.step4)}
-                                                stepNext={this.stepToHandler(STEP.step6)}/>;
-      case STEP.step6:
+                                                step={STEPS.step5}
+                                                stepPrev={this.stepToHandler(STEPS.step4)}
+                                                stepNext={this.stepToHandler(STEPS.step6)}/>;
+      case STEPS.step6:
         return <IntegratedAnalysisCriteriaPreview ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria}
                                                   params={this.params}
-                                                  step={STEP.step6}
-                                                  stepPrev={this.stepToHandler(STEP.step5)}
-                                                  stepNext={this.stepToHandler(STEP.step7)}/>;
-      case STEP.step7:
+                                                  step={STEPS.step6}
+                                                  STEPS={STEPS}
+                                                  stepPrev={this.stepToHandler(STEPS.step5)}
+                                                  stepNext={this.stepToHandler(STEPS.step7)}/>;
+      case STEPS.step7:
         return <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
                                                 params={this.params}
-                                                step={STEP.step7}
-                                                stepPrev={this.stepToHandler(STEP.step6)}/>;
+                                                step={STEPS.step7}
+                                                stepPrev={this.stepToHandler(STEPS.step6)}/>;
 
     }
   };
@@ -151,12 +152,12 @@ class IntegratedAnalysisSideBar extends React.PureComponent {
       <div className="table_block table-responsive">
         <h2>設定觀察客群</h2>
         <ul className="step">
-          <li><a href="#" onClick={this.stepToHandler(STEP.step1)}>第一步：顧客屬性資料</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step2)}>第二步：車輛屬性資料</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step3)}>第三步：明細資料指定條件</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step4)}>第四步：標籤</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step5)}>第五步：行為軌跡</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step6)}>第六步：條件總覽</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step1)}>第一步：顧客屬性資料</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step2)}>第二步：車輛屬性資料</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step3)}>第三步：明細資料指定條件</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step4)}>第四步：標籤</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step5)}>第五步：行為軌跡</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step6)}>第六步：條件總覽</a></li>
         </ul>
       </div>
     );

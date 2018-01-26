@@ -1,7 +1,6 @@
 import React from 'react';
-import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
-import CriteriaDetailBundle from './CriteriaTransactionBundle';
+import CriteriaTransactionBundle from './CriteriaTransactionBundle';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 
 export default class CriteriaComboBundle extends CriteriaBundle {
@@ -51,7 +50,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                collectCriteriaComponents={this.collectCriteriaComponents}
                                removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaDetailBundle key={criteria.uuid} {...this.props}
+        return <CriteriaTransactionBundle key={criteria.uuid} {...this.props}
                                      criteria={criteria}
                                      index={index}
                                      removeCriteria={this.removeCriteria}
