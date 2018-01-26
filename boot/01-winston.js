@@ -26,14 +26,14 @@ module.exports = () => {
   transports.push(consoleLogger);
 
   try {
-    fs.mkdirSync(path.join(__dirname, '../' + constants.LOG_FOLDER));
+    fs.mkdirSync(path.join(__dirname, '../' + constants.LOG_FOLDER_PATH));
   } catch (ignored_err) {
   }
 
   if ('production' === process.env.NODE_ENV) {
     const dailyRotateLoggerInfo = new DailyRotateFile({
       name: 'dailyRotateLoggerInfo',
-      dirname: constants.LOG_FOLDER,
+      dirname: constants.LOG_FOLDER_PATH,
       datePattern: 'yyyy-MM-dd.',
       level: 'info',
       json: false,
@@ -41,7 +41,7 @@ module.exports = () => {
     });
     const dailyRotateLoggerError = new DailyRotateFile({
       name: 'dailyRotateLoggerError',
-      dirname: constants.LOG_FOLDER,
+      dirname: constants.LOG_FOLDER_PATH,
       datePattern: 'yyyy-MM-dd.error.',
       level: 'error',
       json: false,

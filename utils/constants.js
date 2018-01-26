@@ -1,10 +1,13 @@
 "use strict";
 
 const path = require('path');
+const ASSERTS = '.asserts';
 
 module.exports = Object.freeze({
-  LOG_FOLDER: './.logs',
-  ASSERTS_ABSOLUTE_PATH: path.resolve(__dirname, "../.asserts"),
+  LOG_FOLDER_PATH: '.logs',
+  ASSERTS_FOLDER_PATH: ASSERTS,
+  ASSERTS_ABSOLUTE_PATH: path.resolve(__dirname, '..', ASSERTS),
+  FTP_FOLDER_PATH: path.join(ASSERTS, 'ftpd'),
 
   MENU_CODE: {
     USER: "_mgrUser",
