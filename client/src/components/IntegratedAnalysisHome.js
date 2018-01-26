@@ -54,7 +54,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
       console.log('IntegratedAnalysisHome::isReady: ', isReady);
 
       if (isReady) {
-        let criteria = this.stepComponent.criteriaGathering();
+        let criteria = this.stepComponent.getCriteria();
         console.log('IntegratedAnalysisHome::criteria: ' , criteria);
         this.setState(prevState => {
           return {
@@ -79,39 +79,45 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     };
   };
 
-  ContentComponent() {
+  ComponentContent() {
     switch (this.state.step) {
       case STEP.step1:
         return <IntegratedAnalysisCriteriaClient ref={this.storeCurrentStepComponent}
+                                                 criteria={this.state.criteria.get(STEP.step1)}
                                                  params={this.params}
                                                  step={STEP.step1}
                                                  stepNext={this.stepToHandler(STEP.step2)}/>;
       case STEP.step2:
         return <IntegratedAnalysisCriteriaVehicle ref={this.storeCurrentStepComponent}
+                                                  criteria={this.state.criteria.get(STEP.step2)}
                                                   params={this.params}
                                                   step={STEP.step2}
                                                   stepPrev={this.stepToHandler(STEP.step1)}
                                                   stepNext={this.stepToHandler(STEP.step3)}/>;
       case STEP.step3:
         return <IntegratedAnalysisCriteriaTransaction ref={this.storeCurrentStepComponent}
+                                                      criteria={this.state.criteria.get(STEP.step3)}
                                                       params={this.params}
                                                       step={STEP.step3}
                                                       stepPrev={this.stepToHandler(STEP.step2)}
                                                       stepNext={this.stepToHandler(STEP.step4)}/>;
       case STEP.step4:
         return <IntegratedAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
+                                              criteria={this.state.criteria.get(STEP.step4)}
                                               params={this.params}
                                               step={STEP.step4}
                                               stepPrev={this.stepToHandler(STEP.step3)}
                                               stepNext={this.stepToHandler(STEP.step5)}/>;
       case STEP.step5:
         return <IntegratedAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
+                                                criteria={this.state.criteria.get(STEP.step5)}
                                                 params={this.params}
                                                 step={STEP.step5}
                                                 stepPrev={this.stepToHandler(STEP.step4)}
                                                 stepNext={this.stepToHandler(STEP.step6)}/>;
       case STEP.step6:
         return <IntegratedAnalysisCriteriaPreview ref={this.storeCurrentStepComponent}
+                                                  criteria={this.state.criteria}
                                                   params={this.params}
                                                   step={STEP.step6}
                                                   stepPrev={this.stepToHandler(STEP.step5)}
@@ -125,7 +131,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     }
   };
 
-  SideBarComponent() {
+  ComponentSideBar() {
     return <IntegratedAnalysisSideBar stepTo={this.stepTo}/>
   };
 };
@@ -149,8 +155,8 @@ class IntegratedAnalysisSideBar extends React.PureComponent {
           <li><a href="#" onClick={this.stepToHandler(STEP.step2)}>第二步：車輛屬性資料</a></li>
           <li><a href="#" onClick={this.stepToHandler(STEP.step3)}>第三步：明細資料指定條件</a></li>
           <li><a href="#" onClick={this.stepToHandler(STEP.step4)}>第四步：標籤</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step4)}>第五步：行為軌跡</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEP.step4)}>第六步：條件總覽</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEP.step5)}>第五步：行為軌跡</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEP.step6)}>第六步：條件總覽</a></li>
         </ul>
       </div>
     );

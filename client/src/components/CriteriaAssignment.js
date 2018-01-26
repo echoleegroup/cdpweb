@@ -261,7 +261,7 @@ export default class CriteriaAssignment extends React.PureComponent {
           this.fieldInput = e;
         }}/>;
       case 'refOption':
-        return <RefOptionInput criteria={criteria} refOptions={this.props.nodeRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
+        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
           this.fieldInput = e;
         }}/>;
     }
@@ -331,7 +331,7 @@ class RefOptionInput extends InputBase {
       return e.value;
     }).get();
     let labels = values.map((value) => {
-      let t = find(this.options, {optCode: value});
+      let t = find(this.props.refOptions, {optCode: value});
       return t? t.label: '';
     });
     return {
@@ -341,7 +341,6 @@ class RefOptionInput extends InputBase {
   }
 
   render() {
-    this.options = this.props.refOptions;
     return (
       <div>
         <div className="btn-block">
@@ -355,7 +354,7 @@ class RefOptionInput extends InputBase {
         <div className="category_select" ref={(e) => {
           this.optionDivDom = e;
         }}>
-          {this.options.map((opt) => {
+          {this.props.refOptions.map((opt) => {
             return (
               <div className="checkbox" key={opt.optCode}>
                 <label>

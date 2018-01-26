@@ -70,7 +70,7 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
       let isReady = this.criteriaComp.isReadyToLeave();
 
       if (isReady) {
-        let criteria = this.criteriaGathering();
+        let criteria = this.getCriteria();
         this.setState({
           //isLoaded: false,
           criteria

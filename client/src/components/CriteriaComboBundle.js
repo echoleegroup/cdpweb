@@ -25,7 +25,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   };
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaBundle: componentWillUpdate: ', nextState.criteria.toJS());
+    console.log('CriteriaBundle: componentWillUpdate: ', nextState.properties.get('criteria').toJS());
   };
 
   componentWillUnmount() {
@@ -64,11 +64,10 @@ export default class CriteriaComboBundle extends CriteriaBundle {
 
   toInsertCriteriaBundle() {
     // console.log('toInsertCriteriaBundle: ', this.state.criteria.toJS());
-    this.setState({
-      criteria: this.state.criteria.push(this.getBundleProperties({
-        type: this.getInsertCriteriaBundleType()
-      }))
+    let criteriaModel = this.getBundleProperties({
+      type: this.getInsertCriteriaBundleType()
     });
+    this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
   };
 
   ComponentButtonInsertCriteria() {

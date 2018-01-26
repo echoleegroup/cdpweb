@@ -11,7 +11,7 @@ export default class IntegratedAnalysisCriteriaVehicle extends IntegratedAnalysi
     return '第二步 挑選車輛屬性資料';
   };
 
-  dataPreparing(props, _this, callback) {
+  fetchPreparedData(props, _this, callback) {
     IntegratedAnalysisAction.getVehicleCriteriaFeatures(callback);
   };
 };

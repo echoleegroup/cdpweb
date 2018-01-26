@@ -11,7 +11,7 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     return '第一步 挑選顧客屬性資料';
   };
 
-  dataPreparing(props, _this, callback) {
+  fetchPreparedData(props, _this, callback) {
     IntegratedAnalysisAction.getClientCriteriaFeatures(callback);
   };
 

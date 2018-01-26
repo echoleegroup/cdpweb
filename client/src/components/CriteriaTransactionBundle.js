@@ -1,6 +1,9 @@
 import React from 'react';
+import Loader from 'react-loader';
+import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
 import CriteriaAssignment from './CriteriaAssignment';
+import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
@@ -11,10 +14,40 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
+    // state from super:
+    // this.state = {
+    //   isLoaded: true,
+    //   properties: Map(this.getBundleProperties(props.criteria))
+    // };
+    this.state = assign(this.state, {
+      isLoaded: false,
+      features: [],
+      featureRefCodeMap: {}
+    });
   };
 
   componentWillMount() {
     super.componentWillMount();
+
+    this.toAssignCriteria = () => {
+      this.criteriaAssignmentModal.openModal(this.insertCriteriaState);
+    };
+
+    this.fetchFeatureData = callback => {
+      IntegratedAnalysisAction.getTransactionCriteriaFeatures(
+        this.getPropertyState('ref'), callback);
+    };
+
+    this.fetchPreparedData = () => {
+      this.fetchFeatureData(({features, featureRefCodeMap}) => {
+        this.setState({
+          isLoaded: true,
+          features,
+          featureRefCodeMap});
+      });
+    };
+
+    this.fetchPreparedData();
   };
 
   componentWillUnmount() {
@@ -34,22 +67,22 @@ export default class CriteriaDetailBundle extends CriteriaBundle {
   ComponentCriteriaBodyTail() {
     return (
       <div className="sub_conditon">
-        指定參考：<span>{this.state.ref_label}</span>
+        指定參考：<span>{this.getPropertyState('ref_label')}</span>
       </div>
     );
   };
 
   ComponentCustomized() {
-    let mapTpprops = {
-      // mdId: props.params.mdId,
-      // batId: props.params.batId,
+    let mapToProps = {
       features: this.state.features || [],
       featureRefCodeMap: this.state.featureRefCodeMap || {}
     };
     return (
-      <CriteriaAssignment {...mapTpprops} ref={(e) => {
-        this.criteriaAssignmentModal = e;
-      }}/>
+      <Loader loaded={this.state.isLoaded}>
+        <CriteriaAssignment {...mapToProps} ref={(e) => {
+          this.criteriaAssignmentModal = e;
+        }}/>
+      </Loader>
     );
   };
 };

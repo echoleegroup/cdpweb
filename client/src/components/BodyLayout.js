@@ -11,22 +11,22 @@ export default class BodyLayout extends React.PureComponent {
       <div className="row">
         {/*<!-- 左欄 Start -->*/}
         <div className="col-md-8 col-sm-7 col-xs-12">
-          {this.ContentComponent()}
+          {this.ComponentContent()}
         </div>
         {/*<!-- 右欄 Start -->*/}
         <div className="col-md-4 col-sm-5 col-xs-12">
           {/*<!-- table set Start -->*/}
-          {this.SideBarComponent()}
+          {this.ComponentSideBar()}
         </div>
       </div>
     );
   };
 
-  ContentComponent() {
+  ComponentContent() {
     return <div/>
   };
 
-  SideBarComponent() {
+  ComponentSideBar() {
     return <div/>
   };
 };

@@ -1,5 +1,4 @@
 import React from 'react';
-import Rx from 'rxjs';
 import {assign} from 'lodash';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
@@ -23,7 +22,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
     return '第三步 挑選明細資料指定條件';
   };
 
-  dataPreparing(props, _this, callback) {
+  fetchPreparedData(props, _this, callback) {
     // IntegratedAnalysisAction.getVehicleCriteriaFeatures(callback);
     IntegratedAnalysisAction.getTransactionFeatureSets(data => {
       callback({
@@ -65,18 +64,12 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
       console.log(`get setID=${setId} and label=${setLabel}`);
       let criteriaType = this.getInsertCriteriaBundleType();
       console.log(`toPickCriteriaBundle: ${criteriaType}`);
-      let newCriteria = this.getBundleProperties({
+      let criteriaModel = this.getBundleProperties({
         type: this.getInsertCriteriaBundleType(),
         ref: setId,
         ref_label: setLabel
       });
-      let nextCriteriaList = this.state.criteria.push(newCriteria);
-      let nextState = {
-        criteria: nextCriteriaList
-      };
-      console.log('toPickCriteriaBundle__newCriteria ', newCriteria);
-      console.log('toPickCriteriaBundle__nextCriteriaList ', nextCriteriaList.toJS());
-      this.setState(nextState);
+      this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
     });
   };
 

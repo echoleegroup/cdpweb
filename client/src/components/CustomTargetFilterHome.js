@@ -5,11 +5,11 @@ import CustomTargetFilterIllustration from './CustomTargetFilterIllustration';
 
 export default class CustomTargetFilterHome extends BodyLayout {
 
-  ContentComponent() {
+  ComponentContent() {
     return <CustomTargetFilterPrimaryContent params={this.params}/>
   };
 
-  SideBarComponent() {
+  ComponentSideBar() {
     return <CustomTargetFilterIllustration params={this.params}/>
   };
 };

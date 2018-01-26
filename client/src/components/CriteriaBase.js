@@ -27,7 +27,7 @@ export default class CriteriaBase extends React.PureComponent {
     //this.refOptions = _test.refs;
   };
 
-  dataPreparing(props, _this, callback) {
+  fetchPreparedData(props, _this, callback) {
     callback({});
   };
 
@@ -63,18 +63,18 @@ export default class CriteriaBase extends React.PureComponent {
       });
     };
 
-    this.criteriaGathering = () => {
-      let criteria = this.state.criteria;
-      if (!this.state.isPreview) {  //edit mode
-        //fetch all criteria tree
-        criteria = this.criteriaWrapper.criteriaGathering();
-        //this.setState({criteria});
-      }
-      return criteria;
+    this.getCriteria = () => {
+      // let criteria = this.state.criteria;
+      // if (!this.state.isPreview) {  //edit mode
+      //   //fetch all criteria tree
+      //   criteria = this.criteriaWrapper.criteriaGathering();
+      // }
+      // return criteria;
+      return this.state.criteria;
     };
 
     //init work
-    this.dataPreparing(this.props, this, (data) => {
+    this.fetchPreparedData(this.props, this, (data) => {
       this.setState(assign({
         isLoaded: true
       }, data));
@@ -104,14 +104,14 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   ComponentModals() {
-    let mapTpprops = {
+    let mapToProps = {
       // mdId: props.params.mdId,
       // batId: props.params.batId,
       features: this.state.features || [],
       featureRefCodeMap: this.state.featureRefCodeMap || {}
     };
     return (
-      <CriteriaAssignment {...mapTpprops} ref={(e) => {
+      <CriteriaAssignment {...mapToProps} ref={(e) => {
         this.criteriaAssignmentModal = e;
       }}/>
     );
@@ -155,18 +155,16 @@ export default class CriteriaBase extends React.PureComponent {
     };
 
     return (
-      <form className="form-horizontal">
-        <div className="level form-inline">
-          <CriteriaComboBundleList
-            isPreview={this.state.isPreview}
-            criteria={this.state.criteria}
-            assignCriteria={assignCriteria}
-            ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
-            ref={(e) => {
-              this.criteriaWrapper = e;
-            }}/>
-        </div>
-      </form>
+      <div className="level form-inline">
+        <CriteriaComboBundleList
+          isPreview={this.state.isPreview}
+          criteria={this.state.criteria}
+          assignCriteria={assignCriteria}
+          ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
+          ref={(e) => {
+            this.criteriaWrapper = e;
+          }}/>
+      </div>
     );
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {List} from 'immutable';
+import {List, Map} from 'immutable';
 import {isEmpty, reduce, assign} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
@@ -14,7 +14,10 @@ export default class CriteriaBundle extends React.PureComponent {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
-    this.state = this.getBundleProperties(props.criteria);
+    this.state = {
+      isLoaded: true,
+      properties: Map(this.getBundleProperties(props.criteria))
+    };
   };
 
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
@@ -49,7 +52,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.criteriaGathering = () => {
-      // console.log('CriteriaBundle::criteriaGathering: ', this.state.type, this.criteriaComponents);
+      // console.log('CriteriaBundle::criteriaGathering: ', this.state.properties.get('type'), this.criteriaComponents);
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.criteriaGathering(); //immutable Map
         // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
@@ -59,7 +62,7 @@ export default class CriteriaBundle extends React.PureComponent {
       }, []);
 
       // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
-      return (subCrits.length === 0)? {}: assign({}, this.state, {
+      return (subCrits.length === 0)? {}: assign({}, this.state.properties.toJSON(), {
         criteria: subCrits
       });
     };
@@ -70,24 +73,24 @@ export default class CriteriaBundle extends React.PureComponent {
 
     this.insertCriteriaState = (criteria) => {
       console.log('CriteriaBundle:insertCriteria: ', criteria);
-      this.setState(prevState => {
-        return {
-          criteria: prevState.criteria.push(criteria)
-        };
-      });
+      this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteria));
     };
 
     this.removeCriteria = (index) => {
-      this.setState((prevState) => {
-        // console.log('CriteriaBundle:removeCriteria: ', prevState);
-        // console.log('CriteriaBundle:removeCriteria: ', prevState.get('criteria'));
-        return {
-          criteria: prevState.criteria.delete(index)
-        };
-      });
+      this.updatePropertyState('criteria', this.getPropertyState('criteria').delete(index));
     };
 
-    this.props.collectCriteriaComponents(this.state.uuid, this);
+    this.getPropertyState = (key) => {
+      return this.state.properties.get(key);
+    };
+
+    this.updatePropertyState = (key, value) => {
+      this.setState(prevState => ({
+        properties: prevState.properties.set(key, value)
+      }));
+    };
+
+    this.props.collectCriteriaComponents(this.getPropertyState('uuid'), this);
   };
 
   componentWillUpdate(nextProps, nextState) {
@@ -96,7 +99,7 @@ export default class CriteriaBundle extends React.PureComponent {
 
   componentWillUnmount() {
     console.log('CriteriaBundle::componentWillUnmount: ', this.state);
-    this.props.removeCriteriaComponents(this.state.uuid);
+    this.props.removeCriteriaComponents(this.getPropertyState('uuid'));
   };
 
   render() {
@@ -134,12 +137,11 @@ export default class CriteriaBundle extends React.PureComponent {
     // console.log('CriteriaOperatorSelector::CriteriaBundle: ', typeof this.state);
     return (
       <select className="form-control"
-              defaultValue={this.state.operator}
+              defaultValue={this.getPropertyState('operator')}
               disabled={this.props.isPreview}
               onChange={(e) => {
-                this.setState({
-                  operator: e.target.value
-                });
+                let value = e.target.value;
+                this.updatePropertyState('operator', value);
       }}>
         {
           Object.keys(this.OPERATOR_OPTIONS).map((key) => {
@@ -153,7 +155,7 @@ export default class CriteriaBundle extends React.PureComponent {
   ComponentChildCriteriaBlock() {
     return (
       <div className="level form-inline">
-        {this.state.criteria.map((_criteria, index) => {
+        {this.state.properties.get('criteria').map((_criteria, index) => {
           return this.ComponentChildCriteria(_criteria, index);
         })}
       </div>
