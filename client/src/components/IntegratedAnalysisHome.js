@@ -50,29 +50,36 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     this.stepTo = (targetStep) => {
       console.log('IntegratedAnalysisHome::stepTo: ' , targetStep);
 
-      let isReady = this.stepComponent.isReadyToLeave();
-      console.log('IntegratedAnalysisHome::isReady: ', isReady);
+      this.setState({
+        step: targetStep
+      });
+    };
 
-      if (isReady) {
-        let criteria = this.stepComponent.getCriteria();
-        console.log('IntegratedAnalysisHome::criteria: ' , criteria);
-        this.setState(prevState => {
-          return {
-            step: targetStep,
-            criteria: prevState.criteria.set(prevState.step, criteria)
-          };
-        });
-      } else {
-        window.alert('Please confirm your criteria before leaving.');
-      }
+    this.stepToCriteriaHandler = (targetStep) => {
+      return () => {
+        let isReady = this.stepComponent.isReadyToLeave();
+        console.log('IntegratedAnalysisHome::isReady: ', isReady);
+
+        if (isReady) {
+          let criteria = this.stepComponent.getCriteria();
+          console.log('IntegratedAnalysisHome::criteria: ' , criteria);
+          this.setState(prevState => {
+            return {
+              criteria: prevState.criteria.set(prevState.step, criteria)
+            };
+          });
+          this.stepTo(targetStep);
+        } else {
+          window.alert('Please confirm your criteria before leaving.');
+        }
+      };
     };
 
     this.stepToHandler = (targetStep) => {
-
       return () => {
         this.stepTo(targetStep);
       };
-    };
+    }
 
     this.storeCurrentStepComponent = (e) => {
       this.stepComponent = e;
@@ -86,35 +93,35 @@ export default class IntegratedAnalysisHome extends BodyLayout {
                                                  criteria={this.state.criteria.get(STEPS.step1)}
                                                  params={this.params}
                                                  step={STEPS.step1}
-                                                 stepNext={this.stepToHandler(STEPS.step2)}/>;
+                                                 stepNext={this.stepToCriteriaHandler(STEPS.step2)}/>;
       case STEPS.step2:
         return <IntegratedAnalysisCriteriaVehicle ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria.get(STEPS.step2)}
                                                   params={this.params}
                                                   step={STEPS.step2}
-                                                  stepPrev={this.stepToHandler(STEPS.step1)}
-                                                  stepNext={this.stepToHandler(STEPS.step3)}/>;
+                                                  stepPrev={this.stepToCriteriaHandler(STEPS.step1)}
+                                                  stepNext={this.stepToCriteriaHandler(STEPS.step3)}/>;
       case STEPS.step3:
         return <IntegratedAnalysisCriteriaTransaction ref={this.storeCurrentStepComponent}
                                                       criteria={this.state.criteria.get(STEPS.step3)}
                                                       params={this.params}
                                                       step={STEPS.step3}
-                                                      stepPrev={this.stepToHandler(STEPS.step2)}
-                                                      stepNext={this.stepToHandler(STEPS.step4)}/>;
+                                                      stepPrev={this.stepToCriteriaHandler(STEPS.step2)}
+                                                      stepNext={this.stepToCriteriaHandler(STEPS.step4)}/>;
       case STEPS.step4:
         return <IntegratedAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
                                               criteria={this.state.criteria.get(STEPS.step4)}
                                               params={this.params}
                                               step={STEPS.step4}
-                                              stepPrev={this.stepToHandler(STEPS.step3)}
-                                              stepNext={this.stepToHandler(STEPS.step5)}/>;
+                                              stepPrev={this.stepToCriteriaHandler(STEPS.step3)}
+                                              stepNext={this.stepToCriteriaHandler(STEPS.step5)}/>;
       case STEPS.step5:
         return <IntegratedAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
                                                 criteria={this.state.criteria.get(STEPS.step5)}
                                                 params={this.params}
                                                 step={STEPS.step5}
-                                                stepPrev={this.stepToHandler(STEPS.step4)}
-                                                stepNext={this.stepToHandler(STEPS.step6)}/>;
+                                                stepPrev={this.stepToCriteriaHandler(STEPS.step4)}
+                                                stepNext={this.stepToCriteriaHandler(STEPS.step6)}/>;
       case STEPS.step6:
         return <IntegratedAnalysisCriteriaPreview ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria}

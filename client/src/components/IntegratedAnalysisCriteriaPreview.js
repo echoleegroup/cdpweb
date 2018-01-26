@@ -58,7 +58,7 @@ export default class IntegratedAnalysisCriteriaPreview extends React.PureCompone
 
         </div>
         <div className="btn-block center-block">
-          <button type="submit" className="btn btn-lg btn-default">資料分佈分析</button>
+          <button type="submit" className="btn btn-lg btn-default" onClick={this.props.stepNext}>資料分佈分析</button>
         </div>
       </div>
     );
