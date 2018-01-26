@@ -20,10 +20,9 @@ module.exports = (app) => {
     res.render('container', {
       user: req.user,
       menuTitle: '顧客數據導出',
-      modelInfo: {},
-      modelList: [],
-      navMenuList: [],
-      mgrMenuList: []
+      modelList: modelList,
+      navMenuList: navMenuList,
+      mgrMenuList: mgrMenuList
     });
     /*
         Q.nfcall(modelService.getModel, mdId).then((result) => {
