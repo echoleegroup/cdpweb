@@ -18,6 +18,10 @@ winston.info('my ip address: ', ip.address());
 
 module.exports = () => {
 
+  if (!Boolean(process.env.FTP_ENABLE)) {
+    return;
+  }
+
   const server = new ftpd.FtpServer(options.host, {
     getInitialCwd: function() {
       return '/';
