@@ -7,7 +7,8 @@
       <!-- form set Start -->
       <div class="form_block">
         <h2>外部名單上傳</h2>
-        <form id="reg" action="/feeddata/outdata/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal" enctype="multipart/form-data">
+        <form id="reg" action="/feeddata/outdata/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal"
+          enctype="multipart/form-data">
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">品牌</label>
             <div class="col-sm-8">
@@ -42,6 +43,10 @@
               </label>
               <label class="radio-inline">
                 <input type="radio" id="uCustID" name="optradio" value="uCustID">身份證字號必填
+              </label>
+              <label class="radio-inline">
+                <input type="radio" id="uTel" name="optradio" value="uTel">手機必填
+              </label>
             </div>
           </div>
           <div class="form-group">
@@ -172,7 +177,8 @@
       return false;
     }
     if (!document.getElementById("uLiscNO").checked
-      && !document.getElementById("uCustID").checked) {
+      && !document.getElementById("uCustID").checked
+      && !document.getElementById("uTel").checked) {
       alert("請選擇必要檢核");
       return false;
     }

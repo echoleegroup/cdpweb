@@ -162,32 +162,32 @@ module.exports = (app) => {
   });
 
   router.post('/outdata/upload_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT), upload.single('uploadingFile')], function (req, res) {
-    var client = req.body.client || '';
-    var optradio = req.body.optradio || '';
-    var outerListName = req.body.outerListName || '';
-    var funcCatge = req.body.funcCatge || '';
-    var outerListSdt = req.body.outerListSdt || '';
-    var outerListEdt = req.body.outerListEdt || '';
-    var outerListDesc = req.body.outerListDesc || '';
-    var filepath = '';
-    var uNameindex, uCustIDindex, uLicsNOindex, uTelindex, uMailindex, uAddindex, uAtNameindex, uAtTelindex, uAtMailindex, uAtAddindex;
-    var keyIndex = -1;
-    var origName = "";
-    var uniqName = "";
-    var total;
-    var successnum = 0;
-    var errornum = 0;
-    var updtime;
-    var errormsg = '錯誤資訊\r\n';
-    var allmsg = '';
-    var outerListID = 0;
-    var file = req.file;
+    let client = req.body.client || '';
+    let optradio = req.body.optradio || '';
+    let outerListName = req.body.outerListName || '';
+    let funcCatge = req.body.funcCatge || '';
+    let outerListSdt = req.body.outerListSdt || '';
+    let outerListEdt = req.body.outerListEdt || '';
+    let outerListDesc = req.body.outerListDesc || '';
+    let filepath = '';
+    let uNameindex, uCustIDindex, uLicsNOindex, uTelindex, uMailindex, uAddindex, uAtNameindex, uAtTelindex, uAtMailindex, uAtAddindex;
+    let keyIndex = -1;
+    let origName = "";
+    let uniqName = "";
+    let total;
+    let successnum = 0;
+    let errornum = 0;
+    let updtime;
+    let errormsg = '錯誤資訊\r\n';
+    let allmsg = '';
+    let outerListID = 0;
+    let file = req.file;
     // 以下代碼得到檔案後綴
     origName = file.originalname;
-    var name = file.originalname;
-    var nameArray = name.split('');
-    var nameMime = [];
-    var l = nameArray.pop();
+    let name = file.originalname;
+    let nameArray = name.split('');
+    let nameMime = [];
+    let l = nameArray.pop();
     nameMime.unshift(l);
     // Mime是檔案的後綴 Mime=nameMime.join('');
     // console.log(Mime); res.send("done"); //重命名檔案
@@ -195,8 +195,8 @@ module.exports = (app) => {
     // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
     uniqName = file.filename;
     filepath = file.path;
-    var list = xlsx.parse(filepath);
-    var p1 = new Promise(function (resolve, reject) {
+    let list = xlsx.parse(filepath);
+    let p1 = new Promise(function (resolve, reject) {
       total = list[0].data.length - 1;
       function insertMst(origName, uniqName, callback) {
         db.query("INSERT INTO cu_OuterListMst(outerListName,Client,funcCatge,outerListDesc,origName,uniqName,outerListSdt,outerListEdt,updTime,updUser)VALUES('" + outerListName + "','" + client + "','" + funcCatge + "','" + outerListDesc + "','" + origName + "','" + uniqName + "','" + outerListSdt + "','" + outerListEdt + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
@@ -257,22 +257,25 @@ module.exports = (app) => {
         }
         if (optradio == "uCustID")
           keyIndex = uCustIDindex;
-        else
+        else if (optradio == "uLiscNO")
           keyIndex = uLicsNOindex;
+        else
+          keyIndex = uTelindex;
       }
       i = 1
       checkandinsert(i);
       function checkandinsert(i) {
         if (i < list[0].data.length) {
-          console.log(keyIndex);
           if (keyIndex === -1 || keyIndex == undefined) {
             errornum++;
             var linenum = i + 1;
             errormsg += 'Line ' + linenum.toString() + ','
             if (optradio == "uCustID")
               errormsg += '無法找到身份證字號欄位\r\n';
-            else
+            else if (optradio == "uLiscNO")
               errormsg += '無法找到車牌欄位\r\n';
+            else
+              errormsg += '無法找到手機欄位\r\n';
             for (var j = 0; j < list[0].data[i].length; j++) {
               if (j == list[0].data[i].length - 1)
                 errormsg += list[0].data[i][j] + "\r\n";
@@ -334,21 +337,22 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
-            db.query("INSERT INTO cu_OuterListDet (outerListID,uName,uCustID,uLicsNO,uTel,uMail,uAdd,uAtName,uAtTel,uAtMail,uAtAdd)VALUES(" + outerListID + ",'" + list[0].data[i][uNameindex] + "','" + list[0].data[i][uCustIDindex] + "','" + list[0].data[i][uLicsNOindex] + "','" + list[0].data[i][uTelindex] + "','" + list[0].data[i][uMailindex] + "','" + list[0].data[i][uAddindex] + "','" + list[0].data[i][uAtNameindex] + "','" + list[0].data[i][uAtTelindex] + "','" + list[0].data[i][uAtMailindex] + "','" + list[0].data[i][uAtAddindex] + "')", function (err, recordset) {
-              if (err) {
-                console.log(err);
-              }
-              successnum++;
-              if (i == list[0].data.length - 1) {
-                var currentdate = new Date();
-                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                  + currentdate.getHours() + ":"
-                  + currentdate.getMinutes() + ":"
-                  + currentdate.getSeconds();
-                res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
-              }
-              checkandinsert(i + 1);
-            });
+            db.query("INSERT INTO cu_OuterListDet (outerListID,uName,uCustID,uLicsNO,uTel,uMail,uAdd,uAtName,uAtTel,uAtMail,uAtAdd)"
+              + " VALUES(" + outerListID + ",'" + list[0].data[i][uNameindex] + "','" + list[0].data[i][uCustIDindex].toUpperCase() + "','" + list[0].data[i][uLicsNOindex].toUpperCase() + "','" + list[0].data[i][uTelindex] + "','" + list[0].data[i][uMailindex] + "','" + list[0].data[i][uAddindex] + "','" + list[0].data[i][uAtNameindex] + "','" + list[0].data[i][uAtTelindex] + "','" + list[0].data[i][uAtMailindex] + "','" + list[0].data[i][uAtAddindex] + "')", function (err, recordset) {
+                if (err) {
+                  console.log(err);
+                }
+                successnum++;
+                if (i == list[0].data.length - 1) {
+                  var currentdate = new Date();
+                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds();
+                  res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID + "&successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime=" + datetime);
+                }
+                checkandinsert(i + 1);
+              });
           }
         }
       }
