@@ -174,7 +174,7 @@ module.exports = (app) => {
                   datatime = respListTime;
                 else
                   datatime = list[0].data[i][RespTimeindex];
-                db.query("INSERT INTO cu_RespListDet (mdID,batID,respListID,uCustID,uLicsNO,uVIN,uRespTime,rptKey) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex] + "','" + list[0].data[i][LISCNOindex] + "','" + list[0].data[i][VINindex] + "','" + datatime + "','" + data1 + "')", function (err, recordset) {
+                db.query("INSERT INTO cu_RespListDet (mdID,batID,respListID,uCustID,uLicsNO,uVIN,uRespTime,rptKey) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex].toUpperCase() + "','" + list[0].data[i][LISCNOindex].toUpperCase() + "','" + list[0].data[i][VINindex] + "','" + datatime + "','" + data1 + "')", function (err, recordset) {
                   successnum++;
                   if (i == list[0].data.length - 1) {
                     var currentdate = new Date();

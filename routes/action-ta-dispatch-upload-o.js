@@ -108,7 +108,7 @@ module.exports = (app) => {
             errormsg += 'Line ' + linenum.toString() + ','
             for (var j = 0; j < list[0].data[i].length; j++) {
               if (j == list[0].data[i].length - 1)
-                errormsg += list[0].data[i][j] + "<br/>";
+                errormsg += list[0].data[i][j] + "\r\n";
               else
                 errormsg += list[0].data[i][j] + ",";
             }
@@ -166,8 +166,7 @@ module.exports = (app) => {
                 checkandinsert(i + 1);
               }
               else {
-                console.log("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex] + "','" + list[0].data[i][LISCNOindex] + "','" + list[0].data[i][VINindex] + "','" + data1 + "')");
-                db.query("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey,sentListScore) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex] + "','" + list[0].data[i][LISCNOindex] + "','" + list[0].data[i][VINindex] + "','" + data1 + "',(select max(mdListScore) from md_ListDet mld where mld.mdID ='" + mdID + "' and mld.batID ='" + batID + "' and mld.mdListKey1 = '" + data1 + "'))", function (err, recordset) {
+                db.query("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey,sentListScore) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex].toUpperCase() + "','" + list[0].data[i][LISCNOindex].toUpperCase() + "','" + list[0].data[i][VINindex] + "','" + data1 + "',(select max(mdListScore) from md_ListDet mld where mld.mdID ='" + mdID + "' and mld.batID ='" + batID + "' and mld.mdListKey1 = '" + data1 + "'))", function (err, recordset) {
                   successnum++;
                   if (i == list[0].data.length - 1) {
                     var currentdate = new Date();
