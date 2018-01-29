@@ -15,7 +15,7 @@ import CriteriaBaseContainer from "./CriteriaBaseContainer";
  * this.criteria is used to store current criteria, which response by subtree.
  */
 export default class CriteriaBase extends React.PureComponent {
-  constructor(props, options = {}) {
+  constructor(props) {
     super(props);
     this.state = {
       isPreview: true,
