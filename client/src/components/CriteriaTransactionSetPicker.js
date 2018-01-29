@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
-import Picker from './Picker'
+import PickerSingle from './PickerSingle'
 
 export default class CriteriaTransactionSetPicker extends React.PureComponent {
   constructor(props) {
@@ -54,7 +54,7 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
       <div className="modal" style={{display: display}}>
         <div className="table_block">
           <h2>挑選指定明細資訊</h2>
-          <Picker nodes={this.props.featureSets}
+          <PickerSingle nodes={this.props.featureSets}
                   branchClickHandler={this.branchClickHandler}
                   tailClickHandler={this.tailClickHandler}/>
           <div className="btn-block center-block">

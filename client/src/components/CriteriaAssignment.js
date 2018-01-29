@@ -6,7 +6,7 @@ import {find, assign, pick} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 // import CustomFilterAction from '../actions/criteria-action';
-import Picker from './Picker'
+import PickerSingle from './PickerSingle'
 
 const INPUT_CRITERIA_OPERATOR = {
   eq: {
@@ -182,7 +182,7 @@ export default class CriteriaAssignment extends React.PureComponent {
           <div className="row">
             <div className="col-md-6">
               <h3>挑選欄位條件</h3>
-              <Picker nodes={this.props.features}
+              <PickerSingle nodes={this.props.features}
                       branchClickHandler={this.branchClickHandler}
                       tailClickHandler={this.tailClickHandler}/>
             </div>

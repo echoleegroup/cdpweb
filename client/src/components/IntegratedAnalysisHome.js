@@ -147,12 +147,12 @@ export default class IntegratedAnalysisHome extends BodyLayout {
   };
 
   ComponentSideBar() {
-    return <IntegratedAnalysisSideBar stepTo={this.stepToHandler()}/>
+    return <IntegratedAnalysisNavigator stepTo={this.stepToHandler()}/>
   };
 };
 
 
-class IntegratedAnalysisSideBar extends React.PureComponent {
+class IntegratedAnalysisNavigator extends React.PureComponent {
   componentWillMount() {
     this.stepToHandler = (step) => {
       return (() => {
