@@ -300,7 +300,7 @@ module.exports = (app) => {
           criteria: [{
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'customer_profile',
+            cate: null,
             field_id: 'age',
             field_label: '年紀',
             value: 40,
@@ -309,7 +309,7 @@ module.exports = (app) => {
           }, {
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'interaction',
+            cate: null,
             field_id: 'toyota',
             field_label: 'TOYOTA保有台數',
             value: 2,
