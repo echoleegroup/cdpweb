@@ -68,7 +68,7 @@
 
 		x += '<tr class="sub_info"><td colspan="9">';
 		if (o[i].feeddata[0].funcCatge != 'NCBS') {
-			x += '<div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist' + o[i].feeddata[0].ListID + '">';
+			x += '<div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist' + o[i].feeddata[0].ListID + '">';
 			for (j in o[i].feeddata[1].taginfo) {
 				x += '<li class="tag_item">' + o[i].feeddata[1].taginfo[j].tag + '<a href="javascript:deltag(' + o[i].feeddata[0].ListID + ',' + o[i].feeddata[1].taginfo[j].tagID + ')" class="label label-cdp"><i class="fa fa-times"></i></a></li>';
 			}
