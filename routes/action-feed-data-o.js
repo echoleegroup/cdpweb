@@ -10,6 +10,8 @@ const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });
+const _connector = require('../utils/sql-query-util');
+const Q = require('q');
 
 module.exports = (app) => {
   console.log('[FeedDataRoute::create] Creating FeedData route.');
@@ -363,21 +365,21 @@ module.exports = (app) => {
   });
 
   router.get('/outdata/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
-    var outerListID = req.query.outerListID || '';
-    var successnum = req.query.successnum || '';
-    var errormsg = req.query.errormsg || '';
-    var errornum = req.query.errornum || '';
-    var total = req.query.total || '';
-    var dispaly = req.query.dispaly || '';
-    var datetime = req.query.datetime || '';
-    var funcCatge;
-    var modelList = req.session.modelList;
-    var navMenuList = req.session.navMenuList;
-    var mgrMenuList = req.session.mgrMenuList;
-    var atag;
-    var mtag;
-    var maininfo;
-    var p1 = new Promise(function (resolve, reject) {
+    let outerListID = req.query.outerListID || '';
+    let successnum = req.query.successnum || '';
+    let errormsg = req.query.errormsg || '';
+    let errornum = req.query.errornum || '';
+    let total = req.query.total || '';
+    let dispaly = req.query.dispaly || '';
+    let datetime = req.query.datetime || '';
+    let funcCatge;
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+    let atag;
+    let mtag;
+    let maininfo;
+    let p1 = new Promise(function (resolve, reject) {
       db.query("SELECT colm.outerListName,colm.Client,colm.funcCatge,sc.codeLabel,colm.outerListDesc,convert(varchar,colm.outerListSdt,111)outerListSdt,convert(varchar,colm.outerListEdt,111)outerListEdt,colm.isDel,convert(varchar,colm.updTime,111)updTime,colm.updUser,(select count(*) from cu_OuterListDet cold where cold.outerListID = colm.outerListID)total FROM cu_OuterListMst colm left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = colm.funcCatge where outerListID = " + outerListID, function (err, recordset) {
         if (err) {
           reject(err);
@@ -386,13 +388,23 @@ module.exports = (app) => {
         resolve(maininfo);
       });
     });
-    Promise.all([p1]).then(function (results) {
+    let p2 = new Promise(function (resolve, reject) {
+      db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatgeForFeedData' order by codeValue desc ", function (err, recordset) {
+        if (err) {
+          reject(err);
+        }
+        funcCatge = recordset.recordset;
+        resolve(funcCatge);
+      });
+    });
+    Promise.all([p1, p2]).then(function (results) {
       res.render('FeedDataEdit', {
         'user': req.user,
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
         'maininfo': maininfo,
+        'funcCatge': funcCatge,
         'outerListID': outerListID,
         'dispaly': dispaly,
         'successnum': successnum,
@@ -404,6 +416,33 @@ module.exports = (app) => {
     }).catch(function (e) {
       console.log(e);
     });
+  });
+
+  router.post('/outdata/edit_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {
+    let outerListID = req.body.outerListID || '';
+    let outerListName = req.body.outerListName || '';
+    let funcCatge = req.body.funcCatge || '';
+    let outerListSdt = req.body.outerListSdt + " 00:00:00" || '';
+    let outerListEdt = req.body.outerListEdt + " 23:59:59" || '';
+    let outerListDesc = req.body.outerListDesc || '';
+    let sql = "UPDATE cu_OuterListMst set outerListName = @outerListName, funcCatge = @funcCatge, outerListSdt = @outerListSdt, " +
+      "outerListEdt = @outerListEdt, outerListDesc = @outerListDesc, updTime = GETDATE(), updUser = @userID " +
+      " WHERE outerListID = @outerListID";
+    let request = _connector.queryRequest()
+      .setInput('outerListName', _connector.TYPES.NVarChar, outerListName)
+      .setInput('funcCatge', _connector.TYPES.NVarChar, funcCatge)
+      .setInput('outerListSdt', _connector.TYPES.NVarChar, outerListSdt)
+      .setInput('outerListEdt', _connector.TYPES.NVarChar, outerListEdt)
+      .setInput('outerListDesc', _connector.TYPES.NVarChar, outerListDesc)
+      .setInput('userID', _connector.TYPES.NVarChar, req.user.userId)
+      .setInput('outerListID', _connector.TYPES.Int, outerListID);
+    Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+      res.redirect("/feeddata/outdata/edit?outerListID="+outerListID);
+    }).fail((err) => {
+      winston.error('====[modelUpload] query modelUpload failed: ', err);
+      res.send(err);
+    });
+
   });
 
   router.get('/outdata/upload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_OUT)], function (req, res) {

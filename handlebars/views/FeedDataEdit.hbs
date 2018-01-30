@@ -16,12 +16,12 @@
       <!-- form set Start -->
       <div class="form_block">
         <h2>外部名單上傳</h2>
-        <form id="reg" action="/feeddata/outdata/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal"
-          enctype="multipart/form-data">
+        <form id="reg" action="/feeddata/outdata/edit_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
+          <input type="hidden" name="outerListID" value="{{outerListID}}">
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">品牌</label>
             <div class="col-sm-8">
-              <select class="form-control custom" id="client" name="client">
+              <select class="form-control custom" id="client" name="client" disabled>
                 <option value="TOYOTA">TOYOTA</option>
                 <option value="LEXUS">LEXUS</option>
               </select>
@@ -30,16 +30,16 @@
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">名單名稱</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control " id="outerListName" name="outerListName" value="{{maininfo.[0].outerListName}}" disabled
-                placeholder="">
+              <input type="text" class="form-control " id="outerListName" name="outerListName" value="{{maininfo.[0].outerListName}}" placeholder="">
             </div>
           </div>
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">屬性類別</label>
             <div class="col-sm-8">
-              <select id="funcCatge" name="funcCatge" class="form-control custom" disabled>
-
-                <option value="">{{maininfo.[0].codeLabel}}</option>
+              <select class="form-control custom" id="funcCatge" name="funcCatge">
+                {{#each funcCatge as |Categ|}}
+                <option value="{{Categ.codeValue}}">{{Categ.codeLabel}}</option>
+                {{/each}}
 
               </select>
             </div>
@@ -61,29 +61,19 @@
             <div class="col-sm-8">
               <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
               <div class="form-inline">
-                <input type="text" class="form-control" id="outerListSdt" name="outerListSdt" placeholder="" value="{{maininfo.[0].outerListSdt}}"
-                  disabled>~
-                <input type="text" class="form-control" id="outerListEdt" name="outerListEdt" placeholder="" value="{{maininfo.[0].outerListEdt}}"
-                  disabled>
+                <input type="text" class="form-control" id="outerListSdt" name="outerListSdt" placeholder="" value="{{maininfo.[0].outerListSdt}}">~
+                <input type="text" class="form-control" id="outerListEdt" name="outerListEdt" placeholder="" value="{{maininfo.[0].outerListEdt}}">
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">活動內容說明</label>
             <div class="col-sm-8">
-              <textarea class="form-control" rows="5" name="outerListDesc" id="outerListDesc" disabled>{{maininfo.[0].outerListDesc}}</textarea>
+              <textarea class="form-control" rows="5" name="outerListDesc" id="outerListDesc">{{maininfo.[0].outerListDesc}}</textarea>
             </div>
           </div>
-          <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label form-inline">選擇檔案</label>
-            <div class="col-sm-8">
-              <div class="form-inline btn btn-default btn-file">
-                <input type="hidden" class="form-control" id="imageFileTitle1" name="imageFileTitle1" placeholder="請輸入檔案" disabled> 請選擇檔案
-                <input type="file" id="uploadingFile" name="uploadingFile" class="btn btn-lg btn-default" disabled>
-
-              </div>
-
-            </div>
+          <div class="btn-block center-block">
+            <button type="submit" id="openModal1" class="btn btn-lg btn-default">修改</button>
           </div>
         </form>
       </div>
@@ -157,6 +147,17 @@
   </div>
 </div>
 <script>
+  $('#outerListSdt').datepicker({
+    locale: "zh-tw"
+  });
+  $('#outerListEdt').datepicker({
+    locale: "zh-tw"
+  });
+  var f = document.getElementById("funcCatge");
+  for (var i = 0; i < f.options.length; i++) {
+    if (f.options[i].value == "{{maininfo.[0].funcCatge}}")
+      f.options[i].selected = true;
+  }
   $(function () {
     if ("{{dispaly}}" != "block") {
       $('.modal').hide();
@@ -172,5 +173,28 @@
   function closeWindow() {
     $('.modal').hide();
     $('body').removeClass('noscroll');
+  }
+  function checkForm() {
+    if (document.getElementById("outerListName").value == '') {
+      alert("請輸入名單名稱");
+      document.getElementById("outerListName").focus();
+      return false;
+    }
+    if (document.getElementById("outerListSdt").value == '') {
+      alert("請輸入投放時間(起)");
+      document.getElementById("outerListSdt").focus();
+      return false;
+    }
+    if (document.getElementById("outerListEdt").value == '') {
+      alert("請輸入投放時間(末)");
+      document.getElementById("outerListEdt").focus();
+      return false;
+    }
+    if (document.getElementById("outerListDesc").value == '') {
+      alert("請輸入活動內容說明");
+      document.getElementById("outerListDesc").focus();
+      return false;
+    }
+    return true;
   }
 </script>
