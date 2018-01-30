@@ -9,33 +9,33 @@
 
       <div class="form_block">
         <h2>模型受眾名單調整</h2>
-        <form class="form-horizontal">
-          <h3>名單數量調整</h3>
-          <div class="radio">
-            <label class="col-sm-4 control-label">
-              <input type="radio" id="enternum" name="optradio">設定名單數量：</label>
-            <div class="col-sm-5">
-              <input type="text" class="form-control " id="num" name="num" value="" placeholder="">
-            </div>
-          </div>
-          <div class="radio">
-            <label class="col-sm-4 control-label">
-              <input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：</label>
-            <div class="col-sm-12">
-              <div class="rangeslider">
-                <span class="high">高</span>
-                <span class="low">低</span>
-                <span class="sliderName">閥值分數</span>
-                <input id="ex12c" type="text" num="scope" />
-                <div class="info">
-                  <p>名單數：
-                    <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
-                  </p>
-                </div>
+        <form class="form-horizontal form-inline">
+          <div class="form-group">
+            <div class="col-sm-3 control-label">名單數量調整</div>
+            <div class="col-sm-9">
+              <div class="radio">
+                <label>
+                  <input type="radio" id="enternum" name="optradio">設定名單數量：</label>
+                  <input type="text" class="form-control form-inline" id="num" name="num" value="" placeholder="">
               </div>
-
+              <div class="radio">
+                <label>
+                  <input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：
+                    <span>建義閥值:{{batListThold}}以上</span>
+                    <div class="rangeslider">
+                      <span class="high">高</span>
+                      <span class="low">低</span>
+                      <span class="sliderName">閥值分數</span>
+                      <input id="ex12c" type="text" num="scope" />
+                      <div class="info">
+                        <p>名單數：
+                          <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
+                        </p>
+                      </div>
+                    </div>
+                </label>
+              </div>
             </div>
-
           </div>
         </form>
         <div class="btn-block center-block">
