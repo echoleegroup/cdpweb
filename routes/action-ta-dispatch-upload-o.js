@@ -10,6 +10,12 @@ const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });;
 
+function toUP(value) {
+  if( value == undefined) 
+   return "" ;
+  else 
+    return value.toUpperCase();
+};
 module.exports = (app) => {
   console.log('[talist_putuploadRoute::create] Creating talist_putupload route.');
   const router = express.Router();
@@ -166,7 +172,9 @@ module.exports = (app) => {
                 checkandinsert(i + 1);
               }
               else {
-                db.query("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey,sentListScore) values('" + mdID + "','" + batID + "'," + newindex + ",'" + list[0].data[i][CustIDindex].toUpperCase() + "','" + list[0].data[i][LISCNOindex].toUpperCase() + "','" + list[0].data[i][VINindex] + "','" + data1 + "',(select max(mdListScore) from md_ListDet mld where mld.mdID ='" + mdID + "' and mld.batID ='" + batID + "' and mld.mdListKey1 = '" + data1 + "'))", function (err, recordset) {
+                let CustID = toUP(list[0].data[i][CustIDindex]);
+                let LISCNO = toUP(list[0].data[i][LISCNOindex]);
+                db.query("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey,sentListScore) values('" + mdID + "','" + batID + "'," + newindex + ",'" + CustID + "','" + LISCNO + "','" + list[0].data[i][VINindex] + "','" + data1 + "',(select max(mdListScore) from md_ListDet mld where mld.mdID ='" + mdID + "' and mld.batID ='" + batID + "' and mld.mdListKey1 = '" + data1 + "'))", function (err, recordset) {
                   successnum++;
                   if (i == list[0].data.length - 1) {
                     var currentdate = new Date();
