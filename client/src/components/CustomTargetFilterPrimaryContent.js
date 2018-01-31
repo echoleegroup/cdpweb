@@ -109,6 +109,9 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
   render() {
     return (
       <Loader loaded={this.state.isLoaded}>
+        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.expression} ref={(e) => {
+          this.criteriaComp = e;
+        }}/>
         {/*<!-- table set Start -->*/}
         <div className="table_block">
           <h2>自定名單試算與下載</h2>
@@ -134,9 +137,6 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
             <button type="submit" className="btn btn-lg btn-default" onClick={this.filterResultExport}>自定名單下載</button>
           </div>
         </div>
-        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.expression} ref={(e) => {
-          this.criteriaComp = e;
-        }}/>
       </Loader>
     );
   };
