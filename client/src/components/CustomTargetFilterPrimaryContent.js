@@ -37,7 +37,7 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
     this.criteriaGathering = () => {
       return {
         isIncludeModelTarget: this.state.criteria.isIncludeModelTarget,
-        statements: this.criteriaComp.criteriaGathering()
+        statements: this.criteriaComp.getCriteria()
       };
     };
 
