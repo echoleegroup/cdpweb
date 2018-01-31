@@ -2,6 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import numeral from 'numeral';
 import {format} from 'util';
+import {Map} from 'immutable';
 import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
 import CustomFilterAction from '../actions/custom-filter-action';
 
@@ -10,10 +11,10 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
     super(props);
     this.state = {
       isLoaded: true,
-      criteria: {
+      criteria: Map({
         isIncludeModelTarget: true,
-        expression: []
-      },
+        statements: []
+      }),
       prediction: {
         size: 0,
         model_target: 0
@@ -22,21 +23,25 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
   };
 
   componentWillMount() {
-    this.setIncludeModelTarget = (e) => {
-      this.setState({
-        isIncludeModelTarget: e.target.value
-      });
+    this.setIncludeModelTarget = () => {
+      return (e) => {
+        this.setState(prevState => ({
+          criteria: prevState.criteria.set('isIncludeModelTarget', true)
+        }))
+      };
     };
 
-    this.setExcludeModelTarget = (e) => {
-      this.setState({
-        isIncludeModelTarget: e.target.value
-      });
+    this.setExcludeModelTarget = () => {
+      return (e) => {
+        this.setState(prevState => ({
+          criteria: prevState.criteria.set('isIncludeModelTarget', false)
+        }))
+      };
     };
 
     this.criteriaGathering = () => {
       return {
-        isIncludeModelTarget: this.state.criteria.isIncludeModelTarget,
+        isIncludeModelTarget: this.state.criteria.get('isIncludeModelTarget'),
         statements: this.criteriaComp.getCriteria()
       };
     };
@@ -46,10 +51,11 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
 
       if (isReady) {
         let criteria = this.criteriaGathering();
-        this.setState({
-          //isLoaded: false,
-          criteria
-        });
+        this.setState(prevState => ({
+          criteria: prevState.criteria
+            .set('isIncludeModelTarget', criteria.isIncludeModelTarget)
+            .set('statements', criteria.statements)
+        }));
 
         console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
         CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
@@ -71,10 +77,11 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
 
       if (isReady) {
         let criteria = this.getCriteria();
-        this.setState({
-          //isLoaded: false,
-          criteria
-        });
+        this.setState(prevState => ({
+          criteria: prevState.criteria
+            .set('isIncludeModelTarget', criteria.isIncludeModelTarget)
+            .set('statements', criteria.statements)
+        }));
 
         $(this.inputCriteria).val(JSON.stringify(criteria));
         $(this.formComponent).submit();
@@ -107,9 +114,10 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
   };
 
   render() {
+    let isIncludeModelTarget = this.state.criteria.get('isIncludeModelTarget')
     return (
       <Loader loaded={this.state.isLoaded}>
-        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.expression} ref={(e) => {
+        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.get('expression')} ref={(e) => {
           this.criteriaComp = e;
         }}/>
         {/*<!-- table set Start -->*/}
@@ -125,9 +133,9 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
               <label htmlFor="inputName" className="col-sm-3 control-label">是否包含模型受眾</label>
               <div className="col-sm-8">
                 <label className="radio-inline">
-                  <input type="radio" name="optradio" value={true} defaultChecked={this.state.criteria.isIncludeModelTarget} onClick={this.setIncludeModelTarget}/>是</label>
+                  <input type="radio" name="optradio" value={true} defaultChecked={isIncludeModelTarget} onClick={this.setIncludeModelTarget()}/>是</label>
                 <label className="radio-inline">
-                  <input type="radio" name="optradio" value={false} defaultChecked={!this.state.criteria.isIncludeModelTarget} onClick={this.setExcludeModelTarget}/>否</label>
+                  <input type="radio" name="optradio" value={false} defaultChecked={!isIncludeModelTarget} onClick={this.setExcludeModelTarget()}/>否</label>
               </div>
             </div>
             <CustomTargetFilterPreview prediction={this.state.prediction}/>

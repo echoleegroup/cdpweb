@@ -174,7 +174,6 @@ export default class CriteriaAssignment extends React.PureComponent {
   // };
 
   render() {
-    console.log('this.props.features: ', this.props.features);
     let display = (this.state.isOpen)? '': 'none';
     return (
       <div className="modal" style={{display: display}}>

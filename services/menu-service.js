@@ -11,7 +11,7 @@ module.exports.getMenuTree = (callback=() => {}) => {
     'FROM sy_menu sm ' +
     'LEFT JOIN sy_menu pym ON sm.parentId = pym.menuId ' +
     'WHERE sm.parentId IS NOT NULL ' +
-    'ORDER BY sm.seq';
+    'ORDER BY pym.seq, sm.seq';
   Q.nfcall(_connector.execSql, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail(err => {
