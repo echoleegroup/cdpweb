@@ -9,7 +9,7 @@ const FILTER_RESULT_EXPORT = '/api/target/%s/%s/criteria/export';
 const FilterAction = {};
 
 FilterAction.getCustomCriteriaFeatures = (mdId, batId, success, fail) => {
-  let url = format(CRITERIA_FEATURES_URL_TEST, mdId, batId);
+  let url = format(CRITERIA_FEATURES_URL, mdId, batId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
