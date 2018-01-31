@@ -62,7 +62,7 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
           this.setState({
             isLoaded: true,
             prediction: {
-              sizeOfResults: data.size,
+              sizeOfResults: data.sizeOfCriteriaResult,
               sizeOfResultsInTarget: data.sizeOfResultsInTarget
             }
           });

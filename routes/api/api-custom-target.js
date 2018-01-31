@@ -77,11 +77,10 @@ module.exports = (app) => {
       });
       // winston.info('/%s/%s/criteria/preview :: resultsInTarget: ', mdId, batId, resultsInTarget.length);
       // winston.info('/%s/%s/criteria/preview :: resultsExcludeTarget: ', mdId, batId, resultsExcludeTarget.length);
-      let sizeOfResultsInTarget = resultsInTarget.length;
-      let sizeOfResultsExcludeTarget = resultsExcludeTarget.length;
-      let size = sizeOfResultsInTarget + sizeOfResultsExcludeTarget;
+      let sizeOfCriteriaResult = (isIncludeModelTarget)? (resultsInTarget.length + resultsExcludeTarget.length): resultsExcludeTarget.length;
+      let sizeOfResultsInTarget = sizeOfCriteriaResult - resultsExcludeTarget.length;
 
-      res.json({size, sizeOfResultsInTarget, sizeOfResultsExcludeTarget});
+      res.json({sizeOfCriteriaResult, sizeOfResultsInTarget});
     }).fail(err => {
       winston.error('===/%s/%s/criteria/preview internal server error: ', mdId, batId, err);
       res.json(null, 500, 'internal service error');
