@@ -526,7 +526,7 @@ module.exports = (app) => {
   router.post('/outdata/tag/del', function (req, res) {
     var ListID = req.body.ListID;
     var tagID = req.body.tagID;
-    db.query("delete FROM cu_OuterListTag where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {
+    db.query("UPDATE cu_OuterListTag set isDel = 'Y' where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {
       if (err) console.log(err);
       res.end('刪除成功');
     });
