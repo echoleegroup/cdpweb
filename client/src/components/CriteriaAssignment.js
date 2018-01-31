@@ -7,6 +7,7 @@ import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 // import CustomFilterAction from '../actions/criteria-action';
 import PickerSingle from './PickerSingle'
+import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
 const INPUT_CRITERIA_OPERATOR = {
   eq: {
@@ -84,7 +85,7 @@ const GetOperatorSet = (dataType) => {
 };
 const INITIAL_CRITERIA = Object.freeze({
   uuid: undefined,
-  type: 'field',
+  type: CRITERIA_COMPONENT_DICT.FIELD,
   field_id: undefined,
   field_label: undefined,
   data_type: undefined,

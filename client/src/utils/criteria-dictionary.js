@@ -16,7 +16,9 @@ exports.CRITERIA_COMPONENT_DICT = {
   COMBO: 'combo',
   BUNDLE: 'bundle',
   TRANSACTION: 'refTransaction',
-  TAG: 'tag',
-  TRAIL: 'trail',
-  FIELD: 'field'
+  TAG: 'refTag',
+  TRAIL_PERIOD: 'refTrailPeriod',
+  TRAIL_HIT: 'refTrailHit',
+  FIELD: 'field',
+  FIELD_TAG: 'fieldTag'
 };

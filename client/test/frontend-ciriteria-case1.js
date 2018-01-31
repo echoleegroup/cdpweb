@@ -158,6 +158,23 @@ module.exports = {
             ref: null,
             operator: 'lt'
           }]
+        }, {
+          uuid: shortid.generate(),
+          type: 'refTransaction',
+          operator: 'not',
+          ref: 'custom_note',
+          ref_label: '客戶註記',
+          criteria: [{
+            uuid: shortid.generate(),
+            type: 'field',
+            field_id: 'CRCMDF_DEF_CMCHANNEL_F',
+            field_label: '不聯絡註記',
+            value: ['FA','FB','FC','FD'],  //timestamp of 2015/01/01
+            value_label: ['FA','FB','FC','FD'],
+            data_type: 'refOption',
+            ref: '______',
+            operator: 'in'
+          }]
         }]
       } //明細資料指定條件 end
     ],
@@ -188,6 +205,10 @@ module.exports = {
       'CRCMDF_CMCHANNEL' //不聯絡註記
     ],
     transaction: {
+      period_start_value: 1483228800000,
+      period_start_label: '2017/01/01',
+      period_end_value: 1506729600000,
+      period_end_label: '2017/09/30',
       refInsurance: [
         'MAIN_LICSNO',            //車牌
         'MAIN_ISEQNO',            //投保編號

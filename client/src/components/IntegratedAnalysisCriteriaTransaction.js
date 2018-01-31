@@ -34,7 +34,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
   ComponentCriteriaBundleContainer() {
     return (props) => {
       let _props = assign({}, props, {
-        toInsertFeatureSet: this.openFeatureSetPicker
+        toPickFeatureSet: this.openFeatureSetPicker
       });
       return <CriteriaTransactionComboBundle {..._props}/>
     };
@@ -59,8 +59,8 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
     return CRITERIA_COMPONENT_DICT.TRANSACTION
   };
 
-  toPickCriteriaBundle() {
-    this.props.toInsertFeatureSet(({setId, setLabel}) => {
+  toInsertCriteriaBundle() {
+    this.props.toPickFeatureSet(({setId, setLabel}) => {
       console.log(`get setID=${setId} and label=${setLabel}`);
       let criteriaType = this.getInsertCriteriaBundleType();
       console.log(`toPickCriteriaBundle: ${criteriaType}`);
@@ -77,7 +77,7 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.toPickCriteriaBundle.bind(this)}>
+          <button type="button" className="btn btn-warning" onClick={this.toInsertCriteriaBundle.bind(this)}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件組合
           </button>
         </div>

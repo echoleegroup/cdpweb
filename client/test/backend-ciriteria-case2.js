@@ -100,7 +100,7 @@ module.exports = {
       { //標籤篩選
         uuid: shortid.generate(),
         type: 'combo',
-        operator: 'and',
+        operator: 'or',
         criteria: [{
           uuid: shortid.generate(),
           type: 'refTag',
@@ -109,6 +109,7 @@ module.exports = {
           ref_label: '活動名單標籤',
           criteria: [{
             uuid: shortid.generate(),
+            type: 'fieldTag',
             value: 'SIENTA',
             value_label: 'SIENTA'
           }]
@@ -120,6 +121,7 @@ module.exports = {
           ref_label: '活動名單標籤',
           criteria: [{
             uuid: shortid.generate(),
+            type: 'fieldTag',
             value: 'SIENTA',
             value_label: 'SIENTA'
           }]
@@ -130,7 +132,7 @@ module.exports = {
       { //軌跡篩選
         uuid: shortid.generate(),
         type: 'combo',
-        operator: 'and',
+        operator: 'or',
         criteria: [{
           uuid: shortid.generate(),
           type: 'refTrailPeriod',
@@ -151,6 +153,22 @@ module.exports = {
             data_type: 'number',
             ref: null,
             operator: 'gt'
+          }]
+        }, {
+          uuid: shortid.generate(),
+          type: 'refTrailHit',
+          period_start_value: null,
+          period_start_label: null,
+          period_end_value: null,
+          period_end_label: null,
+          operator: 'and',
+          ref: 'edm_hit', //EDM點擊
+          ref_label: 'EDM點擊資料',
+          criteria: [{
+            uuid: shortid.generate(),
+            type: 'fieldTag',
+            value: 'toyota_promo_20171206',
+            value_label: '本月TOYOTA將會有什麼好事降臨!? (2017/12/06)'
           }]
         }]
       }
