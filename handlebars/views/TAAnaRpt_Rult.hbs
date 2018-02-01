@@ -95,42 +95,42 @@ $.ajax({
 		if( myObj.betchInfolist[i].sentCount == 0 ) 
 			batchHtml+= '<h3 class="month">'+myObj.betchInfolist[i].batName+'</h3><div class="noresult"><p>尚無成效數據</p></div>';
 		else{
-			if( myObj.order == null)
+			if( myObj.betchInfolist[i].order == null)
         		batchorder = "-" ;
         	else 
-        		batchorder = myObj.order;
-        	if( myObj.tostore == null)
+        		batchorder = myObj.betchInfolist[i].order;
+        	if( myObj.betchInfolist[i].tostore == null)
         		batchtostore = "-" ;
         	else 
-        		batchtostore = myObj.tostore;
-        	if( myObj.register == null)
+        		batchtostore = myObj.betchInfolist[i].tostore;
+        	if( myObj.betchInfolist[i].register == null)
         		batchregister = "-" ;
         	else 
-        		batchregister = myObj.register;
-        	if( myObj.click == null)
+        		batchregister = myObj.betchInfolist[i].register;
+        	if( myObj.betchInfolist[i].click == null)
         		batchclick = "-" ;
         	else 
-        		batchclick = myObj.click;
-        	if( myObj.orderpercent == null)
+        		batchclick = myObj.betchInfolist[i].click;
+        	if( myObj.betchInfolist[i].orderpercent == null)
         		batchorderpercent = "-" ;
         	else 
-        		batchorderpercent = myObj.orderpercent;
-        	if( myObj.tostorepercent == null)
+        		batchorderpercent = myObj.betchInfolist[i].orderpercent;
+        	if( myObj.betchInfolist[i].tostorepercent == null)
         		batchtostorepercent = "-" ;
         	else 
-        		batchtostorepercent = myObj.tostorepercent;
-        	if( myObj.registerpercent == null)
+        		batchtostorepercent = myObj.betchInfolist[i].tostorepercent;
+        	if( myObj.betchInfolist[i].registerpercent == null)
         		batchregisterpercent = "-" ;
         	else 
-        		batchregisterpercent = myObj.registerpercent;
-        	if( myObj.clickpercent == null)
+        		batchregisterpercent = myObj.betchInfolist[i].registerpercent;
+        	if( myObj.betchInfolist[i].clickpercent == null)
         		batchclickpercent = "-" ;
         	else 
-        		batchclickpercent = myObj.clickpercent;
+        		batchclickpercent = myObj.betchInfolist[i].clickpercent;
 			batchHtml+= '<h3 class="month">'+myObj.betchInfolist[i].batName+'</h3><div class="table-responsive result"><table class="table table-bordered"><tbody>';
 			batchHtml+= '<tr><td rowspan="2">投放人數</td><td>受訂人數</td><td>來店人數</td><td>登錄人數</td><td>點擊人數</td><td rowspan="4" width="180"><a href="javascript:getDeatil('+k+',\''+myObj.betchInfolist[i].batID+'\',\''+mdID+'\')" id="openModal1" class="btn btn-chart"><img src="/images/btn_chart.png" alt="">各名單來源受訂/回應圖</a></td></tr>';
 			batchHtml+= '<tr><td><span class="num">'+batchorder+'</span></td><td><span class="num">'+batchtostore+'</span></td><td><span class="num">'+batchregister+'</span></td><td><span class="num">'+batchclick+'</span></td></tr>';
-			batchHtml+= '<tr><td rowspan="2"><span class="num">'+myObj.sentCount+'</span></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
+			batchHtml+= '<tr><td rowspan="2"><span class="num">'+myObj.betchInfolist[i].sentCount+'</span></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
 			batchHtml+= '<tr><td><span class="num">'+batchorderpercent+'</span></td><td><span class="num">'+batchtostorepercent+'</span></td><td><span class="num">'+batchregisterpercent+'</span></td><td><span class="num">'+batchclickpercent+'</span></td></tr>';
 			batchHtml+= '</tbody></table></div>' ;
 			batchHtml+= '<div id="chart'+k+'" class="chart"><div class="table_block" id="tableChart'+k+'"><h3>各名單來源受訂/回應圖</h3><div class="chart_block"><div id="chartdiv'+k+'" style="width:100%; height: 400px;"></div></div></div></div>';
