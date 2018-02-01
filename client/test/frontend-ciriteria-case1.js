@@ -181,7 +181,7 @@ module.exports = {
     tag: [],  //標籤篩選 end
     trail: [] //軌跡篩選 end
   },
-  output: {
+  export: {
     master: [
       //master
       'MAIN_LICSNO',      //車牌
@@ -195,7 +195,7 @@ module.exports = {
       'CRCRMF_CRBRNH',    //CR營業所
       'CRCRMF_CRSALR',    //CR業代工號
       'SLMNMF_SALSNM',    //CR業代姓名
-      //'待加入',          //APP認證
+      '___',          //APP認證
       'CRCAMF_SEDLDT',    //交車日期
       'MAIN_CARCD',       //車名
       'CRCCMF_LRDT',      //上次回廠日
@@ -204,22 +204,14 @@ module.exports = {
       'SRWHMF_LRKM',      //回廠里程數
       'CRCMDF_CMCHANNEL' //不聯絡註記
     ],
+    transaction: ['refInsurance']
+  },
+  filter: {
     transaction: {
       period_start_value: 1483228800000,
       period_start_label: '2017/01/01',
       period_end_value: 1506729600000,
-      period_end_label: '2017/09/30',
-      refInsurance: [
-        'MAIN_LICSNO',            //車牌
-        'MAIN_ISEQNO',            //投保編號
-        'ISMISITEMS_CREATEDT',    //要保書建立日期
-        'ISMAIN_DPR_GRADE',       //今年責任險等級
-        'ISMAIN_EGNO',            //引擎/車身號碼
-        'ISMAIN_CUSTNM',          //被保險人(領照人)
-        'ISMISITEMS_DEDUCT',      //自負額
-        'ISMISITEMS_ISAMT',       //保險費
-        'MAIN_ISCD'               //險種代碼
-      ]
+      period_end_label: '2017/09/30'
     }
   }
 };

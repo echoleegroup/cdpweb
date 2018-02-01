@@ -173,5 +173,26 @@ module.exports = {
         }]
       }
     ] //軌跡篩選 end
+  },
+  export: {
+    master: [
+      //master
+      'LICSNO',         //車牌
+      '待加入',          //使用人姓名
+      '待加入',          //使用人ID
+      'CRCUMF_MOBILE',  //使用人手機
+      '待加入',          //使用人地址
+      '待加入',          //不聯絡註記
+      '___'               //DxID
+    ],
+    transaction: ['belonging_media']  //自有媒體標籤
+  },
+  filter: {
+    transaction: {
+      period_start_value: 1483228800000,
+      period_start_label: '2017/01/01',
+      period_end_value: 1506729600000,
+      period_end_label: '2017/09/30'
+    }
   }
 };

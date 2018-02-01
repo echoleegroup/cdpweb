@@ -51,15 +51,44 @@ module.exports = {
       }
     ] //軌跡篩選 end
   },
-  output: {
+  export: {
     master: [
       '___',           //線上用戶UUID
       '___',           //CanvasID
       '___',           //CookieID
-      '___',            //車牌
+      '___',           //車牌
 
-      //analysis
-      '___'           //Web頁面瀏覽
+      //從RDB撈出固定的樣貌分析欄位(主表)
+      'MAIN_CARCD',       //車名
+      'CRCCMF_CRCLASS',   //CR等級
+      'SRWHMF_USEFRE',    //每萬公里行駛頻率
+      'SRWHMF_USEMONS',   //萬公里平均月份
+      '___',                 //使用者年齡
+      '___',                 //使用人性別
+      'CRCAMF_FENDAT',    //強制險到期日
+      'CRCAMF_UENDAT'     //任意險到期日
+    ],
+    transaction: {
+      web_browse: [
+        //從RDB取出固定的Web瀏覽欄位
+        '___',           //Web頁面瀏覽
+        '___',           //Web頁面瀏覽
+        '___',           //Web頁面瀏覽
+        '___'           //Web頁面瀏覽
+      ]
+    }
+  },
+  filter: {
+    transaction: [
+      {
+        //從RDB撈出的預設Web瀏覽條件
+        period_start_value: 1483228800000,
+        period_start_label: '2017/01/01',
+        period_end_value: 1506729600000,
+        period_end_label: '2017/09/30',
+        type: 'web_browse',
+        field: '____'  //從RDB撈出的預設Ｗeb瀏覽時間欄位
+      }
     ]
   }
 };

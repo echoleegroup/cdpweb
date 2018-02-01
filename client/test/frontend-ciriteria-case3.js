@@ -51,15 +51,17 @@ module.exports = {
       }
     ] //軌跡篩選 end
   },
-  output: {
+  export: {
     master: [
+      //master
       '___',           //線上用戶UUID
       '___',           //CanvasID
       '___',           //CookieID
-      '___',            //車牌
-
-      //analysis
-      '___'           //Web頁面瀏覽
-    ]
+      '___'            //車牌
+    ],
+    transaction: []
+  },
+  filter: {
+    transaction: {}
   }
 };
