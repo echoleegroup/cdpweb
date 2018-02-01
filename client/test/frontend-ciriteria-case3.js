@@ -5,8 +5,8 @@ module.exports = {
     tag: [
       { //標籤篩選
         uuid: shortid.generate(),
-        type: 'combo',
-        operator: 'and',
+        type: 'combo',  //combo, refTransaction, field, bundle, refTag, fieldTag, refTrailPeriod, refTrailHit
+        operator: 'and',  //and, or, not
         criteria: [{
           uuid: shortid.generate(),
           type: 'refTag',
@@ -45,7 +45,7 @@ module.exports = {
             value_label: 10,
             data_type: 'number',
             ref: null,
-            operator: 'gt'
+            operator: 'gt'    //eq, ne, lt, le, gt, ge, in, ni
           }]
         }]
       }

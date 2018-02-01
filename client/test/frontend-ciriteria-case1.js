@@ -7,8 +7,8 @@ module.exports = {
         //consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
         criteria: {
           uuid: shortid.generate(),
-          type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
-          operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
+          type: 'combo',  //combo, refTransaction, field, bundle, refTag, fieldTag, refTrailPeriod, refTrailHit
+          operator: 'and',  //and, or, not
           criteria: [{
             uuid: shortid.generate(),
             type: 'field',
@@ -18,7 +18,7 @@ module.exports = {
             value_label: ['使用人'],
             data_type: 'refOption',
             ref: '_____',
-            operator: 'eq'
+            operator: 'eq'    //eq, ne, lt, le, gt, ge, in, ni
           }, {
             uuid: shortid.generate(),
             type: 'field',
