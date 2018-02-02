@@ -16,14 +16,15 @@ module.exports = {
         allowNull: false
       },
       logFilename: {
-        type: DataTypes.STRING(50)
+        type: DataTypes.STRING(50),
+        allowNull: false
       },
       userId: {
         type: DataTypes.STRING(50),
         allowNull: false
       },
       dnldDatetime: {
-        type: DataTypes.TIMESTAMP,
+        type: DataTypes.DATE,
         allowNull: false
       }
     })

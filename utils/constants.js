@@ -27,7 +27,8 @@ module.exports = Object.freeze({
     TA_DISPATCH_UPLOAD: "_targetTaDispach",
     TA_REACTION_UPLOAD: "_targetTaReaction",
     TAANARPT_RULT: "_taanaRpt",
-    EVENT_PAGE_Analysis:"actad_actAnalysis"
+    EVENT_PAGE_Analysis:"actad_actAnalysis",
+    CUSTOM_TARGET_FILTER: "_targetFilter"
   }
 });
 

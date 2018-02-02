@@ -67,7 +67,8 @@ module.exports.getBatchTargetInfoOfCategory = (mdId, batId, mdListCateg, callbac
     .setInput('batId', _connector.TYPES.NVarChar, batId)
     .setInput('mdListCateg', _connector.TYPES.NVarChar, mdListCateg);
 
-  Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+  Q.nfcall(request.executeQuery, sql).then(resultSet => {
+    winston.info(`===getBatchTargetInfoOfCategory: ${resultSet}`);
     callback(null, resultSet[0]);
   }).fail((err) => {
     winston.error('===getBatchTargetInfoOfCategory failed:', err);

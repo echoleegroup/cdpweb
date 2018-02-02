@@ -6,7 +6,9 @@ const CRITERIA_FEATURES_URL_TEST = '/api/target/%s/%s/criteria/features/test';
 const CRITERIA_HISTORY_URL = '/api/target/%s/%s/criteria/history';
 const FILTER_RESULT_PREVIEW = '/api/target/%s/%s/criteria/preview';
 const FILTER_RESULT_EXPORT = '/api/target/%s/%s/criteria/export';
-const FilterAction = {};
+const FilterAction = {
+  FILTER_RESULT_EXPORT
+};
 
 FilterAction.getCustomCriteriaFeatures = (mdId, batId, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL, mdId, batId);

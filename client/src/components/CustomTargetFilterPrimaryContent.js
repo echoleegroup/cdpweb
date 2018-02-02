@@ -76,7 +76,7 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
       let isReady = this.criteriaComp.isReadyToLeave();
 
       if (isReady) {
-        let criteria = this.getCriteria();
+        let criteria = this.criteriaGathering();
         this.setState(prevState => ({
           criteria: prevState.criteria
             .set('isIncludeModelTarget', criteria.isIncludeModelTarget)

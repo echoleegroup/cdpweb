@@ -12,11 +12,12 @@ module.exports = {
       },
       seq: {
         type: DataTypes.BIGINT,
-        autoIncrement: true
+        autoIncrement: true,
+        allowNull: false
       },
       menuCode: {
         type: DataTypes.STRING(20),
-        allowNull: false
+        allowNull: false,
       },
       criteria: {
         type: DataTypes.TEXT
@@ -37,16 +38,16 @@ module.exports = {
         type: DataTypes.TEXT
       },
       requestTime: {
-        type: DataTypes.TIMESTAMP,
+        type: DataTypes.DATE,
         allowNull: false
       },
       queryTime: {
-        type: DataTypes.TIMESTAMP
+        type: DataTypes.DATE
       },
       queryResponseTime: {
-        type: DataTypes.TIMESTAMP
+        type: DataTypes.DATE
       },
-      queryResutlFilename: {
+      queryResultFilename: {
         type: DataTypes.STRING(50)
       }
     })
