@@ -17,7 +17,7 @@
     <div class="table_block table-responsive">
       <h2>受訂資訊</h2>
       <div class="btn-block center-block">
-        <button type="submit" class="btn btn-lg btn-default">受訂資料下載</button>
+        <button type="submit" class="btn btn-lg btn-default" onclick="download_data('{{mdID}}')">受訂資料下載</button>
       </div>
     </div>
   </div>
@@ -284,5 +284,11 @@
         alert("ERROR!!!");
       }
     });
+  }
+</script>
+<script>
+  function download_data(mdID) {
+    var url = "/taanarpt_rult/download_act?" + "mdID="+ mdID;
+    window.open(url, '_blank');
   }
 </script>
