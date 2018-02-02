@@ -56,6 +56,7 @@ module.exports.httpResponseArchiveFile = ({
                                             res,
                                             path: [],
                                             buff: [],
+                                            fileName = Date.now(),
                                             password
                                           }) => {
   const zipContentType = 'application/octet-stream';

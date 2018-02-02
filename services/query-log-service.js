@@ -46,8 +46,8 @@ module.exports.updateQueryLog = ({queryId = null, responseTime = new Date(), res
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
-    .setInput('responseTime', _connector.DataTypes.DateTime, responseTime)
-    .setInput('resultFilename', _connector.DataTypes.DateTime, resultFilename);
+    .setInput('responseTime', _connector.TYPES.DateTime, responseTime)
+    .setInput('resultFilename', _connector.TYPES.DateTime, resultFilename);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
@@ -68,10 +68,10 @@ module.exports.insertDownloadLog = ({queryId = null, filename = null, userId = n
     'SELECT SCOPE_IDENTITY() AS logID';
 
   let request = _connector.queryRequest()
-    .setInput('queryId', _connector.DataTypes.NVarChar, queryId)
-    .setInput('filename', _connector.DataTypes.NVarChar, filename)
-    .setInput('userId', _connector.DataTypes.NVarChar, userId)
-    .setInput('downloadDate', _connector.DataTypes.NVarChar, downloadDate);
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('filename', _connector.TYPES.NVarChar, filename)
+    .setInput('userId', _connector.TYPES.NVarChar, userId)
+    .setInput('downloadDate', _connector.TYPES.NVarChar, downloadDate);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);

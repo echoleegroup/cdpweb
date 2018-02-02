@@ -153,10 +153,12 @@ module.exports = (app) => {
       }));
 
       //generate excel file
-      let filename = `${Date.now()}.xlsx`;
-      let xlsxFileAbsolutePath = path.join(storage, filename);
+      let filename = Date.now();
+      let xlsxFilename = `${filename}.xlsx`
+      let xlsxFileAbsolutePath = path.join(storage, xlsxFilename);
       return [
         filename,
+        xlsxFilename,
         Q.nfcall(fileHelper.buildXlsxFile, {
           xlsxDataSet: exportDateSet,
           xlsxFileAbsolutePath: xlsxFileAbsolutePath
@@ -164,19 +166,20 @@ module.exports = (app) => {
           //write download log to DB
           return Q.nfcall(queryService.insertDownloadLog, {
             queryId: queryLogId,
-            filename,
+            xlsxFilename,
             userId: req.user.userId
           }).then(result => {
             return xlsxBuffer;
           });
         })];
 
-    }).spread((filename, xlsxBuffer) => {
+    }).spread((filename, xlsxFilename, xlsxBuffer) => {
       //archive and response to client
       fileHelper.httpResponseArchiveFile({
         res,
-        path: [filename],
+        path: [xlsxFilename],
         buff: xlsxBuffer,
+        fileName: filename,
         password: req.user.userId.toLocaleLowerCase()
       })
     }).fail(err => {
