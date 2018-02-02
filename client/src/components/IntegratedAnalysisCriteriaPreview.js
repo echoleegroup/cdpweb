@@ -3,7 +3,7 @@ import {isEmpty} from 'lodash';
 import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
 import CriteriaComboBundleList from './CriteriaComboBundleList'
 import CriteriaComboBundle from "./CriteriaComboBundle";
-import CriteriaTransactionBundle from './CriteriaTransactionBundle';
+import CriteriaTransactionBundleMute from "./CriteriaTransactionBundleMute";
 
 const ComponentCriteriaBody = (props) => {
   let mapToProps = {};
@@ -54,7 +54,7 @@ export default class IntegratedAnalysisCriteriaPreview extends React.PureCompone
           <h4><i className="fa fa-check" aria-hidden="true"/>明細資料指定條件</h4>
           {/* 條件設定 預覽狀態*/}
           <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step3)}
-                                 ComponentCriteriaBundleContainer={CriteriaTransactionBundle}/>
+                                 ComponentCriteriaBundleContainer={CriteriaTransactionBundleMute}/>
 
         </div>
         <div className="btn-block center-block">

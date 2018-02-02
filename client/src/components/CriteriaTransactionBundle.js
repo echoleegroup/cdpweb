@@ -33,11 +33,6 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
       this.criteriaAssignmentModal.openModal(this.insertCriteriaState);
     };
 
-    this.fetchFeatureData = callback => {
-      IntegratedAnalysisAction.getTransactionCriteriaFeatures(
-        this.getPropertyState('ref'), callback);
-    };
-
     this.fetchPreparedData = () => {
       this.fetchFeatureData(({features, featureRefCodeMap}) => {
         this.setState({
@@ -48,6 +43,11 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     };
 
     this.fetchPreparedData();
+  };
+
+  fetchFeatureData(callback) {
+    IntegratedAnalysisAction.getTransactionCriteriaFeatures(
+      this.getPropertyState('ref'), callback);
   };
 
   componentWillUnmount() {
@@ -73,9 +73,9 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   };
 
   ComponentCustomized() {
-    if (this.props.isPreview) {
-      return <div/>;
-    }
+    // if (this.props.isPreview) {
+    //   return <div/>;
+    // }
 
     let mapToProps = {
       features: this.state.features || [],

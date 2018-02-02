@@ -5,6 +5,7 @@ const CRITERIA_FEATURES_URL_CLIENT = '/api/integration/client/criteria/features'
 const CRITERIA_FEATURES_URL_VEHICLE = '/api/integration/vehicle/criteria/features';
 const CRITERIA_FEATURES_URL_TRANSACTION = '/api/integration/transaction/criteria/features/%s';
 const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/transaction/feature/sets';
+const DOWNLOAD_FEATURE_POOL = '/api/integration/feature/download/pool';
 
 const FilterAction = {};
 
@@ -38,24 +39,16 @@ FilterAction.getTransactionCriteriaFeatures = (setId, success, fail) => {
 
 FilterAction.getTransactionFeatureSets = (success, fail) => {
   action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRANSACTION, undefined, undefined).subscribe(data => {
-    // success && success(data);
-    success && success([
-      {
-        type: 'tail',
-        id: 'aaa',
-        label: '點數明細'
-      },
-      {
-        type: 'tail',
-        id: 'bbb',
-        label: '保險明細'
-      },
-      {
-        type: 'tail',
-        id: 'ccc',
-        label: '消費明細'
-      }
-    ]);
+    success && success(data);
+  }, err => {
+    console.log('===getTransactionFeatureSets failed: ', err);
+    fail && fail(err);
+  });
+};
+
+FilterAction.getOutputFeaturePool = (success, fail) => {
+  action.ajaxGetObservable(DOWNLOAD_FEATURE_POOL, undefined, undefined).subscribe(data => {
+    success && success(data);
   }, err => {
     console.log('===getTransactionFeatureSets failed: ', err);
     fail && fail(err);
