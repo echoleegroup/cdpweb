@@ -71,12 +71,12 @@ module.exports.insertDownloadLog = ({queryId = null, filename = null, userId = n
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('filename', _connector.TYPES.NVarChar, filename)
     .setInput('userId', _connector.TYPES.NVarChar, userId)
-    .setInput('downloadDate', _connector.TYPES.NVarChar, downloadDate);
+    .setInput('downloadDate', _connector.TYPES.DateTime, downloadDate);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
   }).fail(err => {
-    winston.error(`===insert query log failed! (menuCode=${menuCode}, $criteria=${criteria}, features=${features}, filter=${filters})`);
+    winston.error(`===insert query log failed! (queryId=${queryId}, filename=${filename}, userId=${userId}, downloadDate=${downloadDate})`);
     winston.error(err);
     callback(err);
   });

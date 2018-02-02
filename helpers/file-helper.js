@@ -30,8 +30,8 @@ module.exports.buildXlsxFile = ({
 };
 
 module.exports.buildZipBuffer = ({
-                                   path: [],
-                                   buff: [],
+                                   path = [],
+                                   buff = [],
                                    password
                                  }) => {
   const Minizip = require('minizip-asm.js');
@@ -54,8 +54,8 @@ module.exports.buildZipBuffer = ({
 
 module.exports.httpResponseArchiveFile = ({
                                             res,
-                                            path: [],
-                                            buff: [],
+                                            path = [],
+                                            buff = [],
                                             fileName = Date.now(),
                                             password
                                           }) => {

@@ -123,7 +123,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, fe
   //set customized criteria
   //transfer input criteria to sql expression
   let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements, fieldDict);
-  winston.info('queryTargetByCustomCriteria::customCriteriaSqlWhere: %s', customCriteriaSqlWhere);
+  // winston.info('queryTargetByCustomCriteria::customCriteriaSqlWhere: %s', customCriteriaSqlWhere);
   if(customCriteriaSqlWhere) {
     sqlWhere = `${sqlWhere} AND ${customCriteriaSqlWhere}`;
     request = _.reduce(paramsDynamic, (request, {name, type, value}) => {
@@ -133,11 +133,11 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, fe
 
   //compose all the partial sql to full sql
   let sql = `SELECT ${sqlSelect} FROM ${sqlFrom} WHERE ${sqlWhere}`;
-  winston.info('queryTargetByCustomCriteria::sql: %s', sql);
+  // winston.info('queryTargetByCustomCriteria::sql: %s', sql);
 
   //execute query
   Q.nfcall(request.executeQuery, sql).then((result) => {
-    winston.info('===queryTargetByCustomCriteria::executeQuery::result: ', result);
+    // winston.info('===queryTargetByCustomCriteria::executeQuery::result: ', result);
     callback(null, result);
   }).fail((err) => {
     winston.error('===criteria-service::' +

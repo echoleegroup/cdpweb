@@ -116,7 +116,7 @@ module.exports = (app) => {
         menuCode: MENU_CODE.CUSTOM_TARGET_FILTER,
         criteria: req.body.criteria
       })
-    ]).spread((model, features, downloadFeatures, queryLogId) => {
+    ]).spread((model, features, downloadFeatures, queryLogRes) => {
 
       if (!model) {
         res.json(req.params, 404, 'batch data is not found!');
@@ -134,7 +134,7 @@ module.exports = (app) => {
           downloadFeatureIds,
           downloadFeatureLabels,
           Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, downloadFeatureIds),
-          queryLogId];
+          queryLogRes.queryID];
       }
 
     }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet, queryLogId) => {
@@ -154,7 +154,7 @@ module.exports = (app) => {
 
       //generate excel file
       let filename = Date.now();
-      let xlsxFilename = `${filename}.xlsx`
+      let xlsxFilename = `${filename}.xlsx`;
       let xlsxFileAbsolutePath = path.join(storage, xlsxFilename);
       return [
         filename,
@@ -166,7 +166,7 @@ module.exports = (app) => {
           //write download log to DB
           return Q.nfcall(queryService.insertDownloadLog, {
             queryId: queryLogId,
-            xlsxFilename,
+            filename: xlsxFilename,
             userId: req.user.userId
           }).then(result => {
             return xlsxBuffer;
@@ -178,9 +178,9 @@ module.exports = (app) => {
       fileHelper.httpResponseArchiveFile({
         res,
         path: [xlsxFilename],
-        buff: xlsxBuffer,
+        buff: [xlsxBuffer],
         fileName: filename,
-        password: req.user.userId.toLocaleLowerCase()
+        password: req.user.userId.toLowerCase()
       })
     }).fail(err => {
       if (err) {
