@@ -14,7 +14,7 @@ module.exports = Object.freeze({
     USER_ROLE: "_mgrRole",
     CUST_GENE: "_modelChar",
     CUST_MOTIVATION: "_modelPred",
-    CUST_OBRV: "_modelBhv",
+    CUST_OBRV: "_modelBhv", 
     EVENT_PAGE_LIST: "_actad_actList",
     EVENT_PAGE_EDIT: "_actad_actEdit",
     EVENT_AD: "_actad_ad",
