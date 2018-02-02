@@ -4,6 +4,7 @@ const express = require('express');
 const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
+const path = require('path');
 const shortid = require('shortid');
 const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
@@ -11,8 +12,12 @@ const criteriaService = require('../../services/custom-target-service');
 const codeGroupService = require('../../services/code-group-service');
 const exportService = require('../../services/export-service');
 const modelService = require('../../services/model-service');
+const queryService = require('../../services/query-log-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
 const fileHelper = require('../../helpers/file-helper');
+const constants = require('../../utils/constants');
+const MENU_CODE = constants.MENU_CODE;
+const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 module.exports = (app) => {
@@ -66,24 +71,28 @@ module.exports = (app) => {
       //Q.nfcall(modelService.getDownloadFeature, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
     ]).spread((model, features, downloadFeatures) => {
       //downloadFeatures = _.map(downloadFeatures, 'featID');
-      winston.info('/%s/%s/criteria/preview :: model: ', mdId, batId, model);
-
-      return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, []), model];
+      if (!model) {
+        res.json(req.params, 404, 'batch data is not found!');
+        throw null;
+      } else {
+        return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, []), model];
+      }
     }).spread((results, model) => {
-      // winston.info('/%s/%s/criteria/preview :: queryTargetByCustomCriteria: ', mdId, batId, results);
-      // winston.info('/%s/%s/criteria/preview :: model.batListThold: ', mdId, batId, model.batListThold);
+
       let [resultsInTarget, resultsExcludeTarget] = _.partition(results, (obj) => {
         return (obj['_mdListScore'] >= model.batListThold);
       });
-      // winston.info('/%s/%s/criteria/preview :: resultsInTarget: ', mdId, batId, resultsInTarget.length);
-      // winston.info('/%s/%s/criteria/preview :: resultsExcludeTarget: ', mdId, batId, resultsExcludeTarget.length);
+
       let sizeOfCriteriaResult = (isIncludeModelTarget)? (resultsInTarget.length + resultsExcludeTarget.length): resultsExcludeTarget.length;
       let sizeOfResultsInTarget = sizeOfCriteriaResult - resultsExcludeTarget.length;
 
       res.json({sizeOfCriteriaResult, sizeOfResultsInTarget});
+
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/preview internal server error: ', mdId, batId, err);
-      res.json(null, 500, 'internal service error');
+      if (err) {
+        winston.error(`===/${mdId}/${batId}/criteria/preview : ${err}`);
+        res.json(req.params, 500, 'internal service error');
+      }
     });
   });
 
@@ -91,7 +100,6 @@ module.exports = (app) => {
     let mdId = req.params.mdId;
     let batId = req.params.batId;
     let criteria = JSON.parse(req.body.criteria);
-    winston.info('/criteria/export: criteria=%j', criteria);
     let isIncludeModelTarget = criteria.isIncludeModelTarget;
     let statements = criteria.statements;
 
@@ -102,22 +110,36 @@ module.exports = (app) => {
     Q.all([
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
-      Q.nfcall(exportService.getDownloadFeatures, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
-    ]).spread((model, features, downloadFeatures) => {
-      let downloadFeatureIds = [];
-      let downloadFeatureLabels = [];
-      _.forEach(downloadFeatures, feature => {
-        downloadFeatureIds.push(feature.featID);
-        downloadFeatureLabels.push(feature.featName);
-      });
-      // winston.info('/%s/%s/criteria/export :: downloadFeatureIds: ', mdId, batId, downloadFeatureIds);
-      return [
-        model,
-        downloadFeatureIds,
-        downloadFeatureLabels,
-        Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, downloadFeatureIds)];
-    }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet) => {
-      let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, (row) => {
+      Q.nfcall(exportService.getDownloadFeatures, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
+      //write query log to DB
+      Q.nfcall(queryService.insertQueryLog, {
+        menuCode: MENU_CODE.CUSTOM_TARGET_FILTER,
+        criteria: req.body.criteria
+      })
+    ]).spread((model, features, downloadFeatures, queryLogId) => {
+
+      if (!model) {
+        res.json(req.params, 404, 'batch data is not found!');
+        throw null;
+      } else {
+        let downloadFeatureIds = [];
+        let downloadFeatureLabels = [];
+        _.forEach(downloadFeatures, feature => {
+          downloadFeatureIds.push(feature.featID);
+          downloadFeatureLabels.push(feature.featName);
+        });
+
+        return [
+          model,
+          downloadFeatureIds,
+          downloadFeatureLabels,
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, downloadFeatureIds),
+          queryLogId];
+      }
+
+    }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet, queryLogId) => {
+
+      let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, row => {
         return (row['_mdListScore'] >= model.batListThold);
       });
       resultSet = (isIncludeModelTarget)? resultSet: resultsExcludeTarget;
@@ -125,19 +147,43 @@ module.exports = (app) => {
       //arrange result set into specific format, to export as xlsx by node-xlsx
       let exportDateSet = [];
       exportDateSet.push(downloadFeatureLabels);
-      exportDateSet = exportDateSet.concat(resultSet.map((row) => { //transform resultSet[{row},{row}] into[[row],[row]]
+      exportDateSet = exportDateSet.concat(resultSet.map(row => { //transform resultSet[{row},{row}] into[[row],[row]]
         //transform row object into array in the order of downloadFeatureIds
         return downloadFeatureIds.map(featId => row[featId]);
       }));
 
-      //TODO: export as xlsx file
-      fileHelper.sendZipArchivedExcel({res,
-        xlsxDataSet: exportDateSet,
-        password: req.user.userId.toLowerCase()
-      });
+      //generate excel file
+      let filename = `${Date.now()}.xlsx`;
+      let xlsxFileAbsolutePath = path.join(storage, filename);
+      return [
+        filename,
+        Q.nfcall(fileHelper.buildXlsxFile, {
+          xlsxDataSet: exportDateSet,
+          xlsxFileAbsolutePath: xlsxFileAbsolutePath
+        }).then(xlsxBuffer => {
+          //write download log to DB
+          return Q.nfcall(queryService.insertDownloadLog, {
+            queryId: queryLogId,
+            filename,
+            userId: req.user.userId
+          }).then(result => {
+            return xlsxBuffer;
+          });
+        })];
+
+    }).spread((filename, xlsxBuffer) => {
+      //archive and response to client
+      fileHelper.httpResponseArchiveFile({
+        res,
+        path: [filename],
+        buff: xlsxBuffer,
+        password: req.user.userId.toLocaleLowerCase()
+      })
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/export internal server error: ', mdId, batId, err);
-      res.json(null, 500, 'internal service error');
+      if (err) {
+        winston.error(`===/${mdId}/${batId}/criteria/export : ${err}`);
+        res.json(req.params, 500, 'internal service error');
+      }
     });
   });
 
@@ -300,7 +346,7 @@ module.exports = (app) => {
           criteria: [{
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'customer_profile',
+            cate: null,
             field_id: 'age',
             field_label: '年紀',
             value: 40,
@@ -309,7 +355,7 @@ module.exports = (app) => {
           }, {
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'interaction',
+            cate: null,
             field_id: 'toyota',
             field_label: 'TOYOTA保有台數',
             value: 2,

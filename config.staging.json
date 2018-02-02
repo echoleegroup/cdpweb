@@ -3,7 +3,8 @@
     "host": "10.201.2.4",
     "port": 1433,
     "options": {
-      "encrypt": true
+      "encrypt": true,
+      "useUTC": false
     },
     "dialect": "mssql"
   },

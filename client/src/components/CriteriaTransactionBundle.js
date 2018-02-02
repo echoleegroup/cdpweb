@@ -73,6 +73,10 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   };
 
   ComponentCustomized() {
+    if (this.props.isPreview) {
+      return <div/>;
+    }
+
     let mapToProps = {
       features: this.state.features || [],
       featureRefCodeMap: this.state.featureRefCodeMap || {}

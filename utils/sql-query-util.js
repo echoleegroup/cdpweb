@@ -29,8 +29,8 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
     return _request.input(key, value.type, value.value);
   }, request)
     .query(sql)
-    .then((result) => {
-      callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
+    .then(result => {
+      callback(null, result);
     }).catch((err) => {
     callback(err);
   });
@@ -39,7 +39,7 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
 const _that = {
   TYPES: mssql.TYPES,
   execSql: (sql, callback = (err, resultSet) => { }) => {
-    pool.request().query(sql).then((result) => {
+    pool.request().query(sql).then(result => {
       callback(null, result.recordset);
     }).catch(err => {
       callback(err);
@@ -55,7 +55,19 @@ const _that = {
       },
       executeQuery: (sql, callback) => {
         winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
-        execParameterizedSql(sql, inputs, callback);
+        Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
+          callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
+        }).catch(err => {
+          callback(err);
+        });
+      },
+      executeUpdate: (sql, callback) => {
+        winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
+        Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
+          callback(null, (result.rowsAffected.length > 1)? result.rowsAffected: result.rowsAffected[0]);
+        }).catch(err => {
+          callback(err);
+        });
       }
     };
     return _this;

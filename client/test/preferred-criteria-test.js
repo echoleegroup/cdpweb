@@ -2,7 +2,7 @@ const shortid = require('shortid');
 
 module.exports = {
   fields: {
-    preferred_target: [
+    custom_target: [
       {
         type: 'tail',
         id: 'last_visit_date',
@@ -50,7 +50,7 @@ module.exports = {
         }]
       }
     ],
-    customer_profile: [
+    client: [
       {
         type: 'field',
         id: 'last_visit_date',
@@ -94,7 +94,7 @@ module.exports = {
         }]
       }
     ],
-    vehicle_condition: [
+    vehicle: [
       {
         type: 'field',
         id: 'regular_recall',
@@ -111,7 +111,7 @@ module.exports = {
         default_value: ['2']
       }
     ],
-    details: [
+    transaction: [
       {
         type: 'folder',
         id: 'point',
@@ -203,7 +203,7 @@ module.exports = {
     }
   ],
   criteria: {
-    preferred_target: [
+    custom_target: [
       { //自訂名單下載
         uuid: shortid.generate(),
         type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
@@ -224,7 +224,7 @@ module.exports = {
           criteria: [{
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'customer_profile',
+            cate: null,
             field_id: 'age',
             field_label: '年紀',
             value: 40,
@@ -233,7 +233,7 @@ module.exports = {
           }, {
             uuid: shortid.generate(),
             type: 'field',
-            cate: 'interaction',
+            cate: null,
             field_id: 'toyota',
             field_label: 'TOYOTA保有台數',
             value: 2,
@@ -243,7 +243,7 @@ module.exports = {
         }]
       }
     ],
-    customer_profile: [
+    client: [
       { //顧客屬性條件
         consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
         criteria: {
@@ -266,7 +266,7 @@ module.exports = {
             criteria: [{
               uuid: shortid.generate(),
               type: 'field',
-              cate: 'customer_profile',
+              cate: null,
               field_id: 'age',
               field_label: '年紀',
               value: 40,
@@ -275,7 +275,7 @@ module.exports = {
             }, {
               uuid: shortid.generate(),
               type: 'field',
-              cate: 'interaction',
+              cate: null,
               field_id: 'toyota',
               field_label: 'TOYOTA保有台數',
               value: 2,
@@ -286,7 +286,7 @@ module.exports = {
         }
       }
     ], //顧客屬性條件 end
-    vehicle_condition: [
+    vehicle: [
       {  //車輛屬性資料
         uuid: shortid.generate(),
         type: 'combo',
@@ -335,14 +335,14 @@ module.exports = {
         }]
       }
     ],  //車輛屬性資料 end
-    details: [
+    transaction: [
       { //明細資料指定條件
         uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
           uuid: shortid.generate(),
-          type: 'refDetails',
+          type: 'refTransaction',
           operator: 'and',
           ref: 'point',
           ref_label: '點數明細',
@@ -365,7 +365,7 @@ module.exports = {
           }]
         }, {
           uuid: shortid.generate(),
-          type: 'refDetails',
+          type: 'refTransaction',
           operator: 'or',
           ref: 'point',
           ref_label: '點數明細',
@@ -388,7 +388,7 @@ module.exports = {
           }]
         }, {
           uuid: shortid.generate(),
-          type: 'refDetails',
+          type: 'refTransaction',
           operator: 'not',
           ref: 'point',
           ref_label: '點數明細',
@@ -419,14 +419,19 @@ module.exports = {
         operator: 'and',
         criteria: [{
           uuid: shortid.generate(),
-          type: 'tag',
+          type: 'refTag',
           operator: 'or',
           ref: 'event',
+          group: 'group1',
           ref_label: '活動名單標籤',
           criteria: [{
             uuid: shortid.generate(),
-            tagId: 123,
-            tagLabel: '2016TOYOTA玩具愛分享'
+            tagId: {
+              type1: ['111', '3333'],
+              type2: ['111', '2222'],
+              type3: ['3333']
+            },
+            label: '2016TOYOTA玩具愛分享'
           },{
             uuid: shortid.generate(),
             tagId: 234,
@@ -434,7 +439,7 @@ module.exports = {
           }]
         }, {
           uuid: shortid.generate(),
-          type: 'tag',
+          type: 'refTag',
           operator: 'and',
           ref: 'media',
           ref_label: '自有媒體標籤',
@@ -449,7 +454,7 @@ module.exports = {
           }]
         }, {
           uuid: shortid.generate(),
-          type: 'tag',
+          type: 'refTag',
           operator: 'not',
           ref: 'interesting',
           ref_label: '興趣標籤',
@@ -465,14 +470,14 @@ module.exports = {
         }]
       },   //標籤篩選 end
     ],
-    fingerprint: [
+    trail: [
       {
         uuid: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
           uuid: shortid.generate(),
-          type: 'fingerprint',
+          type: 'refTrailHit',
           operator: 'gt',
           field_id: 'product',
           field_label: '車款',
@@ -482,7 +487,7 @@ module.exports = {
           periodTo: Date.now()
         }, {
           uuid: shortid.generate(),
-          type: 'fingerprint',
+          type: 'refTrailHit',
           operator: 'gt',
           field_id: 'calculation',
           field_label: '購車試算',

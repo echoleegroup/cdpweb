@@ -1,81 +1,26 @@
 import React from 'react';
 
-/**
- * [
- {
-   type: 'tail',
-   id: 'last_visit_date',
-   label: '最後訪問日',
-   onSelect: (data) => {}
-   //data_type: 'date',
-   //default_value: Date.now()
- }, {
-        type: 'branch',
-        id: 'customer_profile',
-        label: '客戶屬性',
-        children: [{
-          type: 'node',
-          id: 'gender',
-          label: '性別',
-          data_type: 'refOption',
-          ref: 'gender',
-          default_value: ['M']
-        }, {
-          type: 'tail',
-          id: 'gender2',
-          label: '性別2',
-          data_type: 'refOption',
-          ref: 'booleanYN',
-          default_value: ['M']
-        }, {
-          type: 'tail',
-          id: 'age',
-          label: '年紀',
-          data_type: 'number'
-        }]
-      }, {
-        type: 'branch',
-        id: 'inter_action',
-        label: '互動狀態',
-        children: [{
-          type: 'tail',
-          id: 'lexus',
-          label: 'LEXUS保有台數',
-          data_type: 'number'
-        }, {
-          type: 'tail',
-          id: 'toyota',
-          label: 'TOYOTA保有台數',
-          data_type: 'number'
-        }]
-      }
- ]
- */
-
 const NODE_TYPE = {
   Branch: 'branch',
   Tail: 'tail'
 };
 
-const Node = (props) => {
-  console.log('props.node.type: ', props.node.type);
-  switch (props.node.type) {
-    case NODE_TYPE.Branch:
-      return <Branch node={props.node}
-                     branchClickHandler={props.branchClickHandler}
-                     tailClickHandler={props.tailClickHandler}/>
-    case NODE_TYPE.Tail:
-      return <Tail node={props.node}
-                   tailClickHandler={props.tailClickHandler}/>
-  }
-};
+export default class PickerSingle extends React.PureComponent {
 
-export default class Picker extends React.PureComponent {
+  TailContainer(props) {
+    let node = props.node;
+    return (
+      <li className="radio">
+        <label>
+          <input type="radio" name="optradio" onClick={props.clickHandler}/>{node.label}</label>
+      </li>
+    );
+  };
 
   render() {
     return (
       <form className="addCondition">
-        <Tree {...this.props}/>
+        <Tree {...this.props} TailContainer={this.TailContainer}/>
       </form>
     );
   };
@@ -91,21 +36,39 @@ class Tree extends React.PureComponent {
           return <Branch key={node.id}
                          node={node}
                          branchClickHandler={this.props.branchClickHandler}
-                         tailClickHandler={this.props.tailClickHandler}/>
+                         tailClickHandler={this.props.tailClickHandler}
+                         TailContainer={this.props.TailContainer}/>
         case NODE_TYPE.Tail:
           return <Tail key={node.id}
                        node={node}
-                       tailClickHandler={this.props.tailClickHandler}/>
+                       tailClickHandler={this.props.tailClickHandler}
+                       TailContainer={this.props.TailContainer}/>
       }
     }
   };
 
   render() {
+    const NodeDispatcher = (props) => {
+      let node = props.node;
+      console.log('props.node.type: ', node.type);
+      switch (node.type) {
+        case NODE_TYPE.Branch:
+          return <Branch node={node}
+                         branchClickHandler={props.branchClickHandler}
+                         tailClickHandler={props.tailClickHandler}
+                         TailContainer={props.TailContainer}/>
+        case NODE_TYPE.Tail:
+          return <Tail node={node}
+                       tailClickHandler={props.tailClickHandler}
+                       TailContainer={props.TailContainer}/>
+      }
+    };
+
     let props = this.props;
     return (
       <ul>
         {props.nodes.map(node => {
-          return this.nodeDispatcher(node);
+          return <NodeDispatcher key={node.id} {...this.props} node={node}/>
         })}
       </ul>
     );
@@ -147,7 +110,8 @@ class Branch extends React.PureComponent {
         }}>
           <Tree branchClickHandler={this.props.branchClickHandler}
                 tailClickHandler={this.props.tailClickHandler}
-                nodes={node.children}/>
+                nodes={node.children}
+                TailContainer={this.props.TailContainer}/>
         </ul>
       </li>
     );
@@ -164,13 +128,12 @@ class Tail extends React.PureComponent {
 
   render() {
     let node = this.props.node;
+    let TailContainer = this.props.TailContainer;
     return (
-      <li className="radio" key={node.id}>
-        <label>
-          <input type="radio"
-                 name="optradio"
-                 onClick={this.selectHandler}/>{node.label}</label>
-      </li>
+      <TailContainer
+        name="optradio"
+        node={node}
+        clickHandler={this.selectHandler}/>
     );
   };
 }

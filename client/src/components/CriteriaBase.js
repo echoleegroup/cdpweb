@@ -22,8 +22,8 @@ export default class CriteriaBase extends React.PureComponent {
       isLoaded: false,
       criteria: props.criteria || []
     };
-    //this.criteria = _test.criteria.preferred_target || [];
-    //this.fields = _test.fields.preferred_target;
+    //this.criteria = _test.criteria.custom_target || [];
+    //this.fields = _test.fields.custom_target;
     //this.refOptions = _test.refs;
   };
 
