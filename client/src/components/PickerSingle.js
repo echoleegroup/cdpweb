@@ -1,9 +1,5 @@
 import React from 'react';
-
-const NODE_TYPE = {
-  Branch: 'branch',
-  Tail: 'tail'
-};
+import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-dictionary';
 
 export default class PickerSingle extends React.PureComponent {
 
@@ -82,9 +78,14 @@ class Branch extends React.PureComponent {
       $(this.foldingIconDom).toggleClass('fa-minus');
     };
 
-    this.clickHandler = (e) => {
-      this.props.branchClickHandler(this.props.node);
-      this.toggleFolding(e);
+    this.clickHandler = () => {
+      const branchClickHandler = this.props.branchClickHandler;
+      return (e) => {
+        if (branchClickHandler) {
+          branchClickHandler(this.props.node);
+        }
+        this.toggleFolding(e);
+      };
     };
   };
 
@@ -120,9 +121,13 @@ class Branch extends React.PureComponent {
 
 class Tail extends React.PureComponent {
   componentWillMount() {
-    this.selectHandler = (e) => {
-      console.log('Tail::selectHandler: ', e.target.value);
-      this.props.tailClickHandler(this.props.node);
+    this.selectHandler = () => {
+      const tailClickHandler = this.props.tailClickHandler;
+      return (e) => {
+        if (tailClickHandler) {
+          tailClickHandler(this.props.node)
+        }
+      };
     };
   };
 
@@ -133,7 +138,7 @@ class Tail extends React.PureComponent {
       <TailContainer
         name="optradio"
         node={node}
-        clickHandler={this.selectHandler}/>
+        clickHandler={this.selectHandler()}/>
     );
   };
 }

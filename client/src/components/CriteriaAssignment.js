@@ -294,7 +294,7 @@ class TextInput extends InputBase {}
 
 class DateInput extends InputBase {
   getInputData() {
-    let d = $(this.input).datepicker('getDate');
+    let d = this.datepicker.datepicker('getDate');
     let value, value_label = null;
     if (d) {
       let m = moment(d);
@@ -311,13 +311,13 @@ class DateInput extends InputBase {
   componentDidMount() {
     this.datepicker = $(this.input).datepicker({
       format: 'yyyy/mm/dd'
-    });
+    }).datepicker('setDate', new Date());
   };
 
   render() {
     return (
       <div className="radio">
-        <input type="text" className="form-control" placeholder="" readOnly={true} ref={(e) => {
+        <input type="text" className="form-control" readOnly={true} ref={(e) => {
           this.input = e;
         }}/>
       </div>

@@ -1,239 +1,172 @@
 import React from 'react';
+import Loader from 'react-loader';
+import Rx from 'rxjs';
+import {assign} from 'lodash';
+import {fromJS, List} from 'immutable';
+import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-dictionary';
+import PickerMultiple from './PickerMultiple';
+import moment from "moment/moment";
+
+const setAllOptionNodesIsSelected = (nodesListAsImmutable, selected) => {
+  return nodesListAsImmutable.map(nodeMapAsImmutable => {
+    switch (nodeMapAsImmutable.get('type')) {
+      case NODE_TYPE.Branch:
+        return nodeMapAsImmutable.set('nodes', setAllOptionNodesIsSelected(nodeMapAsImmutable.get('nodes'), selected));
+      case NODE_TYPE.Tail:
+        return nodeMapAsImmutable.set('isSelected', selected);
+    }
+  })
+};
+
+const toggleOptionNodeSelected = (nodesListAsImmutable, uuid) => {
+  return nodesListAsImmutable.map(nodeMapAsImmutable => {
+    switch (nodeMapAsImmutable.get('type')) {
+      case NODE_TYPE.Branch:
+        return nodeMapAsImmutable.set('nodes', setAllOptionNodesIsSelected(nodeMapAsImmutable.get('nodes'), uuid));
+      case NODE_TYPE.Tail:
+        if (nodeMapAsImmutable.get('uuid') === uuid)
+          return nodeMapAsImmutable.set('isSelected', !nodeMapAsImmutable.get('isSelected'));
+        return nodeMapAsImmutable;
+    }
+  })
+};
+
+const getDatePickerValue = (date) => {
+  let value, value_label = null;
+  if (date) {
+    let m = moment(date).startOf('day');
+    value = m.utc().valueOf();
+    value_label = m.format('YYYY/MM/DD')
+  }
+  return {
+    value,
+    value_label
+  };
+};
 
 export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    let today = getDatePickerValue(new Date());
+    this.state = {
+      isLoaded: false,
+      featureOptions: List(),
+      transactionOptions: List(),
+      periodStart: today.value,
+      periodStartLabel: today.value_label,
+      periodEnd: today.value,
+      periodEndLabel: today.value_label,
+    };
+  };
+
+  componentWillMount() {
+    this.fetchExportFeatureOptions = (callback) => {
+      //TODO:
+    };
+
+    this.fetchExportTransactionOptions = (callback) => {
+      //TODO:
+    };
+
+    this.fetchPreparedData = (callback) => {
+      let fetchExportFeatureOptions = Rx.Observable.bindCallback(this.fetchExportFeatureOptions);
+      let fetchExportTransactionOptions = Rx.Observable.bindCallback(this.fetchExportTransactionOptions);
+      Rx.Observable.concat(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
+        callback({
+          featureOptions: fromJS(res[0]),
+          transactionOptions: fromJS(res[1])
+        });
+      });
+    };
+
+    this.selectAllFeatureHandler = () => {
+      let state = setAllOptionNodesIsSelected(this.state.featureOptions, true);
+      this.setState({featureOptions: state});
+    };
+
+    this.deselectAllHandler = () => {
+      let state = setAllOptionNodesIsSelected(this.state.featureOptions, false);
+      this.setState({featureOptions: state});
+    };
+
+    this.featureTailClickHandler = (node) => {
+      let state = toggleOptionNodeSelected(this.state.featureOptions, node.uuid);
+      this.setState({featureOptions: state});
+    };
+
+    this.transactionTailClickHandler = (node) => {
+      let state = toggleOptionNodeSelected(this.state.transactionOptions, node.uuid);
+      this.setState({transactionOptions: state});
+    };
+
+    this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
+      $(dom).datepicker({
+        format: 'yyyy/mm/dd'
+      }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
+        .datepicker('onClose', (dateText, picker) => {
+          let data = getDatePickerValue(picker.datepicker('getDate'));
+          this.setState({
+            [timestampPropsOfState]: data.value,
+            [labelPropsOfState]: data.value_label
+          });
+        });
+    };
+
+    this.processPostDate = (e) => {
+      //TODO:
+    };
+
+    // execute
+    this.fetchPreparedData(data => {
+      this.setState(assign({
+        isLoaded: true
+      }, data));
+    });
+  };
+
+  componentDidMount() {
+    this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
+    this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
+  };
+
   render() {
     return (
-      <div className="table_block feature">
-        <h2>查詢條件</h2>
-        <h3>第五步 挑選下載欄位</h3>
-        <h4>挑選下載欄位</h4>
-        <div className="btn-block text-left">
-          <button type="submit" className="btn btn-sm btn-default">全選</button>
-          <button type="submit" className="btn btn-sm btn-default">全不選</button>
-        </div>
-        <form className="addCondition">
-          <ul>
-            <li>
-              <a href="#">客戶屬性 <i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>性別</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>年紀</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>生日月份</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>學歷</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>婚姻狀況</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>建檔所</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>建檔日期</label>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">互動狀態<i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>LEXUS保有台數</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>TOYOTA保有台數</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>最近訪問日</label>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">車輛基本資料<i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>車名</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>販賣日期</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>原始交車日</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>年式</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>車齡</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>販賣經銷商</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>販賣營業所</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>販賣業代</label>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">點數精品<i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>目前累積點數</label>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">保險資料<i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>車體險到期日</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>強制險到期日</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>任意險到期日</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>車體險[甲、乙、丙]</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>強制險</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>任意險</label>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">車輛服務<i className="fa fa-plus" aria-hidden="true"/></a>
-              <ul style={{display: 'none'}}>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>CR等級</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>最近回廠日</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>每年連續回廠定保</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>每年連續回廠維修</label>
-                </li>
-                <li className="checkbox">
-                  <label>
-                    <input type="checkbox" value=""/>服務等級</label>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </form>
-        <h4>挑選下載明細資訊</h4>
-        <div className="form-group">
-          <label htmlFor="inputName" className="col-sm-3 control-label form-inline">明細時間區間</label>
-          <div className="col-sm-7">
-            <div className="form-inline">
-              <input type="text" className="form-control" id="startDate" placeholder="2017/05/01"/> ~
-                <input type="text" className="form-control" id="endDate" placeholder="2017/12/31"/>
+      <Loader loaded={this.state.isLoaded}>
+        <div className="table_block feature">
+          <h2>查詢條件</h2>
+          <h3>第五步 挑選下載欄位</h3>
+          <h4>挑選下載欄位</h4>
+          <div className="btn-block text-left">
+            <button type="button" className="btn btn-sm btn-default" onClick={this.selectAllFeatureHandler}>全選</button>
+            <button type="button" className="btn btn-sm btn-default" onClick={this.deselectAllHandler}>全不選</button>
+          </div>
+          <PickerMultiple nodes={this.state.featureOptions.toJS()} tailClickHandler={this.featureTailClickHandler}/>
+          <h4>挑選下載明細資訊</h4>
+          <div className="form-group">
+            <label htmlFor="inputName" className="col-sm-3 control-label form-inline">明細時間區間</label>
+            <div className="col-sm-7">
+              <div className="form-inline">
+                <input type="text" className="form-control" id="periodStart" readOnly={true} ref={(e) => {
+                  this.periodStart = e;
+                }}/>
+                <span> ~ </span>
+                <input type="text" className="form-control" id="periodEnd" readOnly={true} ref={(e) => {
+                  this.periodEnd = e;
+                }}/>
+              </div>
             </div>
           </div>
+          <PickerMultiple nodes={this.state.transactionOptions.toJS()} tailClickHandler={this.transactionTailClickHandler}/>
+          <div className="btn-block center-block">
+            {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
+            <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
+          </div>
         </div>
-        <form className="addCondition">
-          <ul>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>點數明細</label>
-              兌換日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>CARES案件明細</label>
-              案件建立日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>保險明細</label>
-              要保書建立日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>預約明細</label>
-              預約日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>訂單明細</label>
-              建檔日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>勸誘明細</label>
-              建檔日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>活動明細</label>
-              建檔日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>NaN案件明細</label>
-              建檔日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>估價單明細</label>
-              估價日期
-            </li>
-            <li className="checkbox">
-              <label>
-                <input type="checkbox" value="" name="optradio"/>工作傳票明細</label>
-              入廠日期
-            </li>
-          </ul>
+        <form method="POST" action={} ref={e => {this.formComponent = e;}}>
+          <input type="hidden" name="criteria" value={null}/>
         </form>
-        <div className="btn-block center-block">
-          <button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>
-          <button type="submit" className="btn btn-lg btn-default">下載資料</button>
-        </div>
-      </div>
+      </Loader>
     );
   };
 };

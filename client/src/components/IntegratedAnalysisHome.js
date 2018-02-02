@@ -1,6 +1,6 @@
 import React  from 'react';
 import BodyLayout from "./BodyLayout";
-import {OrderedMap} from 'immutable';
+import {Map} from 'immutable';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
 import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehicle";
 import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
@@ -28,6 +28,8 @@ const criteriaStepForwardHandler = (targetStep, _that) => {
   }
 };
 
+const featurePickerStepForwardHandler = (targetStep, _that) => {};
+
 const stepForwardHandler = (targetStep, _that) => {
   _that.setStep(targetStep);
 };
@@ -49,7 +51,7 @@ const STEP_FORWARD_HANDLERS = Object.freeze({
   [STEPS.step4]: criteriaStepForwardHandler,
   [STEPS.step5]: criteriaStepForwardHandler,
   [STEPS.step6]: stepForwardHandler,
-  [STEPS.step7]: stepForwardHandler,
+  [STEPS.step7]: featurePickerStepForwardHandler,
 });
 
 export default class IntegratedAnalysisHome extends BodyLayout {
@@ -57,13 +59,14 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     super(props);
     this.state = {
       step: STEPS.step1,
-      criteria: OrderedMap({
+      criteria: Map({
         [STEPS.step1]: [],
         [STEPS.step2]: [],
         [STEPS.step3]: [],
         [STEPS.step4]: [],
         [STEPS.step5]: []
-      })
+      }),
+      output: Map()
     };
   };
 
