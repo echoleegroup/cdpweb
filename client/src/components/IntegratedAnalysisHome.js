@@ -1,6 +1,7 @@
-import React  from 'react';
+import React from 'react';
+import Loader from 'react-loader';
 import BodyLayout from "./BodyLayout";
-import {Map} from 'immutable';
+import {fromJS, List, Map} from 'immutable';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
 import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehicle";
 import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
@@ -8,6 +9,8 @@ import IntegratedAnalysisCriteriaTag from "./IntegratedAnalysisCriteriaTag";
 import IntegratedAnalysisCriteriaTrail from "./IntegratedAnalysisCriteriaTrail";
 import IntegratedAnalysisCriteriaPreview from "./IntegratedAnalysisCriteriaPreview";
 import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisOutputFeaturePicker";
+import integratedAction from '../actions/integrated-analysis-action';
+import {getDate} from '../utils/date-util';
 
 const criteriaStepForwardHandler = (targetStep, _that) => {
   console.log('criteriaStepForwardHandler: ', _that.state.step);
@@ -28,7 +31,14 @@ const criteriaStepForwardHandler = (targetStep, _that) => {
   }
 };
 
-const featurePickerStepForwardHandler = (targetStep, _that) => {};
+const featurePickerStepForwardHandler = (targetStep, _that) => {
+  let exportConfig = _that.stepComponent.getExportOuputConfig();
+  console.log('===get output feature: ', exportConfig);
+  _that.setState(prevState => ({
+    output: prevState.output.merge(exportConfig),
+    step: targetStep
+  }));
+};
 
 const stepForwardHandler = (targetStep, _that) => {
   _that.setStep(targetStep);
@@ -57,7 +67,11 @@ const STEP_FORWARD_HANDLERS = Object.freeze({
 export default class IntegratedAnalysisHome extends BodyLayout {
   constructor(props) {
     super(props);
+
+    let today = getDate();
+
     this.state = {
+      isLoaded:false,
       step: STEPS.step1,
       criteria: Map({
         [STEPS.step1]: [],
@@ -66,14 +80,21 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         [STEPS.step4]: [],
         [STEPS.step5]: []
       }),
-      output: Map()
+      output: Map({
+        featureOptions: [],
+        transactionOptions: [],
+        periodStart: today.value,
+        periodStartLabel: today.value_label,
+        periodEnd: today.value,
+        periodEndLabel: today.value_label,
+      })
     };
   };
 
   componentWillMount() {
 
     this.setStep = (targetStep) => {
-      console.log('IntegratedAnalysisHome::stepTo: ' , targetStep);
+      // console.log('IntegratedAnalysisHome::stepTo: ' , targetStep);
 
       this.setState({
         step: targetStep
@@ -95,6 +116,25 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     this.storeCurrentStepComponent = (e) => {
       this.stepComponent = e;
     };
+
+    this.fetchExportFeatureOptions = (callback) => {
+      integratedAction.getExportFeaturePool(callback);
+    };
+
+    this.fetchPreparedData = (callback) => {
+      this.fetchExportFeatureOptions(data => callback({
+        featureOptions: data.featureOptions,
+        transactionOptions: data.transactionOptions
+      }));
+    };
+
+    // execute
+    this.fetchPreparedData(data => {
+      this.setState(prevState => ({
+        isLoaded: true,
+        output: prevState.output.merge(data)
+      }));
+    });
   };
 
   ComponentContent() {
@@ -142,9 +182,14 @@ export default class IntegratedAnalysisHome extends BodyLayout {
                                                   //stepPrev={this.stepTo(STEPS.step5)}
                                                   stepNext={this.stepTo(STEPS.step7)}/>;
       case STEPS.step7:
-        return <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
-                                                params={this.params}
-                                                step={STEPS.step7}/>;
+        return (
+          <Loader loaded={this.state.isLoaded}>
+            <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
+                                             outputFeatures={this.state.output.toJS()}
+                                             params={this.params}
+                                             step={STEPS.step7}/>
+          </Loader>
+        );
 
     }
   };
@@ -175,6 +220,7 @@ class IntegratedAnalysisNavigator extends React.PureComponent {
           {/*<li><a href="#" onClick={this.stepToHandler(STEPS.step4)}>第四步：標籤</a></li>
           <li><a href="#" onClick={this.stepToHandler(STEPS.step5)}>第五步：行為軌跡</a></li>*/}
           <li><a href="#" onClick={this.stepToHandler(STEPS.step6)}>第六步：條件總覽</a></li>
+          <li><a href="#" onClick={this.stepToHandler(STEPS.step7)}>第七步：挑選下載欄位</a></li>
         </ul>
       </div>
     );

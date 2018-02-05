@@ -89,27 +89,28 @@ const MODEL_LIST_CATEGORY = 'tapop';
 
 const TailModelWrapper = (feature) => {
   // set data_type properties
-  let dataTypeProperties = {
-    data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[feature.dataType]
-  };
+  let dataTypeProperties = {};
+
   if (!_.isEmpty(feature.codeGroup)) {
     dataTypeProperties = {
       data_type: FIELD_REF_DATA_TYPE,
       ref: feature.codeGroup
     };
-    //save ref to fetch options latter
-    //fieldRefs.push(rawField.codeGroup);
+  } else if (!_.isEmpty(feature.dataType)) {
+    dataTypeProperties = {
+      data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[feature.dataType]
+    };
   }
 
   // to complete field model
-  return Object.assign({}, TAIL_MODEL_TEMPLATE, dataTypeProperties, {
+  return _.assign({}, TAIL_MODEL_TEMPLATE, dataTypeProperties, {
     id: feature.featID,
     label: feature.featName
   });
 };
 
 const RefFieldHandler = (criteria, fieldDef) => {
-  const REF_FIELD_COMPARE_OPERATOR_DICT = Object.assign({}, SQL_OPERATOR_DICT, {
+  const REF_FIELD_COMPARE_OPERATOR_DICT = _.assign({}, SQL_OPERATOR_DICT, {
     eq: 'IN',
     ne: 'NOT IN'
   });
@@ -133,7 +134,7 @@ const ChildSqlCriteriaExpressionHandler = ({sqlExpressions}, {operator}) => {
       sql = `( ${sqlExpressions.join(delimiter)} )`;
     }
     //collector.paramsIndex = paramsIndex;
-    //collector.params = Object.assign(collector.params, params);
+    //collector.params = _.assign(collector.params, params);
   }
   return sql;
 };
@@ -238,7 +239,7 @@ module.exports = {
 
         if (childFeatures.length > 0) {
           //create a folder model
-          let branchModel = Object.assign({}, BRANCH_MODEL_TEMPLATE, {
+          let branchModel = _.assign({}, BRANCH_MODEL_TEMPLATE, {
             id: node.nodeID,
             label: node.nodeName
           });
@@ -258,7 +259,7 @@ module.exports = {
     //put all un-folded field to an virtual node
     if(features.length > 0) {
       //create a folder model
-      let branchModel = Object.assign({}, BRANCH_MODEL_TEMPLATE, {
+      let branchModel = _.assign({}, BRANCH_MODEL_TEMPLATE, {
         id: shortid.generate(),
         label: LABEL_UNFOLDED
       });
@@ -273,10 +274,19 @@ module.exports = {
     return foldingNodes;
   },
 
+  relativeSetsToNodes: (sets) => {
+    return sets.map(set => {
+      return _.assign({}, TAIL_MODEL_TEMPLATE, {
+        id: set.setId,
+        label: set.setName
+      });
+    });
+  },
+
   codeGroupToFeatureRef: (codeGroupDict) => {
     //rename code group properties for frontend
     return _.reduce(codeGroupDict, (fieldRefs, codeGroupBody, key) => {
-      fieldRefs[key] = Object.assign({}, FIELD_REF_OPTIONS_TEMPLATE, {
+      fieldRefs[key] = _.assign({}, FIELD_REF_OPTIONS_TEMPLATE, {
         refCode: codeGroupBody.codeGroup,
         optCode: codeGroupBody.codeValue,
         label: codeGroupBody.codeLabel,

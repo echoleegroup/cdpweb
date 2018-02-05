@@ -1,11 +1,9 @@
 import React from 'react';
-import Loader from 'react-loader';
-import Rx from 'rxjs';
-import {assign} from 'lodash';
 import {fromJS, List} from 'immutable';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-dictionary';
+import {getDate} from '../utils/date-util';
 import PickerMultiple from './PickerMultiple';
-import moment from "moment/moment";
+import integratedAction from '../actions/integrated-analysis-action'
 
 const setAllOptionNodesIsSelected = (nodesListAsImmutable, selected) => {
   return nodesListAsImmutable.map(nodeMapAsImmutable => {
@@ -31,54 +29,22 @@ const toggleOptionNodeSelected = (nodesListAsImmutable, uuid) => {
   })
 };
 
-const getDatePickerValue = (date) => {
-  let value, value_label = null;
-  if (date) {
-    let m = moment(date).startOf('day');
-    value = m.utc().valueOf();
-    value_label = m.format('YYYY/MM/DD')
-  }
-  return {
-    value,
-    value_label
-  };
-};
-
 export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = getDatePickerValue(new Date());
+    let today = getDate();
     this.state = {
-      isLoaded: false,
-      featureOptions: List(),
-      transactionOptions: List(),
-      periodStart: today.value,
-      periodStartLabel: today.value_label,
-      periodEnd: today.value,
-      periodEndLabel: today.value_label,
+      featureOptions: List(props.outputFeatures.featureOptions),
+      transactionOptions: List(props.outputFeatures.transactionOptions),
+      periodStart: props.outputFeatures.periodStart,
+      periodStartLabel: props.outputFeatures.periodStartLabel,
+      periodEnd: props.outputFeatures.periodEnd,
+      periodEndLabel: props.outputFeatures.periodEndLabel,
     };
   };
 
   componentWillMount() {
-    this.fetchExportFeatureOptions = (callback) => {
-      //TODO:
-    };
-
-    this.fetchExportTransactionOptions = (callback) => {
-      //TODO:
-    };
-
-    this.fetchPreparedData = (callback) => {
-      let fetchExportFeatureOptions = Rx.Observable.bindCallback(this.fetchExportFeatureOptions);
-      let fetchExportTransactionOptions = Rx.Observable.bindCallback(this.fetchExportTransactionOptions);
-      Rx.Observable.concat(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
-        callback({
-          featureOptions: fromJS(res[0]),
-          transactionOptions: fromJS(res[1])
-        });
-      });
-    };
 
     this.selectAllFeatureHandler = () => {
       let state = setAllOptionNodesIsSelected(this.state.featureOptions, true);
@@ -105,7 +71,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         format: 'yyyy/mm/dd'
       }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
         .datepicker('onClose', (dateText, picker) => {
-          let data = getDatePickerValue(picker.datepicker('getDate'));
+          let data = getDate(picker.datepicker('getDate'));
           this.setState({
             [timestampPropsOfState]: data.value,
             [labelPropsOfState]: data.value_label
@@ -113,16 +79,20 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         });
     };
 
+    this.getExportOuputConfig = () => {
+      return {
+        featureOptions: this.state.featureOptions.toJS(),
+        transactionOptions: this.state.transactionOptions.toJS(),
+        periodStart: this.state.periodStart,
+        periodStartLabel: this.state.periodStartLabel,
+        periodEnd: this.state.periodEnd,
+        periodEndLabel: this.state.periodEndLabel,
+      };
+    };
+
     this.processPostDate = (e) => {
       //TODO:
     };
-
-    // execute
-    this.fetchPreparedData(data => {
-      this.setState(assign({
-        isLoaded: true
-      }, data));
-    });
   };
 
   componentDidMount() {
@@ -132,41 +102,39 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
   render() {
     return (
-      <Loader loaded={this.state.isLoaded}>
-        <div className="table_block feature">
-          <h2>查詢條件</h2>
-          <h3>第五步 挑選下載欄位</h3>
-          <h4>挑選下載欄位</h4>
-          <div className="btn-block text-left">
-            <button type="button" className="btn btn-sm btn-default" onClick={this.selectAllFeatureHandler}>全選</button>
-            <button type="button" className="btn btn-sm btn-default" onClick={this.deselectAllHandler}>全不選</button>
-          </div>
-          <PickerMultiple nodes={this.state.featureOptions.toJS()} tailClickHandler={this.featureTailClickHandler}/>
-          <h4>挑選下載明細資訊</h4>
-          <div className="form-group">
-            <label htmlFor="inputName" className="col-sm-3 control-label form-inline">明細時間區間</label>
-            <div className="col-sm-7">
-              <div className="form-inline">
-                <input type="text" className="form-control" id="periodStart" readOnly={true} ref={(e) => {
-                  this.periodStart = e;
-                }}/>
-                <span> ~ </span>
-                <input type="text" className="form-control" id="periodEnd" readOnly={true} ref={(e) => {
-                  this.periodEnd = e;
-                }}/>
-              </div>
+      <div className="table_block feature">
+        <h2>查詢條件</h2>
+        <h3>第七步 挑選下載欄位</h3>
+        <h4>挑選下載欄位</h4>
+        <div className="btn-block text-left">
+          <button type="button" className="btn btn-sm btn-default" onClick={this.selectAllFeatureHandler}>全選</button>
+          <button type="button" className="btn btn-sm btn-default" onClick={this.deselectAllHandler}>全不選</button>
+        </div>
+        <PickerMultiple nodes={this.state.featureOptions.toJS()} tailClickHandler={this.featureTailClickHandler}/>
+        <h4>挑選下載明細資訊</h4>
+        <div className="form-group">
+          <label htmlFor="inputName" className="col-sm-3 control-label form-inline">明細時間區間</label>
+          <div className="col-sm-7">
+            <div className="form-inline">
+              <input type="text" className="form-control" id="periodStart" readOnly={true} ref={(e) => {
+                this.periodStart = e;
+              }}/>
+              <span> ~ </span>
+              <input type="text" className="form-control" id="periodEnd" readOnly={true} ref={(e) => {
+                this.periodEnd = e;
+              }}/>
             </div>
           </div>
-          <PickerMultiple nodes={this.state.transactionOptions.toJS()} tailClickHandler={this.transactionTailClickHandler}/>
-          <div className="btn-block center-block">
-            {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
-            <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
-          </div>
         </div>
-        <form method="POST" action={} ref={e => {this.formComponent = e;}}>
-          <input type="hidden" name="criteria" value={null}/>
+        <PickerMultiple nodes={this.state.transactionOptions.toJS()} tailClickHandler={this.transactionTailClickHandler}/>
+        <div className="btn-block center-block">
+          {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
+          <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
+        </div>
+        <form method="POST" action={integratedAction.EXPORT_QUERY} ref={e => {this.formComponent = e;}}>
+          <input type="hidden" name="criteria" value=""/>
         </form>
-      </Loader>
+      </div>
     );
   };
 };

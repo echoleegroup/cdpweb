@@ -5,32 +5,30 @@ module.exports = {
     client: [
       { //顧客屬性條件
         //consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
-        criteria: {
+        uuid: shortid.generate(),
+        type: 'combo',  //combo, refTransaction, field, bundle, refTag, fieldTag, refTrailPeriod, refTrailHit
+        operator: 'and',  //and, or, not
+        criteria: [{
           uuid: shortid.generate(),
-          type: 'combo',  //combo, refTransaction, field, bundle, refTag, fieldTag, refTrailPeriod, refTrailHit
-          operator: 'and',  //and, or, not
-          criteria: [{
-            uuid: shortid.generate(),
-            type: 'field',
-            field_id: 'CRAURF_TARGET',
-            field_label: '使用人',
-            value: ['2'],
-            value_label: ['使用人'],
-            data_type: 'refOption',
-            ref: '_____',
-            operator: 'eq'  //eq, ne, lt, le, gt, ge, in, ni
-          }, {
-            uuid: shortid.generate(),
-            type: 'field',
-            field_id: 'CRCUMF_CUSTS',
-            field_label: '聯絡狀態',
-            value: ['1'],
-            value_label: ['正常'],
-            data_type: 'refOption',
-            ref: '_____',
-            operator: 'eq'
-          }]
-        }
+          type: 'field',
+          field_id: 'CRAURF_TARGET',
+          field_label: '使用人',
+          value: ['2'],
+          value_label: ['使用人'],
+          data_type: 'refOption',
+          ref: '_____',
+          operator: 'eq'  //eq, ne, lt, le, gt, ge, in, ni
+        }, {
+          uuid: shortid.generate(),
+          type: 'field',
+          field_id: 'CRCUMF_CUSTS',
+          field_label: '聯絡狀態',
+          value: ['1'],
+          value_label: ['正常'],
+          data_type: 'refOption',
+          ref: '_____',
+          operator: 'eq'
+        }]
       }
     ], //顧客屬性條件 end
     vehicle: [

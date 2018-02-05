@@ -18,7 +18,9 @@ const VEHICLE_CRITERIA_FEATURE_SET_ID = 'COMMCAR';
 
 const INTEGRATION_ANALYSIS_TREE_ID = 'COMM';
 
-const TRANSACTION_SET_ID = 'COMMTARGETSET';
+const CRITERIA_TRANSACTION_SET_ID = 'COMMTARGETSET';
+const EXPORT_DOWNLOAD_FEATURE_SET_ID = 'COMMDNLD';
+const EXPORT_RELATIVE_SET_ID = 'COMMDNLDSET';
 
 const criteriaFeaturePromise = (setId, treeId) => {
   return Q.all([
@@ -46,42 +48,66 @@ module.exports = (app) => {
   /**
    * get available features (and folds), that user able to set filter criteria.
    * */
-  router.get('/client/criteria/features', middlewares, (req, res) => {
+  router.get('/features/criteria/client', middlewares, (req, res) => {
     criteriaFeaturePromise(CLIENT_CRITERIA_FEATURE_SET_ID, INTEGRATION_ANALYSIS_TREE_ID).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/client/criteria/features internal server error: ', err);
+      winston.error('===/features/criteria/client internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
 
-  router.get('/vehicle/criteria/features', middlewares, (req, res) => {
+  router.get('/features/criteria/vehicle', middlewares, (req, res) => {
     criteriaFeaturePromise(VEHICLE_CRITERIA_FEATURE_SET_ID, INTEGRATION_ANALYSIS_TREE_ID).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/vehicle/criteria/features internal server error: ', err);
+      winston.error('===/features/criteria/vehicle internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
 
-  router.get('/transaction/criteria/features/:setId', middlewares, (req, res) => {
+  router.get('/features/criteria/transaction/set/:setId', middlewares, (req, res) => {
     let setId = req.params.setId;
     criteriaFeaturePromise(setId, INTEGRATION_ANALYSIS_TREE_ID).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/transaction/criteria/features/%s internal server error: ', setId, err);
+      winston.error('===/features/criteria/transaction/set/%s internal server error: ', setId, err);
       res.json(null, 500, 'internal service error');
     });
   });
 
-  router.get('/transaction/feature/sets', middlewares, (req, res) => {
-    Q.nfcall(integrationService.getFeatureSets, TRANSACTION_SET_ID).then(resSet => {
-      winston.info('/transaction/feature/sets  getFeatureSets: %j', resSet);
+  router.get('/features/criteria/transaction/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, CRITERIA_TRANSACTION_SET_ID).then(resSet => {
+      winston.info('/features/criteria/transaction/sets  getFeatureSets: %j', resSet);
       let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
-      winston.info('/transaction/feature/sets  featureSetsToTreeNodes: ', nodes);
+      winston.info('/features/criteria/transaction/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
-      winston.error('===/transaction/feature/sets internal server error: ', err);
+      winston.error('===/features/criteria/transaction/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/export/features', middlewares, (req, res) => {
+    Q.all([
+      Q.nfcall(integrationService.getDownloadFeatures, EXPORT_DOWNLOAD_FEATURE_SET_ID),
+      Q.nfcall(integrationService.getCriteriaFeatureTree, INTEGRATION_ANALYSIS_TREE_ID)
+    ]).spread((features, foldingTree) => {
+      winston.info('getCriteriaFeatures: ', features);
+      winston.info('getCriteriaFeatureTree: ', foldingTree);
+      let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
+      res.json(fields);
+    }).fail(err => {
+      winston.error('===/export/features internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/export/relative/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getRelativeFeatureSets, EXPORT_RELATIVE_SET_ID).then(resSet => {
+      res.json(criteriaHelper.relativeSetsToNodes(resSet));
+    }).fail(err => {
+      winston.error('===/export/relative/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
