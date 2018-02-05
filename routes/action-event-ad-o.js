@@ -477,5 +477,34 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/ad/analysis/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+    let funcCatge;
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+
+    let p1 = new Promise(function (resolve, reject) {
+      db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge' order by codeValue desc ", function (err, recordset) {
+        if (err) {
+          reject(err);
+        }
+        funcCatge = recordset.recordset;
+        resolve(funcCatge);
+      });
+    });
+    Promise.all([p1]).then(function (results) {
+      res.render('ad-analysis-search', {
+        'user': req.user,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList,
+        'funcCatge': funcCatge
+      });
+    }).catch(function (e) {
+      console.log(e);
+    });
+
+
+  });
   return router;
 };
