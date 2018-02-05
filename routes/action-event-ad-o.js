@@ -9,7 +9,8 @@ const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_ABSOLUTE_PATH;
 const upload = multer({ dest: storage });
-
+const _connector = require('../utils/sql-query-util');
+const Q = require('q');
 module.exports = (app) => {
   console.log('[EvtadRoute::create] Creating Evtad route.');
   const router = express.Router();
@@ -503,8 +504,74 @@ module.exports = (app) => {
     }).catch(function (e) {
       console.log(e);
     });
+  });
 
+  router.post('/ad/analysis/list', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+    let client = req.body.client || '';
+    let funcCatge = req.body.funcCatge || '';
+    let sdt = req.body.sdt || '';
+    let edt = req.body.edt || '';
+    let tpc = req.body.tpc || '';
 
+    let where = " and demv.client =@client ";
+    if (funcCatge != '')
+      where += " and demv.funcCatge =@funcCatge ";
+    if (sdt != '') {
+      sdt = sdt + " 00:00:00";
+      where += " and demv.trkSdt >= @sdt ";
+    }
+    if (edt != '') {
+      edt = edt + " 23:59:59";
+      where += " and demv.trkEdt <= @edt ";
+    }
+    if (tpc != '')
+      where += " and demv.tpc like '%@tpc%' ";
+    let sql = "SELECT ROW_NUMBER() OVER (ORDER BY demv.funcCatge desc) as no, deam.evtadID,deam.adSource ,demv.tpc ," +
+      "sc.codeLabel,CONVERT(varchar,demv.trkSdt,111) trksdt,CONVERT(varchar,demv.trkEdt,111) trkedt," +
+      "deams.browseCount,deams.cookieCount,deams.canvasCount " +
+      "FROM dm_EvtadMst deam " +
+      "LEFT JOIN dm_EvtpgMst_View demv on demv.evtpgID = deam.evtpgID "+where+ 
+      "LEFT JOIN sy_CodeTable sc on sc.codeValue = demv.funcCatge and sc.codeGroup ='funcCatge' " +
+      "LEFT JOIN dm_EvtadMst_statistic deams on deams.evtadID = deam.evtadID " +
+      "WHERE deam.evtadID in ( SELECT distinct(deat.evtadID) FROM dm_EvtadTag deat) "+
+      "ORDER BY demv.funcCatge desc ";
+    let request = _connector.queryRequest()
+      .setInput('client', _connector.TYPES.NVarChar, client)
+      .setInput('funcCatge', _connector.TYPES.NVarChar, funcCatge)
+      .setInput('sdt', _connector.TYPES.NVarChar, sdt)
+      .setInput('edt', _connector.TYPES.NVarChar, edt)
+      .setInput('tpc', _connector.TYPES.NVarChar, tpc);
+    Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+      res.render('ad-analysis-list', {
+        'user': req.user,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList,
+        'dataList': resultSet
+      })
+
+    }).fail((err) => {
+      winston.error('====[modelUpload] query modelUpload failed: ', err);
+      res.send(err);
+    });
+  });
+
+  router.post('/ad/analysis/tag/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+    let evtadID = req.body.evtadID ;
+    let sql = "SELECT tagLabel " +
+      " FROM dm_EvtadTag " +
+      " where evtadID = @evtadID " ;
+    let request = _connector.queryRequest()
+      .setInput('evtadID', _connector.TYPES.NVarChar, evtadID)
+    Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+      res.json(resultSet);
+    }).fail((err) => {
+      winston.error('====[modelUpload] query modelUpload failed: ', err);
+      res.send(err);
+    });
   });
   return router;
 };

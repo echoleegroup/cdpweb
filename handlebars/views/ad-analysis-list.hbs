@@ -1,0 +1,90 @@
+{{> title title='特徵回饋學習'}}
+<!--
+<div class="title">
+  <div class="container">
+    <h1>活動頁面清單</h1>
+  </div>
+</div>
+-->
+<div class="container">
+  <!-- table set Start -->
+  <div class="table_block table-responsive">
+    <h2>特徵回饋學習</h2>
+    <a href="/actad/ad/analysis/search" title="重新查詢">
+      <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
+    </a>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>
+            <i class="fa fa-sort" aria-hidden="true"></i> 行銷管道
+          </th>
+          <th>
+            <i class="fa fa-sort" aria-hidden="true"></i> 類別</th>
+          <th>
+            <i class="fa fa-sort" aria-hidden="true"></i> 活動名稱
+          </th>
+          <th>
+            <i class="fa fa-sort" aria-hidden="true"></i> 活動露出期間
+          </th>
+          <th>頁面瀏覽次數</th>
+          <th>Cookie id 追蹤數</th>
+          <th>車主追蹤數</th>
+          <th>標籤</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each dataList as |data|}}
+        <tr>
+          <td>{{data.no}}</td>
+          <td>{{data.adSource}}</td>
+          <td>{{data.codeLabel}}</td>
+          <td>{{data.tpc}}</td>
+          <td>{{data.trksdt}} - {{data.trkedt}}</td>
+          <td>{{data.browseCount}}</td>
+          <td>{{data.cookieCount}}</td>
+          <td>{{data.canvasCount}}</td>
+          <td>
+            <a href="#" class="fa fa-tag" aria-hidden="true"></a>
+          </td>
+          <td>
+            <td>
+              <i class="fa fa-caret-down" aria-hidden="true" onclick="showTags({{data.evtadID}})"></i>
+            </td>
+          </td>
+        </tr>
+        <tr class="sub_info" id="tag{{data.evtadID}}">
+         
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <!-- pagination -->
+  </div>
+</div>
+<script>
+  function showTags(evtadID) {
+    var x = "";
+    $.ajax({
+      url: "/actad/ad/analysis/tag/search",
+      data: {
+        "evtadID": evtadID,
+      },
+      type: "POST",
+      dataType: 'json',
+      success: function (msg) {
+        x += '<td colspan="11">';
+        x += '<h3>標籤內容</h3>';
+        x += '<div class="tag_block">';
+        for (i in msg) 
+          x += '<a href="#" class="label label-cdp">'+msg[i].tagLabel+'</a>' 
+        x+= '</div></td>';
+        document.getElementById("tag"+evtadID).innerHTML = x ;
+      }
+    });
+
+
+  }
+</script>
