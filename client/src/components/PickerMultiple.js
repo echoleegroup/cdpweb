@@ -8,7 +8,7 @@ export default class PickerMultiple extends PickerSingle {
     return (
       <li className="checkbox">
         <label>
-          <input type="checkbox" name="optradio" onClick={props.clickHandler} defaultChecked={props.isSelected}/>{node.label}</label>
+          <input type="checkbox" name="optradio" onClick={props.clickHandler} defaultChecked={props.isChecked}/>{node.label}</label>
       </li>
     );
   };

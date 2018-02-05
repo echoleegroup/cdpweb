@@ -264,7 +264,7 @@
       "CRCAMF_FENDAT",
       "CRCAMF_UENDAT"
     ],
-    "transaction": {
+    "relatives": {
       "refInsurance": [
         "MAIN_LICSNO",
         "MAIN_ISEQNO",
@@ -279,7 +279,7 @@
     }
   },
   "filter": {
-    "transaction": [
+    "relatives": [
       {
         "period_start_value": 1483228800000,
         "period_start_label": "2017/01/01",

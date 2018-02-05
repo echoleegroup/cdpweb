@@ -65,7 +65,7 @@
       "CRCAMF_FENDAT",
       "CRCAMF_UENDAT"
     ],
-    "transaction": {
+    "relatives": {
       "web_browse": [
         "___",
         "___",
@@ -75,7 +75,7 @@
     }
   },
   "filter": {
-    "transaction": [
+    "relatives": [
       {
         "period_start_value": 1483228800000,
         "period_start_label": "2017/01/01",

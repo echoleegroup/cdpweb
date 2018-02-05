@@ -32,7 +32,7 @@ const criteriaStepForwardHandler = (targetStep, _that) => {
 };
 
 const featurePickerStepForwardHandler = (targetStep, _that) => {
-  let exportConfig = _that.stepComponent.getExportOuputConfig();
+  let exportConfig = _that.stepComponent.getExportOutputConfig();
   console.log('===get output feature: ', exportConfig);
   _that.setState(prevState => ({
     output: prevState.output.merge(exportConfig),
@@ -82,7 +82,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
       }),
       output: Map({
         featureOptions: [],
-        transactionOptions: [],
+        relativeSetOptions: [],
         periodStart: today.value,
         periodStartLabel: today.value_label,
         periodEnd: today.value,
@@ -124,7 +124,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     this.fetchPreparedData = (callback) => {
       this.fetchExportFeatureOptions(data => callback({
         featureOptions: data.featureOptions,
-        transactionOptions: data.transactionOptions
+        relativeSetOptions: data.relativeSetOptions
       }));
     };
 
@@ -185,6 +185,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         return (
           <Loader loaded={this.state.isLoaded}>
             <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
+                                             criteria={this.state.criteria.toJS()}
                                              outputFeatures={this.state.output.toJS()}
                                              params={this.params}
                                              step={STEPS.step7}/>

@@ -2,43 +2,41 @@
   "criteria": {
     "client": [
       {
-        "criteria": {
-          "uuid": "shortid.generate()",
-          "type": "combo",
-          "operator": "and",
-          "criteria": [
-            {
-              "uuid": "shortid.generate()",
-              "type": "field",
-              "field_id": "CRAURF_TARGET",
-              "field_label": "使用人",
-              "value": [
-                "2"
-              ],
-              "value_label": [
-                "使用人"
-              ],
-              "data_type": "refOption",
-              "ref": "_____",
-              "operator": "eq"
-            },
-            {
-              "uuid": "shortid.generate()",
-              "type": "field",
-              "field_id": "CRCUMF_CUSTS",
-              "field_label": "聯絡狀態",
-              "value": [
-                "1"
-              ],
-              "value_label": [
-                "正常"
-              ],
-              "data_type": "refOption",
-              "ref": "_____",
-              "operator": "eq"
-            }
-          ]
-        }
+        "uuid": "shortid.generate()",
+        "type": "combo",
+        "operator": "and",
+        "criteria": [
+          {
+            "uuid": "shortid.generate()",
+            "type": "field",
+            "field_id": "CRAURF_TARGET",
+            "field_label": "使用人",
+            "value": [
+              "2"
+            ],
+            "value_label": [
+              "使用人"
+            ],
+            "data_type": "refOption",
+            "ref": "_____",
+            "operator": "eq"
+          },
+          {
+            "uuid": "shortid.generate()",
+            "type": "field",
+            "field_id": "CRCUMF_CUSTS",
+            "field_label": "聯絡狀態",
+            "value": [
+              "1"
+            ],
+            "value_label": [
+              "正常"
+            ],
+            "data_type": "refOption",
+            "ref": "_____",
+            "operator": "eq"
+          }
+        ]
       }
     ],
     "vehicle": [
@@ -222,7 +220,7 @@
       "CRCAMF_FENDAT",
       "CRCAMF_UENDAT"
     ],
-    "transaction": {
+    "relatives": {
       "belonging_media": [
         "___",
         "___",
@@ -231,7 +229,7 @@
     }
   },
   "filter": {
-    "transaction": [
+    "relatives": [
       {
         "period_start_value": 1512086400000,
         "period_start_label": "2017/12/01",

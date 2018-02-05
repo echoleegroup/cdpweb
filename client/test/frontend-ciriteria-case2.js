@@ -183,10 +183,10 @@ module.exports = {
       '待加入',          //不聯絡註記
       '___'               //DxID
     ],
-    transaction: ['belonging_media']  //自有媒體標籤
+    relatives: ['belonging_media']  //自有媒體標籤
   },
   filter: {
-    transaction: {
+    relatives: {
       period_start_value: 1483228800000,
       period_start_label: '2017/01/01',
       period_end_value: 1506729600000,

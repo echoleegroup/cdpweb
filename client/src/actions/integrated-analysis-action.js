@@ -55,11 +55,9 @@ FilterAction.getExportFeaturePool = (success, fail) => {
   let fetchExportFeatureOptions = action.ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
   let fetchExportTransactionOptions = action.ajaxGetObservable(EXPORT_TRANSACTION_POOL, undefined, undefined);
   Rx.Observable.concat(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
-    let featureOptions = res[0];
-    let transactionOptions = res[1];
     success({
       featureOptions: res[0],
-      transactionOptions: res[1]
+      relativeSetOptions: res[1]
     });
   }, err => {
     console.log('===getExportFeaturePool failed: ', err);

@@ -202,10 +202,10 @@ module.exports = {
       'SRWHMF_LRKM',      //回廠里程數
       'CRCMDF_CMCHANNEL' //不聯絡註記
     ],
-    transaction: ['refInsurance']
+    relatives: ['refInsurance']
   },
   filter: {
-    transaction: {
+    relatives: {
       period_start_value: 1483228800000,
       period_start_label: '2017/01/01',
       period_end_value: 1506729600000,

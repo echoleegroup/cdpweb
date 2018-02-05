@@ -5,38 +5,52 @@ import {getDate} from '../utils/date-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action'
 
-const setAllOptionNodesIsSelected = (nodesListAsImmutable, selected) => {
-  return nodesListAsImmutable.map(nodeMapAsImmutable => {
-    switch (nodeMapAsImmutable.get('type')) {
+const IS_CHECKED_ATTRIBUTE = 'isChecked';
+
+const setAllOptionNodesIsSelected = (nodeListImmutable, selected) => {
+  return nodeListImmutable.map(nodeImmutable => {
+    switch (nodeImmutable.get('type')) {
       case NODE_TYPE.Branch:
-        return nodeMapAsImmutable.set('nodes', setAllOptionNodesIsSelected(nodeMapAsImmutable.get('nodes'), selected));
+        return nodeImmutable.set('nodes', setAllOptionNodesIsSelected(nodeImmutable.get('nodes'), selected));
       case NODE_TYPE.Tail:
-        return nodeMapAsImmutable.set('isSelected', selected);
+        return nodeImmutable.set(IS_CHECKED_ATTRIBUTE, selected);
     }
   })
 };
 
-const toggleOptionNodeSelected = (nodesListAsImmutable, uuid) => {
-  return nodesListAsImmutable.map(nodeMapAsImmutable => {
-    switch (nodeMapAsImmutable.get('type')) {
+const toggleOptionNodeSelected = (nodeListImmutable, id) => {
+  return nodeListImmutable.map(nodeImmutable => {
+    switch (nodeImmutable.get('type')) {
       case NODE_TYPE.Branch:
-        return nodeMapAsImmutable.set('nodes', setAllOptionNodesIsSelected(nodeMapAsImmutable.get('nodes'), uuid));
+        return nodeImmutable.set('nodes', setAllOptionNodesIsSelected(nodeImmutable.get('nodes'), id));
       case NODE_TYPE.Tail:
-        if (nodeMapAsImmutable.get('uuid') === uuid)
-          return nodeMapAsImmutable.set('isSelected', !nodeMapAsImmutable.get('isSelected'));
-        return nodeMapAsImmutable;
+        if (nodeImmutable.get('id') === id)
+          return nodeImmutable.set(IS_CHECKED_ATTRIBUTE, !nodeImmutable.get(IS_CHECKED_ATTRIBUTE));
+        return nodeImmutable;
     }
   })
+};
+
+const getSelectedNodes = (nodeListImmutable) => {
+  return nodeListImmutable.reduce((acc, nodeImmutable) => {
+    switch (nodeImmutable.get('type')) {
+      case NODE_TYPE.Branch:
+        return acc.concat(getSelectedNodes(nodeImmutable.get('nodes')));
+      case NODE_TYPE.Tail:
+        if (nodeImmutable.get(IS_CHECKED_ATTRIBUTE))
+          acc.push(nodeImmutable.get('id'));
+        return acc;
+    }
+  }, []);
 };
 
 export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = getDate();
     this.state = {
-      featureOptions: List(props.outputFeatures.featureOptions),
-      transactionOptions: List(props.outputFeatures.transactionOptions),
+      featureOptions: fromJS(props.outputFeatures.featureOptions),
+      relativeSetOptions: fromJS(props.outputFeatures.relativeSetOptions),
       periodStart: props.outputFeatures.periodStart,
       periodStartLabel: props.outputFeatures.periodStartLabel,
       periodEnd: props.outputFeatures.periodEnd,
@@ -57,13 +71,13 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
     };
 
     this.featureTailClickHandler = (node) => {
-      let state = toggleOptionNodeSelected(this.state.featureOptions, node.uuid);
+      let state = toggleOptionNodeSelected(this.state.featureOptions, node.id);
       this.setState({featureOptions: state});
     };
 
     this.transactionTailClickHandler = (node) => {
-      let state = toggleOptionNodeSelected(this.state.transactionOptions, node.uuid);
-      this.setState({transactionOptions: state});
+      let state = toggleOptionNodeSelected(this.state.relativeSetOptions, node.id);
+      this.setState({relativeSetOptions: state});
     };
 
     this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
@@ -79,10 +93,10 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         });
     };
 
-    this.getExportOuputConfig = () => {
+    this.getExportOutputConfig = () => {
       return {
         featureOptions: this.state.featureOptions.toJS(),
-        transactionOptions: this.state.transactionOptions.toJS(),
+        relativeSetOptions: this.state.relativeSetOptions.toJS(),
         periodStart: this.state.periodStart,
         periodStartLabel: this.state.periodStartLabel,
         periodEnd: this.state.periodEnd,
@@ -92,7 +106,29 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
     this.processPostDate = (e) => {
       //TODO:
-    };
+      let criteria = this.props.criteria;
+      let selectedFeatures = getSelectedNodes(this.state.featureOptions);
+      let selectedRelativeSets = getSelectedNodes(this.state.relativeSetOptions);
+
+      let formDate = {
+        criteria,
+        export: {
+          master: selectedFeatures,
+          relatives: selectedRelativeSets
+        },
+        filter: {
+          relatives: {
+            period_start_value: this.state.periodStart,
+            period_start_label: this.state.periodStartLabel,
+            period_end_value: this.state.periodEnd,
+            period_end_label: this.state.periodEndLabel
+          }
+        }
+      };
+
+      $(this.inputCriteria).val(JSON.stringify(formDate));
+      $(this.formComponent).submit();
+    }
   };
 
   componentDidMount() {
@@ -126,13 +162,13 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
             </div>
           </div>
         </div>
-        <PickerMultiple nodes={this.state.transactionOptions.toJS()} tailClickHandler={this.transactionTailClickHandler}/>
+        <PickerMultiple nodes={this.state.relativeSetOptions.toJS()} tailClickHandler={this.transactionTailClickHandler}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
           <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
         </div>
         <form method="POST" action={integratedAction.EXPORT_QUERY} ref={e => {this.formComponent = e;}}>
-          <input type="hidden" name="criteria" value=""/>
+          <input type="hidden" name="criteria" value="" ref={e => this.inputCriteria = e}/>
         </form>
       </div>
     );

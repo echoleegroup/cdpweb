@@ -212,7 +212,7 @@ module.exports = {
       'CRCAMF_FENDAT',    //強制險到期日
       'CRCAMF_UENDAT'     //任意險到期日
     ],
-    transaction: {
+    relatives: {
       //從RDB撈出固定的樣貌分析欄位(保險明細)
       refInsurance: [
         'MAIN_LICSNO',            //車牌
@@ -228,7 +228,7 @@ module.exports = {
     }
   },
   filter: {
-    transaction: [
+    relatives: [
       {
         period_start_value: 1483228800000,
         period_start_label: '2017/01/01',

@@ -193,7 +193,7 @@ module.exports = {
       'CRCAMF_FENDAT',    //強制險到期日
       'CRCAMF_UENDAT'     //任意險到期日
     ],
-    transaction: {
+    relatives: {
       //從RDB撈出固定的樣貌分析欄位(自有媒體標籤)
       belonging_media: [  //自有媒體標籤
         '___',               //車牌
@@ -203,7 +203,7 @@ module.exports = {
     }
   },
   filter: {
-    transaction: [
+    relatives: [
       {
         period_start_value: 1512086400000,
         period_start_label: '2017/12/01',

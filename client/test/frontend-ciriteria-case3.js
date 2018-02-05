@@ -59,9 +59,9 @@ module.exports = {
       '___',           //CookieID
       '___'            //車牌
     ],
-    transaction: []
+    relatives: []
   },
   filter: {
-    transaction: {}
+    relatives: {}
   }
 };

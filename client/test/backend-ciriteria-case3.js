@@ -68,7 +68,7 @@ module.exports = {
       'CRCAMF_FENDAT',    //強制險到期日
       'CRCAMF_UENDAT'     //任意險到期日
     ],
-    transaction: {
+    relatives: {
       web_browse: [
         //從RDB取出固定的Web瀏覽欄位
         '___',           //Web頁面瀏覽
@@ -79,7 +79,7 @@ module.exports = {
     }
   },
   filter: {
-    transaction: [
+    relatives: [
       {
         //從RDB撈出的預設Web瀏覽條件
         period_start_value: 1483228800000,
