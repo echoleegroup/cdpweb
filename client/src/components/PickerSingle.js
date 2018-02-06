@@ -101,7 +101,7 @@ class Branch extends React.PureComponent {
     }*/
     return (
       <li key={node.id}>
-        <a href="#" onClick={this.clickHandler}>{node.label}
+        <a href="#" onClick={this.clickHandler()}>{node.label}
           <i className={className} aria-hidden={collapse} ref={e => {
             this.foldingIconDom = e;
           }}/>
