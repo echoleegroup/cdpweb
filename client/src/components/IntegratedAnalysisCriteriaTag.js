@@ -51,18 +51,16 @@ export default class IntegratedAnalysisCriteriaTag extends IntegratedAnalysisCri
 
 class CriteriaTagComboBundle extends CriteriaComboBundle {
 
-  getInsertCriteriaBundleType() {
-    console.log('getInsertCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.TAG);
+  getChildCriteriaBundleType() {
+    console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.TAG);
     return CRITERIA_COMPONENT_DICT.TAG
   };
 
   toInsertCriteriaBundle() {
     this.props.toPickTagPoolSource(({ref, refLabel}) => {
       console.log(`get ref=${ref} and refLabel=${refLabel}`);
-      let criteriaType = this.getInsertCriteriaBundleType();
-      console.log(`toPickCriteriaBundle: ${criteriaType}`);
       let criteriaModel = this.getBundleProperties({
-        type: this.getInsertCriteriaBundleType(),
+        type: this.getChildCriteriaBundleType(),
         ref: ref,
         ref_label: refLabel
       });

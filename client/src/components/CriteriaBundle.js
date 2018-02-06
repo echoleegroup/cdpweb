@@ -20,11 +20,15 @@ export default class CriteriaBundle extends React.PureComponent {
     };
   };
 
+  myFieldType() {
+    return CRITERIA_COMPONENT_DICT.BUNDLE;
+  };
+
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
     // console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, criteria=%s)', uuid, type, operator, criteria);
     return {
       uuid: uuid || shortid.generate(),
-      type: type || CRITERIA_COMPONENT_DICT.BUNDLE, //combo, ref, field
+      type: type || this.myFieldType(), //combo, ref, field
       operator: operator || 'and',   //and, or, eq, ne, lt, le, gt, ge, not
       ref: ref || null,
       ref_label: ref_label || null,
