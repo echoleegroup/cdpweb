@@ -88,12 +88,10 @@ module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
   });
 };
 
-module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, features, downloadFeatureIds=[], callback) => {
+module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, downloadFeatureIds=[], callback) => {
   const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
   const MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY = 'mdListKey';
 
-  //create a dictionary via features with key in 'featID'
-  let fieldDict = _.keyBy(features, 'featID');
   //let bigTable = model.bigtbName;
   let bigTable = model.bigtbName;
 
@@ -122,7 +120,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, fe
   }
   //set customized criteria
   //transfer input criteria to sql expression
-  let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements, fieldDict);
+  let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements);
   // winston.info('queryTargetByCustomCriteria::customCriteriaSqlWhere: %s', customCriteriaSqlWhere);
   if(customCriteriaSqlWhere) {
     sqlWhere = `${sqlWhere} AND ${customCriteriaSqlWhere}`;
@@ -142,7 +140,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, fe
   }).fail((err) => {
     winston.error('===criteria-service::' +
       'queryTargetByCustomCriteria(%j) failed: %j',
-      {mdId, batId, statements, model, features, downloadFeatureIds}, err);
+      {mdId, batId, statements, model, downloadFeatureIds}, err);
     callback(err);
   });
 };

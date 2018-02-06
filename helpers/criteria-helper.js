@@ -13,8 +13,9 @@ const TAIL_MODEL_TEMPLATE = {
   type: 'tail',
   id: undefined,
   label: undefined,
-  data_type: 'text', //num, text, date, refOption
-  ref: undefined, //for data_type: refOption
+  data_type: undefined,
+  input_type: 'text',  //num, text, date, refOption,
+  ref: undefined, //for input_type: refOption
   default_value: undefined  //for refOption, set default value as array object, e.g. default_value: ['M']
 };
 
@@ -88,34 +89,23 @@ const MODEL_FEATURE_CATEGORY_ID = 'tagene';
 const MODEL_LIST_CATEGORY = 'tapop';
 
 const TailModelWrapper = (feature) => {
-  // set data_type properties
-  let dataTypeProperties = {};
-
-  if (!_.isEmpty(feature.codeGroup)) {
-    dataTypeProperties = {
-      data_type: FIELD_REF_DATA_TYPE,
-      ref: feature.codeGroup
-    };
-  } else if (!_.isEmpty(feature.dataType)) {
-    dataTypeProperties = {
-      data_type: FEATURE_DATATYPE_TO_INPUT_TYPE[feature.dataType]
-    };
-  }
-
   // to complete field model
-  return _.assign({}, TAIL_MODEL_TEMPLATE, dataTypeProperties, {
+  return _.assign({}, TAIL_MODEL_TEMPLATE, {
     id: feature.featID,
-    label: feature.featName
+    label: feature.featName,
+    data_type: feature.dataType,
+    input_type: feature.uiInputType,
+    ref: _.isEmpty(feature.codeGroup)? null: feature.codeGroup
   });
 };
 
-const RefFieldHandler = (criteria, fieldDef) => {
+const RefFieldHandler = (criteria) => {
   const REF_FIELD_COMPARE_OPERATOR_DICT = _.assign({}, SQL_OPERATOR_DICT, {
     eq: 'IN',
     ne: 'NOT IN'
   });
   let query_value_list = _.isEmpty(criteria.value)? '': `('${criteria.value.join('\',\'')}')`;
-  let query = `${fieldDef.featID} ${REF_FIELD_COMPARE_OPERATOR_DICT[criteria.operator]} ${query_value_list}`;
+  let query = `${criteria.field_id} ${REF_FIELD_COMPARE_OPERATOR_DICT[criteria.operator]} ${query_value_list}`;
   return query;
 };
 
@@ -147,7 +137,7 @@ const ChildSqlCriteriaExpressionHandler = ({sqlExpressions}, {operator}) => {
  * @constructor
  * expect return {query: ['', ''], params: [], paramIndex: ${number}}
  */
-const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
+const ChildSqlCriteriaComposer = (statements, paramsIndex=0) => {
   let collector = {
     sqlExpressions: [],
     params: [],
@@ -155,42 +145,42 @@ const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
   };
   return statements.reduce((collector, criteria) => {
     let criteriaType = criteria.type;
-    let fieldDef = fieldDict[criteria.field_id];
+    let fieldInputType = criteria.input_type;
     let fieldDataType = criteria.data_type;
     let fieldValue = criteria.value;
     let fieldOperator = criteria.operator;
 
     if (CRITERIA_FIELD_TYPE === criteriaType) { //type === field
-      if (CRITERIA_FIELD_TYPE === fieldDataType) {  //data_type === refOption
-        let query = RefFieldHandler(criteria, fieldDef);
+      if (CRITERIA_FIELD_TYPE === fieldInputType) {  //data_type === refOption
+        let query = RefFieldHandler(criteria);
         collector.sqlExpressions.push(query);
       } else {
         let paramValue = undefined;
-        let query = `${fieldDef.featID} ${SQL_OPERATOR_DICT[fieldOperator]}`;
+        let query = `${criteria.field_id} ${SQL_OPERATOR_DICT[fieldOperator]}`;
 
         if (fieldValue) {
           try {
-            if (FIELD_DATE_DATA_TYPE === fieldDataType) { //data_type === date
+            if (FIELD_DATE_DATA_TYPE === fieldInputType) { //data_type === date
               paramValue = new Date(fieldValue);
               // paramValue = ('le' === fieldOperator)?
               //   moment(fieldValue).endOf('day'):
               //   moment(fieldValue).startOf('day');
-            } else if (FIELD_DATETIME_DATA_TYPE === fieldDataType) { //data_type === datetime
+            } else if (FIELD_DATETIME_DATA_TYPE === fieldInputType) { //data_type === datetime
               paramValue = new Date(fieldValue);
               // paramValue = ('le' === fieldOperator)?
               //   moment(fieldValue).endOf('minute'):
               //   moment(fieldValue).startOf('minute');
-            } else if (FIELD_TEXT_DATA_TYPE === fieldDataType) {  //data_type === text
+            } else if (FIELD_TEXT_DATA_TYPE === fieldInputType) {  //data_type === text
               paramValue = fieldValue + '';
-            } else if (FIELD_NUMBER_DATA_TYPE === fieldDataType) {  //data_type === number
+            } else if (FIELD_NUMBER_DATA_TYPE === fieldInputType) {  //data_type === number
               paramValue = fieldValue * 1;
             }
 
-            let paramVariable = `${fieldDef.featID}_${collector.paramsIndex++}`;
+            let paramVariable = `${criteria.field_id}_${collector.paramsIndex++}`;
             query = `${query} @${paramVariable}`;
             collector.params.push({
               name: paramVariable,
-              type: fieldDef.dataType,
+              type: fieldDataType,
               value: paramValue
             });
           } catch (e) {
@@ -200,7 +190,7 @@ const ChildSqlCriteriaComposer = (statements, fieldDict, paramsIndex=0) => {
         collector.sqlExpressions.push(query);
       } //end of data_type handler
     } else {
-      let childCriteria = ChildSqlCriteriaComposer(criteria.criteria, fieldDict, collector.paramsIndex);
+      let childCriteria = ChildSqlCriteriaComposer(criteria.criteria, collector.paramsIndex);
       let childSql = ChildSqlCriteriaExpressionHandler(childCriteria, criteria);
       winston.info('ChildSqlCriteriaComposer::ChildSqlCriteriaExpressionHandler: %s', childSql);
       if (childSql) {
@@ -296,9 +286,9 @@ module.exports = {
     }, {});
   },
 
-  inputCriteriaToSqlWhere: (statements, fieldDict) => {
+  inputCriteriaToSqlWhere: (statements) => {
     let operator = 'and';
-    let childCriteria = ChildSqlCriteriaComposer(statements, fieldDict);
+    let childCriteria = ChildSqlCriteriaComposer(statements);
     winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaComposer: ', childCriteria);
     let sqlWhere = ChildSqlCriteriaExpressionHandler(childCriteria, {operator});
     winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);

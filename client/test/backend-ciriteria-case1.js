@@ -15,7 +15,7 @@ module.exports = {
           field_label: '使用人',
           value: ['2'],
           value_label: ['使用人'],
-          data_type: 'refOption',
+          data_type: '___',
           ref: '_____',
           operator: 'eq'  //eq, ne, lt, le, gt, ge, in, ni
         }, {
@@ -25,7 +25,7 @@ module.exports = {
           field_label: '聯絡狀態',
           value: ['1'],
           value_label: ['正常'],
-          data_type: 'refOption',
+          data_type: '___',
           ref: '_____',
           operator: 'eq'
         }]
@@ -43,7 +43,7 @@ module.exports = {
           field_label: '交車年份',
           ref: null,
           value: 1388534400000,
-          data_type: 'date',
+          data_type: '___',
           value_label: '2014/1/1',
           operator: 'ge'
         }, {
@@ -54,7 +54,7 @@ module.exports = {
           ref: null,
           value: 1404086400000,
           value_label: '2014/06/30',
-          data_type: 'date',
+          data_type: '___',
           operator: 'le'
         }, {
           uuid: shortid.generate(),
@@ -64,7 +64,7 @@ module.exports = {
           ref: '_____',
           value: ['1'],
           value_label: ['自然人'],
-          data_type: 'refOption',
+          data_type: '___',
           operator: 'eq'
         }, {
           uuid: shortid.generate(),
@@ -78,7 +78,7 @@ module.exports = {
             ref: '_____',
             value: ['1'],
             value_label: ['保有'],
-            data_type: 'refOption',
+            data_type: '___',
             operator: 'eq'
           }, {
             uuid: shortid.generate(),
@@ -88,7 +88,7 @@ module.exports = {
             ref: '_____',
             value: ['A'],
             value_label: ['A'],
-            data_type: 'refOption',
+            data_type: '___',
             operator: 'eq'
           }]
         }, {
@@ -99,7 +99,7 @@ module.exports = {
           ref: '_____',
           value: ['H'],
           value_label: ['和泰車'],
-          data_type: 'refOption',
+          data_type: '___',
           operator: 'eq'
         }, {
           uuid: shortid.generate(),
@@ -109,7 +109,7 @@ module.exports = {
           ref: '_____',
           value: ['CR_1'],
           value_label: ['現職業代'],
-          data_type: 'refOption',
+          data_type: '___',
           operator: 'eq'
         }, {
           uuid: shortid.generate(),
@@ -119,7 +119,7 @@ module.exports = {
           ref: '_____',
           value: ['taxi', 'legal', 'rental'],
           value_label: ['計程車', '法人車', '租賃車'],
-          data_type: 'refOption',
+          data_type: '___',
           operator: 'ni'  //not in
         }]
       }
@@ -142,7 +142,7 @@ module.exports = {
             field_label: '要保書建立日期',
             value: 1420070400000,  //timestamp of 2015/01/01
             value_label: '2015/01/01',
-            data_type: 'date',
+            data_type: '___',
             ref: null,
             operator: 'gt'
           }, {
@@ -152,7 +152,7 @@ module.exports = {
             field_label: '要保書建立日期',
             value: 1514678400000,  //timestamp of 2017/12/31
             value_label: '2017/12/31',
-            data_type: 'date',
+            data_type: '___',
             ref: null,
             operator: 'lt'
           }]
@@ -169,7 +169,7 @@ module.exports = {
             field_label: '不聯絡註記',
             value: ['FA','FB','FC','FD'],  //timestamp of 2015/01/01
             value_label: ['FA','FB','FC','FD'],
-            data_type: 'refOption',
+            data_type: '___',
             ref: '______',
             operator: 'in'
           }]

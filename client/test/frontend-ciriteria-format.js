@@ -16,7 +16,7 @@ module.exports = {
             field_id: 'last_visit_date',
             field_label: '最近訪問日',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'lg'
           }, {
             uuid: shortid.generate(),
@@ -29,7 +29,7 @@ module.exports = {
               field_id: 'age',
               field_label: '年紀',
               value: 40,
-              data_type: 'number',
+              data_type: '___',
               operator: 'lt'
             }, {
               uuid: shortid.generate(),
@@ -38,7 +38,7 @@ module.exports = {
               field_id: 'toyota',
               field_label: 'TOYOTA保有台數',
               value: 2,
-              data_type: 'number',
+              data_type: '___',
               operator: 'gt'
             }]
           }]
@@ -56,7 +56,7 @@ module.exports = {
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
           value: ['Y'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: ['是'],
           operator: 'eq'
         }, {
@@ -65,7 +65,7 @@ module.exports = {
           field_id: 'purpose',
           field_label: '類別',
           value: ['2'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: ['一般自用'],
           operator: 'gt'
         }]
@@ -79,7 +79,7 @@ module.exports = {
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
           value: ['Y'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: ['是'],
           operator: 'eq'
         }, {
@@ -88,7 +88,7 @@ module.exports = {
           field_id: 'purpose',
           field_label: '類別',
           value: ['1'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: ['一般自用'],
           operator: 'gt'
         }]
@@ -111,7 +111,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -119,7 +119,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }, {
@@ -134,7 +134,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -142,7 +142,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }, {
@@ -157,7 +157,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -165,7 +165,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }]

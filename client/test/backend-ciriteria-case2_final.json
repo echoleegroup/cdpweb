@@ -17,7 +17,7 @@
             "value_label": [
               "使用人"
             ],
-            "data_type": "refOption",
+            "data_type": "___",
             "ref": "_____",
             "operator": "eq"
           },
@@ -32,7 +32,7 @@
             "value_label": [
               "正常"
             ],
-            "data_type": "refOption",
+            "data_type": "___",
             "ref": "_____",
             "operator": "eq"
           }
@@ -52,7 +52,7 @@
             "field_label": "交車年份",
             "ref": null,
             "value": 1388534400000,
-            "data_type": "date",
+            "data_type": "___",
             "value_label": "2014/1/1",
             "operator": "ge"
           },
@@ -64,7 +64,7 @@
             "ref": null,
             "value": 1404086400000,
             "value_label": "2014/06/30",
-            "data_type": "date",
+            "data_type": "___",
             "operator": "le"
           }
         ]
@@ -90,7 +90,7 @@
                 "field_label": "要保書建立日期",
                 "value": 1420070400000,
                 "value_label": "2015/01/01",
-                "data_type": "date",
+                "data_type": "___",
                 "ref": null,
                 "operator": "gt"
               },
@@ -101,7 +101,7 @@
                 "field_label": "要保書建立日期",
                 "value": 1514678400000,
                 "value_label": "2017/12/31",
-                "data_type": "date",
+                "data_type": "___",
                 "ref": null,
                 "operator": "lt"
               }
@@ -173,7 +173,7 @@
                 "field_label": "車款_SIENTA (瀏覽次數)",
                 "value": 10,
                 "value_label": 10,
-                "data_type": "number",
+                "data_type": "___",
                 "ref": null,
                 "operator": "gt"
               }

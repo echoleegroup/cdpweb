@@ -10,10 +10,7 @@ module.exports.getCriteriaFeatures = (setId, callback) => {
     'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID';
 
   let request = _connector.queryRequest().setInput('setId', _connector.TYPES.NVarChar, setId);
-  Q.nfcall(request.executeQuery, sql).then(results => {
-    let featureIds = _.map(results, 'featID');
-    return Q.nfcall(modelService.getBatchCategoryFeatures, featureIds);
-  }).then((result) => {
+  Q.nfcall(request.executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail(err => {
     winston.error('===getCustomCriteriaFeatures failed:', err);

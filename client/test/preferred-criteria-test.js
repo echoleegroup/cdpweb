@@ -7,7 +7,7 @@ module.exports = {
         type: 'tail',
         id: 'last_visit_date',
         label: '最後訪問日',
-        data_type: 'date',
+        data_type: '___',
         default_value: Date.now()
       }, {
         type: 'branch',
@@ -17,21 +17,21 @@ module.exports = {
           type: 'node',
           id: 'gender',
           label: '性別',
-          data_type: 'refOption',
+          data_type: '___',
           ref: 'gender',
           default_value: ['M']
         }, {
           type: 'tail',
           id: 'gender2',
           label: '性別2',
-          data_type: 'refOption',
+          data_type: '___',
           ref: 'booleanYN',
           default_value: ['M']
         }, {
           type: 'tail',
           id: 'age',
           label: '年紀',
-          data_type: 'number'
+          data_type: '___'
         }]
       }, {
         type: 'branch',
@@ -41,12 +41,12 @@ module.exports = {
           type: 'tail',
           id: 'lexus',
           label: 'LEXUS保有台數',
-          data_type: 'number'
+          data_type: '___'
         }, {
           type: 'tail',
           id: 'toyota',
           label: 'TOYOTA保有台數',
-          data_type: 'number'
+          data_type: '___'
         }]
       }
     ],
@@ -55,7 +55,7 @@ module.exports = {
         type: 'field',
         id: 'last_visit_date',
         label: '最後訪問日',
-        data_type: 'date',
+        data_type: '___',
         default_value: Date.now()
       }, {
         type: 'folder',
@@ -65,20 +65,20 @@ module.exports = {
           type: 'field',
           id: 'gender',
           label: '性別',
-          data_type: 'refOption', //for cassandra
+          data_type: '___', //for cassandra
           ref: 'gender',
           default_value: ['M']
         }, {
           type: 'field',
           id: 'age',
           label: '年紀',
-          data_type: 'number'
+          data_type: '___'
         }]
       }, {
         type: 'field',
         id: 'first_visit_date2',
         label: '初次訪問日',
-        data_type: 'date',
+        data_type: '___',
         default_value: Date.now()
       }, {
         id: 'inter_action',
@@ -86,11 +86,11 @@ module.exports = {
         fields: [{
           id: 'lexus',
           label: 'LEXUS保有台數',
-          data_type: 'number'
+          data_type: '___'
         }, {
           id: 'toyota',
           label: 'TOYOTA保有台數',
-          data_type: 'number'
+          data_type: '___'
         }]
       }
     ],
@@ -99,14 +99,14 @@ module.exports = {
         type: 'field',
         id: 'regular_recall',
         label: '每年連續回廠定保',
-        data_type: 'refOption',
+        data_type: '___',
         ref: 'booleanYN',
         default_value: ['Y']
       }, {
         type: 'field',
         id: 'purpose',
         label: '類別',
-        data_type: 'refOption',
+        data_type: '___',
         ref: 'carPurpose',
         default_value: ['2']
       }
@@ -121,13 +121,13 @@ module.exports = {
           id: 'exchange_date',
           label: '兌換日期',
           default_value: Date.now(),
-          data_type: 'date'
+          data_type: '___'
         }, {
           type: 'field',
           id: 'exchange_price',
           label: '兌換金額',
           default_value: 2,
-          data_type: 'number'
+          data_type: '___'
         }]
       }, {
         type: 'folder',
@@ -138,13 +138,13 @@ module.exports = {
           id: 'exchange_date2',
           label: '兌換日期',
           default_value: Date.now(),
-          data_type: 'date'
+          data_type: '___'
         }, {
           type: 'field',
           id: 'exchange_price2',
           label: '兌換金額',
           default_value: 2,
-          data_type: 'number'
+          data_type: '___'
         }]
       }
     ],
@@ -157,13 +157,13 @@ module.exports = {
           id: 'product',
           label: '車款',
           default_value: 10,
-          data_type: 'number',
+          data_type: '___',
         }, {
           type: 'field',
           id: 'calculation',
           label: '購車試算',
           default_value: 5,
-          data_type: 'number',
+          data_type: '___',
         }]
       }
     ],
@@ -215,7 +215,7 @@ module.exports = {
           field_id: 'last_visit_date',
           field_label: '最近訪問日',
           value: Date.now(),
-          data_type: 'date',
+          data_type: '___',
           operator: 'lt'
         }, {
           uuid: shortid.generate(),
@@ -228,7 +228,7 @@ module.exports = {
             field_id: 'age',
             field_label: '年紀',
             value: 40,
-            data_type: 'number',
+            data_type: '___',
             operator: 'lt'
           }, {
             uuid: shortid.generate(),
@@ -237,7 +237,7 @@ module.exports = {
             field_id: 'toyota',
             field_label: 'TOYOTA保有台數',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'gt'
           }]
         }]
@@ -257,7 +257,7 @@ module.exports = {
             field_id: 'last_visit_date',
             field_label: '最近訪問日',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'lg'
           }, {
             uuid: shortid.generate(),
@@ -270,7 +270,7 @@ module.exports = {
               field_id: 'age',
               field_label: '年紀',
               value: 40,
-              data_type: 'number',
+              data_type: '___',
               operator: 'lt'
             }, {
               uuid: shortid.generate(),
@@ -279,7 +279,7 @@ module.exports = {
               field_id: 'toyota',
               field_label: 'TOYOTA保有台數',
               value: 2,
-              data_type: 'number',
+              data_type: '___',
               operator: 'gt'
             }]
           }]
@@ -297,7 +297,7 @@ module.exports = {
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
           value: ['Y'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: '是',
           operator: 'eq'
         }, {
@@ -306,7 +306,7 @@ module.exports = {
           field_id: 'purpose',
           field_label: '類別',
           value: ['2'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: '一般自用',
           operator: 'gt'
         }]
@@ -320,7 +320,7 @@ module.exports = {
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
           value: ['Y'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: '是',
           operator: 'eq'
         }, {
@@ -329,7 +329,7 @@ module.exports = {
           field_id: 'purpose',
           field_label: '類別',
           value: ['1'],
-          data_type: 'refOption',
+          data_type: '___',
           value_label: '一般自用',
           operator: 'gt'
         }]
@@ -352,7 +352,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -360,7 +360,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }, {
@@ -375,7 +375,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -383,7 +383,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }, {
@@ -398,7 +398,7 @@ module.exports = {
             field_id: 'exchange_date',
             field_label: '兌換日期',
             value: Date.now(),
-            data_type: 'date',
+            data_type: '___',
             operator: 'ge'
           }, {
             uuid: shortid.generate(),
@@ -406,7 +406,7 @@ module.exports = {
             field_id: 'exchange_price',
             field_label: '兌換金額',
             value: 2,
-            data_type: 'number',
+            data_type: '___',
             operator: 'ge'
           }]
         }]
@@ -482,7 +482,7 @@ module.exports = {
           field_id: 'product',
           field_label: '車款',
           value: 10,
-          data_type: 'number',
+          data_type: '___',
           periodFrom: Date.now(),
           periodTo: Date.now()
         }, {
@@ -492,7 +492,7 @@ module.exports = {
           field_id: 'calculation',
           field_label: '購車試算',
           value: 5,
-          data_type: 'number',
+          data_type: '___',
           periodFrom: Date.now(),
           periodTo: Date.now()
         }]

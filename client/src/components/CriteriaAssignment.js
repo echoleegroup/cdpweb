@@ -89,6 +89,7 @@ const INITIAL_CRITERIA = Object.freeze({
   field_id: undefined,
   field_label: undefined,
   data_type: undefined,
+  input_type: 'text',
   ref: undefined,
   value: undefined,
   value_label: undefined,
@@ -113,7 +114,7 @@ export default class CriteriaAssignment extends React.PureComponent {
       this.responseCriteria = callback;
       this.setState(prevState => ({
         isOpen: true,
-        criteria: prevState.criteria.merge({
+        criteria: Map(INITIAL_CRITERIA).merge({
           uuid: shortid.generate()
         })
       }));
@@ -150,6 +151,7 @@ export default class CriteriaAssignment extends React.PureComponent {
             field_id: node.id,
             field_label: node.label,
             data_type: node.data_type,
+            input_type: node.input_type,
             ref: node.ref,
             //value: 'Y',
             //value_label: '是',
@@ -206,40 +208,37 @@ export default class CriteriaAssignment extends React.PureComponent {
 
   CriteriaOperatorBlock(criteria) {
     // console.log('CriteriaAssignment::CriteriaOperatorBlock: ', criteria);
-    if (criteria.get('data_type')) {
-      let dataType = criteria.get('data_type');
-      let operatorSet = this.operatorSet = GetOperatorSet(dataType);
-      console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
-      return (
-        <div>
-          <h3>條件</h3>
-          <select className="form-control judgment" onChange={(e) => {
-            let inputValue = e.target.value;
-            this.setState((prevState) => {
-              return {
-                criteria: prevState.criteria.set('operator', inputValue)
-              };
-            });
-          }} value={criteria.get('operator')}>
-            {Object.keys(operatorSet).map((key) => {
-              return (
-                <option key={key} value={key}>{operatorSet[key].label}</option>
-              );
-            })}
-          </select>
-        </div>
-      );
-    }
-    return null;
+    let operatorSet = this.operatorSet = GetOperatorSet(criteria.get('input_type'));
+    console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
+    return (
+      <div>
+        <h3>條件</h3>
+        <select className="form-control judgment" onChange={(e) => {
+          let inputValue = e.target.value;
+          this.setState((prevState) => {
+            return {
+              criteria: prevState.criteria.set('operator', inputValue)
+            };
+          });
+        }} value={criteria.get('operator')}>
+          {Object.keys(operatorSet).map((key) => {
+            return (
+              <option key={key} value={key}>{operatorSet[key].label}</option>
+            );
+          })}
+        </select>
+      </div>
+    );
   };
 
   CriteriaInputBlock(criteria) {
     const excludes = ['in', 'nn'];
-    if (criteria.get('data_type') && excludes.indexOf(criteria.get('operator')) < 0) {
+    let input_type = criteria.get('input_type');
+    if (input_type && excludes.indexOf(criteria.get('operator')) < 0) {
       return (
         <div>
           <h3>條件值</h3>
-          {this.CriteriaFieldInput(criteria)}
+          {this.CriteriaFieldInput(criteria, input_type)}
         </div>
       );
     }
@@ -247,7 +246,7 @@ export default class CriteriaAssignment extends React.PureComponent {
   };
 
   CriteriaFieldInput(criteria) {
-    switch (criteria.get('data_type')) {
+    switch (criteria.get('input_type')) {
       case 'number':
         return <NumberInput criteria={criteria} ref={(e) => {
           this.fieldInput = e;
@@ -280,7 +279,7 @@ class InputBase extends React.PureComponent {
   render() {
     return (
       <div className="radio">
-        <input type={this.props.criteria.get('data_type')} className="form-control" placeholder="" ref={(e) => {
+        <input type={this.props.criteria.get('input_type')} className="form-control" placeholder="" ref={(e) => {
           this.input = e;
         }}/>
       </div>

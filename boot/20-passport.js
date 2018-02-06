@@ -30,13 +30,13 @@ module.exports = () => {
           return done(null, _.pick(user, ['userId', 'userName', 'email']));
         });
       } else {
-        winston.info('帳號或密碼不正確');
+        winston.error('帳號或密碼不正確');
         return done(null, false, {
           message: '帳號或密碼不正確'
         });
       }
     }).fail(err => {
-      winston.info('error: ', err);
+      winston.error('error: ', err);
       return done(null, false, {
         message: '系統錯誤，請洽管理員'
       });

@@ -43,7 +43,7 @@ module.exports = {
             field_label: '車款_SIENTA (瀏覽次數)',
             value: 10,
             value_label: 10,
-            data_type: 'number',
+            data_type: '___',
             ref: null,
             operator: 'gt'    //eq, ne, lt, le, gt, ge, in, ni
           }]

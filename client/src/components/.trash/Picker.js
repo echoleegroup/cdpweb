@@ -7,7 +7,7 @@ import React from 'react';
    id: 'last_visit_date',
    label: '最後訪問日',
    onSelect: (data) => {}
-   //data_type: 'date',
+   //___: 'date',
    //default_value: Date.now()
  }, {
         type: 'branch',
@@ -17,21 +17,21 @@ import React from 'react';
           type: 'node',
           id: 'gender',
           label: '性別',
-          data_type: 'refOption',
+          data_type: '___',
           ref: 'gender',
           default_value: ['M']
         }, {
           type: 'tail',
           id: 'gender2',
           label: '性別2',
-          data_type: 'refOption',
+          data_type: '___',
           ref: 'booleanYN',
           default_value: ['M']
         }, {
           type: 'tail',
           id: 'age',
           label: '年紀',
-          data_type: 'number'
+          data_type: '___'
         }]
       }, {
         type: 'branch',
@@ -41,12 +41,12 @@ import React from 'react';
           type: 'tail',
           id: 'lexus',
           label: 'LEXUS保有台數',
-          data_type: 'number'
+          data_type: '___'
         }, {
           type: 'tail',
           id: 'toyota',
           label: 'TOYOTA保有台數',
-          data_type: 'number'
+          data_type: '___'
         }]
       }
  ]

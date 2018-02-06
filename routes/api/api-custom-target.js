@@ -65,17 +65,12 @@ module.exports = (app) => {
     winston.info('/criteria/preview: isIncludeModelTarget=%s', isIncludeModelTarget);
     winston.info('/criteria/preview: statements=%j', statements);
 
-    Q.all([
-      Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
-      Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
-      //Q.nfcall(modelService.getDownloadFeature, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
-    ]).spread((model, features, downloadFeatures) => {
-      //downloadFeatures = _.map(downloadFeatures, 'featID');
+    Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY).then(model => {
       if (!model) {
         res.json(req.params, 404, 'batch data is not found!');
         throw null;
       } else {
-        return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, []), model];
+        return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, []), model];
       }
     }).spread((results, model) => {
 
@@ -109,14 +104,14 @@ module.exports = (app) => {
 
     Q.all([
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
-      Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
+      //Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       Q.nfcall(exportService.getDownloadFeatures, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       //write query log to DB
       Q.nfcall(queryService.insertQueryLog, {
         menuCode: MENU_CODE.CUSTOM_TARGET_FILTER,
         criteria: req.body.criteria
       })
-    ]).spread((model, features, downloadFeatures, queryLogRes) => {
+    ]).spread((model, downloadFeatures, queryLogRes) => {
 
       if (!model) {
         res.json(req.params, 404, 'batch data is not found!');
@@ -133,7 +128,7 @@ module.exports = (app) => {
           model,
           downloadFeatureIds,
           downloadFeatureLabels,
-          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, features, downloadFeatureIds),
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, downloadFeatureIds),
           queryLogRes.queryID];
       }
 

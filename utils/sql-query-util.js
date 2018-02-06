@@ -13,14 +13,21 @@ const config = {
   options: db_info.options,
   pool: {
     max: 10,
-    min: 0,
+    min: 2,
     idleTimeoutMillis: 30000
   }
 };
 
-const pool = new mssql.ConnectionPool(config).connect((err) => {
+const pool = new mssql.ConnectionPool(config);
+
+// pool.on('error', err => {
+//   winston.error('connection pool emmit error event: ', err);
+// });
+
+pool.connect((err) => {
   err && winston.error('connect db failed: %j', err);
 });
+
 winston.info('mssql connection pool established.');
 
 const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => { }) => {

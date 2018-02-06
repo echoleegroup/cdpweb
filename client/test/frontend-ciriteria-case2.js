@@ -15,7 +15,7 @@ module.exports = {
           field_label: '使用人',
           value: ['2'],
           value_label: ['使用人'],
-          data_type: 'refOption',
+          data_type: '___',
           ref: '_____',
           operator: 'eq'    //eq, ne, lt, le, gt, ge, in, ni
         }, {
@@ -25,7 +25,7 @@ module.exports = {
           field_label: '聯絡狀態',
           value: ['1'],
           value_label: ['正常'],
-          data_type: 'refOption',
+          data_type: '___',
           ref: '_____',
           operator: 'eq'
         }]
@@ -43,7 +43,7 @@ module.exports = {
           field_label: '交車年份',
           ref: null,
           value: 1388534400000,
-          data_type: 'date',
+          data_type: '___',
           value_label: '2014/1/1',
           operator: 'ge'
         }, {
@@ -54,7 +54,7 @@ module.exports = {
           ref: null,
           value: 1404086400000,
           value_label: '2014/06/30',
-          data_type: 'date',
+          data_type: '___',
           operator: 'le'
         }]
       }
@@ -77,7 +77,7 @@ module.exports = {
             field_label: '要保書建立日期',
             value: 1420070400000,  //timestamp of 2015/01/01
             value_label: '2015/01/01',
-            data_type: 'date',
+            data_type: '___',
             ref: null,
             operator: 'gt'
           }, {
@@ -87,7 +87,7 @@ module.exports = {
             field_label: '要保書建立日期',
             value: 1514678400000,  //timestamp of 2017/12/31
             value_label: '2017/12/31',
-            data_type: 'date',
+            data_type: '___',
             ref: null,
             operator: 'lt'
           }]
@@ -148,7 +148,7 @@ module.exports = {
             field_label: '車款_SIENTA (瀏覽次數)',
             value: 10,
             value_label: 10,
-            data_type: 'number',
+            data_type: '___',
             ref: null,
             operator: 'gt'
           }]
