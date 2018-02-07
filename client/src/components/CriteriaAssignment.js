@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import shortid from 'shortid';
 import moment from 'moment';
-import {find, assign, pick} from 'lodash';
+import {find, assign, pick, isEmpty} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 // import CustomFilterAction from '../actions/criteria-action';
@@ -89,7 +89,7 @@ const INITIAL_CRITERIA = Object.freeze({
   field_id: undefined,
   field_label: undefined,
   data_type: undefined,
-  input_type: 'text',
+  input_type: undefined,
   ref: undefined,
   value: undefined,
   value_label: undefined,
@@ -104,7 +104,10 @@ export default class CriteriaAssignment extends React.PureComponent {
       collapse: true,
       // features: props.features,
       // featureRefCodeMap: props.featureRefCodeMap,
-      criteria: Map(INITIAL_CRITERIA)
+      criteria: Map(INITIAL_CRITERIA).merge({
+        uuid: shortid.generate()
+      }),
+      selectedFeature: null
     };
   };
 
@@ -113,17 +116,18 @@ export default class CriteriaAssignment extends React.PureComponent {
       // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
       this.setState(prevState => ({
-        isOpen: true,
-        criteria: Map(INITIAL_CRITERIA).merge({
-          uuid: shortid.generate()
-        })
+        isOpen: true
       }));
       $('body').addClass('noscroll');
     };
 
     this.closeModal = () => {
       this.setState({
-        isOpen: false
+        isOpen: false,
+        criteria: Map(INITIAL_CRITERIA).merge({
+          uuid: shortid.generate()
+        }),
+        selectedFeature: null
       });
       $('body').removeClass('noscroll');
     };
@@ -145,8 +149,10 @@ export default class CriteriaAssignment extends React.PureComponent {
     this.branchClickHandler = (node) => {};
 
     this.tailClickHandler = (node) => {
-      this.setState((prevState) => {
+      console.log('tail changed: ', node.id);
+      this.setState(prevState => {
         return {
+          selectedFeature: node.id,
           criteria: prevState.criteria.merge({
             field_id: node.id,
             field_label: node.label,
@@ -160,21 +166,7 @@ export default class CriteriaAssignment extends React.PureComponent {
         }
       });
     };
-
-    // this.dataPreparing(this.props, this, data => {
-    //   this.setState({
-    //     isLoaded: true,
-    //     nodes: data.features,
-    //     featureRefCodeMap: data.featureRefCodeMap
-    //   });
-    // });
   };
-
-  // dataPreparing(props, _this, callback) {
-  //   CustomFilterAction.getCustomCriteriaFeatures(props.mdId, props.batId, (data) => {
-  //     callback(data);
-  //   });
-  // };
 
   render() {
     let display = (this.state.isOpen)? '': 'none';
@@ -186,8 +178,9 @@ export default class CriteriaAssignment extends React.PureComponent {
             <div className="col-md-6">
               <h3>挑選欄位條件</h3>
               <PickerSingle nodes={this.props.features}
-                      branchClickHandler={this.branchClickHandler}
-                      tailClickHandler={this.tailClickHandler}/>
+                            branchClickHandler={this.branchClickHandler}
+                            tailClickHandler={this.tailClickHandler}
+                            selectedId={this.state.selectedFeature}/>
             </div>
             <div className="col-md-2">
               {this.CriteriaOperatorBlock(this.state.criteria)}
@@ -207,8 +200,12 @@ export default class CriteriaAssignment extends React.PureComponent {
   };
 
   CriteriaOperatorBlock(criteria) {
-    // console.log('CriteriaAssignment::CriteriaOperatorBlock: ', criteria);
-    let operatorSet = this.operatorSet = GetOperatorSet(criteria.get('input_type'));
+    let inputType = criteria.get('input_type');
+    console.log('CriteriaAssignment::CriteriaOperatorBlock.inputType: ', inputType);
+    if (isEmpty(inputType)) {
+      return null;
+    }
+    let operatorSet = this.operatorSet = GetOperatorSet(inputType);
     console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
     return (
       <div>

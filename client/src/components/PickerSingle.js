@@ -8,9 +8,17 @@ export default class PickerSingle extends React.PureComponent {
     return (
       <li className="radio">
         <label>
-          <input type="radio" name="optradio" onClick={props.clickHandler} checked={node.isChecked}/>{node.label}</label>
+          <input type="radio" name="optradio" onChange={props.clickHandler} checked={node.id === props.selectedId}/>{node.label}</label>
       </li>
     );
+  };
+
+  componentWillMount() {
+    console.log('===PickerSingle componentWillMount');
+  };
+
+  componentWillUpdate() {
+    console.log('===PickerSingle componentWillUpdate');
   };
 
   render() {
@@ -25,36 +33,27 @@ export default class PickerSingle extends React.PureComponent {
 class Tree extends React.PureComponent {
 
   componentWillMount() {
-    this.nodeDispatcher = (node) => {
-      console.log('props.node.type: ', node.type);
+    console.log('Tree componentWillMount');
+  };
+
+  componentWillUpdate() {
+    console.log('Tree componentWillUpdate');
+  };
+
+  render() {
+    const NodeDispatcher = (node, props) => {
       switch (node.type) {
         case NODE_TYPE.Branch:
           return <Branch key={node.id}
                          node={node}
-                         branchClickHandler={this.props.branchClickHandler}
-                         tailClickHandler={this.props.tailClickHandler}
-                         TailContainer={this.props.TailContainer}/>
-        case NODE_TYPE.Tail:
-          return <Tail key={node.id}
-                       node={node}
-                       tailClickHandler={this.props.tailClickHandler}
-                       TailContainer={this.props.TailContainer}/>
-      }
-    }
-  };
-
-  render() {
-    const NodeDispatcher = (props) => {
-      let node = props.node;
-      console.log('props.node.type: ', node.type);
-      switch (node.type) {
-        case NODE_TYPE.Branch:
-          return <Branch node={node}
+                         selectedId={props.selectedId}
                          branchClickHandler={props.branchClickHandler}
                          tailClickHandler={props.tailClickHandler}
                          TailContainer={props.TailContainer}/>
         case NODE_TYPE.Tail:
-          return <Tail node={node}
+          return <Tail key={node.id}
+                       node={node}
+                       selectedId={props.selectedId}
                        tailClickHandler={props.tailClickHandler}
                        TailContainer={props.TailContainer}/>
       }
@@ -64,7 +63,7 @@ class Tree extends React.PureComponent {
     return (
       <ul>
         {props.nodes.map(node => {
-          return <NodeDispatcher key={node.id} {...this.props} node={node}/>
+          return NodeDispatcher(node, props);
         })}
       </ul>
     );
@@ -72,11 +71,15 @@ class Tree extends React.PureComponent {
 }
 
 class Branch extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapse: true
+    }
+  };
+
   componentWillMount() {
-    this.toggleFolding = () => {
-      $(this.foldingDom).toggle();
-      $(this.foldingIconDom).toggleClass('fa-minus');
-    };
+    console.log('Branch componentWillMount');
 
     this.clickHandler = () => {
       const branchClickHandler = this.props.branchClickHandler;
@@ -84,34 +87,52 @@ class Branch extends React.PureComponent {
         if (branchClickHandler) {
           branchClickHandler(this.props.node);
         }
-        this.toggleFolding(e);
+        this.setState(prevState => ({
+          collapse: !prevState.collapse
+        }));
       };
+    };
+
+    this.collapseConfig = (collapse) => {
+      console.log('===collapseConfig: ', collapse);
+      switch (collapse) {
+        case true:
+          return {
+            isCollapse: true,
+            class_name: 'fa fa-plus',
+            style: {display: 'none'}
+          };
+        default:
+          return {
+            isCollapse: false,
+            class_name: 'fa fa-minus',
+            style: {}
+          };
+      }
     };
   };
 
+  componentWillUpdate() {
+    console.log('Branch componentWillUpdate');
+  };
+
   render() {
-    let collapse = true;  //this.state.collapse;
-    let className = 'fa fa-plus';
-    let style = {display: 'none'};
+    let collapseConfig = this.collapseConfig(this.state.collapse);
     let node = this.props.node;
-    /*
-    if (!collapse) {
-      className += ' fa-minus';
-      style = {};
-    }*/
     return (
       <li key={node.id}>
         <a href="#" onClick={this.clickHandler()}>{node.label}
-          <i className={className} aria-hidden={collapse} ref={e => {
+          <i className={collapseConfig.class_name} aria-hidden={collapseConfig.isCollapse} ref={e => {
             this.foldingIconDom = e;
           }}/>
         </a>
-        <ul style={style} ref={e => {
+        <ul style={collapseConfig.style} ref={e => {
           this.foldingDom = e;
         }}>
           <Tree branchClickHandler={this.props.branchClickHandler}
                 tailClickHandler={this.props.tailClickHandler}
                 nodes={node.children}
+                selectedId={this.props.selectedId}
                 TailContainer={this.props.TailContainer}/>
         </ul>
       </li>
@@ -138,6 +159,7 @@ class Tail extends React.PureComponent {
       <TailContainer
         name="optradio"
         node={node}
+        selectedId={this.props.selectedId}
         clickHandler={this.selectHandler()}/>
     );
   };
