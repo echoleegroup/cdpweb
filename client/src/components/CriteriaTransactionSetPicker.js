@@ -57,11 +57,13 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
       <div className="modal" style={{display: display}}>
         <div className="table_block">
           <h2>挑選指定明細資訊</h2>
-          <PickerSingle
-            nodes={this.props.featureSets}
-            selectedId={this.state.setId}
-            branchClickHandler={this.branchClickHandler}
-            tailClickHandler={this.tailClickHandler}/>
+          <div className="modalContent">
+            <PickerSingle
+              nodes={this.props.featureSets}
+              selectedId={this.state.setId}
+              branchClickHandler={this.branchClickHandler}
+              tailClickHandler={this.tailClickHandler}/>
+          </div>
           <div className="btn-block center-block">
             <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
             <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>

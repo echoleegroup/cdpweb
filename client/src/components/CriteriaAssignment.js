@@ -174,7 +174,7 @@ export default class CriteriaAssignment extends React.PureComponent {
       <div className="modal" style={{display: display}}>
         <div className="table_block">
           <h2>新增條件</h2>
-          <div className="row">
+          <div className="modalContent">
             <div className="col-md-6">
               <h3>挑選欄位條件</h3>
               <PickerSingle nodes={this.props.features}
