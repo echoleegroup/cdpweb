@@ -23,9 +23,9 @@ export default class PickerSingle extends React.PureComponent {
 
   render() {
     return (
-      <form className="addCondition">
+      <div className="addCondition">
         <Tree {...this.props} TailContainer={this.TailContainer}/>
-      </form>
+      </div>
     );
   };
 };

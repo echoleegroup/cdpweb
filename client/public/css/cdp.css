@@ -1273,11 +1273,18 @@ select.custom option {
   padding-bottom: 40px !important;
 }
 .modal .table_block .modalContent {
-  width: 95%;
+  width: 100%;
+  padding-right: 20px;
   height: 380px;
   margin-right: auto;
   margin-left: 0;
   overflow-y: auto;
+}
+.modal .table_block .modalContent .form-group {
+  width: 100%;
+}
+.modal .table_block .modalContent .control-label {
+  text-align: left;
 }
 .modal .table_block .btn-block {
   position: absolute;
@@ -2009,13 +2016,20 @@ ul.step li a:hover, ul.step li a:focus {
   background: #5a7f09;
   color: #FFF;
 }
+.addCondition ul > li > a:hover i, .addCondition ul > li > a:focus i {
+  color: #FFF;
+}
 .addCondition ul > li > a.active {
   color: #FFF;
 }
-.addCondition ul > li > a i {
+.addCondition ul > li > a > i {
   float: right;
+  font-size: .938em;
+  margin-right: 0px;
+  position: relative !important;
   color: #FFF;
   margin-top: 6px;
+  opacity: .8;
 }
 .addCondition ul ul {
   padding-left: 2em;
@@ -2027,9 +2041,40 @@ ul.step li a:hover, ul.step li a:focus {
   margin: 1em 0;
 }
 
+.modal .addCondition ul > li > a {
+  background: #7caf0c;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 3px 10px;
+  color: #FFF;
+  display: block;
+  margin-bottom: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.modal .addCondition ul > li > a:hover, .modal .addCondition ul > li > a:focus {
+  background: #5a7f09;
+  color: #FFF;
+}
+.modal .addCondition ul > li > a.active {
+  color: #FFF;
+}
+.modal .addCondition ul > li > a > i {
+  float: right;
+  font-size: .938em;
+  margin-right: 20px;
+  position: relative !important;
+  color: #FFF;
+  margin-top: -2px;
+}
+
 .addCondition .checkbox,
 .addCondition .radio {
   border-bottom: 1px dashed #999;
+  width: 100%;
+  display: block;
 }
 .addCondition .checkbox label,
 .addCondition .radio label {
@@ -2107,6 +2152,15 @@ select {
   -moz-box-shadow: 1px 1px 2px RGBA(0, 0, 0, 0.4) inset;
   -webkit-box-shadow: 1px 1px 2px RGBA(0, 0, 0, 0.4) inset;
   box-shadow: 1px 1px 2px RGBA(0, 0, 0, 0.4) inset;
+}
+.category_select .checkbox {
+  display: block;
+  width: 100%;
+  border-bottom: 1px dashed #999;
+  padding: .1em 0em !important;
+}
+.category_select .checkbox input {
+  margin-right: 5px;
 }
 
 .preview {

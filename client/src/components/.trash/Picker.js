@@ -61,9 +61,9 @@ export default class Picker extends React.PureComponent {
 
   render() {
     return (
-      <form className="addCondition">
+      <div className="addCondition">
         <Tree {...this.props}/>
-      </form>
+      </div>
     );
   };
 };
