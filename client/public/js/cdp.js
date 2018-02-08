@@ -193,7 +193,12 @@ $(function() {
 $(function() {
     $("a:contains('複製連結')").css("white-space", "nowrap");
     $("a:contains('開啟連結')").css("white-space", "nowrap");
-
+    $('.tag a').click(function(event) {
+        return false;
+    });
+    $('.customize a').click(function(event) {
+        $(this).parent('li').hide();
+    });
 });
 $(function() {
     $('.search_block').hide();
@@ -210,6 +215,7 @@ $(function() {
     $('.menu .submenu').hide();
     $('body').append('<div class="floatMenu"></div>');
     $('.floatMenu').append('<button type="button" class="close"></button>');
+    $('header').append('<button type="button" class="menuBtn fa fa-bars"></button>');
     $('.menuBtn').hide();
     $('.floatMenu').hide();
     $(window).on("load resize", function(e) {
@@ -246,7 +252,7 @@ $(function() {
                     $(this).children('.submenu').stop(true, true).fadeIn();
                 }, function() {
                     $(this).children('.submenu').stop(true, true).fadeOut();
-                    //$(this).children('.submenu').children('.choose').siblings('a').hide();
+                    $(this).children('.submenu').children('.choose').siblings('a').hide();
                 });
             });
             $('body').css('padding-top', 0);
@@ -259,11 +265,11 @@ $(function() {
 /*-----------------------------------*/
 $(function() {
     $('.choose').hover(function() {
-     $('body').addClass('noscroll');
- }, function() {
+       $('body').addClass('noscroll');
+   }, function() {
     $('body').removeClass('noscroll');
 });
-    $('.choose').siblings('a:not(._fix)').hide();
+    $('.choose').siblings('a').hide();
     var len = 15; // 超過50個字以"..."取代
     $(".choose ul li a").each(function(index) {
         if ($(this).text().length > len) {
@@ -272,13 +278,11 @@ $(function() {
             $(this).text(text);
 
         };
-
-
         $(this).click(function(event) {
             var spanText=$(this).html();
             console.log(text);
             $('.choose').siblings('h3').find('span').text(spanText);
-            $('.choose').siblings('a:not(._fix)').each(function(index, el) {
+            $('.choose').siblings('a').each(function(index, el) {
                 $(this).hide();
                 $(this).delay(100 * index).fadeIn();
             });
@@ -318,4 +322,11 @@ $(function() {
             $(this).addClass('active');
         });
     });
+});
+
+
+
+$(function() {
+    var logoImgPath= 'images/logo_big.png';
+    $('.copyRight').find('.logo img').attr('src',logoImgPath);
 });

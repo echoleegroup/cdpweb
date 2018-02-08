@@ -81,8 +81,8 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         [STEPS.step5]: []
       }),
       output: Map({
-        featureOptions: [],
-        relativeSetOptions: [],
+        selectedFeatureId: List(),
+        selectedRelativeId: List(),
         periodStart: today.value,
         periodStartLabel: today.value_label,
         periodEnd: today.value,
@@ -185,8 +185,8 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         return (
           <Loader loaded={this.state.isLoaded}>
             <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
-                                             criteria={this.state.criteria.toJS()}
-                                             outputFeatures={this.state.output.toJS()}
+                                             criteria={this.state.criteria}
+                                             {...this.state.output.toJSON()}
                                              params={this.params}
                                              step={STEPS.step7}/>
           </Loader>
