@@ -41,11 +41,11 @@ module.exports = (app) => {
       // get code group from features
       // ** IMPORTANT: get code group before transforming features to tree nodes **
       // ** because featuresToTreeNodes is a mutated function, which move folded fields out of features **
-      let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
+      let codeGroupGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
-      return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
+      return Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroupGroups).then(codeGroupResSet => ({
         features: fields,
-        featureRefCodeMap: criteriaHelper.codeGroupToFeatureRef(codeGroupResSet)
+        featurecodeGroupMap: codeGroupResSet
       }));
     }).then(resSet => {
       res.json(resSet);
@@ -263,59 +263,59 @@ module.exports = (app) => {
           }]
         }
       ],
-      featureRefCodeMap: {
+      featurecodeGroupMap: {
         product: [{
-          refCode: 'product',
-          optCode: 'abc',
-          label: '福義軒',
+          codeGroup: 'product',
+          codeValue: 'abc',
+          codeLabel: '福義軒',
           seq: '2'
         }, {
-          refCode: 'product',
-          optCode: 'bcd',
-          label: '福義軒2',
+          codeGroup: 'product',
+          codeValue: 'bcd',
+          codeLabel: '福義軒2',
           seq: '1'
         }, {
-          refCode: 'product',
-          optCode: 'cde',
-          label: '福義軒3',
+          codeGroup: 'product',
+          codeValue: 'cde',
+          codeLabel: '福義軒3',
           seq: '2d'
         }],
         carPurpose: [{
-          refCode: 'carPurpose',
-          optCode: '1',
-          label: '送禮',
+          codeGroup: 'carPurpose',
+          codeValue: '1',
+          codeLabel: '送禮',
           seq: '2d'
         }, {
-          refCode: 'carPurpose',
-          optCode: '2',
+          codeGroup: 'carPurpose',
+          codeValue: '2',
           label: '自用',
           seq: '2d'
         }, {
-          refCode: 'carPurpose',
-          optCode: '3',
-          label: '兩相宜',
+          codeGroup: 'carPurpose',
+          codeValue: '3',
+          codeLabel: '兩相宜',
           seq: '2d'
         }],
         booleanYN: [{
-          refCode: 'booleanYN',
-          optCode: 'Y',
-          label: '是',
+          codeGroup: 'booleanYN',
+          codeValue: 'Y',
+          codeLabel: '是',
           seq: '2d'
         }, {
-          refCode: 'booleanYN',
-          optCode: 'N',
-          label: '否',
+          codeGroup: 'booleanYN',
+          codeValue: 'N',
+          codeLabel: '否',
           seq: '2d'
         }],
         gender: [{
-          refCode: 'gender',
-          optCode: 'M',
-          label: '男',
+          codeGroup: 'gender',
+          codeValue: 'M',
+          codeLabel: '男',
           seq: '1'
         }, {
-          refCode: 'gender',
-          optCode: 'F',
-          label: '女',
+          codeGroup: 'gender',
+          codeValue: 'F',
+          codeLabel: '女',
           seq: '2'
         }]
       }

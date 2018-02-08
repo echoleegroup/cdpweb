@@ -244,7 +244,7 @@ export default class CriteriaBase extends React.PureComponent {
    type: 'field',
    id: 'last_visit_date',
    label: '最後訪問日',
-   data_type: 'date',
+   input_type: 'date',
    default_value: Date.now()
  }, {
         type: 'folder',
@@ -254,14 +254,14 @@ export default class CriteriaBase extends React.PureComponent {
           type: 'field',
           id: 'gender',
           label: '性別',
-          data_type: 'refOption', //for cassandra
+          input_type: 'refOption', //for cassandra
           ref: 'gender',
           default_value: 'M'
         }, {
           type: 'field',
           id: 'age',
           label: '年紀',
-          data_type: 'number'
+          input_type: 'number'
         }]
       }
  ]
@@ -273,7 +273,7 @@ export default class CriteriaBase extends React.PureComponent {
 //         [data.id]: {
 //           id: data.id,
 //           label: data.label,
-//           data_type: data.data_type,
+//           input_type: data.input_type,
 //           default_value: data.default_value,
 //           ref: data.ref
 //         }

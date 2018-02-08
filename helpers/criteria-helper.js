@@ -6,7 +6,7 @@ const BRANCH_MODEL_TEMPLATE = {
   type: 'branch',
   id: undefined,
   label: undefined,
-  nodes: []
+  children: []
 };
 
 const TAIL_MODEL_TEMPLATE = {
@@ -17,44 +17,6 @@ const TAIL_MODEL_TEMPLATE = {
   input_type: 'text',  //num, text, date, refOption,
   ref: undefined, //for input_type: refOption
   default_value: undefined  //for refOption, set default value as array object, e.g. default_value: ['M']
-};
-
-const FIELD_REF_OPTIONS_TEMPLATE = {
-  refCode: undefined,
-  optCode: undefined,
-  label: undefined,
-  seq: '0'
-};
-
-const FEATURE_DATATYPE_TO_INPUT_TYPE = {
-  //digit
-  bigint: 'number',
-  bit: 'number',
-  decimal: 'number',
-  int: 'number',
-  money: 'number',
-  numeric: 'number',
-  smallint: 'number',
-  smallmoney: 'number',
-  tinyint: 'number',
-  //float
-  float: 'number',
-  real: 'number',
-  //date
-  date: 'date',
-  datetime2: 'date',
-  datetime: 'date',
-  datetimeoffset: 'date',
-  smalldatetime: 'date',
-  time: 'date',
-  //literal
-  char: 'text',
-  text: 'text',
-  varchar: 'text',
-  //string
-  nchar: 'text',
-  ntext: 'text',
-  nvarchar: 'text'
 };
 
 const SQL_OPERATOR_DICT = {
@@ -213,9 +175,9 @@ module.exports = {
   //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
 
   featuresToTreeNodes: (features, foldingTree) => {
-    winston.info('===featuresToTreeNodes: ', features);
+    // winston.info('===featuresToTreeNodes: ', features);
     let foldingNodes = foldingTree.reduce((foldingNodes, node) => {
-      winston.info('===featuresToTreeNodes::foldingTree ', node);
+      // winston.info('===featuresToTreeNodes::foldingTree ', node);
       if ('ROOT' === node.parentID) { // virtual node: folder
 
         // extract all the raw features, who's featID is referenced to node's nodeID
@@ -273,25 +235,12 @@ module.exports = {
     });
   },
 
-  codeGroupToFeatureRef: (codeGroupDict) => {
-    //rename code group properties for frontend
-    return _.reduce(codeGroupDict, (fieldRefs, codeGroupBody, key) => {
-      fieldRefs[key] = _.assign({}, FIELD_REF_OPTIONS_TEMPLATE, {
-        refCode: codeGroupBody.codeGroup,
-        optCode: codeGroupBody.codeValue,
-        label: codeGroupBody.codeLabel,
-        seq: '0'
-      });
-      return fieldRefs;
-    }, {});
-  },
-
   inputCriteriaToSqlWhere: (statements) => {
     let operator = 'and';
     let childCriteria = ChildSqlCriteriaComposer(statements);
-    winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaComposer: ', childCriteria);
+    // winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaComposer: ', childCriteria);
     let sqlWhere = ChildSqlCriteriaExpressionHandler(childCriteria, {operator});
-    winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);
+    // winston.info('===inputCriteriaToSqlWhere::ChildSqlCriteriaExpressionHandler: %s', sqlWhere);
     return {
       customCriteriaSqlWhere: sqlWhere,
       paramsDynamic: childCriteria.params

@@ -20,28 +20,28 @@ module.exports = {
         type: DataTypes.STRING(50)
       },
       featCateg: {
-        type: DataTypes.CHAR(3)
+        type: DataTypes.STRING(3)
       },
       dataType: {
-        type: DataTypes.CHAR(5)
+        type: DataTypes.STRING(20)
       },
       dataSize: {
         type: DataTypes.INTEGER
       },
       chartType: {
-        type: DataTypes.CHAR(3)
+        type: DataTypes.STRING(20)
       },
       minPeriod: {
-        type: DataTypes.CHAR(3)
+        type: DataTypes.STRING(3)
       },
       dataSource: {
-        type: DataTypes.CHAR(10)
+        type: DataTypes.STRING(10)
       },
       isCode: {
-        type: DataTypes.CHAR(1)
+        type: DataTypes.STRING(1)
       },
       codeGroup: {
-        type: DataTypes.CHAR(20)
+        type: DataTypes.STRING(20)
       },
       featDesc: {
         type: DataTypes.STRING(200)
@@ -50,10 +50,10 @@ module.exports = {
         type: DataTypes.STRING(200)
       },
       featClient: {
-        type: DataTypes.CHAR(20)
+        type: DataTypes.STRING(20)
       },
       isDel: {
-        type: DataTypes.CHAR(1)
+        type: DataTypes.STRING(1)
       },
       crtTime: {
         type: DataTypes.DATE
@@ -64,7 +64,7 @@ module.exports = {
       updUser: {
         type: DataTypes.STRING(20)
       },
-      condiPickType: {
+      uiInputType: {
         type: DataTypes.STRING(20)
       }
     })

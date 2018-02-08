@@ -5,7 +5,7 @@ const _connector = require('../utils/sql-query-util');
 const modelService = require('./model-service');
 
 module.exports.getCriteriaFeatures = (setId, callback) => {
-  const sql = 'SELECT feature.featID ' +
+  const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM cd_TargetFeat t_feat, cd_Feature feature ' +
     'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID';
 

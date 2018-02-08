@@ -36,7 +36,7 @@ class PortalRoute extends React.Component {
         <Switch>
           <Route exact path="/" component={Home}/>
           <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetFilterHome}/>
-          <Route exact path="/integration/property/analysis" component={IntegratedAnalysisHome}/>
+          <Route exact path="/integration/analysis" component={IntegratedAnalysisHome}/>
         </Switch>
       </Router>
     );

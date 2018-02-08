@@ -257,6 +257,7 @@ export default class CriteriaAssignment extends React.PureComponent {
           this.fieldInput = e;
         }}/>;
       case 'refOption':
+        console.log('this.state.criteria == refOption: ', this.props.featureRefCodeMap[this.state.criteria.get('ref')]);
         return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
           this.fieldInput = e;
         }}/>;
@@ -294,7 +295,7 @@ class DateInput extends InputBase {
     let value, value_label = null;
     if (d) {
       let m = moment(d);
-      value = m.utc().valueOf();
+      value = m.valueOf();
       value_label = m.format('YYYY/MM/DD')
     }
     // console.log('DateInput::getInputData: ', d);
@@ -327,8 +328,8 @@ class RefOptionInput extends InputBase {
       return e.value;
     }).get();
     let labels = values.map((value) => {
-      let t = find(this.props.refOptions, {optCode: value});
-      return t? t.label: '';
+      let t = find(this.props.refOptions, {codeValue: value});
+      return t? t.codeLabel: '';
     });
     return {
       value: values,
@@ -350,11 +351,11 @@ class RefOptionInput extends InputBase {
         <div className="category_select" ref={(e) => {
           this.optionDivDom = e;
         }}>
-          {this.props.refOptions.map((opt) => {
+          {this.props.refOptions.map(opt => {
             return (
-              <div className="checkbox" key={opt.optCode}>
+              <div className="checkbox" key={opt.codeValue}>
                 <label>
-                  <input type="checkbox" value={opt.optCode}/>{opt.label}
+                  <input type="checkbox" value={opt.codeValue}/>{opt.codeLabel}
                 </label>
               </div>
             );

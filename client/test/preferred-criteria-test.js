@@ -501,57 +501,57 @@ module.exports = {
   },
   refs: {
     product: [{
-      refCode: 'product',
-      optCode: 'abc',
-      label: '福義軒',
+      codeGroup: 'product',
+      codeValue: 'abc',
+      codeLabel: '福義軒',
       seq: '2'
     }, {
-      refCode: 'product',
-      optCode: 'bcd',
-      label: '福義軒2',
+      codeGroup: 'product',
+      codeValue: 'bcd',
+      codeLabel: '福義軒2',
       seq: '1'
     }, {
-      refCode: 'product',
-      optCode: 'cde',
-      label: '福義軒3',
+      codeGroup: 'product',
+      codeValue: 'cde',
+      codeLabel: '福義軒3',
       seq: '2d'
     }],
     carPurpose: [{
-      refCode: 'carPurpose',
-      optCode: '1',
-      label: '送禮',
+      codeGroup: 'carPurpose',
+      codeValue: '1',
+      codeLabel: '送禮',
       seq: '2d'
     }, {
-      refCode: 'carPurpose',
-      optCode: '2',
-      label: '自用',
+      codeGroup: 'carPurpose',
+      codeValue: '2',
+      codeLabel: '自用',
       seq: '2d'
     }, {
-      refCode: 'carPurpose',
-      optCode: '3',
-      label: '兩相宜',
+      codeGroup: 'carPurpose',
+      codeValue: '3',
+      codeLabel: '兩相宜',
       seq: '2d'
     }],
     booleanYN: [{
-      refCode: 'booleanYN',
-      optCode: 'Y',
-      label: '是',
+      codeGroup: 'booleanYN',
+      codeValue: 'Y',
+      codeLabel: '是',
       seq: '2d'
     }, {
-      refCode: 'booleanYN',
-      optCode: 'N',
-      label: '否',
+      codeGroup: 'booleanYN',
+      codeValue: 'N',
+      codeLabel: '否',
       seq: '2d'
     }],
     gender: [{
-      refCode: 'gender',
-      optCode: 'M',
-      label: '男',
+      codeGroup: 'gender',
+      codeValue: 'M',
+      codeLabel: '男',
       seq: '1'
     }, {
-      refCode: 'gender',
-      optCode: 'F',
-      label: '女',
+      codeGroup: 'gender',
+      codeValue: 'F',
+      codeLabel: '女',
       seq: '2'
     }]
   }

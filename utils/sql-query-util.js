@@ -79,26 +79,39 @@ const _that = {
     };
     return _this;
   },
-  preparedStatement: () => {
+  preparedStatement: (sql) => {
     let ps = new mssql.PreparedStatement(pool);
+
+    const getPrepared = (callback) => {
+      console.log('ps.prepared: ', ps.prepared);
+      if (ps.prepared) {
+        callback(null, ps);
+      } else {
+        ps.prepare(sql).then(prepared => {
+          callback(null, prepared);
+        }).catch(err => {
+          console.log('preparedStatement prepare error: ', err);
+          callback(err, null);
+        });
+      }
+    };
+
     const _this = {
       setType: (param, type) => {
         ps.input(param, type);
         return _this;
       },
-      execute: (sql, params, callback = (err, resultSet) => { }) => {
-        ps.prepare(sql).then(() => {
-          return ps.execute(params);
-        }).then((result) => {
-          // winston.info('result.recordset: %j', result.recordset);
-          //ps.prepared && ps.unprepare();
+      execute: (params, callback = (err, resultSet) => { }) => {
+        Q.nfcall(getPrepared).then(prepared => {
+          return prepared.execute(params);
+        }).then(result => {
+          winston.info('===preparedStatement execute: ', result);
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
         }).catch((err) => {
           //ps.prepared && ps.unprepare();
           callback(err);
         }).then(() => {
-          winston.info('===finally');
-          ps.prepared && ps.unprepare();
+          winston.info('===preparedStatement finally');
         });
       },
       release: (callback = (err) => { }) => {

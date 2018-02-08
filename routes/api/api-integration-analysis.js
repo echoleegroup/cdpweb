@@ -27,8 +27,8 @@ const criteriaFeaturePromise = (setId, treeId) => {
     Q.nfcall(integrationService.getCriteriaFeatures, setId),
     Q.nfcall(integrationService.getCriteriaFeatureTree, treeId)
   ]).spread((features, foldingTree) => {
-    winston.info('getCriteriaFeatures: ', features);
-    winston.info('getCriteriaFeatureTree: ', foldingTree);
+    // winston.info('criteriaFeaturePromise getCriteriaFeatures: ', features);
+    // winston.info('criteriaFeaturePromise getCriteriaFeatureTree: ', foldingTree);
     // get code group from features
     // ** IMPORTANT: get code group before transforming features to tree nodes **
     // ** because featuresToTreeNodes is a mutated function, which move folded fields out of features **
@@ -36,7 +36,7 @@ const criteriaFeaturePromise = (setId, treeId) => {
     let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
     return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
       features: fields,
-      featureRefCodeMap: criteriaHelper.codeGroupToFeatureRef(codeGroupResSet)
+      featureRefCodeMap: codeGroupResSet
     }));
   });
 };
@@ -52,7 +52,7 @@ module.exports = (app) => {
     criteriaFeaturePromise(CLIENT_CRITERIA_FEATURE_SET_ID, INTEGRATION_ANALYSIS_TREE_ID).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/features/criteria/client internal server error: ', err);
+      console.log('===/features/criteria/client internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -93,8 +93,8 @@ module.exports = (app) => {
       Q.nfcall(integrationService.getDownloadFeatures, EXPORT_DOWNLOAD_FEATURE_SET_ID),
       Q.nfcall(integrationService.getCriteriaFeatureTree, INTEGRATION_ANALYSIS_TREE_ID)
     ]).spread((features, foldingTree) => {
-      winston.info('getCriteriaFeatures: ', features);
-      winston.info('getCriteriaFeatureTree: ', foldingTree);
+      // winston.info('/export/features getCriteriaFeatures: ', features);
+      // winston.info('/export/features getCriteriaFeatureTree: ', foldingTree);
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       res.json(fields);
     }).fail(err => {

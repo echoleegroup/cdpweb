@@ -10,7 +10,7 @@ module.exports = (app) => {
   console.log('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
-  router.get('/property/analysis', function (req, res, next) {
+  router.get('/analysis', function (req, res, next) {
     let mdId = req.params.mdId;
     let batId = req.params.batId;
     let modelList = req.session.modelList;

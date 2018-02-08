@@ -28,7 +28,7 @@ export default class CriteriaField extends React.PureComponent {
           field_id: 'last_visit_date',
           field_label: '最近訪問日',
           value: Date.now(),
-          data_type: 'date',
+          input_type: 'date',
           operator: 'lt'
         }
      */
@@ -38,7 +38,7 @@ export default class CriteriaField extends React.PureComponent {
     let criteria = this.props.criteria;
     // console.log('CriteriaField: componentWillMount: ', this.props.criteria);
     this.field_label = this.props.criteria.field_label;
-    this.value_label = this.displayTextFormatter(criteria.data_type, criteria.value, criteria.value_label);
+    this.value_label = this.displayTextFormatter(criteria.input_type, criteria.value, criteria.value_label);
 
     this.criteriaGathering = () => {
       return this.props.criteria;
@@ -83,7 +83,7 @@ export default class CriteriaField extends React.PureComponent {
     );
   };
 
-  displayTextFormatter(dataType, value, valueLabel) {
+  displayTextFormatter(inputType, value, valueLabel) {
     // console.log('value: ', value);
     // console.log('field.ref: ', field);
     // console.log('refOptions: ', refOptions);
@@ -91,7 +91,7 @@ export default class CriteriaField extends React.PureComponent {
     if(!value)
       return null;
 
-    switch (dataType) {
+    switch (inputType) {
       case 'number':
       case 'text':
       case 'date':

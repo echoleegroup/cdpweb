@@ -15,7 +15,10 @@ const ComponentCriteriaBody = (props) => {
   } else {
     mapToProps = {
       styleClass: 'condition',
-      ComponentCriteriaBody: ComponentContentBody
+      ComponentCriteriaBody:
+        <ComponentContentBody
+          criteria={props.criteria}
+          ComponentCriteriaBundleContainer={props.ComponentCriteriaBundleContainer}/>
     };
   }
   return <CriteriaBaseBodyContainer {...mapToProps}/>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {fromJS, List} from 'immutable';
-import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-dictionary';
+import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import {getDate} from '../utils/date-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action'

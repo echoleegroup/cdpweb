@@ -6,7 +6,8 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      setId: null
+      setId: null,
+      setLabel: null
     };
   };
 
@@ -16,7 +17,8 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
       this.responseCriteria = callback;
       this.setState({
         isOpen: true,
-        setId: null
+        setId: null,
+        setLabel: null
       });
       $('body').addClass('noscroll');
     };
@@ -24,7 +26,8 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
     this.closeModal = () => {
       this.setState({
         isOpen: false,
-        setId: null
+        setId: null,
+        setLabel: null
       });
       $('body').removeClass('noscroll');
     };
@@ -54,9 +57,11 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
       <div className="modal" style={{display: display}}>
         <div className="table_block">
           <h2>挑選指定明細資訊</h2>
-          <PickerSingle nodes={this.props.featureSets}
-                  branchClickHandler={this.branchClickHandler}
-                  tailClickHandler={this.tailClickHandler}/>
+          <PickerSingle
+            nodes={this.props.featureSets}
+            selectedId={this.state.setId}
+            branchClickHandler={this.branchClickHandler}
+            tailClickHandler={this.tailClickHandler}/>
           <div className="btn-block center-block">
             <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
             <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>

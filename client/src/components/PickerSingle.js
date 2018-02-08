@@ -1,5 +1,5 @@
 import React from 'react';
-import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-dictionary';
+import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 
 export default class PickerSingle extends React.PureComponent {
 
