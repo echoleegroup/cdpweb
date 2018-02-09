@@ -36,7 +36,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
       let _props = assign({}, props, {
         toPickFeatureSet: this.openFeatureSetPicker
       });
-      // console.log('Transaction ComponentCriteriaBundleContainer: ', _props);
+      console.log('Transaction ComponentCriteriaBundleContainer: ', _props);
       return <CriteriaTransactionComboBundle {..._props}/>
     };
   };
@@ -54,6 +54,15 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
 };
 
 class CriteriaTransactionComboBundle extends CriteriaComboBundle {
+  constructor(props) {
+    super(props);
+    console.log('CriteriaTransactionComboBundle props.criteria: ', props.criteria);
+  }
+
+  render() {
+    console.log('CriteriaTransactionComboBundle render');
+    return super.render();
+  };
 
   getChildCriteriaBundleType() {
     // console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.TRANSACTION);

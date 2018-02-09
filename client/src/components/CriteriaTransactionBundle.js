@@ -55,6 +55,11 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   //   super.componentWillUnmount()
   // };
 
+  render() {
+    console.log('CriteriaTransactionBundle render');
+    return super.render();
+  };
+
   ComponentCriteriaBody() {
     return (
       <div className="head">
