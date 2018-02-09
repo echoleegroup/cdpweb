@@ -43,7 +43,9 @@ export default class CriteriaField extends React.PureComponent {
     this.criteriaGathering = () => {
       return this.props.criteria;
     };
+  };
 
+  componentDidMount() {
     this.props.collectCriteriaComponents(this.props.criteria.uuid, this);
   };
 

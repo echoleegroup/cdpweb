@@ -56,7 +56,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
 class CriteriaTransactionComboBundle extends CriteriaComboBundle {
   constructor(props) {
     super(props);
-    console.log('CriteriaTransactionComboBundle props.criteria: ', props.criteria);
+    console.log('CriteriaTransactionComboBundle constructor props.criteria: ', props.criteria);
   }
 
   render() {

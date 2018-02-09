@@ -158,7 +158,8 @@ export default class CriteriaBase extends React.PureComponent {
           criteria={this.state.criteria}
           assignCriteria={assignCriteria}
           ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
-          ref={(e) => {
+          ref={e => {
+            console.log('ref to CriteriaComboBundleList: ', e);
             this.criteriaWrapper = e;
           }}/>
       </div>

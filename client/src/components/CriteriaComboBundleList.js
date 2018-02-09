@@ -25,7 +25,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
 
     this.collectCriteriaComponents = (uuid, component) => {
       this.criteriaComponents[uuid] = component;
-      console.log('CriteriaComboBundleList::collectCriteriaComponents:: ', this.id);
+      console.log('CriteriaComboBundleList::collectCriteriaComponents:: ', component);
     };
 
     this.removeCriteriaComponents = (uuid) => {

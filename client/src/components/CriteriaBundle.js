@@ -94,7 +94,9 @@ export default class CriteriaBundle extends React.PureComponent {
         properties: prevState.properties.set(key, value)
       }));
     };
+  };
 
+  componentDidMount() {
     this.props.collectCriteriaComponents(this.getPropertyState('uuid'), this);
   };
 
