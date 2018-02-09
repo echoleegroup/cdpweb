@@ -46,21 +46,6 @@ export default class CriteriaComboBundleList extends React.PureComponent {
         return isEmpty(crite)? collector: collector.concat(crite);
       }, []);
     };
-
-    this.removeCriteria = (index) => {
-      this.setState((prevState) => {
-        // console.log('CriteriaComboBundleList:removeCriteria: ', prevState);
-        // console.log('CriteriaComboBundleList:removeCriteria: ', prevState.get('criteria'));
-        return {
-          criteria: prevState.criteria.delete(index)
-        };
-      });
-    };
-
-    this.getDefaultBundleProps = () => {
-      // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);
-      return assign({}, DEFAULT_BUNDLE_PROPS);
-    };
   }
 
   // componentWillUnmount() {
@@ -70,10 +55,11 @@ export default class CriteriaComboBundleList extends React.PureComponent {
   render() {
     let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;
     let ComponentCriteriaBundleContainer = this.props.ComponentCriteriaBundleContainer;
-    // console.log('CriteriaComboBundleList:render::_criteria: ', criteria);
+    let criteria =  isEmpty(this.props.criteria)? [getDefaultBundleProps()]: this.props.criteria;
+    console.log('CriteriaComboBundleList:render::_criteria: ', criteria);
     return (
       <div>
-        {criteria.map((_criteria, index) => {
+        {criteria.map(_criteria => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <ComponentCriteriaBundleContainer {...this.props}
                                                    key={_criteria.uuid}
