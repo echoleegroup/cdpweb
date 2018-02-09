@@ -56,7 +56,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   // };
 
   render() {
-    console.log('CriteriaTransactionBundle render');
+    // console.log('CriteriaTransactionBundle render');
     return super.render();
   };
 

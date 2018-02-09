@@ -45,7 +45,7 @@ export default class CriteriaBase extends React.PureComponent {
       let valid = this.validate();
       if (valid) {
         let criteria = this.criteriaWrapper.criteriaGathering();
-        console.log('this.criteriaWrapper.criteriaGathering(): ', criteria);
+        // console.log('this.criteriaWrapper.criteriaGathering(): ', criteria);
         this.setState({
           isPreview: true,
           criteria: criteria
@@ -159,7 +159,6 @@ export default class CriteriaBase extends React.PureComponent {
           assignCriteria={assignCriteria}
           ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
           ref={e => {
-            console.log('ref to CriteriaComboBundleList: ', e);
             this.criteriaWrapper = e;
           }}/>
       </div>
