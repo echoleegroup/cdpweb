@@ -19,6 +19,7 @@ const extractAllNodeId = (nodes) => {
 };
 
 const toggleList = (id, target) => {
+  console.log('toggleList target: ', target);
   return xor(target, [id]);
 };
 
@@ -29,13 +30,14 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
     this.state = {
       // featureOptions: fromJS(props.outputFeatures.featureOptions),
       // relativeSetOptions: fromJS(props.outputFeatures.relativeSetOptions),
-      periodStart: props.periodStart,
-      periodStartLabel: props.periodStartLabel,
-      periodEnd: props.periodEnd,
-      periodEndLabel: props.periodEndLabel,
-      selectedFeatureId: props.selectedFeatureId,
-      selectedRelativeId: props.selectedRelativeId
+      periodStart: props.output.periodStart,
+      periodStartLabel: props.output.periodStartLabel,
+      periodEnd: props.output.periodEnd,
+      periodEndLabel: props.output.periodEndLabel,
+      selectedFeatureId: props.output.selectedFeatureId,
+      selectedRelativeId: props.output.selectedRelativeId
     };
+
   };
 
   componentWillMount() {
@@ -55,13 +57,13 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
     this.featureTailClickHandler = (node) => {
       this.setState(prevState => ({
-        selectedFeatureId: List(toggleList(node.id, prevState.selectedFeatureId))
+        selectedFeatureId: List(toggleList(node.id, prevState.selectedFeatureId.toJS()))
       }));
     };
 
     this.relativeTailClickHandler = (node) => {
       this.setState(prevState => ({
-        selectedRelativeId: List(toggleList(node.id, prevState.selectedRelativeId))
+        selectedRelativeId: List(toggleList(node.id, prevState.selectedRelativeId.toJS()))
       }));
     };
 
@@ -123,8 +125,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           <button type="button" className="btn btn-sm btn-default" onClick={this.selectAllFeatureHandler}>全選</button>
           <button type="button" className="btn btn-sm btn-default" onClick={this.deselectAllHandler}>全不選</button>
         </div>
-        <PickerMultiple nodes={this.props.featureOptions.toJS()}
-                        selectedId={this.state.selectedFeatureId}
+        <PickerMultiple nodes={this.props.featureOptions}
+                        selectedId={this.state.selectedFeatureId.toJS()}
                         tailClickHandler={this.featureTailClickHandler}/>
         <h4>挑選下載明細資訊</h4>
         <div className="form-group">
@@ -141,8 +143,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
             </div>
           </div>
         </div>
-        <PickerMultiple nodes={this.props.relativeSetOptions.toJS()}
-                        selectedId={this.state.selectedRelativeId}
+        <PickerMultiple nodes={this.props.relativeSetOptions}
+                        selectedId={this.state.selectedRelativeId.toJS()}
                         tailClickHandler={this.relativeTailClickHandler}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}

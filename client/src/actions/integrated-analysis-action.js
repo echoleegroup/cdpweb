@@ -54,7 +54,7 @@ FilterAction.getTransactionFeatureSets = (success, fail) => {
 FilterAction.getExportFeaturePool = (success, fail) => {
   let fetchExportFeatureOptions = action.ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
   let fetchExportTransactionOptions = action.ajaxGetObservable(EXPORT_TRANSACTION_POOL, undefined, undefined);
-  Rx.Observable.concat(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
+  Rx.Observable.forkJoin(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
     success({
       featureOptions: res[0],
       relativeSetOptions: res[1]

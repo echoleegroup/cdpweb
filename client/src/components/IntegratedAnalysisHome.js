@@ -1,7 +1,8 @@
 import React from 'react';
 import Loader from 'react-loader';
 import BodyLayout from "./BodyLayout";
-import {fromJS, List, Map} from 'immutable';
+import {List, Map} from 'immutable';
+import {assign} from 'lodash';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
 import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehicle";
 import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
@@ -13,13 +14,10 @@ import integratedAction from '../actions/integrated-analysis-action';
 import {getDate} from '../utils/date-util';
 
 const criteriaStepForwardHandler = (targetStep, _that) => {
-  console.log('criteriaStepForwardHandler: ', _that.state.step);
   let isReady = _that.stepComponent.isReadyToLeave();
-  console.log('IntegratedAnalysisHome::isReady: ', isReady);
 
   if (isReady) {
     let criteria = _that.stepComponent.getCriteria();
-    console.log('IntegratedAnalysisHome::criteria: ' , criteria);
     _that.setState(prevState => {
       return {
         criteria: prevState.criteria.set(prevState.step, criteria)
@@ -33,9 +31,8 @@ const criteriaStepForwardHandler = (targetStep, _that) => {
 
 const featurePickerStepForwardHandler = (targetStep, _that) => {
   let exportConfig = _that.stepComponent.getExportOutputConfig();
-  console.log('===get output feature: ', exportConfig);
   _that.setState(prevState => ({
-    output: prevState.output.merge(exportConfig),
+    output: exportConfig,
     step: targetStep
   }));
 };
@@ -73,6 +70,8 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     this.state = {
       isLoaded:false,
       step: STEPS.step1,
+      featureOptions: [],
+      relativeSetOptions: [],
       criteria: Map({
         [STEPS.step1]: [],
         [STEPS.step2]: [],
@@ -80,14 +79,14 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         [STEPS.step4]: [],
         [STEPS.step5]: []
       }),
-      output: Map({
+      output: {
         selectedFeatureId: List(),
         selectedRelativeId: List(),
         periodStart: today.value,
         periodStartLabel: today.value_label,
         periodEnd: today.value,
         periodEndLabel: today.value_label,
-      })
+      }
     };
   };
 
@@ -130,10 +129,9 @@ export default class IntegratedAnalysisHome extends BodyLayout {
 
     // execute
     this.fetchPreparedData(data => {
-      this.setState(prevState => ({
+      this.setState(assign({
         isLoaded: true,
-        output: prevState.output.merge(data)
-      }));
+      }, data));
     });
   };
 
@@ -186,7 +184,9 @@ export default class IntegratedAnalysisHome extends BodyLayout {
           <Loader loaded={this.state.isLoaded}>
             <IntegratedAnalysisFeaturePicker ref={this.storeCurrentStepComponent}
                                              criteria={this.state.criteria}
-                                             {...this.state.output.toJSON()}
+                                             output={this.state.output}
+                                             featureOptions={this.state.featureOptions}
+                                             relativeSetOptions={this.state.relativeSetOptions}
                                              params={this.params}
                                              step={STEPS.step7}/>
           </Loader>

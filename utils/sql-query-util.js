@@ -83,14 +83,13 @@ const _that = {
     let ps = new mssql.PreparedStatement(pool);
 
     const getPrepared = (callback) => {
-      console.log('ps.prepared: ', ps.prepared);
       if (ps.prepared) {
         callback(null, ps);
       } else {
         ps.prepare(sql).then(prepared => {
           callback(null, prepared);
         }).catch(err => {
-          console.log('preparedStatement prepare error: ', err);
+          winston.error('preparedStatement prepare error: ', err);
           callback(err, null);
         });
       }
@@ -105,7 +104,6 @@ const _that = {
         Q.nfcall(getPrepared).then(prepared => {
           return prepared.execute(params);
         }).then(result => {
-          winston.info('===preparedStatement execute: ', result);
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
         }).catch((err) => {
           //ps.prepared && ps.unprepare();

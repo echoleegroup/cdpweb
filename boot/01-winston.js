@@ -17,10 +17,14 @@ module.exports = () => {
       return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
     },
     formatter: (options) => {
+      console.log('winston formatter options.meta: ', options.meta);
       return winston.config.colorize(options.level, options.timestamp() + ' ') +
         winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
         (options.message ? options.message : '') +
-        (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
+        (options.meta && Object.keys(options.meta).length ?
+          '\n\t' + JSON.stringify(options.meta) :
+          (options.meta && options.meta instanceof Error && options.meta.stack ?
+            options.meta.stack : ''));
     }
   });
   transports.push(consoleLogger);
