@@ -36,6 +36,7 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
       let _props = assign({}, props, {
         toPickFeatureSet: this.openFeatureSetPicker
       });
+      // console.log('Transaction ComponentCriteriaBundleContainer: ', _props);
       return <CriteriaTransactionComboBundle {..._props}/>
     };
   };
@@ -55,13 +56,13 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
 class CriteriaTransactionComboBundle extends CriteriaComboBundle {
 
   getChildCriteriaBundleType() {
-    console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.TRANSACTION);
+    // console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.TRANSACTION);
     return CRITERIA_COMPONENT_DICT.TRANSACTION
   };
 
   toInsertCriteriaBundle() {
     this.props.toPickFeatureSet(({setId, setLabel}) => {
-      console.log(`get setID=${setId} and label=${setLabel}`);
+      // console.log(`get setID=${setId} and label=${setLabel}`);
       let criteriaModel = this.getBundleProperties({
         type: this.getChildCriteriaBundleType(),
         ref: setId,

@@ -40,10 +40,12 @@ export default class CriteriaTransactionSetPicker extends React.PureComponent {
       this.closeModal();
     };
 
-    this.branchClickHandler = (node) => {};
+    this.branchClickHandler = (node) => {
+      // console.log('CriteriaTransactionSetPicker branchClickHandler: ', node);
+    };
 
     this.tailClickHandler = (node) => {
-      console.log('tailClickHandler: ', node);
+      // console.log('CriteriaTransactionSetPicker tailClickHandler: ', node);
       this.setState({
         setId: node.id,
         setLabel: node.label

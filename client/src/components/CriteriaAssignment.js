@@ -122,6 +122,7 @@ export default class CriteriaAssignment extends React.PureComponent {
     };
 
     this.closeModal = () => {
+      // console.log('CriteriaAssignment closeModal');
       this.setState({
         isOpen: false,
         criteria: Map(INITIAL_CRITERIA).merge({
@@ -134,8 +135,8 @@ export default class CriteriaAssignment extends React.PureComponent {
 
     this.confirmCriteria = () => {
       let data = this.fieldInput? this.fieldInput.getInputData(): {};
-      console.log('confirmCriteria this.state.criteria.operator: ', this.state.criteria.get('operator'));
-      console.log('confirmCriteria this.operatorSet[this.state.criteria.operator]: ', this.operatorSet[this.state.criteria.get('operator')]);
+      // console.log('confirmCriteria this.state.criteria.operator: ', this.state.criteria.get('operator'));
+      // console.log('confirmCriteria this.operatorSet[this.state.criteria.operator]: ', this.operatorSet[this.state.criteria.get('operator')]);
       let dataProcessor = this.operatorSet[this.state.criteria.get('operator')].dataProcessor;
       let c = this.state.criteria.merge({
         value: dataProcessor(data.value),
@@ -146,10 +147,12 @@ export default class CriteriaAssignment extends React.PureComponent {
       this.closeModal();
     };
 
-    this.branchClickHandler = (node) => {};
+    this.branchClickHandler = (node) => {
+      // console.log('CriteriaAssignment branchClickHandler: ', node);
+    };
 
     this.tailClickHandler = (node) => {
-      console.log('tail changed: ', node.id);
+      // console.log('CriteriaAssignment tailClickHandler: ', node);
       this.setState(prevState => {
         return {
           selectedFeature: node.id,
@@ -201,12 +204,12 @@ export default class CriteriaAssignment extends React.PureComponent {
 
   CriteriaOperatorBlock(criteria) {
     let inputType = criteria.get('input_type');
-    console.log('CriteriaAssignment::CriteriaOperatorBlock.inputType: ', inputType);
+    // console.log('CriteriaAssignment::CriteriaOperatorBlock.inputType: ', inputType);
     if (isEmpty(inputType)) {
       return null;
     }
     let operatorSet = this.operatorSet = GetOperatorSet(inputType);
-    console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
+    // console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
     return (
       <div>
         <h3>條件</h3>

@@ -44,9 +44,11 @@ export default class CriteriaBase extends React.PureComponent {
     this.toPreview = () => {
       let valid = this.validate();
       if (valid) {
+        let criteria = this.criteriaWrapper.criteriaGathering();
+        console.log('this.criteriaWrapper.criteriaGathering(): ', criteria);
         this.setState({
           isPreview: true,
-          criteria: this.criteriaWrapper.criteriaGathering()
+          criteria: criteria
         });
       }
     };
@@ -81,13 +83,9 @@ export default class CriteriaBase extends React.PureComponent {
     });
   };
 
-  componentWillUpdate() {
-    console.log('CriteriaBase::componentWillUpdate: ');
-  };
-
-  componentWillUnmount() {
-    console.log('CriteriaBase::componentWillUnmount: ');
-  };
+  // componentWillUnmount() {
+  //   console.log('CriteriaBase::componentWillUnmount: ');
+  // };
 
   render() {
     if (!this.state.isLoaded) {
@@ -150,7 +148,6 @@ export default class CriteriaBase extends React.PureComponent {
 
   ComponentContentBody() {
     const assignCriteria = (callback) => {
-      console.log('CriteriaBase::assignCriteria');
       this.criteriaAssignmentModal.openModal(callback);
     };
 

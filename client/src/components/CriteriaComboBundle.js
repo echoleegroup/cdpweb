@@ -37,7 +37,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   };
 
   ComponentChildCriteria(criteria, index) {
-    console.log('ComponentChildCriteria: ', criteria);
+    // console.log('ComponentChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.COMBO:
         return <CriteriaComboBundle key={criteria.uuid} {...this.props}

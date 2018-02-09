@@ -20,10 +20,12 @@ export default class CriteriaComboBundleList extends React.PureComponent {
 
   componentWillMount() {
     this.criteriaComponents = {};
+    this.id = shortid.generate();
+    console.log('CriteriaComboBundleList  componentWillMount: ', this.id);
 
     this.collectCriteriaComponents = (uuid, component) => {
-      // console.log('CriteriaComboBundleList::componentWillMount::collectCriteriaComponents:: ', component);
       this.criteriaComponents[uuid] = component;
+      console.log('CriteriaComboBundleList::collectCriteriaComponents:: ', this.id);
     };
 
     this.removeCriteriaComponents = (uuid) => {
@@ -37,7 +39,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
     };
 
     this.criteriaGathering = () => {
-      // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering: ', this.criteriaComponents);
+      console.log('CriteriaComboBundleList::criteriaGathering: ', this.criteriaComponents);
       return reduce(this.criteriaComponents, (collector, comp) => {
         let crite = comp.criteriaGathering(); //immutable map
         console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
@@ -61,9 +63,9 @@ export default class CriteriaComboBundleList extends React.PureComponent {
     };
   }
 
-  componentWillUnmount() {
-    console.log('CriteriaComboBundleList::componentWillUnmount');
-  };
+  // componentWillUnmount() {
+  //   console.log('CriteriaComboBundleList::componentWillUnmount');
+  // };
 
   render() {
     let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;

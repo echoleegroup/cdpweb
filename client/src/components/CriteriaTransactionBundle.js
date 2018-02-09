@@ -49,11 +49,11 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     IntegratedAnalysisAction.getTransactionCriteriaFeatures(
       this.getPropertyState('ref'), callback);
   };
-
-  componentWillUnmount() {
-    console.log('CriteriaDetailBundle: componentWillUnmount', this.state);
-    super.componentWillUnmount()
-  };
+  //
+  // componentWillUnmount() {
+  //   console.log('CriteriaTransactionBundle: componentWillUnmount', this.state);
+  //   super.componentWillUnmount()
+  // };
 
   ComponentCriteriaBody() {
     return (

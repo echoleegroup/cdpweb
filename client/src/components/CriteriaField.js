@@ -52,7 +52,7 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   componentWillUnmount() {
-    console.log('CriteriaField::componentWillUnmount: ', this.props.criteria);
+    // console.log('CriteriaField::componentWillUnmount: ', this.props.criteria);
     this.props.removeCriteriaComponents(this.props.criteria.uuid);
   };
 

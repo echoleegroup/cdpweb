@@ -12,14 +12,14 @@ export default class PickerSingle extends React.PureComponent {
       </li>
     );
   };
-
-  componentWillMount() {
-    console.log('===PickerSingle componentWillMount');
-  };
-
-  componentWillUpdate() {
-    console.log('===PickerSingle componentWillUpdate');
-  };
+  //
+  // componentWillMount() {
+  //   console.log('===TailContainer componentWillMount');
+  // };
+  //
+  // componentWillUpdate() {
+  //   console.log('===TailContainer componentWillUpdate');
+  // };
 
   render() {
     return (
@@ -31,14 +31,6 @@ export default class PickerSingle extends React.PureComponent {
 };
 
 class Tree extends React.PureComponent {
-
-  componentWillMount() {
-    console.log('Tree componentWillMount');
-  };
-
-  componentWillUpdate() {
-    console.log('Tree componentWillUpdate');
-  };
 
   render() {
     const NodeDispatcher = (node, props) => {
@@ -79,7 +71,6 @@ class Branch extends React.PureComponent {
   };
 
   componentWillMount() {
-    console.log('Branch componentWillMount');
 
     this.clickHandler = () => {
       const branchClickHandler = this.props.branchClickHandler;
@@ -94,7 +85,6 @@ class Branch extends React.PureComponent {
     };
 
     this.collapseConfig = (collapse) => {
-      console.log('===collapseConfig: ', collapse);
       switch (collapse) {
         case true:
           return {
@@ -112,16 +102,12 @@ class Branch extends React.PureComponent {
     };
   };
 
-  componentWillUpdate() {
-    console.log('Branch componentWillUpdate');
-  };
-
   render() {
     let collapseConfig = this.collapseConfig(this.state.collapse);
     let node = this.props.node;
     return (
       <li key={node.id}>
-        <a href="#" onClick={this.clickHandler()}>{node.label}
+        <a href="javascript:;" onClick={this.clickHandler()}>{node.label}
           <i className={collapseConfig.class_name} aria-hidden={collapseConfig.isCollapse} ref={e => {
             this.foldingIconDom = e;
           }}/>

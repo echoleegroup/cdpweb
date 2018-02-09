@@ -3,7 +3,7 @@ import {isEmpty} from 'lodash';
 import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
 import CriteriaComboBundleList from './CriteriaComboBundleList'
 import CriteriaComboBundle from "./CriteriaComboBundle";
-import CriteriaTransactionBundleMute from "./CriteriaTransactionBundleMute";
+import CriteriaComboBundleMute from "./CriteriaComboBundleMute";
 
 const ComponentCriteriaBody = (props) => {
   let mapToProps = {};
@@ -47,17 +47,17 @@ export default class IntegratedAnalysisCriteriaPreview extends React.PureCompone
           <p className="customer">顧客對象別：<span>使用人</span></p>
           {/* 條件設定 預覽狀態*/}
           <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step1)}
-                                 ComponentCriteriaBundleContainer={CriteriaComboBundle}/>
+                                 ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
           <h4><i className="fa fa-check" aria-hidden="true"/>車輛屬性條件</h4>
           {/* 條件設定 預覽狀態*/}
           <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step2)}
-                                 ComponentCriteriaBundleContainer={CriteriaComboBundle}/>
+                                 ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
           <h4><i className="fa fa-check" aria-hidden="true"/>明細資料指定條件</h4>
           {/* 條件設定 預覽狀態*/}
           <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step3)}
-                                 ComponentCriteriaBundleContainer={CriteriaTransactionBundleMute}/>
+                                 ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
         </div>
         <div className="btn-block center-block">

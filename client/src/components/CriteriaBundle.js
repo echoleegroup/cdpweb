@@ -25,7 +25,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
-    // console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, criteria=%s)', uuid, type, operator, criteria);
+    console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, ref_label=%s, ref=%s)', uuid, type, operator, ref_label, ref);
     return {
       uuid: uuid || shortid.generate(),
       type: type || this.myFieldType(), //combo, ref, field
@@ -41,7 +41,7 @@ export default class CriteriaBundle extends React.PureComponent {
     this.criteriaComponents = {};
 
     this.collectCriteriaComponents = (uuid, component) => {
-      // console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', component);
+      console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', uuid);
       this.criteriaComponents[uuid] = component;
     };
 
@@ -56,16 +56,17 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.criteriaGathering = () => {
-      // console.log('CriteriaBundle::criteriaGathering: ', this.state.properties.get('type'), this.criteriaComponents);
+      console.log('CriteriaBundle::criteriaGathering: ', this.criteriaComponents);
       let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.criteriaGathering(); //immutable Map
-        // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
+        console.log('CriteriaBundle::criteriaGathering::crite ', crite);
         if (!isEmpty(crite))
           collector.push(crite);
         return collector
       }, []);
 
-      // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
+      console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
+      console.log('CriteriaBundle::criteriaGathering::subCrits.length ', subCrits.length);
       return (subCrits.length === 0)? {}: assign({}, this.state.properties.toJSON(), {
         criteria: subCrits
       });
@@ -76,7 +77,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.insertCriteriaState = (criteria) => {
-      console.log('CriteriaBundle:insertCriteria: ', criteria);
+      // console.log('CriteriaBundle:insertCriteria: ', criteria);
       this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteria));
     };
 
@@ -97,12 +98,12 @@ export default class CriteriaBundle extends React.PureComponent {
     this.props.collectCriteriaComponents(this.getPropertyState('uuid'), this);
   };
 
-  componentWillUpdate(nextProps, nextState) {
-    // console.log('CriteriaBundle: componentWillUpdate: ', nextState);
-  };
+  // componentWillUpdate(nextProps, nextState) {
+  //   console.log('CriteriaBundle: componentWillUpdate: ', nextState);
+  // };
 
   componentWillUnmount() {
-    console.log('CriteriaBundle::componentWillUnmount: ', this.state);
+    // console.log('CriteriaBundle::componentWillUnmount: ', this.state);
     this.props.removeCriteriaComponents(this.getPropertyState('uuid'));
   };
 

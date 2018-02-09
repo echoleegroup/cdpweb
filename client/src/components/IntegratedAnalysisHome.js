@@ -134,6 +134,13 @@ export default class IntegratedAnalysisHome extends BodyLayout {
       }, data));
     });
   };
+  //
+  // componentWillUpdate(nextProps, nextState) {
+  //   console.log('IntegratedAnalysisHome::componentWillUpdate this.props: ', this.props);
+  //   console.log('IntegratedAnalysisHome::componentWillUpdate nextProps: ', nextProps);
+  //   console.log('IntegratedAnalysisHome::componentWillUpdate this.state: ', this.state);
+  //   console.log('IntegratedAnalysisHome::componentWillUpdate nextState: ', nextState);
+  // };
 
   ComponentContent() {
     switch (this.state.step) {
@@ -156,7 +163,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
                                                       params={this.params}
                                                       step={STEPS.step3}
                                                       stepPrev={this.stepTo(STEPS.step2)}
-                                                      stepNext={this.stepTo(STEPS.step4)}/>;
+                                                      stepNext={this.stepTo(STEPS.step6)}/>;
       case STEPS.step4:
         return <IntegratedAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
                                               criteria={this.state.criteria.get(STEPS.step4)}
@@ -215,13 +222,13 @@ class IntegratedAnalysisNavigator extends React.PureComponent {
       <div className="table_block table-responsive">
         <h2>設定觀察客群</h2>
         <ul className="step">
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step1)}>第一步：顧客屬性資料</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step2)}>第二步：車輛屬性資料</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step3)}>第三步：明細資料指定條件</a></li>
-          {/*<li><a href="#" onClick={this.stepToHandler(STEPS.step4)}>第四步：標籤</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step5)}>第五步：行為軌跡</a></li>*/}
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step6)}>第六步：條件總覽</a></li>
-          <li><a href="#" onClick={this.stepToHandler(STEPS.step7)}>第七步：挑選下載欄位</a></li>
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step1)}>第一步：顧客屬性資料</a></li>
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step2)}>第二步：車輛屬性資料</a></li>
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step3)}>第三步：明細資料指定條件</a></li>
+          {/*<li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step4)}>第四步：標籤</a></li>
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step5)}>第五步：行為軌跡</a></li>*/}
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step6)}>第六步：條件總覽</a></li>
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step7)}>第七步：挑選下載欄位</a></li>
         </ul>
       </div>
     );
