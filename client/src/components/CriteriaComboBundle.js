@@ -22,19 +22,19 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     return CRITERIA_COMPONENT_DICT.BUNDLE
   };
 
-  componentWillMount() {
-    // console.log('CriteriaComboBundle::componentWillMount: ', this.state);
-    super.componentWillMount();
-  };
+  // componentWillMount() {
+  //   console.log('CriteriaComboBundle::componentWillMount: ', this.state);
+  //   super.componentWillMount();
+  // };
 
-  componentWillUpdate(nextProps, nextState) {
-    console.log('CriteriaBundle: componentWillUpdate: ', nextState.properties.get('criteria').toJS());
-  };
+  // componentWillUpdate(nextProps, nextState) {
+  //   console.log('CriteriaBundle: componentWillUpdate: ', nextState.properties.get('criteria').toJS());
+  // };
 
-  componentWillUnmount() {
-    // console.log('CriteriaComboBundle: componentWillUnmount', this.state);
-    super.componentWillUnmount();
-  };
+  // componentWillUnmount() {
+  //   console.log('CriteriaComboBundle: componentWillUnmount', this.state);
+  //   super.componentWillUnmount();
+  // };
 
   ComponentChildCriteria(criteria, index) {
     // console.log('ComponentChildCriteria: ', criteria);

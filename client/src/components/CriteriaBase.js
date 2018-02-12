@@ -22,6 +22,18 @@ export default class CriteriaBase extends React.PureComponent {
       isLoaded: false,
       criteria: props.criteria || []
     };
+    this.ComponentModals = this.ComponentModals.bind(this);
+    this.ComponentContentBody = this.ComponentContentBody.bind(this);
+    this.ComponentCriteriaBundleContainer = this.ComponentCriteriaBundleContainer.bind(this);
+    this.ComponentHeadline = this.ComponentHeadline.bind(this);
+    this.ComponentSideHead = this.ComponentSideHead.bind(this);
+    this.ComponentEmptyBody = this.ComponentEmptyBody.bind(this);
+    this.ComponentPreviewEmpty = this.ComponentPreviewEmpty.bind(this);
+    this.ComponentPreviewContent = this.ComponentPreviewContent.bind(this);
+    this.ComponentEditContent = this.ComponentEditContent.bind(this);
+    this.ComponentPreviewControlButton = this.ComponentPreviewControlButton.bind(this);
+    this.ComponentEditControlButton = this.ComponentEditControlButton.bind(this);
+
     //this.criteria = _test.criteria.custom_target || [];
     //this.fields = _test.fields.custom_target;
     //this.refOptions = _test.refs;
@@ -75,6 +87,10 @@ export default class CriteriaBase extends React.PureComponent {
       return this.state.criteria;
     };
 
+    this.assignCriteria = (callback) => {
+      this.masterModal.openModal(callback);
+    };
+
     //init work
     this.fetchPreparedData(this.props, this, (data) => {
       this.setState(assign({
@@ -88,53 +104,60 @@ export default class CriteriaBase extends React.PureComponent {
   // };
 
   render() {
-    if (!this.state.isLoaded) {
-      return (<Loader loaded={false}/>);
-    } else {
-      return (
-        <div>
-          {this.ComponentContentView()}
-          {/*<!-- 新增條件組合 -->*/}
-          {this.ComponentModals()}
-        </div>
-      );
+    let ComponentModals = this.ComponentModals;
+    let mapToProps = {
+      ComponentHeadline: this.ComponentHeadline,
+      ComponentSideHead: this.ComponentSideHead,
+      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
+    };
+    if (this.state.isPreview) {
+      if (isEmpty(this.state.criteria)) {
+        mapToProps = assign(mapToProps, {
+          styleClass: 'nocondition',
+          ComponentCriteriaBody: this.ComponentEmptyBody,
+          ComponentControlButton: this.ComponentPreviewControlButton,
+        });
+      } else {
+        mapToProps = assign(mapToProps, {
+          styleClass: 'condition',
+          ComponentCriteriaBody: this.ComponentContentBody,
+          ComponentControlButton: this.ComponentPreviewControlButton
+        });
+      }
+    } else {  //edit view
+      mapToProps = assign(mapToProps, {
+        styleClass: 'condition edit',
+        ComponentCriteriaBody: this.ComponentContentBody,
+        ComponentControlButton: this.ComponentEditControlButton
+      });
     }
+
+    return (
+      <Loader loaded={this.state.isLoaded}>
+        <CriteriaBaseContainer {...mapToProps}/>
+        {/*<!-- 新增條件組合 -->*/}
+        <ComponentModals {...this.state}/>
+      </Loader>
+    );
   };
 
-  ComponentModals() {
+  ComponentModals(props) {
     let mapToProps = {
-      // mdId: props.params.mdId,
-      // batId: props.params.batId,
-      features: this.state.features || [],
-      featureRefCodeMap: this.state.featureRefCodeMap || {}
+      features: props.features || [],
+      featureRefCodeMap: props.featureRefCodeMap || {}
     };
     return (
       <CriteriaAssignment {...mapToProps} ref={(e) => {
-        this.criteriaAssignmentModal = e;
+        this.masterModal = e;
       }}/>
     );
   };
 
-  ComponentContentView() {
-    if (!this.state.isLoaded)
-      return null;
-
-    if(this.state.isPreview) {
-      if (isEmpty(this.state.criteria)) {
-        return this.ComponentPreviewEmpty();
-      } else {
-        return this.ComponentPreviewContent();
-      }
-    } else {  //edit view
-      return this.ComponentEditContent();
-    }
-  };
-
-  ComponentHeadline() {
+  ComponentHeadline(props) {
     return <h2>{this.headlineText()}</h2>
   };
 
-  ComponentSideHead() {
+  ComponentSideHead(props) {
     return <h3>{this.subheadText()}</h3>;
   };
 
@@ -146,18 +169,14 @@ export default class CriteriaBase extends React.PureComponent {
     return '';
   };
 
-  ComponentContentBody() {
-    const assignCriteria = (callback) => {
-      this.criteriaAssignmentModal.openModal(callback);
-    };
-
+  ComponentContentBody(props) {
     return (
       <div className="level form-inline">
         <CriteriaComboBundleList
           isPreview={this.state.isPreview}
           criteria={this.state.criteria}
-          assignCriteria={assignCriteria}
-          ComponentCriteriaBundleContainer={this.ComponentCriteriaBundleContainer()}
+          assignCriteria={this.assignCriteria}
+          ComponentCriteriaBundleContainer={props.ComponentCriteriaBundleContainer}
           ref={e => {
             this.criteriaWrapper = e;
           }}/>
@@ -165,46 +184,52 @@ export default class CriteriaBase extends React.PureComponent {
     );
   };
 
-  ComponentCriteriaBundleContainer() {
-    return CriteriaComboBundle;
+  ComponentCriteriaBundleContainer(props) {
+    return <CriteriaComboBundle {...props}/>;
   };
 
-  ComponentPreviewEmpty() {
-    const Body = <p>無條件設定</p>;
-    let props = {
+  ComponentPreviewEmpty(props) {
+    let mapToProps = {
       styleClass: 'nocondition',
-      ComponentHeadline: this.ComponentHeadline(),
-      ComponentSideHead: this.ComponentSideHead(),
-      ComponentCriteriaBody: Body,
-      ComponentControlButton: this.ComponentPreviewControlButton()
+      ComponentHeadline: this.ComponentHeadline,
+      ComponentSideHead: this.ComponentSideHead,
+      ComponentCriteriaBody: this.ComponentEmptyBody,
+      ComponentControlButton: this.ComponentPreviewControlButton,
+      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
     };
 
-    return <CriteriaBaseContainer {...props}/>
+    return <CriteriaBaseContainer {...mapToProps}/>
   };
 
-  ComponentEditContent() {
-    let props = {
+  ComponentEmptyBody(props) {
+    return (<p>無條件設定</p>);
+  };
+
+  ComponentEditContent(props) {
+    let mapToProps = {
       styleClass: 'condition edit',
-      ComponentHeadline: this.ComponentHeadline(),
-      ComponentSideHead: this.ComponentSideHead(),
-      ComponentCriteriaBody: this.ComponentContentBody(),
-      ComponentControlButton: this.ComponentEditControlButton(),
+      ComponentHeadline: this.ComponentHeadline,
+      ComponentSideHead: this.ComponentSideHead,
+      ComponentCriteriaBody: this.ComponentContentBody,
+      ComponentControlButton: this.ComponentEditControlButton,
+      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
     };
-    return <CriteriaBaseContainer {...props}/>
+    return <CriteriaBaseContainer {...mapToProps}/>
   };
 
-  ComponentPreviewContent() {
-    let props = {
+  ComponentPreviewContent(props) {
+    let mapToProps = {
       styleClass: 'condition',
-      ComponentHeadline: this.ComponentHeadline(),
-      ComponentSideHead: this.ComponentSideHead(),
-      ComponentCriteriaBody: this.ComponentContentBody(),
-      ComponentControlButton: this.ComponentPreviewControlButton()
+      ComponentHeadline: this.ComponentHeadline,
+      ComponentSideHead: this.ComponentSideHead,
+      ComponentCriteriaBody: this.ComponentContentBody,
+      ComponentControlButton: this.ComponentPreviewControlButton,
+      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
     };
-    return <CriteriaBaseContainer {...props}/>
+    return <CriteriaBaseContainer {...mapToProps}/>
   };
 
-  ComponentPreviewControlButton() {
+  ComponentPreviewControlButton(props) {
     return (
       <div className="btn-block center-block">
         <button type="button" className="btn btn-lg btn-default" onClick={this.toEdit}>編輯條件</button>
@@ -212,7 +237,7 @@ export default class CriteriaBase extends React.PureComponent {
     );
   };
 
-  ComponentEditControlButton() {
+  ComponentEditControlButton(props) {
     return (
       <div className="btn-block center-block">
         <button type="button" className="btn btn-lg btn-default" onClick={this.toPreview}>完成編輯</button>

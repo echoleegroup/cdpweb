@@ -31,19 +31,17 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
     });
   };
 
-  ComponentCriteriaBundleContainer() {
-    return (props) => {
-      let _props = assign({}, props, {
-        toPickFeatureSet: this.openFeatureSetPicker
-      });
-      // console.log('Transaction ComponentCriteriaBundleContainer: ', _props);
-      return <CriteriaTransactionComboBundle {..._props}/>
-    };
+  ComponentCriteriaBundleContainer(props) {
+    let mapToProps = assign({}, props, {
+      toPickFeatureSet: this.openFeatureSetPicker
+    });
+    // console.log('Transaction ComponentCriteriaBundleContainer: ', _props);
+    return <CriteriaTransactionComboBundle {...mapToProps}/>
   };
 
-  ComponentModals() {
+  ComponentModals(props) {
     let mapToProps = {
-      featureSets: this.state.featureSets
+      featureSets: props.featureSets
     };
     return (
       <IntegratedAnalysisFeatureSetPicker {...mapToProps} ref={(e) => {

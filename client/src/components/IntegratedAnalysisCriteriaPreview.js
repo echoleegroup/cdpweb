@@ -2,26 +2,10 @@ import React from 'react';
 import {isEmpty} from 'lodash';
 import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
 import CriteriaComboBundleList from './CriteriaComboBundleList'
-import CriteriaComboBundle from "./CriteriaComboBundle";
 import CriteriaComboBundleMute from "./CriteriaComboBundleMute";
 
-const ComponentCriteriaBody = (props) => {
-  let mapToProps = {};
-  if (isEmpty(props.criteria)) {
-    mapToProps = {
-      styleClass: 'nocondition',
-      ComponentCriteriaBody: (<p>無條件設定</p>)
-    };
-  } else {
-    mapToProps = {
-      styleClass: 'condition',
-      ComponentCriteriaBody:
-        <ComponentContentBody
-          criteria={props.criteria}
-          ComponentCriteriaBundleContainer={props.ComponentCriteriaBundleContainer}/>
-    };
-  }
-  return <CriteriaBaseBodyContainer {...mapToProps}/>
+const ComponentEmptyBody = (props) => {
+  return (<p>無條件設定</p>);
 };
 
 const ComponentContentBody = (props) => {
@@ -36,7 +20,30 @@ const ComponentContentBody = (props) => {
 };
 
 export default class IntegratedAnalysisCriteriaPreview extends React.PureComponent {
+  constructor(props) {
+    super(props);
+  };
+
+  ComponentCriteriaBody(props) {
+    let mapToProps = {};
+    if (isEmpty(props.criteria)) {
+      mapToProps = {
+        styleClass: 'nocondition',
+        ComponentCriteriaBody: ComponentEmptyBody
+      };
+    } else {
+      mapToProps = {
+        styleClass: 'condition',
+        ComponentCriteriaBody: ComponentContentBody,
+        criteria: props.criteria,
+        ComponentCriteriaBundleContainer: props.ComponentCriteriaBundleContainer
+      };
+    }
+    return <CriteriaBaseBodyContainer {...mapToProps}/>
+  };
+
   render() {
+    let ComponentCriteriaBody = this.ComponentCriteriaBody;
     return (
       <div className="table_block">
         <h2>查詢條件</h2>

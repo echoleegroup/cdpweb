@@ -20,6 +20,13 @@ export default class CriteriaBundle extends React.PureComponent {
     };
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(prevState => ({
+      properties: prevState.properties.merge(this.getBundleProperties(nextProps.criteria))
+    }));
+  };
+
+
   myFieldType() {
     return CRITERIA_COMPONENT_DICT.BUNDLE;
   };

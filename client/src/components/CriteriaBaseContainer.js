@@ -4,13 +4,17 @@ import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
 export default class CriteriaBaseContainer extends React.PureComponent {
   render() {
     let props = this.props;
+    let ComponentHeadline = props.ComponentHeadline;
+    let ComponentSideHead = props.ComponentSideHead;
+    let ComponentControlButton = props.ComponentControlButton;
     return (
       <div className="table_block">
-        {props.ComponentHeadline}
-        {props.ComponentSideHead}
+        <ComponentHeadline/>
+        <ComponentSideHead/>
         <CriteriaBaseBodyContainer styleClass={props.styleClass}
-                                   ComponentCriteriaBody={props.ComponentCriteriaBody}/>
-        {props.ComponentControlButton}
+                                   ComponentCriteriaBody={props.ComponentCriteriaBody}
+                                   ComponentCriteriaBundleContainer={props.ComponentCriteriaBundleContainer}/>
+        <ComponentControlButton/>
       </div>
     );
   };

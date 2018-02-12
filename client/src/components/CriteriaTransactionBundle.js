@@ -30,7 +30,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     super.componentWillMount();
 
     this.toAssignCriteria = () => {
-      this.criteriaAssignmentModal.openModal(this.insertCriteriaState);
+      this.slaveModal.openModal(this.insertCriteriaState);
     };
 
     this.fetchPreparedData = () => {
@@ -89,7 +89,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     return (
       <Loader loaded={this.state.isLoaded}>
         <CriteriaAssignment {...mapToProps} ref={(e) => {
-          this.criteriaAssignmentModal = e;
+          this.slaveModal = e;
         }}/>
       </Loader>
     );

@@ -29,8 +29,8 @@ export default class CriteriaView extends React.PureComponent {
      */
     return (
       <div className="table_block">
-        {ComponentHeadline}
-        {ComponentSideHead}
+        <ComponentHeadline/>
+        <ComponentSideHead/>
         <div className={this.props.styleClass}>
           {this.CriteriaBody()}
         </div>
