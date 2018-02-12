@@ -1,10 +1,14 @@
 "use strict";
 const express = require('express');
 const winston = require('winston');
+const randtoken = require('rand-token');
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
-
+const _connector = require('../utils/sql-query-util');
+const Q = require('q');
+const domainName = require("../app-config").get("DOMAIN_NAME");
+const mail_util = require("../utils/mail-util");
 module.exports = (app) => {
   console.log('[userRoute::create] Creating user route.');
   const router = express.Router();
@@ -293,6 +297,126 @@ module.exports = (app) => {
       });
     }).catch(function (e) {
       console.log(e);
+    });
+  });
+
+  router.get('/user/forget', function (req, res) {
+    res.render('forget-pwd', {
+      layout: 'layout-login'
+    });
+  });
+
+  router.post('/user/forget_act', function (req, res) {
+    let userId = req.body.userId || '';
+    let email = req.body.email || '';
+    let token = randtoken.generate(16);
+    let sql = "SELECT count(*) total " +
+      " FROM sy_infouser " +
+      " WHERE userId = @userId and email = @email ";
+
+    let request = _connector.queryRequest()
+      .setInput('userId', _connector.TYPES.NVarChar, userId)
+      .setInput('email', _connector.TYPES.NVarChar, email);
+    Q.nfcall(request.executeQuery, sql).then((result) => {
+      let total = result[0].total;
+      return total;
+    }).then((total) => {
+      if (total == 0) {
+        res.redirect("/");
+      }
+      else {
+        sql = "INSERT sy_ForgotPwd (userId,email,token,create_datetime) " +
+          " VALUES(@userId,@email,@token,GETDATE())";
+        request = _connector.queryRequest()
+          .setInput('userId', _connector.TYPES.NVarChar, userId)
+          .setInput('email', _connector.TYPES.NVarChar, email)
+          .setInput('token', _connector.TYPES.NVarChar, token);
+        return Q.nfcall(request.executeUpdate, sql)
+      }
+    }).then((resultset) => {
+      let url = "?userId=" + userId + "&token=" + token;
+      let sendInfo = {
+        "to": email,
+        "subject": "更改密碼",
+        "text": "http://" + domainName + ":" + process.env.PORT + "/system/user/pwd/change" + url
+      }
+
+      mail_util.mail(sendInfo, req, res, function (err, result) {
+        if (err) {
+          winston.error('===forgetpwd failed:', err);
+          res.redirect("/");
+        }
+        else {
+          res.render('message', {
+            layout: 'layout-login',
+            message : "密碼已更改成功，請重新登入"
+          });
+        }
+ 
+      });
+    }).fail((err) => {
+      winston.error('===forgetpwd failed:', err);
+      res.send(err);
+    });
+  });
+  router.get('/user/pwd/change', function (req, res) {
+    let userId = req.query.userId || '';
+    let token = req.query.token || '';
+    let sql = "SELECT count(*) total " +
+      " FROM sy_ForgotPwd " +
+      " WHERE token = @token and ( is_send != 'Y' or is_send is null )  ";
+
+    let request = _connector.queryRequest()
+      .setInput('token', _connector.TYPES.NVarChar, token)
+    Q.nfcall(request.executeQuery, sql).then((result) => {
+      let total = result[0].total;
+      return total;
+    }).then((total) => {
+      if (total == 0) {
+        res.redirect("/");
+      }
+      else {
+        res.render('change-pwd', {
+          layout: 'layout-login',
+          userId: userId,
+          token : token
+        })
+      }
+    }).fail((err) => {
+      winston.error('===forgetpwd failed:', err);
+      res.redirect("/");
+    });
+  });
+
+  router.post('/user/pwd/change_act', function (req, res) {
+    let password = req.body.password || '';
+    let token = req.body.token || '';
+    let userId = req.body.userId || '';
+    let sql = "UPDATE sy_infouser " +
+      " SET password = @password, modifyTime = GETDATE()" +
+      " WHERE userId = @userId  ";
+
+    let request = _connector.queryRequest()
+      .setInput('password', _connector.TYPES.NVarChar, password)
+      .setInput('userId', _connector.TYPES.NVarChar, userId);
+    Q.nfcall(request.executeUpdate, sql).then((result) => {
+      return result;
+    }).then((result) => {
+      sql = "UPDATE sy_ForgotPwd " +
+      " SET is_send = 'Y', update_datetime = GETDATE()" +
+      " WHERE token = @token  ";
+      let request = _connector.queryRequest()
+      .setInput('token', _connector.TYPES.NVarChar, token)
+      return Q.nfcall(request.executeUpdate, sql)
+    }).then((resultset) => {
+      res.render('message', {
+        layout: 'layout-login',
+        message : "密碼已更改成功，請重新登入"
+      })
+
+    }).fail((err) => {
+      winston.error('===forgetpwd failed:', err);
+      res.redirect("/");
     });
   });
   return router;
