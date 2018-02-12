@@ -39,6 +39,8 @@ module.exports = (app) => {
   app.use('/api/target', require('./api/api-custom-target')(app));
   app.use('/api/integration', require('./api/api-integration-analysis')(app));
 
+  app.use('/api/', require('./api/api-360-backand')(app));
+
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));
 

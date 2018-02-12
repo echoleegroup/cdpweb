@@ -1,45 +1,45 @@
 <div class="login">
-	<div class="loginDIV">
-		<div class="container">
-			<div class="row">
-				<h1>和泰大數據平台</h1>
-				<!-- form set Start -->
-				<form action="/login" method="post" class="form-horizontal">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">帳號</label>
-						<div class="col-sm-6">
-							<input type="text" class="form-control " id="userId" name="userId" value="" placeholder="請輸入帳號">
+  <div class="loginDIV">
+    <div class="container">
+      <div class="row">
+        <h1>和泰大數據平台</h1>
+        <!-- form set Start -->
+        <form action="/login" method="post" class="form-horizontal">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">帳號</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control " id="userId" name="userId" value="" placeholder="請輸入帳號">
 
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">密碼</label>
-						<div class="col-sm-6">
-							<input type="password" class="form-control " id="inputName" name="password" value="" placeholder="請輸入密碼">
-              {{#if message.hasError}}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">密碼</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control " id="inputName" name="password" value="" placeholder="請輸入密碼"> {{#if message.hasError}}
               <div class="isa_error" id="errorpassword">
-								<i class="fa fa-times-circle"></i>
-								{{message.hasError}}
-							</div>
+                <i class="fa fa-times-circle"></i>
+                {{message.hasError}}
+              </div>
               <script>
                 $('.isa_error').click(function (event) {
                   $(this).hide();
                 });
-              </script>
-              {{/if}}
-						</div>
-					</div>
+              </script> {{/if}}
+            </div>
+          </div>
+          <div class="loginForget">
+            <a href="/system/user/forget">忘記密碼</a>
+          </div>
+          <input type="submit" class="btn btn-lg btn-default" value="登入">
+        </form>
 
-					<input type="submit" class="btn btn-lg btn-default" value="登入">
-				</form>
-        
-				<div class="copyRight">
-					<div class="logo">
-						<img src="/images/logo.png" alt="" class="img-responsive">
-					</div>
-					<p class="text-center">© 2017 Maxnerva Technology Services Limited All rights reserved</p>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="copyRight">
+          <div class="logo">
+            <img src="/images/logo.png" alt="" class="img-responsive">
+          </div>
+          <p class="text-center">© 2017 Maxnerva Technology Services Limited All rights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

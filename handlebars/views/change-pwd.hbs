@@ -1,0 +1,46 @@
+<div class="login">
+  <div class="loginDIV">
+    <div class="container">
+      <div class="row">
+        <h1>和泰大數據平台</h1>
+        <h2 style="color:rgb(255, 0, 0);">修改密碼</h2>
+        <!-- form set Start -->
+        <form action="/system/user/pwd/change_act" method="post" class="form-horizontal" onsubmit="return checkForm();">
+          <input type="hidden" name="token" value="{{token}}">
+          <input type="hidden" name="uesrId" value="{{uesrId}}">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">新密碼</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control " id="password" name="password" value="" placeholder="請輸入密碼">
+
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-3 control-label">密碼確認</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control " id="checkpassword" name="checkpassword" value="" placeholder="請輸入密碼">
+            </div>
+          </div>
+
+          <input type="submit" class="btn btn-lg btn-default" value="確定">
+        </form>
+
+        <div class="copyRight">
+          <div class="logo">
+            <img src="/images/logo.png" alt="" class="img-responsive">
+          </div>
+          <p class="text-center">© 2017 Maxnerva Technology Services Limited All rights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function checkForm(){
+    if( document.getElementById("password").value != document.getElementById("checkpassword").value ) {
+      alert("密碼不一樣，請確認");
+      return false ;
+    }
+    return true ;
+  }
+</script>

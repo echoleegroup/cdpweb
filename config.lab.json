@@ -11,5 +11,13 @@
   "JAVA_API_ENDPOINT": "http://192.168.1.247:8080",
   "JAVA_API_PROTOCOL": "http:",
   "JAVA_API_HOST": "192.168.1.247",
-  "JAVA_API_PORT":8080
+  "JAVA_API_PORT":8080,
+  "MAIL_INFO": {
+    "service": "smtp.gmail.com",
+    "port" : 465,
+    "user": "",
+    "pass": "",
+    "from": ""
+  },
+  "DOMAIN_NAME": "127.0.0.1"
 }

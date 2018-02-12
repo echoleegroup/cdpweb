@@ -11,5 +11,13 @@
   "JAVA_API_ENDPOINT": "http://10.201.1.130:8080",
   "JAVA_API_PROTOCOL": "http:",
   "JAVA_API_HOST": "10.201.1.130",
-  "JAVA_API_PORT":8080
+  "JAVA_API_PORT":8080,
+  "MAIL_INFO": {
+    "service": "smtp.office365.com",
+    "port" : 587,
+    "user": "apicheck@hotaimotor.onmicrosoft.com",
+    "pass": "!QAZ1129@",
+    "from": "mail@microsoft.com"
+  },
+  "DOMAIN_NAME": "10.201.201.4"
 }
