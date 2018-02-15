@@ -6,6 +6,8 @@ import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
     super(props);
+    this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.COMBO;
+    this.CHILD_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
   }
 
   // getBundleProperties(criteria) {
@@ -13,14 +15,10 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   //   return super.getBundleProperties(assign({}, {type: CRITERIA_COMPONENT_DICT.COMBO}, criteria));
   // };
 
-  myFieldType() {
-    return CRITERIA_COMPONENT_DICT.COMBO;
-  };
-
-  getChildCriteriaBundleType() {
-    // console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.BUNDLE);
-    return CRITERIA_COMPONENT_DICT.BUNDLE
-  };
+  // getChildCriteriaBundleType() {
+  //   // console.log('getChildCriteriaBundleType: ', CRITERIA_COMPONENT_DICT.BUNDLE);
+  //   return CRITERIA_COMPONENT_DICT.BUNDLE
+  // };
 
   // componentWillMount() {
   //   console.log('CriteriaComboBundle::componentWillMount: ', this.state);
@@ -68,7 +66,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   toInsertCriteriaBundle() {
     // console.log('toInsertCriteriaBundle: ', this.state.criteria.toJS());
     let criteriaModel = this.getBundleProperties({
-      type: this.getChildCriteriaBundleType()
+      type: this.CHILD_BUNDLE_TYPE
     });
     this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
   };

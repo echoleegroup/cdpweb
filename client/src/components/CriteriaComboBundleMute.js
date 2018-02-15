@@ -28,23 +28,6 @@ class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
     //DO overwrite, but do nothing
   };
 
-  ComponentCriteriaBody(props) {
-    return (
-      <div className="head">
-        以下條件的明細記錄{this.CriteriaOperatorSelector()}符合
-        {this.ComponentCriteriaBodyTail()}
-      </div>
-    );
-  };
-
-  ComponentCriteriaBodyTail(props) {
-    return (
-      <div className="sub_conditon">
-        指定參考：<span>{this.getPropertyState('ref_label')}</span>
-      </div>
-    );
-  };
-
   ComponentCustomized(props) {
     return <div/>;
   };

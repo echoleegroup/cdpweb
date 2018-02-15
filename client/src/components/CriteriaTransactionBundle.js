@@ -14,6 +14,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
+    this.BUNDLE_TYPE_LABEL = '明細記錄';
     // state from super:
     // this.state = {
     //   isLoaded: true,
@@ -61,10 +62,12 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   // };
 
   ComponentCriteriaBody(props) {
+    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
+    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
     return (
       <div className="head">
-        以下條件的明細記錄{this.CriteriaOperatorSelector()}符合
-        {this.ComponentCriteriaBodyTail()}
+        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
+        <ComponentCriteriaBodyTail/>
       </div>
     );
   };

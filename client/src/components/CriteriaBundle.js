@@ -14,6 +14,8 @@ export default class CriteriaBundle extends React.PureComponent {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
+    this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
+    this.BUNDLE_TYPE_LABEL = '條件';
     this.state = {
       isLoaded: true,
       properties: Map(this.getBundleProperties(props.criteria))
@@ -26,16 +28,11 @@ export default class CriteriaBundle extends React.PureComponent {
     }));
   };
 
-
-  myFieldType() {
-    return CRITERIA_COMPONENT_DICT.BUNDLE;
-  };
-
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
     console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, ref_label=%s, ref=%s)', uuid, type, operator, ref_label, ref);
     return {
       uuid: uuid || shortid.generate(),
-      type: type || this.myFieldType(), //combo, ref, field
+      type: type || this.MY_BUNDLE_TYPE, //combo, ref, field
       operator: operator || 'and',   //and, or, eq, ne, lt, le, gt, ge, not
       ref: ref || null,
       ref_label: ref_label || null,
@@ -145,7 +142,7 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
     return (
       <div className="head">
-        以下條件<CriteriaOperatorSelector/>符合
+        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
         <ComponentCriteriaBodyTail/>
       </div>
     );
