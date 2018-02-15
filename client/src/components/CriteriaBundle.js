@@ -117,37 +117,45 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   render() {
+    let ComponentCriteriaBody = this.ComponentCriteriaBody.bind(this);
+    let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
+    let ComponentCustomized = this.ComponentCustomized.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
-        {this.ComponentCriteriaBody()}
+        <ComponentCriteriaBody/>
         {/*<!-- 第二層 -->*/}
-        {this.ComponentChildCriteriaBlock()}
-        {this.ComponentButtonInsertCriteria()}
-        {this.ComponentCustomized()}
+        <div className="level form-inline">
+          {this.state.properties.get('criteria').map((_criteria, index) => {
+            return this.ComponentChildCriteria(_criteria, index);
+          })}
+        </div>
+        <ComponentButtonInsertCriteria/>
+        <ComponentCustomized/>
       </div>
     );
   }
 
-  ComponentCustomized() {
+  ComponentCustomized(props) {
     return (<div/>);
   };
 
-  ComponentCriteriaBody() {
-    // console.log('CriteriaBundle::ComponentCriteriaBody');
+  ComponentCriteriaBody(props) {
+    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
+    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
     return (
       <div className="head">
-        以下條件{this.CriteriaOperatorSelector()}符合
-        {this.ComponentCriteriaBodyTail()}
+        以下條件<CriteriaOperatorSelector/>符合
+        <ComponentCriteriaBodyTail/>
       </div>
     );
   };
 
-  ComponentCriteriaBodyTail() {
+  ComponentCriteriaBodyTail(props) {
     return null;
   };
 
-  CriteriaOperatorSelector() {
+  CriteriaOperatorSelector(props) {
     // console.log('CriteriaOperatorSelector::CriteriaBundle: ', typeof this.state);
     return (
       <select className="form-control"
@@ -166,15 +174,15 @@ export default class CriteriaBundle extends React.PureComponent {
     );
   };
 
-  ComponentChildCriteriaBlock() {
-    return (
-      <div className="level form-inline">
-        {this.state.properties.get('criteria').map((_criteria, index) => {
-          return this.ComponentChildCriteria(_criteria, index);
-        })}
-      </div>
-    );
-  };
+  // ComponentChildCriteriaBlock() {
+  //   return (
+  //     <div className="level form-inline">
+  //       {this.state.properties.get('criteria').map((_criteria, index) => {
+  //         return this.ComponentChildCriteria(_criteria, index);
+  //       })}
+  //     </div>
+  //   );
+  // };
 
   ComponentChildCriteria(criteria, index) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
@@ -191,7 +199,7 @@ export default class CriteriaBundle extends React.PureComponent {
     }
   };
 
-  ComponentButtonInsertCriteria() {
+  ComponentButtonInsertCriteria(props) {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
@@ -200,6 +208,8 @@ export default class CriteriaBundle extends React.PureComponent {
           </button>
         </div>
       );
+    } else {
+      return null;
     }
   };
 };

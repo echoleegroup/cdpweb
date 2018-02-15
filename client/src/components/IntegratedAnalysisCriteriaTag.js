@@ -68,7 +68,7 @@ class CriteriaTagComboBundle extends CriteriaComboBundle {
     });
   };
 
-  ComponentButtonInsertCriteria() {
+  ComponentButtonInsertCriteria(props) {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
@@ -77,6 +77,8 @@ class CriteriaTagComboBundle extends CriteriaComboBundle {
           </button>
         </div>
       );
+    } else {
+      return null;
     }
   };
 }

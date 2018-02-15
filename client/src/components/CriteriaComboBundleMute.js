@@ -28,7 +28,7 @@ class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
     //DO overwrite, but do nothing
   };
 
-  ComponentCriteriaBody() {
+  ComponentCriteriaBody(props) {
     return (
       <div className="head">
         以下條件的明細記錄{this.CriteriaOperatorSelector()}符合
@@ -37,7 +37,7 @@ class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
     );
   };
 
-  ComponentCriteriaBodyTail() {
+  ComponentCriteriaBodyTail(props) {
     return (
       <div className="sub_conditon">
         指定參考：<span>{this.getPropertyState('ref_label')}</span>
@@ -45,7 +45,7 @@ class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
     );
   };
 
-  ComponentCustomized() {
+  ComponentCustomized(props) {
     return <div/>;
   };
 };

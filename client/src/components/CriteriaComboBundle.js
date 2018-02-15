@@ -73,7 +73,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
   };
 
-  ComponentButtonInsertCriteria() {
+  ComponentButtonInsertCriteria(props) {
     if (!this.props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
@@ -85,6 +85,8 @@ export default class CriteriaComboBundle extends CriteriaBundle {
           </button>
         </div>
       );
+    } else {
+      return null;
     }
   };
 };

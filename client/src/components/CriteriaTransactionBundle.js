@@ -55,12 +55,12 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   //   super.componentWillUnmount()
   // };
 
-  render() {
-    // console.log('CriteriaTransactionBundle render');
-    return super.render();
-  };
+  // render() {
+  //   // console.log('CriteriaTransactionBundle render');
+  //   return super.render();
+  // };
 
-  ComponentCriteriaBody() {
+  ComponentCriteriaBody(props) {
     return (
       <div className="head">
         以下條件的明細記錄{this.CriteriaOperatorSelector()}符合
@@ -69,7 +69,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     );
   };
 
-  ComponentCriteriaBodyTail() {
+  ComponentCriteriaBodyTail(props) {
     return (
       <div className="sub_conditon">
         指定參考：<span>{this.getPropertyState('ref_label')}</span>
@@ -77,7 +77,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     );
   };
 
-  ComponentCustomized() {
+  ComponentCustomized(props) {
     // if (this.props.isPreview) {
     //   return <div/>;
     // }
