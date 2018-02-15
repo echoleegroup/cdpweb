@@ -61,18 +61,18 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   //   return super.render();
   // };
 
-  ComponentCriteriaBody(props) {
+  ComponentBundleBody(props) {
     let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
-    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
+    let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
     return (
       <div className="head">
         以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
-        <ComponentCriteriaBodyTail/>
+        <ComponentBundleBodyTail/>
       </div>
     );
   };
 
-  ComponentCriteriaBodyTail(props) {
+  ComponentBundleBodyTail(props) {
     return (
       <div className="sub_conditon">
         指定參考：<span>{this.getPropertyState('ref_label')}</span>

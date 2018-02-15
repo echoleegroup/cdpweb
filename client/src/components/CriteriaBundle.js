@@ -114,13 +114,13 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   render() {
-    let ComponentCriteriaBody = this.ComponentCriteriaBody.bind(this);
+    let ComponentBundleBody = this.ComponentBundleBody.bind(this);
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
-        <ComponentCriteriaBody/>
+        <ComponentBundleBody/>
         {/*<!-- 第二層 -->*/}
         <div className="level form-inline">
           {this.state.properties.get('criteria').map((_criteria, index) => {
@@ -137,18 +137,18 @@ export default class CriteriaBundle extends React.PureComponent {
     return (<div/>);
   };
 
-  ComponentCriteriaBody(props) {
+  ComponentBundleBody(props) {
     let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
-    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
+    let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
     return (
       <div className="head">
         以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
-        <ComponentCriteriaBodyTail/>
+        <ComponentBundleBodyTail/>
       </div>
     );
   };
 
-  ComponentCriteriaBodyTail(props) {
+  ComponentBundleBodyTail(props) {
     return null;
   };
 
