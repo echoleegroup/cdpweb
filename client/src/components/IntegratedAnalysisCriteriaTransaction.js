@@ -77,7 +77,7 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
   };
 
   ComponentButtonInsertCriteria(props) {
-    if (!this.props.isPreview) {
+    if (!props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
           <button type="button" className="btn btn-warning" onClick={this.toInsertCriteriaBundle.bind(this)}>

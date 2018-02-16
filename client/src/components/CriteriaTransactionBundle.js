@@ -30,10 +30,6 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   componentWillMount() {
     super.componentWillMount();
 
-    this.toAssignCriteria = () => {
-      this.slaveModal.openModal(this.insertCriteriaState);
-    };
-
     this.fetchPreparedData = () => {
       this.fetchFeatureData(({features, featureRefCodeMap}) => {
         this.setState({
@@ -61,21 +57,14 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   //   return super.render();
   // };
 
-  ComponentBundleBody(props) {
-    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
-    let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
-    return (
-      <div className="head">
-        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
-        <ComponentBundleBodyTail/>
-      </div>
-    );
+  addCriteriaClickHandler() {
+    this.slaveModal.openModal(this.insertCriteriaState);
   };
 
   ComponentBundleBodyTail(props) {
     return (
       <div className="sub_conditon">
-        指定參考：<span>{this.getPropertyState('ref_label')}</span>
+        指定參考：<span>{props.criteria.ref_label}</span>
       </div>
     );
   };

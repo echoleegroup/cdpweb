@@ -47,10 +47,10 @@ export default class CriteriaComboBundleList extends React.PureComponent {
       }, []);
     };
   }
-
-  componentWillUnmount() {
-    console.log('CriteriaComboBundleList::componentWillUnmount');
-  };
+  //
+  // componentWillUnmount() {
+  //   console.log('CriteriaComboBundleList::componentWillUnmount');
+  // };
 
   render() {
     let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;

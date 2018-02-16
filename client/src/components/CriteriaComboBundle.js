@@ -73,10 +73,10 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   };
 
   ComponentButtonInsertCriteria(props) {
-    if (!this.props.isPreview) {
+    if (!props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.toAssignCriteria}>
+          <button type="button" className="btn btn-warning" onClick={this.addCriteriaClickHandler.bind(this)}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
           <button type="button" className="btn btn-warning" onClick={this.toInsertCriteriaBundle.bind(this)}>

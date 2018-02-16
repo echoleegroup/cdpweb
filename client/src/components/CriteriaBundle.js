@@ -1,6 +1,6 @@
 import React from 'react';
 import {List, Map} from 'immutable';
-import {isEmpty, reduce, assign} from 'lodash';
+import {isEmpty, reduce, assign, map} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
@@ -80,10 +80,6 @@ export default class CriteriaBundle extends React.PureComponent {
       });
     };
 
-    this.toAssignCriteria = () => {
-      this.props.assignCriteria(this.insertCriteriaState);
-    };
-
     this.insertCriteriaState = (criteria) => {
       let childCriteria = List(this.gatheringChildCriteria()).push(criteria);
       this.updatePropertyState('criteria', childCriteria);
@@ -95,6 +91,12 @@ export default class CriteriaBundle extends React.PureComponent {
 
     this.getPropertyState = (key) => {
       return this.state.properties.get(key);
+    };
+
+    this.changeOperatorHandler = (value) => {
+      let childCriteria = List(this.gatheringChildCriteria());
+      this.updatePropertyState('criteria', childCriteria);
+      this.updatePropertyState('operator', value);
     };
 
     this.updatePropertyState = (key, value) => {
@@ -121,33 +123,48 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentBundleBody = this.ComponentBundleBody.bind(this);
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
+    let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
+    let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
-        <ComponentBundleBody/>
+        <ComponentBundleBody criteria={this.state.properties.toJS()}
+                             isPreview={this.props.isPreview}
+                             changeOperatorHandler={this.changeOperatorHandler}
+                             ComponentBundleOperator={ComponentBundleOperator}
+                             ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
         <div className="level form-inline">
           {this.state.properties.get('criteria').map((_criteria, index) => {
             return this.ComponentChildCriteria(_criteria, index);
           })}
         </div>
-        <ComponentButtonInsertCriteria/>
+        <ComponentButtonInsertCriteria isPreview={this.props.isPreview}/>
         <ComponentCustomized/>
       </div>
     );
   }
+
+  addCriteriaClickHandler() {
+    this.props.assignCriteria(this.insertCriteriaState);
+  };
 
   ComponentCustomized(props) {
     return (<div/>);
   };
 
   ComponentBundleBody(props) {
-    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
-    let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
+    let ComponentBundleOperator = props.ComponentBundleOperator;
+    let ComponentBundleBodyTail = props.ComponentBundleBodyTail;
     return (
       <div className="head">
-        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
-        <ComponentBundleBodyTail/>
+        以下{this.BUNDLE_TYPE_LABEL}
+        <ComponentBundleOperator criteria={props.criteria}
+                                 isPreview={props.isPreview}
+                                 OPERATOR_OPTIONS={this.OPERATOR_OPTIONS}
+                                 changeOperatorHandler={props.changeOperatorHandler}/>符合
+        <ComponentBundleBodyTail criteria={props.criteria}
+                                 isPreview={props.isPreview}/>
       </div>
     );
   };
@@ -156,21 +173,19 @@ export default class CriteriaBundle extends React.PureComponent {
     return null;
   };
 
-  CriteriaOperatorSelector(props) {
-    // console.log('CriteriaOperatorSelector::CriteriaBundle: ', typeof this.state);
+  ComponentBundleOperator(props) {
+    // console.log('ComponentBundleOperator::CriteriaBundle: ', typeof this.state);
     return (
       <select className="form-control"
-              defaultValue={this.getPropertyState('operator')}
-              disabled={this.props.isPreview}
+              defaultValue={props.criteria.operator}
+              disabled={props.isPreview}
               onChange={(e) => {
                 let value = e.target.value;
-                let childCriteria = List(this.gatheringChildCriteria());
-                this.updatePropertyState('criteria', childCriteria);
-                this.updatePropertyState('operator', value);
+                props.changeOperatorHandler(value);
       }}>
         {
-          Object.keys(this.OPERATOR_OPTIONS).map((key) => {
-            return <option value={key} key={key}>{this.OPERATOR_OPTIONS[key]}</option>;
+          map(props.OPERATOR_OPTIONS, (value, key) => {
+            return <option value={key} key={key}>{value}</option>;
           })
         }
       </select>
@@ -203,10 +218,10 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   ComponentButtonInsertCriteria(props) {
-    if (!this.props.isPreview) {
+    if (!props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.toAssignCriteria}>
+          <button type="button" className="btn btn-warning" onClick={this.addCriteriaClickHandler.bind(this)}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
         </div>
