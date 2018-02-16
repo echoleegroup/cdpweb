@@ -3,6 +3,7 @@ import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import CriteriaComboBundle from "./CriteriaComboBundle";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
+import {List} from "immutable";
 
 export default class IntegratedAnalysisCriteriaTag extends IntegratedAnalysisCriteriaBase {
   subheadText() {
@@ -63,7 +64,8 @@ class CriteriaTagComboBundle extends CriteriaComboBundle {
         ref: ref,
         ref_label: refLabel
       });
-      this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
+      let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
+      this.updatePropertyState('criteria', childCriteria);
     });
   };
 

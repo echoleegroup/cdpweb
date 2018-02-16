@@ -85,8 +85,8 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.insertCriteriaState = (criteria) => {
-      // console.log('CriteriaBundle:insertCriteria: ', criteria);
-      this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteria));
+      let childCriteria = List(this.gatheringChildCriteria()).push(criteria);
+      this.updatePropertyState('criteria', childCriteria);
     };
 
     this.removeCriteria = (index) => {
@@ -164,6 +164,8 @@ export default class CriteriaBundle extends React.PureComponent {
               disabled={this.props.isPreview}
               onChange={(e) => {
                 let value = e.target.value;
+                let childCriteria = List(this.gatheringChildCriteria());
+                this.updatePropertyState('criteria', childCriteria);
                 this.updatePropertyState('operator', value);
       }}>
         {

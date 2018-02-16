@@ -2,6 +2,7 @@ import React from 'react';
 import CriteriaBundle from './CriteriaBundle';
 import CriteriaTransactionBundle from './CriteriaTransactionBundle';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
+import {List} from "immutable";
 
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
@@ -67,7 +68,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     let criteriaModel = this.getBundleProperties({
       type: this.CHILD_BUNDLE_TYPE
     });
-    let childCriteria = this.gatheringChildCriteria().concat(criteriaModel);
+    let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
     this.updatePropertyState('criteria', childCriteria);
   };
 

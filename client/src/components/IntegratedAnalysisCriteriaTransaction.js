@@ -1,5 +1,6 @@
 import React from 'react';
 import {assign} from 'lodash';
+import {List} from 'immutable';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
@@ -70,7 +71,7 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
         ref: setId,
         ref_label: setLabel
       });
-      let childCriteria = this.gatheringChildCriteria().concat(criteriaModel);
+      let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
       this.updatePropertyState('criteria', childCriteria);
     });
   };
