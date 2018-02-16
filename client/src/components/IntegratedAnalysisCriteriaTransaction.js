@@ -70,7 +70,8 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
         ref: setId,
         ref_label: setLabel
       });
-      this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
+      let childCriteria = this.gatheringChildCriteria().concat(criteriaModel);
+      this.updatePropertyState('criteria', childCriteria);
     });
   };
 

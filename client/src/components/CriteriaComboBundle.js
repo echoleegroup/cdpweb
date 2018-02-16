@@ -64,11 +64,11 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   };
 
   toInsertCriteriaBundle() {
-    // console.log('toInsertCriteriaBundle: ', this.state.criteria.toJS());
     let criteriaModel = this.getBundleProperties({
       type: this.CHILD_BUNDLE_TYPE
     });
-    this.updatePropertyState('criteria', this.getPropertyState('criteria').push(criteriaModel));
+    let childCriteria = this.gatheringChildCriteria().concat(criteriaModel);
+    this.updatePropertyState('criteria', childCriteria);
   };
 
   ComponentButtonInsertCriteria(props) {

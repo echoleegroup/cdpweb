@@ -59,15 +59,19 @@ export default class CriteriaBundle extends React.PureComponent {
       // console.log('CriteriaBundle::removeCriteriaComponents: ', this.criteriaComponents);
     };
 
-    this.criteriaGathering = () => {
-      // console.log('CriteriaBundle::criteriaGathering: ', this.criteriaComponents);
-      let subCrits = reduce(this.criteriaComponents, (collector, comp, uuid) => {
+    this.gatheringChildCriteria = () => {
+      return reduce(this.criteriaComponents, (collector, comp, uuid) => {
         let crite = comp.criteriaGathering(); //immutable Map
         // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
         if (!isEmpty(crite))
           collector.push(crite);
         return collector
       }, []);
+    };
+
+    this.criteriaGathering = () => {
+      // console.log('CriteriaBundle::criteriaGathering: ', this.criteriaComponents);
+      let subCrits = this.gatheringChildCriteria();
 
       // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
       // console.log('CriteriaBundle::criteriaGathering::subCrits.length ', subCrits.length);
