@@ -82,11 +82,18 @@ export default class CriteriaBundle extends React.PureComponent {
 
     this.insertCriteriaState = (criteria) => {
       let childCriteria = List(this.gatheringChildCriteria()).push(criteria);
-      this.updatePropertyState('criteria', childCriteria);
+      // this.updatePropertyState('criteria', childCriteria);
+      this.setState(prevState => ({
+        properties: prevState.properties.set('criteria', childCriteria)
+      }));
+      // this.updatePropertyState('criteria', this.state.properties.get('criteria').push(criteria));
     };
 
     this.removeCriteria = (index) => {
-      this.updatePropertyState('criteria', this.getPropertyState('criteria').delete(index));
+      this.setState(prevState => ({
+        properties: prevState.properties.set('criteria', prevState.properties.get('criteria').delete(index))
+      }));
+      // this.updatePropertyState('criteria', this.getPropertyState('criteria').delete(index));
     };
 
     this.getPropertyState = (key) => {
@@ -95,15 +102,18 @@ export default class CriteriaBundle extends React.PureComponent {
 
     this.changeOperatorHandler = (value) => {
       let childCriteria = List(this.gatheringChildCriteria());
-      this.updatePropertyState('criteria', childCriteria);
-      this.updatePropertyState('operator', value);
+      this.setState(prevState => ({
+        properties: prevState.properties.set('operator', value).set('criteria', childCriteria)
+      }));
+      // this.updatePropertyState('criteria', childCriteria);
+      // this.updatePropertyState('operator', value);
     };
 
-    this.updatePropertyState = (key, value) => {
-      this.setState(prevState => ({
-        properties: prevState.properties.set(key, value)
-      }));
-    };
+    // this.updatePropertyState = (key, value) => {
+    //   this.setState(prevState => ({
+    //     properties: prevState.properties.set(key, value)
+    //   }));
+    // };
   };
 
   componentDidMount() {
@@ -125,6 +135,7 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
+    let ComponentChildCriteriaList = this.ComponentChildCriteriaList.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
@@ -135,9 +146,11 @@ export default class CriteriaBundle extends React.PureComponent {
                              ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
         <div className="level form-inline">
-          {this.state.properties.get('criteria').map((_criteria, index) => {
-            return this.ComponentChildCriteria(_criteria, index);
-          })}
+          <ComponentChildCriteriaList isPreview={this.props.isPreview}
+                                      criteria={this.state.properties.get('criteria')}/>
+          {/*{this.state.properties.get('criteria').map((_criteria, index) => {*/}
+            {/*return <ComponentChildCriteria key={_criteria.uuid} criteria={_criteria} index={index}/>*/}
+          {/*})}*/}
         </div>
         <ComponentButtonInsertCriteria isPreview={this.props.isPreview}/>
         <ComponentCustomized/>
@@ -202,13 +215,25 @@ export default class CriteriaBundle extends React.PureComponent {
   //   );
   // };
 
-  ComponentChildCriteria(criteria, index) {
+  ComponentChildCriteriaList(props) {
+    let criteria = props.criteria;
+    let ComponentChildCriteria = this.ComponentChildCriteria.bind(this);
+    return criteria.map((_criteria, index) => {
+      return <ComponentChildCriteria key={_criteria.uuid}
+                                     isPreview={props.isPreview}
+                                     criteria={_criteria}
+                                     index={index}/>
+      // return this.ComponentChildCriteria(_criteria, index);
+    })
+  };
+
+  ComponentChildCriteria(props) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
+    let criteria = props.criteria;
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.FIELD:
-        return <CriteriaField key={criteria.uuid} {...this.props}
-                              criteria={criteria}
-                              index={index}
+        return <CriteriaField criteria={criteria}
+                              index={props.index}
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}/>;

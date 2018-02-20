@@ -72,7 +72,10 @@ class CriteriaTransactionComboBundle extends CriteriaComboBundle {
         ref_label: setLabel
       });
       let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
-      this.updatePropertyState('criteria', childCriteria);
+      this.setState(prevState => ({
+        properties: prevState.properties.set('criteria', childCriteria)
+      }));
+      // this.updatePropertyState('criteria', childCriteria);
     });
   };
 

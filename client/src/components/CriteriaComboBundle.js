@@ -35,32 +35,35 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   //   super.componentWillUnmount();
   // };
 
-  ComponentChildCriteria(criteria, index) {
+  ComponentChildCriteria(props) {
     // console.log('ComponentChildCriteria: ', criteria);
+    let criteria = props.criteria;
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.COMBO:
-        return <CriteriaComboBundle key={criteria.uuid} {...this.props}
-                                    criteria={criteria}
-                                    index={index}
+        return <CriteriaComboBundle criteria={criteria}
+                                    index={props.index}
+                                    isPreview={props.isPreview}
                                     removeCriteria={this.removeCriteria}
                                     collectCriteriaComponents={this.collectCriteriaComponents}
                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.BUNDLE:
-        return <CriteriaBundle key={criteria.uuid} {...this.props}
-                               criteria={criteria}
-                               index={index}
+        return <CriteriaBundle criteria={criteria}
+                               index={props.index}
+                               isPreview={props.isPreview}
+                               assignCriteria={this.props.assignCriteria}
                                removeCriteria={this.removeCriteria}
                                collectCriteriaComponents={this.collectCriteriaComponents}
                                removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundle key={criteria.uuid} {...this.props}
-                                     criteria={criteria}
-                                     index={index}
-                                     removeCriteria={this.removeCriteria}
-                                     collectCriteriaComponents={this.collectCriteriaComponents}
-                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
+        return <CriteriaTransactionBundle criteria={criteria}
+                                          index={props.index}
+                                          isPreview={props.isPreview}
+                                          removeCriteria={this.removeCriteria}
+                                          collectCriteriaComponents={this.collectCriteriaComponents}
+                                          removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
-        return super.ComponentChildCriteria(criteria, index);
+        let SuperComponentChildCriteria = super.ComponentChildCriteria.bind(this);
+        return <SuperComponentChildCriteria {...props}/>
     }
   };
 
@@ -69,7 +72,11 @@ export default class CriteriaComboBundle extends CriteriaBundle {
       type: this.CHILD_BUNDLE_TYPE
     });
     let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
-    this.updatePropertyState('criteria', childCriteria);
+    this.setState(prevState => ({
+      properties: prevState.properties.set('criteria', childCriteria)
+    }));
+    // this.updatePropertyState('criteria', childCriteria);
+    // this.updatePropertyState('criteria', this.state.properties.get('criteria').push(criteriaModel));
   };
 
   ComponentButtonInsertCriteria(props) {

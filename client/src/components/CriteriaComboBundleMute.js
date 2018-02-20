@@ -6,18 +6,19 @@ import CriteriaComboBundle from "./CriteriaComboBundle";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
 export default class CriteriaComboBundleMute extends CriteriaComboBundle {
-  ComponentChildCriteria(criteria, index) {
+  ComponentChildCriteria(props) {
     // console.log('ComponentChildCriteria: ', criteria);
+    let criteria = props.criteria;
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundleMute key={criteria.uuid} {...this.props}
-                                          criteria={criteria}
-                                          index={index}
-                                          removeCriteria={this.removeCriteria}
-                                          collectCriteriaComponents={this.collectCriteriaComponents}
-                                          removeCriteriaComponents={this.removeCriteriaComponents}/>;
+        return <CriteriaTransactionBundleMute criteria={criteria}
+                                              index={props.index}
+                                              removeCriteria={this.removeCriteria}
+                                              collectCriteriaComponents={this.collectCriteriaComponents}
+                                              removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
-        return super.ComponentChildCriteria(criteria, index);
+        let SuperComponentChildCriteria = super.ComponentChildCriteria.bind(this);
+        return <SuperComponentChildCriteria {...props}/>
     }
   };
 }
