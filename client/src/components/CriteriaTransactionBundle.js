@@ -57,11 +57,18 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   //   return super.render();
   // };
 
-  addCriteriaClickHandler() {
-    this.slaveModal.openModal(this.insertCriteriaState);
+  ComponentCriteriaBody(props) {
+    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
+    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
+    return (
+      <div className="head">
+        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
+        <ComponentCriteriaBodyTail/>
+      </div>
+    );
   };
 
-  ComponentBundleBodyTail(props) {
+  ComponentCriteriaBodyTail(props) {
     return (
       <div className="sub_conditon">
         指定參考：<span>{props.criteria.ref_label}</span>

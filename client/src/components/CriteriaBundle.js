@@ -129,7 +129,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   render() {
-    let ComponentBundleBody = this.ComponentBundleBody.bind(this);
+    let ComponentCriteriaBody = this.ComponentCriteriaBody.bind(this);
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
@@ -138,11 +138,7 @@ export default class CriteriaBundle extends React.PureComponent {
     return (
       <div>
         {/*<!-- head -->*/}
-        <ComponentBundleBody criteria={this.state.properties.toJS()}
-                             isPreview={this.props.isPreview}
-                             changeOperatorHandler={this.changeOperatorHandler}
-                             ComponentBundleOperator={ComponentBundleOperator}
-                             ComponentBundleBodyTail={ComponentBundleBodyTail}/>
+        <ComponentCriteriaBody/>
         {/*<!-- 第二層 -->*/}
         <div className="level form-inline">
           <ComponentChildCriteriaList isPreview={this.props.isPreview}
@@ -165,23 +161,18 @@ export default class CriteriaBundle extends React.PureComponent {
     return (<div/>);
   };
 
-  ComponentBundleBody(props) {
-    let ComponentBundleOperator = props.ComponentBundleOperator;
-    let ComponentBundleBodyTail = props.ComponentBundleBodyTail;
+  ComponentCriteriaBody(props) {
+    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
+    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
     return (
       <div className="head">
-        以下{this.BUNDLE_TYPE_LABEL}
-        <ComponentBundleOperator criteria={props.criteria}
-                                 isPreview={props.isPreview}
-                                 OPERATOR_OPTIONS={this.OPERATOR_OPTIONS}
-                                 changeOperatorHandler={props.changeOperatorHandler}/>符合
-        <ComponentBundleBodyTail criteria={props.criteria}
-                                 isPreview={props.isPreview}/>
+        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
+        <ComponentCriteriaBodyTail/>
       </div>
     );
   };
 
-  ComponentBundleBodyTail(props) {
+  ComponentCriteriaBodyTail(props) {
     return null;
   };
 
