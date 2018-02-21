@@ -35,35 +35,35 @@ export default class CriteriaComboBundle extends CriteriaBundle {
   //   super.componentWillUnmount();
   // };
 
-  ComponentChildCriteria(props) {
+  ComponentChildCriteria(criteria, index) {
     // console.log('ComponentChildCriteria: ', criteria);
-    let criteria = props.criteria;
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.COMBO:
-        return <CriteriaComboBundle criteria={criteria}
-                                    index={props.index}
-                                    isPreview={props.isPreview}
+        return <CriteriaComboBundle key={criteria.uuid}
+                                    criteria={criteria}
+                                    index={index}
+                                    isPreview={this.props.isPreview}
                                     removeCriteria={this.removeCriteria}
                                     collectCriteriaComponents={this.collectCriteriaComponents}
                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.BUNDLE:
-        return <CriteriaBundle criteria={criteria}
-                               index={props.index}
-                               isPreview={props.isPreview}
+        return <CriteriaBundle key={criteria.uuid}
+                               criteria={criteria}
+                               index={index}
+                               isPreview={this.props.isPreview}
                                assignCriteria={this.props.assignCriteria}
                                removeCriteria={this.removeCriteria}
                                collectCriteriaComponents={this.collectCriteriaComponents}
                                removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundle criteria={criteria}
-                                          index={props.index}
-                                          isPreview={props.isPreview}
+        return <CriteriaTransactionBundle key={criteria.uuid}
+                                          criteria={criteria}
+                                          index={index}
                                           removeCriteria={this.removeCriteria}
                                           collectCriteriaComponents={this.collectCriteriaComponents}
                                           removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
-        let SuperComponentChildCriteria = super.ComponentChildCriteria.bind(this);
-        return <SuperComponentChildCriteria {...props}/>
+        return super.ComponentChildCriteria(criteria, index);
     }
   };
 
@@ -71,19 +71,17 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     let criteriaModel = this.getBundleProperties({
       type: this.CHILD_BUNDLE_TYPE
     });
-    let childCriteria = List(this.gatheringChildCriteria()).push(criteriaModel);
+
     this.setState(prevState => ({
-      properties: prevState.properties.set('criteria', childCriteria)
+      properties: prevState.properties.set('criteria', prevState.properties.get('criteria').push(criteriaModel))
     }));
-    // this.updatePropertyState('criteria', childCriteria);
-    // this.updatePropertyState('criteria', this.state.properties.get('criteria').push(criteriaModel));
   };
 
   ComponentButtonInsertCriteria(props) {
     if (!props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.addCriteriaClickHandler.bind(this)}>
+          <button type="button" className="btn btn-warning" onClick={props.addCriteriaClickHandler}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
           <button type="button" className="btn btn-warning" onClick={this.toInsertCriteriaBundle.bind(this)}>

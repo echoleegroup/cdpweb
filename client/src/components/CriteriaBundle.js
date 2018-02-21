@@ -23,6 +23,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps: ', nextProps);
     if (this.props.isPreview !== nextProps.isPreview) {
       this.setState(prevState => ({
         properties: prevState.properties.merge(this.getBundleProperties(nextProps.criteria))
@@ -82,19 +83,16 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.insertCriteriaState = (criteria) => {
-      let childCriteria = List(this.gatheringChildCriteria()).push(criteria);
-      // this.updatePropertyState('criteria', childCriteria);
+      // console.log('CriteriaBundle:insertCriteria: ', criteria);
       this.setState(prevState => ({
-        properties: prevState.properties.set('criteria', childCriteria)
+        properties: prevState.properties.set('criteria', prevState.properties.get('criteria').push(criteria))
       }));
-      // this.updatePropertyState('criteria', this.state.properties.get('criteria').push(criteria));
     };
 
     this.removeCriteria = (index) => {
       this.setState(prevState => ({
         properties: prevState.properties.set('criteria', prevState.properties.get('criteria').delete(index))
       }));
-      // this.updatePropertyState('criteria', this.getPropertyState('criteria').delete(index));
     };
 
     this.getPropertyState = (key) => {
@@ -102,9 +100,8 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.changeOperatorHandler = (value) => {
-      let childCriteria = List(this.gatheringChildCriteria());
       this.setState(prevState => ({
-        properties: prevState.properties.set('operator', value).set('criteria', childCriteria)
+        properties: prevState.properties.set('operator', value)
       }));
       // this.updatePropertyState('criteria', childCriteria);
       // this.updatePropertyState('operator', value);
@@ -126,34 +123,46 @@ export default class CriteriaBundle extends React.PureComponent {
   // };
 
   componentWillUnmount() {
-    // console.log('CriteriaBundle::componentWillUnmount: ', this.state);
+    console.log('CriteriaBundle::componentWillUnmount: ', this.state);
     this.props.removeCriteriaComponents(this.getPropertyState('uuid'));
   };
 
   render() {
-    let ComponentCriteriaBody = this.ComponentCriteriaBody.bind(this);
+    let ComponentBundleBody = this.ComponentBundleBody.bind(this);
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
-    let ComponentChildCriteriaList = this.ComponentChildCriteriaList.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
-        <ComponentCriteriaBody/>
+        <ComponentBundleBody criteria={this.state.properties.toJS()}
+                             isPreview={this.props.isPreview}
+                             OPERATOR_OPTIONS={this.OPERATOR_OPTIONS}
+                             changeOperatorHandler={this.changeOperatorHandler}
+                             ComponentBundleOperator={ComponentBundleOperator}
+                             ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
         <div className="level form-inline">
-          <ComponentChildCriteriaList isPreview={this.props.isPreview}
-                                      criteria={this.state.properties.get('criteria')}/>
-          {/*{this.state.properties.get('criteria').map((_criteria, index) => {*/}
-            {/*return <ComponentChildCriteria key={_criteria.uuid} criteria={_criteria} index={index}/>*/}
-          {/*})}*/}
+          {this.state.properties.get('criteria').map((_criteria, index) => {
+            return this.ComponentChildCriteria(_criteria, index);
+            // console.log('_criteria.uuid: ', _criteria.uuid);
+            // return <ComponentChildCriteria key={_criteria.uuid}
+            //                         isPreview={this.props.isPreview}
+            //                         criteria={_criteria}
+            //                         index={index}/>
+          })}
         </div>
-        <ComponentButtonInsertCriteria isPreview={this.props.isPreview}/>
+        <ComponentButtonInsertCriteria isPreview={this.props.isPreview}
+                                       addCriteriaClickHandler={this.addCriteriaClickHandler.bind(this)}/>
         <ComponentCustomized/>
       </div>
     );
-  }
+  };
+
+  addCriteriaClickHandler() {
+    this.props.assignCriteria(this.insertCriteriaState);
+  };
 
   addCriteriaClickHandler() {
     this.props.assignCriteria(this.insertCriteriaState);
@@ -163,18 +172,23 @@ export default class CriteriaBundle extends React.PureComponent {
     return (<div/>);
   };
 
-  ComponentCriteriaBody(props) {
-    let CriteriaOperatorSelector = this.CriteriaOperatorSelector.bind(this);
-    let ComponentCriteriaBodyTail = this.ComponentCriteriaBodyTail.bind(this);
+  ComponentBundleBody(props) {
+    let ComponentBundleOperator = props.ComponentBundleOperator;
+    let ComponentBundleBodyTail = props.ComponentBundleBodyTail;
     return (
       <div className="head">
-        以下{this.BUNDLE_TYPE_LABEL}<CriteriaOperatorSelector/>符合
-        <ComponentCriteriaBodyTail/>
+        以下{this.BUNDLE_TYPE_LABEL}
+        <ComponentBundleOperator criteria={props.criteria}
+                                 isPreview={props.isPreview}
+                                 OPERATOR_OPTIONS={props.OPERATOR_OPTIONS}
+                                 changeOperatorHandler={props.changeOperatorHandler}/>符合
+        <ComponentBundleBodyTail criteria={props.criteria}
+                                 isPreview={props.isPreview}/>
       </div>
     );
   };
 
-  ComponentCriteriaBodyTail(props) {
+  ComponentBundleBodyTail(props) {
     return null;
   };
 
@@ -187,7 +201,7 @@ export default class CriteriaBundle extends React.PureComponent {
               onChange={(e) => {
                 let value = e.target.value;
                 props.changeOperatorHandler(value);
-      }}>
+              }}>
         {
           map(props.OPERATOR_OPTIONS, (value, key) => {
             return <option value={key} key={key}>{value}</option>;
@@ -207,25 +221,13 @@ export default class CriteriaBundle extends React.PureComponent {
   //   );
   // };
 
-  ComponentChildCriteriaList(props) {
-    let criteria = props.criteria;
-    let ComponentChildCriteria = this.ComponentChildCriteria.bind(this);
-    return criteria.map((_criteria, index) => {
-      return <ComponentChildCriteria key={_criteria.uuid}
-                                     isPreview={props.isPreview}
-                                     criteria={_criteria}
-                                     index={index}/>
-      // return this.ComponentChildCriteria(_criteria, index);
-    })
-  };
-
-  ComponentChildCriteria(props) {
+  ComponentChildCriteria(criteria, index) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
-    let criteria = props.criteria;
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.FIELD:
-        return <CriteriaField criteria={criteria}
-                              index={props.index}
+        return <CriteriaField key={criteria.uuid}
+                              criteria={criteria}
+                              index={index}
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
@@ -238,7 +240,7 @@ export default class CriteriaBundle extends React.PureComponent {
     if (!props.isPreview) {
       return (
         <div className="add_condition">{/*<!-- 加條件 條件組合 -->*/}
-          <button type="button" className="btn btn-warning" onClick={this.addCriteriaClickHandler.bind(this)}>
+          <button type="button" className="btn btn-warning" onClick={props.addCriteriaClickHandler}>
             <i className="fa fa-plus" aria-hidden="true"/>加條件
           </button>
         </div>
