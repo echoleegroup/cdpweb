@@ -4,15 +4,6 @@ import {reduce, isEmpty, assign} from 'lodash';
 import shortid from 'shortid';
 // import {List} from "immutable";
 
-const DEFAULT_BUNDLE_PROPS = {
-  uuid: shortid.generate()
-  //type: 'combo',  //combo, ref, field
-  //operator: 'and',  //and, or, eq, ne, lt, le, gt, ge, not
-  //ref: null,
-  //ref_label: null,
-  //criteria: List()
-};
-
 const getDefaultBundleProps = () => {
   // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);
   return {

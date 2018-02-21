@@ -23,7 +23,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps: ', nextProps);
+    // console.log('componentWillReceiveProps: ', nextProps);
     if (this.props.isPreview !== nextProps.isPreview) {
       this.setState(prevState => ({
         properties: prevState.properties.merge(this.getBundleProperties(nextProps.criteria))
@@ -123,7 +123,7 @@ export default class CriteriaBundle extends React.PureComponent {
   // };
 
   componentWillUnmount() {
-    console.log('CriteriaBundle::componentWillUnmount: ', this.state);
+    // console.log('CriteriaBundle::componentWillUnmount: ', this.state);
     this.props.removeCriteriaComponents(this.getPropertyState('uuid'));
   };
 
