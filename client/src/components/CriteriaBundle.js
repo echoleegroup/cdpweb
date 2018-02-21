@@ -29,7 +29,6 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
-    console.log('CriteriaBundle::getBundleProperties::injection.criteria(uuid=%s, type=%s, operator=%s, ref_label=%s, ref=%s)', uuid, type, operator, ref_label, ref);
     return {
       uuid: uuid || shortid.generate(),
       type: type || this.MY_BUNDLE_TYPE, //combo, ref, field
@@ -45,7 +44,7 @@ export default class CriteriaBundle extends React.PureComponent {
     this.criteriaComponents = {};
 
     this.collectCriteriaComponents = (uuid, component) => {
-      console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', uuid);
+      // console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', uuid);
       this.criteriaComponents[uuid] = component;
     };
 

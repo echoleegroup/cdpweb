@@ -13,6 +13,13 @@ const DEFAULT_BUNDLE_PROPS = {
   //criteria: List()
 };
 
+const getDefaultBundleProps = () => {
+  // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);
+  return {
+    uuid: shortid.generate()
+  };
+};
+
 export default class CriteriaComboBundleList extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -20,8 +27,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
 
   componentWillMount() {
     this.criteriaComponents = {};
-    this.id = shortid.generate();
-    console.log('CriteriaComboBundleList  componentWillMount: ', this.id);
+    // console.log('CriteriaComboBundleList  componentWillMount: ', this.criteriaComponents);
 
     this.collectCriteriaComponents = (uuid, component) => {
       this.criteriaComponents[uuid] = component;
@@ -39,10 +45,10 @@ export default class CriteriaComboBundleList extends React.PureComponent {
     };
 
     this.criteriaGathering = () => {
-      console.log('CriteriaComboBundleList::criteriaGathering: ', this.criteriaComponents);
+      // console.log('CriteriaComboBundleList::criteriaGathering: ', this.criteriaComponents);
       return reduce(this.criteriaComponents, (collector, comp) => {
         let crite = comp.criteriaGathering(); //immutable map
-        console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
+        // console.log('CriteriaComboBundleList::componentWillMount::criteriaGathering::crite ', crite);
         return isEmpty(crite)? collector: collector.concat(crite);
       }, []);
     };
@@ -53,7 +59,6 @@ export default class CriteriaComboBundleList extends React.PureComponent {
   // };
 
   render() {
-    let criteria = isEmpty(this.props.criteria)? [this.getDefaultBundleProps()]: this.props.criteria;
     let ComponentCriteriaBundleContainer = this.props.ComponentCriteriaBundleContainer;
     let criteria =  isEmpty(this.props.criteria)? [getDefaultBundleProps()]: this.props.criteria;
     // console.log('CriteriaComboBundleList:render::_criteria: ', criteria);
@@ -62,12 +67,12 @@ export default class CriteriaComboBundleList extends React.PureComponent {
         {criteria.map(_criteria => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <ComponentCriteriaBundleContainer //{...this.props}
-                                                   key={_criteria.uuid}
-                                                   isPreview={this.props.isPreview}
-                                                   criteria={_criteria}
-                                                   assignCriteria={this.props.assignCriteria}
-                                                   collectCriteriaComponents={this.collectCriteriaComponents}
-                                                   removeCriteriaComponents={this.removeCriteriaComponents}/>
+            key={_criteria.uuid}
+            isPreview={this.props.isPreview}
+            criteria={_criteria}
+            assignCriteria={this.props.assignCriteria}
+            collectCriteriaComponents={this.collectCriteriaComponents}
+            removeCriteriaComponents={this.removeCriteriaComponents}/>
         })}
       </div>
     );
