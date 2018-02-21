@@ -59,6 +59,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
         return <CriteriaTransactionBundle key={criteria.uuid}
                                           criteria={criteria}
                                           index={index}
+                                          isPreview={this.props.isPreview}
                                           removeCriteria={this.removeCriteria}
                                           collectCriteriaComponents={this.collectCriteriaComponents}
                                           removeCriteriaComponents={this.removeCriteriaComponents}/>;
