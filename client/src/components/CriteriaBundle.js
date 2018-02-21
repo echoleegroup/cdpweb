@@ -23,9 +23,11 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState(prevState => ({
-      properties: prevState.properties.merge(this.getBundleProperties(nextProps.criteria))
-    }));
+    if (this.props.isPreview !== nextProps.isPreview) {
+      this.setState(prevState => ({
+        properties: prevState.properties.merge(this.getBundleProperties(nextProps.criteria))
+      }));
+    }
   };
 
   getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
