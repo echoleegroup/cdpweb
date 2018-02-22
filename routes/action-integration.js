@@ -10,9 +10,7 @@ module.exports = (app) => {
   console.log('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
-  router.get('/analysis', function (req, res, next) {
-    let mdId = req.params.mdId;
-    let batId = req.params.batId;
+  router.get('/query', function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -24,20 +22,6 @@ module.exports = (app) => {
       navMenuList: navMenuList,
       mgrMenuList: mgrMenuList
     });
-    /*
-        Q.nfcall(modelService.getModel, mdId).then((result) => {
-          res.render('target-filter', {
-            user: req.user,
-            modelInfo: result,
-            modelList: modelList,
-            navMenuList: navMenuList,
-            mgrMenuList: mgrMenuList
-          });
-        }).fail((err) => {
-          winston.error('===/custom/filter/%s/%s failed:', mdId, batId,  err);
-          next(boom.internal());
-        });
-        */
   });
 
   return router;

@@ -9,8 +9,11 @@ const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
 const codeGroupService = require('../../services/code-group-service');
+const queryService = require('../../services/query-log-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
+const constants = require('../../utils/constants');
+const MENU_CODE = constants.MENU_CODE;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 const CLIENT_CRITERIA_FEATURE_SET_ID = 'COMMCUST';
@@ -129,9 +132,15 @@ module.exports = (app) => {
           }
         }
       });
-    });
+    }).splice(0, 0,
+      Q.nfcall(queryService.insertQueryLog , {
+        menuCode: MENU_CODE.INTEGRATED_QUERY,
+        criteria: JSON.stringify(criteria.criteria),
+        features: JSON.stringify(criteria.export),
+        filters: JSON.stringify(criteria.filter)
+    }));
 
-    Q.all(promises).then(res => {
+    Q.all(promises).then((insertLog, ...res) => {
       let relatives = _.assign({}, ...res);
       let backendCriteriaData = {
         criteria: criteria.criteria,
