@@ -235,59 +235,59 @@
     "trail": []
   },
   "export": {
-    "master": [
-      "MAIN_LICSNO",
-      "MAIN_CALICSNM",
-      "MAIN_CALICSID",
-      "MAIN_CAUSRNM",
-      "MAIN_CAUSRID",
-      "MAIN_CAUSRADDR",
-      "MAIN_CAUSRMOBI",
-      "CRCRMF_CRDLR",
-      "CRCRMF_CRBRNH",
-      "CRCRMF_CRSALR",
-      "SLMNMF_SALSNM",
-      "___",
-      "CRCAMF_SEDLDT",
-      "MAIN_CARCD",
-      "CRCCMF_LRDT",
-      "CRCAMF_FENDAT",
-      "CRCAMF_UENDAT",
-      "SRWHMF_LRKM",
-      "CRCMDF_CMCHANNEL",
-      "MAIN_CARCD",
-      "CRCCMF_CRCLASS",
-      "SRWHMF_USEFRE",
-      "SRWHMF_USEMONS",
-      "___",
-      "___",
-      "CRCAMF_FENDAT",
-      "CRCAMF_UENDAT"
-    ],
-    "relatives": {
-      "refInsurance": [
+    "master": {
+      "features": [
         "MAIN_LICSNO",
-        "MAIN_ISEQNO",
-        "ISMISITEMS_CREATEDT",
-        "ISMAIN_DPR_GRADE",
-        "ISMAIN_EGNO",
-        "ISMAIN_CUSTNM",
-        "ISMISITEMS_DEDUCT",
-        "ISMISITEMS_ISAMT",
-        "MAIN_ISCD"
-      ]
-    }
-  },
-  "filter": {
-    "relatives": [
-      {
-        "period_start_value": 1483228800000,
-        "period_start_label": "2017/01/01",
-        "period_end_value": 1506729600000,
-        "period_end_label": "2017/09/30",
-        "type": "refInsurance",
-        "field": "____"
+        "MAIN_CALICSNM",
+        "MAIN_CALICSID",
+        "MAIN_CAUSRNM",
+        "MAIN_CAUSRID",
+        "MAIN_CAUSRADDR",
+        "MAIN_CAUSRMOBI",
+        "CRCRMF_CRDLR",
+        "CRCRMF_CRBRNH",
+        "CRCRMF_CRSALR",
+        "SLMNMF_SALSNM",
+        "___",
+        "CRCAMF_SEDLDT",
+        "MAIN_CARCD",
+        "CRCCMF_LRDT",
+        "CRCAMF_FENDAT",
+        "CRCAMF_UENDAT",
+        "SRWHMF_LRKM",
+        "CRCMDF_CMCHANNEL",
+        "MAIN_CARCD",
+        "CRCCMF_CRCLASS",
+        "SRWHMF_USEFRE",
+        "SRWHMF_USEMONS",
+        "___",
+        "___",
+        "CRCAMF_FENDAT",
+        "CRCAMF_UENDAT"
+      ],
+      "filter": {}
+    },
+    "relatives": {
+      "refInsurance": {
+        "features": [
+          "MAIN_LICSNO",
+          "MAIN_ISEQNO",
+          "ISMISITEMS_CREATEDT",
+          "ISMAIN_DPR_GRADE",
+          "ISMAIN_EGNO",
+          "ISMAIN_CUSTNM",
+          "ISMISITEMS_DEDUCT",
+          "ISMISITEMS_ISAMT",
+          "MAIN_ISCD"
+        ],
+        "filter": {
+          "period_start_value": 1483228800000,
+          "period_start_label": "2017/01/01",
+          "period_end_value": 1506729600000,
+          "period_end_label": "2017/09/30",
+          "feature": "____"
+        }
       }
-    ]
+    }
   }
 }

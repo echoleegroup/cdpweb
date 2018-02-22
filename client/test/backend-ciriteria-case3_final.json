@@ -50,40 +50,40 @@
     ]
   },
   "export": {
-    "master": [
-      "___",
-      "___",
-      "___",
-      "___",
+    "master": {
+      "features": [
+        "___",
+        "___",
+        "___",
+        "___",
 
-      "MAIN_CARCD",
-      "CRCCMF_CRCLASS",
-      "SRWHMF_USEFRE",
-      "SRWHMF_USEMONS",
-      "___",
-      "___",
-      "CRCAMF_FENDAT",
-      "CRCAMF_UENDAT"
-    ],
+        "MAIN_CARCD",
+        "CRCCMF_CRCLASS",
+        "SRWHMF_USEFRE",
+        "SRWHMF_USEMONS",
+        "___",
+        "___",
+        "CRCAMF_FENDAT",
+        "CRCAMF_UENDAT"
+      ],
+      "filter": {}
+    },
     "relatives": {
-      "web_browse": [
-        "___",
-        "___",
-        "___",
-        "___"
-      ]
-    }
-  },
-  "filter": {
-    "relatives": [
-      {
-        "period_start_value": 1483228800000,
-        "period_start_label": "2017/01/01",
-        "period_end_value": 1506729600000,
-        "period_end_label": "2017/09/30",
-        "type": "web_browse",
-        "field": "____"
+      "web_browse": {
+        "features": [
+          "___",
+          "___",
+          "___",
+          "___"
+        ],
+        "filter": {
+          "period_start_value": 1483228800000,
+          "period_start_label": "2017/01/01",
+          "period_end_value": 1506729600000,
+          "period_end_label": "2017/09/30",
+          "feature": "____"
+        }
       }
-    ]
+    }
   }
 }

@@ -173,45 +173,45 @@ module.exports = {
     ] //軌跡篩選 end
   },
   export: {
-    master: [
-      //master
-      'LICSNO',         //車牌
-      '待加入',          //使用人姓名
-      '待加入',          //使用人ID
-      'CRCUMF_MOBILE',  //使用人手機
-      '待加入',          //使用人地址
-      '待加入',          //不聯絡註記
-      '___',               //DxID
+    master: {
+      features: [
+        //master
+        'LICSNO',         //車牌
+        '待加入',          //使用人姓名
+        '待加入',          //使用人ID
+        'CRCUMF_MOBILE',  //使用人手機
+        '待加入',          //使用人地址
+        '待加入',          //不聯絡註記
+        '___',               //DxID
 
-      //從RDB撈出固定的樣貌分析欄位(主表)
-      'MAIN_CARCD',       //車名
-      'CRCCMF_CRCLASS',   //CR等級
-      'SRWHMF_USEFRE',    //每萬公里行駛頻率
-      'SRWHMF_USEMONS',   //萬公里平均月份
-      '___',                 //使用者年齡
-      '___',                 //使用人性別
-      'CRCAMF_FENDAT',    //強制險到期日
-      'CRCAMF_UENDAT'     //任意險到期日
-    ],
+        //從RDB撈出固定的樣貌分析欄位(主表)
+        'MAIN_CARCD',       //車名
+        'CRCCMF_CRCLASS',   //CR等級
+        'SRWHMF_USEFRE',    //每萬公里行駛頻率
+        'SRWHMF_USEMONS',   //萬公里平均月份
+        '___',                 //使用者年齡
+        '___',                 //使用人性別
+        'CRCAMF_FENDAT',    //強制險到期日
+        'CRCAMF_UENDAT'     //任意險到期日
+      ],
+      filter: {}
+    },
     relatives: {
       //從RDB撈出固定的樣貌分析欄位(自有媒體標籤)
-      belonging_media: [  //自有媒體標籤
-        '___',               //車牌
-        '___',               //標籤
-        '___'               //貼標日期
-      ]
-    }
-  },
-  filter: {
-    relatives: [
-      {
-        period_start_value: 1512086400000,
-        period_start_label: '2017/12/01',
-        period_end_value: 1514678400000,
-        period_end_label: '2017/12/31',
-        type: 'belonging_media',
-        field: '____'  //從RDB撈出的預設時間欄位
+      belonging_media: {
+        features: [  //自有媒體標籤
+          '___',               //車牌
+          '___',               //標籤
+          '___'               //貼標日期
+        ],
+        filter: {
+          period_start_value: 1512086400000,
+          period_start_label: '2017/12/01',
+          period_end_value: 1514678400000,
+          period_end_label: '2017/12/31',
+          feature: '____'  //從RDB撈出的預設時間欄位
+        }
       }
-    ]
+    }
   }
 };

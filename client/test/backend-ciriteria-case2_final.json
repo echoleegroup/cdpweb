@@ -203,41 +203,41 @@
     ]
   },
   "export": {
-    "master": [
-      "LICSNO",
-      "待加入",
-      "待加入",
-      "CRCUMF_MOBILE",
-      "待加入",
-      "待加入",
-      "___",
-      "MAIN_CARCD",
-      "CRCCMF_CRCLASS",
-      "SRWHMF_USEFRE",
-      "SRWHMF_USEMONS",
-      "___",
-      "___",
-      "CRCAMF_FENDAT",
-      "CRCAMF_UENDAT"
-    ],
+    "master": {
+      "features": [
+        "LICSNO",
+        "待加入",
+        "待加入",
+        "CRCUMF_MOBILE",
+        "待加入",
+        "待加入",
+        "___",
+        "MAIN_CARCD",
+        "CRCCMF_CRCLASS",
+        "SRWHMF_USEFRE",
+        "SRWHMF_USEMONS",
+        "___",
+        "___",
+        "CRCAMF_FENDAT",
+        "CRCAMF_UENDAT"
+      ],
+      "filter": {}
+    },
     "relatives": {
-      "belonging_media": [
-        "___",
-        "___",
-        "___"
-      ]
-    }
-  },
-  "filter": {
-    "relatives": [
-      {
-        "period_start_value": 1512086400000,
-        "period_start_label": "2017/12/01",
-        "period_end_value": 1514678400000,
-        "period_end_label": "2017/12/31",
-        "type": "belonging_media",
-        "field": "____"
+      "belonging_media": {
+        "features": [
+          "___",
+          "___",
+          "___"
+        ],
+        "filter": {
+          "period_start_value": 1512086400000,
+          "period_start_label": "2017/12/01",
+          "period_end_value": 1514678400000,
+          "period_end_label": "2017/12/31",
+          "feature": "____"
+        }
       }
-    ]
+    }
   }
 }
