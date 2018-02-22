@@ -229,8 +229,8 @@ module.exports = {
   relativeSetsToNodes: (sets) => {
     return sets.map(set => {
       return _.assign({}, TAIL_MODEL_TEMPLATE, {
-        id: set.setId,
-        label: set.setName
+        id: set.transFeatSetID,
+        label: set.transFeatSetName
       });
     });
   },

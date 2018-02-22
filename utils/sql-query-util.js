@@ -61,7 +61,7 @@ const _that = {
         return _this;
       },
       executeQuery: (sql, callback) => {
-        winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
+        // winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
         Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
         }).catch(err => {

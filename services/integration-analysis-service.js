@@ -51,6 +51,23 @@ module.exports.getFeatureSets = (transSetId, callback) => {
   });
 };
 
+module.exports.getFeatureSet = (transSetId, setId, callback) => {
+  const sql = 'SELECT transFeatSetID, transFeatSetName, periodCriteriaFeatID, updTime, updUser ' +
+    'FROM cd_TransFeatSet ' +
+    'WHERE transSetID = @transSetID AND transFeatSetID = @transFeatSetID';
+
+  Q.nfcall(_connector
+    .queryRequest()
+    .setInput('transSetID', _connector.TYPES.NVarChar, transSetId)
+    .setInput('transFeatSetID', _connector.TYPES.NVarChar, setId)
+    .executeQuery, sql).then((result) => {
+    callback(null, result[0]);
+  }).fail((err) => {
+    winston.error(`===integrated-analysis-service::getFeatureSet(transSetId=${transSetId}, setId=${setId}) failed: ${err}`);
+    callback(err);
+  });
+};
+
 module.exports.getDownloadFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName ' +
     'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
@@ -61,20 +78,6 @@ module.exports.getDownloadFeatures = (setId, callback) => {
     callback(null, results);
   }).fail(err => {
     winston.error('===getDownloadFeatures failed:', err);
-    callback(err);
-  });
-};
-
-module.exports.getRelativeFeatureSets = (transSetId, callback) => {
-  const sql = 'SELECT transFeatSetID AS setId, transFeatSetName AS setName ' +
-    'FROM cd_TransFeatSet t_set ' +
-    'WHERE transSetID = @transSetId';
-
-  let request = _connector.queryRequest().setInput('transSetId', _connector.TYPES.NVarChar, transSetId);
-  Q.nfcall(request.executeQuery, sql).then(results => {
-    callback(null, results);
-  }).fail(err => {
-    winston.error('===getRelativeFeatureSets failed:', err);
     callback(err);
   });
 };

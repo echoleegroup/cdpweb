@@ -104,10 +104,48 @@ module.exports = (app) => {
   });
 
   router.get('/export/relative/sets', middlewares, (req, res) => {
-    Q.nfcall(integrationService.getRelativeFeatureSets, EXPORT_RELATIVE_SET_ID).then(resSet => {
+    Q.nfcall(integrationService.getFeatureSets, EXPORT_RELATIVE_SET_ID).then(resSet => {
       res.json(criteriaHelper.relativeSetsToNodes(resSet));
     }).fail(err => {
       winston.error('===/export/relative/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.post('/export/query', middlewares, (req, res) => {
+    let criteria = JSON.parse(req.body.criteria);
+
+    let promises = _.map(criteria.export.relatives, relativeSetId => {
+      return Q.all([
+        Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
+        Q.nfcall(integrationService.getDownloadFeatures, relativeSetId)
+      ]).spread((featureSet, features) => {
+        return {
+          [relativeSetId]: {
+            features: _.map(features, 'featID'),
+            filter: _.assign({
+              feature: featureSet.periodCriteriaFeatID
+            }, criteria.filter.relatives)
+          }
+        }
+      });
+    });
+
+    Q.all(promises).then(res => {
+      let relatives = _.assign({}, ...res);
+      let backendCriteriaData = {
+        criteria: criteria.criteria,
+        export: {
+          master: {
+            features: criteria.export.master,
+            filter: {}
+          },
+          relatives: relatives
+        }
+      };
+      winston.info('backendCriteriaData: %j', backendCriteriaData);
+    }).fail(err => {
+      winston.error(`===/export/query internal server error: ${err}`);
       res.json(null, 500, 'internal service error');
     });
   });
