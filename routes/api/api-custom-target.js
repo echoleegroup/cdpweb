@@ -109,7 +109,8 @@ module.exports = (app) => {
       //write query log to DB
       Q.nfcall(queryService.insertQueryLog, {
         menuCode: MENU_CODE.CUSTOM_TARGET_FILTER,
-        criteria: req.body.criteria
+        criteria: req.body.criteria,
+        updUser: req.user.userId
       })
     ]).spread((model, downloadFeatures, queryLogRes) => {
 

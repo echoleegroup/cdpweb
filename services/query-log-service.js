@@ -9,20 +9,23 @@ const _connector = require('../utils/sql-query-util');
 module.exports.insertQueryLog = ({
                                    menuCode = null, criteria = null,
                                    features = null, filters = null,
-                                   requestTime = new Date(), queryTime = new Date()}, callback) => {
+                                   updUser,
+                                 }, callback) => {
   const sql = 'INSERT INTO cu_QueryLog (' +
-    'queryID, menuCode, criteria, exportFeats, exportFilters, requestTime, queryTime) ' +
-    'VALUES (@queryId, @menuCode, @criteria, @exportFeats, @exportFilters, @requestTime, @queryTime)';
+    'queryID, menuCode, criteria, exportFeats, exportFilters, crtTime, updTime, updUser) ' +
+    'VALUES (@queryId, @menuCode, @criteria, @exportFeats, @exportFilters, @crtTime, @updTime, @updUser)';
 
   let queryId = shortid.generate();
+  let now = new Date();
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('menuCode', _connector.TYPES.NVarChar, menuCode)
     .setInput('criteria', _connector.TYPES.NVarChar, criteria)
     .setInput('exportFeats', _connector.TYPES.NVarChar, features)
     .setInput('exportFilters', _connector.TYPES.NVarChar, filters)
-    .setInput('requestTime', _connector.TYPES.DateTime, requestTime)
-    .setInput('queryTime', _connector.TYPES.DateTime, queryTime);
+    .setInput('crtTime', _connector.TYPES.DateTime, now)
+    .setInput('updTime', _connector.TYPES.DateTime, now)
+    .setInput('updUser', _connector.TYPES.NVarChar, updUser);
 
   // Q.nfcall(request.executeQuery, sql).then(result => {
   //   winston.info(`===insertQueryLog result: ${result}`);

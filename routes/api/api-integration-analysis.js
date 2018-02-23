@@ -8,6 +8,7 @@ const shortid = require('shortid');
 const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
+const integrationTaskService = require('../../services/integration-analysis-task-service');
 const codeGroupService = require('../../services/code-group-service');
 const queryService = require('../../services/query-log-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
@@ -137,8 +138,11 @@ module.exports = (app) => {
         menuCode: MENU_CODE.INTEGRATED_QUERY,
         criteria: JSON.stringify(criteria.criteria),
         features: JSON.stringify(criteria.export),
-        filters: JSON.stringify(criteria.filter)
-    }));
+        filters: JSON.stringify(criteria.filter),
+        updUser: req.user.userId
+    }).then(insertRes => {
+      return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
+      }));
 
     Q.all(promises).then((insertLog, ...res) => {
       let relatives = _.assign({}, ...res);
