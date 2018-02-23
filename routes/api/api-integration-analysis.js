@@ -159,5 +159,39 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/export/query/ready/:queryId', factory.ajax_response_factory(), (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const Minizip = require('minizip-asm.js');
+    let queryId = req.params.queryId;
+    Q.nfcall(fs.readFile, path.join(constants.FTP_FOLDER_PATH, `${queryId}.zip`)).fail(err => {
+      winston.error(`===/export/query/ready/${queryId} internal server error: ${err}`);
+      res.json(null, 404, 'file not found');
+    }).then(zipBuff => {
+      let mz = new Minizip(zipBuff);
+      let dataArray = mz.list().map(item => {
+        let filePath = item.filepath;
+        console.log('filePath: ', filePath);
+        if ('.json' !== path.extname(filePath).toLowerCase())
+          return;
+
+        let content = mz.extract(filePath, {
+          encoding: 'utf8'
+        }).toString();
+        return {
+          [path.basename(filePath, '.json')]: JSON.parse(content)
+        };
+      });
+      res.json(null, 200, 'success');
+
+      let dataObj = _.assign({}, ...dataArray);
+      winston.info('dataObj: %j', dataObj);
+    }).fail(err => {
+      winston.error(`===/export/query/ready/${queryId} internal server error: ${err}`, err);
+      res.json(null, 301, 'invalid file content');
+    });
+
+  });
+
   return router;
 };
