@@ -186,13 +186,22 @@ module.exports = (app) => {
           [path.basename(filePath, '.json')]: JSON.parse(content)
         };
       });
+
+      return Q(_.assign({}, ...dataArray));
+    }).fail(err => {
+      winston.error(`===/export/query/ready/${queryId} invalid file content: ${err}`);
+      res.json(null, 301, 'invalid file content');
+    }).then(zipContentBuffers => {
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(res => {
+        return zipContentBuffers;
+      });
+    }).fail(err => {
+      winston.error(`===/export/query/ready/${queryId} fail to update task status: ${err}`)
+      res.json(null, 302, 'fail to update task status. maybe check if the ID is valid');
+    }).then(zipContentBuffers => {
       res.json(null, 200, 'success');
 
-      let dataObj = _.assign({}, ...dataArray);
-      winston.info('dataObj: %j', dataObj);
-    }).fail(err => {
-      winston.error(`===/export/query/ready/${queryId} internal server error: ${err}`, err);
-      res.json(null, 301, 'invalid file content');
+      winston.info('dataObj: %j', zipContentBuffers);
     });
 
   });
