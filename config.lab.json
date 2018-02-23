@@ -19,5 +19,7 @@
     "pass": "",
     "from": ""
   },
-  "DOMAIN_NAME": "127.0.0.1"
+  "DOMAIN_NAME": "127.0.0.1",
+  "API_360_HOST":"",
+  "API_360_PORT":""
 }

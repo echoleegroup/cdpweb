@@ -1,58 +1,73 @@
 'use strict';
 const winston = require('winston');
+const API_360_HOST = require("../app-config").get("API_360_HOST");
+const API_360_PORT = require("../app-config").get("API_360_PORT");
+module.exports.transService = (queryId, JObject, callback) => {
+  let transJson = new Object();
 
-module.exports.transService = (JObject) => {
-  return transBackand(JObject);
-  function transBackand(frontObject) {
-    //let data = jsonFile.readFileSync('backend-ciriteria-case1_final.json');
-    let data = JSON.parse(frontObject);
-    let transJson = new Object();
+  //開始組select json
+  let selectInfo = [];
+  let postWhere = [];
+  let column;
+  let filter;
+  let filterObject = new Object();
+  //先組Master 
+  column = data.export.master.features;
+  selectInfo.push({
+    "type": "master",
+    "column": column
+  })
 
-    //開始組select json
-    let selectInfo = [];
-    let postWhere = [];
-    let column;
-    let filter;
-    let filterObject = new Object();
-    //先組Master
-    column = data.export.master.features;
+  //組filter(master)
+  filter = data.export.master.filter;
+  filterObject = getPostWhere(filter, "master");
+  postWhere.push(filterObject);
+
+  //開始組其他select欄位
+  let keys = Object.keys(data.export.relatives);
+  for (let i = 0; i < keys.length; i++) {
+    column = data.export.relatives[keys[i]].features;
     selectInfo.push({
-      "type": "master",
+      "type": keys[i],
       "column": column
-    })
+    });
 
-    //組filter(master)
-    filter = data.export.master.filter;
-    filterObject = getPostWhere(filter, "master");
+    //組filter(其他)
+    filter = data.export.relatives[keys[i]].filter;
+    filterObject = getPostWhere(filter, keys[i]);
     postWhere.push(filterObject);
-
-    //開始組其他select欄位
-    let keys = Object.keys(data.export.relatives);
-    for (let i = 0; i < keys.length; i++) {
-      column = data.export.relatives[keys[i]].features;
-      selectInfo.push({
-        "type": keys[i],
-        "column": column
-      });
-
-      //組filter(其他)
-      filter = data.export.relatives[keys[i]].filter;
-      filterObject = getPostWhere(filter, keys[i]);
-      postWhere.push(filterObject);
-    }
-
-
-    //開始組where條件
-    let whereArray = [];
-    whereArray = getWhere(data.criteria);
-
-    transJson.select = selectInfo;
-    transJson.where = whereArray;
-    transJson.postWhere = postWhere
-
-    console.log(JSON.stringify(transJson));
-    return transJson;
   }
+
+
+  //開始組where條件
+  let whereArray = [];
+  whereArray = getWhere(data.criteria);
+
+  transJson.select = selectInfo;
+  transJson.where = whereArray;
+  transJson.postWhere = postWhere;
+  console.log(JSON.stringify(transJson));
+
+  //呼叫API
+  /*待聖智完成
+  let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
+  request({
+    url: url,
+    method: "POST",
+    json: true,
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(transJson)
+  }, function (error, response, body) {
+    if (error)
+      callback(error, null);
+    else if (!error && response.statusCode == 200)
+      callback(null, transJson);
+  });
+  */
+  callback(null, transJson);
+
   function getWhere(Jdata) {
     let whereArray = [];
     //客戶明細

@@ -19,5 +19,7 @@
     "pass": "godislove0717",
     "from": "vian2233@gmail.com"
   },
-  "DOMAIN_NAME": "127.0.0.1"
+  "DOMAIN_NAME": "127.0.0.1",
+  "API_360_HOST":"10.201.2.130",
+  "API_360_PORT":"4060"
 }
