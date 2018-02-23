@@ -12,28 +12,28 @@ module.exports.transService = (queryId, JObject, callback) => {
   let filter;
   let filterObject = new Object();
   //先組Master 
-  column = data.export.master.features;
+  column = JObject.export.master.features;
   selectInfo.push({
     "type": "master",
     "column": column
   })
 
   //組filter(master)
-  filter = data.export.master.filter;
+  filter = JObject.export.master.filter;
   filterObject = getPostWhere(filter, "master");
   postWhere.push(filterObject);
 
   //開始組其他select欄位
-  let keys = Object.keys(data.export.relatives);
+  let keys = Object.keys(JObject.export.relatives);
   for (let i = 0; i < keys.length; i++) {
-    column = data.export.relatives[keys[i]].features;
+    column = JObject.export.relatives[keys[i]].features;
     selectInfo.push({
       "type": keys[i],
       "column": column
     });
 
     //組filter(其他)
-    filter = data.export.relatives[keys[i]].filter;
+    filter = JObject.export.relatives[keys[i]].filter;
     filterObject = getPostWhere(filter, keys[i]);
     postWhere.push(filterObject);
   }
@@ -41,7 +41,7 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   //開始組where條件
   let whereArray = [];
-  whereArray = getWhere(data.criteria);
+  whereArray = getWhere(JObject.criteria);
 
   transJson.select = selectInfo;
   transJson.where = whereArray;
