@@ -50,6 +50,7 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   //呼叫API
   /*待聖智完成
+  let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
     url: url,
