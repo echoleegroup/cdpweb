@@ -1,7 +1,7 @@
 "use strict";
 const express = require('express');
 const winston = require('winston');
-const randtoken = require('rand-token');
+const shortid = require('shortid');
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
@@ -309,7 +309,7 @@ module.exports = (app) => {
   router.post('/user/forget_act', function (req, res) {
     let userId = req.body.userId || '';
     let email = req.body.email || '';
-    let token = randtoken.generate(16);
+    let token = shortid.generate();
     let sql = "SELECT count(*) total " +
       " FROM sy_infouser " +
       " WHERE userId = @userId and email = @email ";
