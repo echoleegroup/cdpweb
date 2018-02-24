@@ -87,7 +87,7 @@ const GetOperatorSet = (dataType) => {
   }
 };
 const INITIAL_CRITERIA = Object.freeze({
-  uuid: undefined,
+  id: undefined,
   type: CRITERIA_COMPONENT_DICT.FIELD,
   field_id: undefined,
   field_label: undefined,
@@ -108,7 +108,7 @@ export default class CriteriaAssignment extends React.PureComponent {
       // features: props.features,
       // featureRefCodeMap: props.featureRefCodeMap,
       criteria: Map(INITIAL_CRITERIA).merge({
-        uuid: shortid.generate()
+        id: shortid.generate()
       }),
       selectedFeature: null
     };
@@ -129,7 +129,7 @@ export default class CriteriaAssignment extends React.PureComponent {
       this.setState({
         isOpen: false,
         criteria: Map(INITIAL_CRITERIA).merge({
-          uuid: shortid.generate()
+          id: shortid.generate()
         }),
         selectedFeature: null
       });

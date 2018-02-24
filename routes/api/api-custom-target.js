@@ -326,11 +326,11 @@ module.exports = (app) => {
   router.get('/:mdId/:batId/criteria/history/:id/test', factory.ajax_response_factory(), (req, res) => {
     res.json([
       { //自訂名單下載
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
         operator: 'or',  //and, or, eq, ne, lt, le, gt, ge, not
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           cate: null,
           field_id: 'last_visit_date',
@@ -339,11 +339,11 @@ module.exports = (app) => {
           data_type: 'date',
           operator: 'lt'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'bundle',
           operator: 'and',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             cate: null,
             field_id: 'age',
@@ -352,7 +352,7 @@ module.exports = (app) => {
             data_type: 'number',
             operator: 'lt'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             cate: null,
             field_id: 'toyota',

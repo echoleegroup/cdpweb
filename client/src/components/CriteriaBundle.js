@@ -31,9 +31,9 @@ export default class CriteriaBundle extends React.PureComponent {
     }
   };
 
-  getBundleProperties({uuid, type, operator, ref, ref_label, criteria} = {}) {
+  getBundleProperties({id, type, operator, ref, ref_label, criteria} = {}) {
     return {
-      uuid: uuid || shortid.generate(),
+      id: id || shortid.generate(),
       type: type || this.MY_BUNDLE_TYPE, //combo, ref, field
       operator: operator || 'and',   //and, or, eq, ne, lt, le, gt, ge, not
       ref: ref || null,
@@ -46,14 +46,14 @@ export default class CriteriaBundle extends React.PureComponent {
     // console.log('CriteriaBundle: componentWillMount: ', this.state);
     this.criteriaComponents = {};
 
-    this.collectCriteriaComponents = (uuid, component) => {
-      // console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', uuid);
-      this.criteriaComponents[uuid] = component;
+    this.collectCriteriaComponents = (id, component) => {
+      // console.log('CriteriaBundle::componentWillMount::collectCriteriaComponents:: ', id);
+      this.criteriaComponents[id] = component;
     };
 
-    this.removeCriteriaComponents = (uuid) => {
-      // console.log('CriteriaBundle::removeCriteriaComponents: ', uuid);
-      delete this.criteriaComponents[uuid];
+    this.removeCriteriaComponents = (id) => {
+      // console.log('CriteriaBundle::removeCriteriaComponents: ', id);
+      delete this.criteriaComponents[id];
       // console.log('CriteriaBundle::removeCriteriaComponents: ', component);
       // let index = indexOf(this.criteriaComponents, component);
       // console.log('CriteriaBundle::removeCriteriaComponents::findIndex ', index);
@@ -62,7 +62,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.gatheringChildCriteria = () => {
-      return reduce(this.criteriaComponents, (collector, comp, uuid) => {
+      return reduce(this.criteriaComponents, (collector, comp, id) => {
         let crite = comp.criteriaGathering(); //immutable Map
         // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
         if (!isEmpty(crite))
@@ -115,7 +115,7 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.props.collectCriteriaComponents(this.getPropertyState('uuid'), this);
+    this.props.collectCriteriaComponents(this.getPropertyState('id'), this);
   };
 
   // componentWillUpdate(nextProps, nextState) {
@@ -124,7 +124,7 @@ export default class CriteriaBundle extends React.PureComponent {
 
   componentWillUnmount() {
     // console.log('CriteriaBundle::componentWillUnmount: ', this.state);
-    this.props.removeCriteriaComponents(this.getPropertyState('uuid'));
+    this.props.removeCriteriaComponents(this.getPropertyState('id'));
   };
 
   render() {
@@ -146,8 +146,8 @@ export default class CriteriaBundle extends React.PureComponent {
         <div className="level form-inline">
           {this.state.properties.get('criteria').map((_criteria, index) => {
             return this.ComponentChildCriteria(_criteria, index);
-            // console.log('_criteria.uuid: ', _criteria.uuid);
-            // return <ComponentChildCriteria key={_criteria.uuid}
+            // console.log('_criteria.id: ', _criteria.id);
+            // return <ComponentChildCriteria key={_criteria.id}
             //                         isPreview={this.props.isPreview}
             //                         criteria={_criteria}
             //                         index={index}/>
@@ -225,7 +225,7 @@ export default class CriteriaBundle extends React.PureComponent {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.FIELD:
-        return <CriteriaField key={criteria.uuid}
+        return <CriteriaField key={criteria.id}
                               criteria={criteria}
                               index={index}
                               isPreview={this.props.isPreview}
@@ -233,7 +233,7 @@ export default class CriteriaBundle extends React.PureComponent {
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
-        return <div key={criteria.uuid}/>;
+        return <div key={criteria.id}/>;
     }
   };
 

@@ -10,7 +10,7 @@ export default class CriteriaComboBundleMute extends CriteriaComboBundle {
     // console.log('ComponentChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundleMute key={criteria.uuid}
+        return <CriteriaTransactionBundleMute key={criteria.id}
                                               criteria={criteria}
                                               index={index}
                                               isPreview={this.props.isPreview}

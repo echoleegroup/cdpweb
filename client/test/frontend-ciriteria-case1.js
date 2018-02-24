@@ -5,11 +5,11 @@ module.exports = {
     client: [
       { //顧客屬性條件
         //consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',  //combo, refTransaction, field, bundle, refTag, fieldTag, refTrailPeriod, refTrailHit
         operator: 'and',  //and, or, not
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRAURF_TARGET',
           field_label: '使用人',
@@ -19,7 +19,7 @@ module.exports = {
           ref: '_____',
           operator: 'eq'    //eq, ne, lt, le, gt, ge, in, ni
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRCUMF_CUSTS',
           field_label: '聯絡狀態',
@@ -33,11 +33,11 @@ module.exports = {
     ], //顧客屬性條件 end
     vehicle: [
       {  //車輛屬性資料
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRCAMF_SEDLDT',
           field_label: '交車年份',
@@ -47,7 +47,7 @@ module.exports = {
           value_label: '2014/1/1',
           operator: 'ge'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRCAMF_SEDLDT',
           field_label: '交車年份',
@@ -57,7 +57,7 @@ module.exports = {
           data_type: '___',
           operator: 'le'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'MAIN_ISCAUSRNTRL',
           field_label: '車輛使用人',
@@ -67,11 +67,11 @@ module.exports = {
           data_type: '___',
           operator: 'eq'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'bundle',
           operator: 'or',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'CRCAMF_STSCD',
             field_label: '保有狀況',
@@ -81,7 +81,7 @@ module.exports = {
             data_type: '___',
             operator: 'eq'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'CRCCMF_CRCLASS',
             field_label: 'CR等級',
@@ -92,7 +92,7 @@ module.exports = {
             operator: 'eq'
           }]
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRCAMF_ISHTCAR',
           field_label: '車輛識別',
@@ -102,7 +102,7 @@ module.exports = {
           data_type: '___',
           operator: 'eq'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'CRCRMF_ISSLRINCM',
           field_label: 'CR業代',
@@ -112,7 +112,7 @@ module.exports = {
           data_type: '___',
           operator: 'eq'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'MAIN_ISLICSNOPRV',
           field_label: '車牌',
@@ -126,17 +126,17 @@ module.exports = {
     ],  //車輛屬性資料 end
     transaction: [  //明細資料指定條件
       {
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'refTransaction',
           operator: 'and',
           ref: 'insurance',
           ref_label: '保險明細',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'ISMAIN_CREATEDT',
             field_label: '要保書建立日期',
@@ -146,7 +146,7 @@ module.exports = {
             ref: null,
             operator: 'gt'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'ISMAIN_CREATEDT',
             field_label: '要保書建立日期',
@@ -157,13 +157,13 @@ module.exports = {
             operator: 'lt'
           }]
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'refTransaction',
           operator: 'not',
           ref: 'custom_note',
           ref_label: '客戶註記',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'CRCMDF_DEF_CMCHANNEL_F',
             field_label: '不聯絡註記',

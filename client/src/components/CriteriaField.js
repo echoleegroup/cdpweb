@@ -22,7 +22,7 @@ export default class CriteriaField extends React.PureComponent {
     this.OPERATOR_DICT = OPERATOR_DICT;
     /**
      * {
-          uuid: 'xdsfa',
+          id: 'xdsfa',
           type: 'field',
           cate: null,
           field_id: 'last_visit_date',
@@ -46,7 +46,7 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.props.collectCriteriaComponents(this.props.criteria.uuid, this);
+    this.props.collectCriteriaComponents(this.props.criteria.id, this);
   };
 
   componentWillUpdate(nextProps, nextState) {
@@ -55,7 +55,7 @@ export default class CriteriaField extends React.PureComponent {
 
   componentWillUnmount() {
     // console.log('CriteriaField::componentWillUnmount: ', this.props.criteria);
-    this.props.removeCriteriaComponents(this.props.criteria.uuid);
+    this.props.removeCriteriaComponents(this.props.criteria.id);
   };
 
   render() {
@@ -78,7 +78,7 @@ export default class CriteriaField extends React.PureComponent {
                  disabled={true}/>
         </div>
         {(this.props.isPreview)? null: <i className="fa fa-times" aria-hidden="true" onClick={() => {
-          // console.log('CriteriaField::onClick::removeCriteria: ', criteria.uuid);
+          // console.log('CriteriaField::onClick::removeCriteria: ', criteria.id);
           this.props.removeCriteria(this.props.index);
         }}/>}
       </div>

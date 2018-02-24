@@ -2,12 +2,12 @@
   "criteria": {
     "client": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "and",
         "criteria": [
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "field",
             "field_id": "CRAURF_TARGET",
             "field_label": "使用人",
@@ -22,7 +22,7 @@
             "operator": "eq"
           },
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "field",
             "field_id": "CRCUMF_CUSTS",
             "field_label": "聯絡狀態",
@@ -41,12 +41,12 @@
     ],
     "vehicle": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "and",
         "criteria": [
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "field",
             "field_id": "CRCAMF_SEDLDT",
             "field_label": "交車年份",
@@ -57,7 +57,7 @@
             "operator": "ge"
           },
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "field",
             "field_id": "CRCAMF_SEDLDT",
             "field_label": "交車年份",
@@ -72,19 +72,19 @@
     ],
     "transaction": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "and",
         "criteria": [
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "refTransaction",
             "operator": "and",
             "ref": "refInsurance",
             "ref_label": "保險明細",
             "criteria": [
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "field",
                 "field_id": "ISMAIN_CREATEDT",
                 "field_label": "要保書建立日期",
@@ -95,7 +95,7 @@
                 "operator": "gt"
               },
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "field",
                 "field_id": "ISMAIN_CREATEDT",
                 "field_label": "要保書建立日期",
@@ -112,19 +112,19 @@
     ],
     "tag": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "or",
         "criteria": [
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "refTag",
             "operator": "or",
             "ref": "belonging_media",
             "ref_label": "活動名單標籤",
             "criteria": [
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "fieldTag",
                 "value": "SIENTA",
                 "value_label": "SIENTA"
@@ -132,14 +132,14 @@
             ]
           },
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "refTag",
             "operator": "or",
             "ref": "event",
             "ref_label": "活動名單標籤",
             "criteria": [
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "fieldTag",
                 "value": "SIENTA",
                 "value_label": "SIENTA"
@@ -151,12 +151,12 @@
     ],
     "trail": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "or",
         "criteria": [
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "refTrailPeriod",
             "period_start_value": 1512086400000,
             "period_start_label": "2017/12/01",
@@ -167,7 +167,7 @@
             "ref_label": "官網頁面瀏覽資料",
             "criteria": [
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "field",
                 "field_id": "__SIENTA",
                 "field_label": "車款_SIENTA (瀏覽次數)",
@@ -180,7 +180,7 @@
             ]
           },
           {
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "refTrailHit",
             "period_start_value": null,
             "period_start_label": null,
@@ -191,7 +191,7 @@
             "ref_label": "EDM點擊資料",
             "criteria": [
               {
-                "uuid": "shortid.generate()",
+                "id": "shortid.generate()",
                 "type": "fieldTag",
                 "value": "toyota_promo_20171206",
                 "value_label": "本月TOYOTA將會有什麼好事降臨!? (2017/12/06)"

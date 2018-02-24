@@ -6,11 +6,11 @@ module.exports = {
       { //顧客屬性條件
         consumer: 'holder', //holder: 使用人  owner: 領照人  contact: 聯絡人
         criteria: {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'combo',  //combo, refDetails, field, bundle, tag, fingerprint
           operator: 'or',  //and, or, eq, ne, lt, le, gt, ge, not
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             cate: null,
             field_id: 'last_visit_date',
@@ -19,11 +19,11 @@ module.exports = {
             data_type: '___',
             operator: 'lg'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'bundle',
             operator: 'and',
             criteria: [{
-              uuid: shortid.generate(),
+              id: shortid.generate(),
               type: 'field',
               cate: null,
               field_id: 'age',
@@ -32,7 +32,7 @@ module.exports = {
               data_type: '___',
               operator: 'lt'
             }, {
-              uuid: shortid.generate(),
+              id: shortid.generate(),
               type: 'field',
               cate: null,
               field_id: 'toyota',
@@ -47,11 +47,11 @@ module.exports = {
     ], //顧客屬性條件 end
     vehicle: [
       {  //車輛屬性資料
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
@@ -60,7 +60,7 @@ module.exports = {
           value_label: ['是'],
           operator: 'eq'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'purpose',
           field_label: '類別',
@@ -70,11 +70,11 @@ module.exports = {
           operator: 'gt'
         }]
       }, {
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'not',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'regular_recall',
           field_label: '每年連續回廠定保',
@@ -83,7 +83,7 @@ module.exports = {
           value_label: ['是'],
           operator: 'eq'
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'field',
           field_id: 'purpose',
           field_label: '類別',
@@ -96,17 +96,17 @@ module.exports = {
     ],  //車輛屬性資料 end
     transaction: [
       { //明細資料指定條件
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'refTransaction',
           operator: 'and',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_date',
             field_label: '兌換日期',
@@ -114,7 +114,7 @@ module.exports = {
             data_type: '___',
             operator: 'ge'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_price',
             field_label: '兌換金額',
@@ -123,13 +123,13 @@ module.exports = {
             operator: 'ge'
           }]
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'refTransaction',
           operator: 'or',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_date',
             field_label: '兌換日期',
@@ -137,7 +137,7 @@ module.exports = {
             data_type: '___',
             operator: 'ge'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_price',
             field_label: '兌換金額',
@@ -146,13 +146,13 @@ module.exports = {
             operator: 'ge'
           }]
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'refTransaction',
           operator: 'not',
           ref: 'point',
           ref_label: '點數明細',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_date',
             field_label: '兌換日期',
@@ -160,7 +160,7 @@ module.exports = {
             data_type: '___',
             operator: 'ge'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             type: 'field',
             field_id: 'exchange_price',
             field_label: '兌換金額',
@@ -173,18 +173,18 @@ module.exports = {
     ],
     tags: [
       { //標籤篩選
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'tag',
           operator: 'or',
           ref: 'event',
           group: 'event', //活動類型
           ref_label: '活動名單標籤',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             id: '1df',
             label: '2017TOYOTA玩具愛分享',
             tag_id: {
@@ -194,7 +194,7 @@ module.exports = {
             },
             tag_label: '2016TOYOTA玩具愛分享'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             id: 'asfs',
             label: '開車愛旅遊',
             tag_id: {
@@ -205,14 +205,14 @@ module.exports = {
             tag_label: '2016TOYOTA玩具愛分享'
           }]
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'tag',
           operator: 'or',
           ref: 'ilovetravel',
           group: 'media',  //自有媒體
           ref_label: '自有媒體標籤',
           criteria: [{
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             id: '3423',
             label: '2017TOYOTA玩具愛分享',
             tag_id: {
@@ -222,7 +222,7 @@ module.exports = {
             },
             tag_label: '2016TOYOTA玩具愛分享'
           }, {
-            uuid: shortid.generate(),
+            id: shortid.generate(),
             id: 'afdsf',
             label: '開車愛旅遊',
             tag_id: {
@@ -237,11 +237,11 @@ module.exports = {
     ],
     trail: [
       {
-        uuid: shortid.generate(),
+        id: shortid.generate(),
         type: 'combo',
         operator: 'and',
         criteria: [{
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'fingerprint',
           operator: 'gt',
           field_id: 'product',
@@ -251,7 +251,7 @@ module.exports = {
           periodFrom: Date.now(),
           periodTo: Date.now()
         }, {
-          uuid: shortid.generate(),
+          id: shortid.generate(),
           type: 'fingerprint',
           operator: 'gt',
           field_id: 'calculation',

@@ -7,7 +7,7 @@ import shortid from 'shortid';
 const getDefaultBundleProps = () => {
   // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);
   return {
-    uuid: shortid.generate()
+    id: shortid.generate()
   };
 };
 
@@ -20,14 +20,14 @@ export default class CriteriaComboBundleList extends React.PureComponent {
     this.criteriaComponents = {};
     // console.log('CriteriaComboBundleList  componentWillMount: ', this.criteriaComponents);
 
-    this.collectCriteriaComponents = (uuid, component) => {
-      this.criteriaComponents[uuid] = component;
+    this.collectCriteriaComponents = (id, component) => {
+      this.criteriaComponents[id] = component;
       // console.log('CriteriaComboBundleList::collectCriteriaComponents:: ', component);
     };
 
-    this.removeCriteriaComponents = (uuid) => {
-      // console.log('CriteriaComboBundleList::removeCriteriaComponents: ', uuid);
-      delete this.criteriaComponents[uuid];
+    this.removeCriteriaComponents = (id) => {
+      // console.log('CriteriaComboBundleList::removeCriteriaComponents: ', id);
+      delete this.criteriaComponents[id];
       // console.log('CriteriaComboBundleList::removeCriteriaComponents: ', component);
       // let index = indexOf(this.criteriaComponents, component);
       // console.log('CriteriaComboBundleList::removeCriteriaComponents::findIndex ', index);
@@ -57,7 +57,7 @@ export default class CriteriaComboBundleList extends React.PureComponent {
         {criteria.map(_criteria => {
           // console.log('this.props.criteria.map::_criteria: ', _criteria);
           return <ComponentCriteriaBundleContainer //{...this.props}
-            key={_criteria.uuid}
+            key={_criteria.id}
             isPreview={this.props.isPreview}
             criteria={_criteria}
             assignCriteria={this.props.assignCriteria}

@@ -39,7 +39,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
     // console.log('ComponentChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.COMBO:
-        return <CriteriaComboBundle key={criteria.uuid}
+        return <CriteriaComboBundle key={criteria.id}
                                     criteria={criteria}
                                     index={index}
                                     isPreview={this.props.isPreview}
@@ -47,7 +47,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                     collectCriteriaComponents={this.collectCriteriaComponents}
                                     removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.BUNDLE:
-        return <CriteriaBundle key={criteria.uuid}
+        return <CriteriaBundle key={criteria.id}
                                criteria={criteria}
                                index={index}
                                isPreview={this.props.isPreview}
@@ -56,7 +56,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                collectCriteriaComponents={this.collectCriteriaComponents}
                                removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundle key={criteria.uuid}
+        return <CriteriaTransactionBundle key={criteria.id}
                                           criteria={criteria}
                                           index={index}
                                           isPreview={this.props.isPreview}

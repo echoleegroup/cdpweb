@@ -2,17 +2,17 @@
   "criteria": {
     "tag": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "and",
         "criteria": [{
-          "uuid": "shortid.generate()",
+          "id": "shortid.generate()",
           "type": "refTag",
           "operator": "or",
           "ref": "belonging_media",
           "ref_label": "活動名單標籤",
           "criteria": [{
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "value": "SIENTA",
             "value_label": "SIENTA"
           }]
@@ -21,11 +21,11 @@
     ],
     "trail": [
       {
-        "uuid": "shortid.generate()",
+        "id": "shortid.generate()",
         "type": "combo",
         "operator": "and",
         "criteria": [{
-          "uuid": "shortid.generate()",
+          "id": "shortid.generate()",
           "type": "refTrailPeriod",
           "period_start_value": 1512086400000,
           "period_start_label": "2017/12/01",
@@ -35,7 +35,7 @@
           "ref": "official_web",
           "ref_label": "官網頁面瀏覽資料",
           "criteria": [{
-            "uuid": "shortid.generate()",
+            "id": "shortid.generate()",
             "type": "field",
             "field_id": "__SIENTA",
             "field_label": "車款_SIENTA (瀏覽次數)",
