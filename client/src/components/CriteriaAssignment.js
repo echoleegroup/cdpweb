@@ -315,6 +315,7 @@ class DateInput extends InputBase {
         <Flatpickr options={{
           dateFormat: "Y/m/d",
           defaultDate: new Date(this.state.value),
+          inline: true,
           onChange: (selectedDates, dateStr) => {
             this.setState({
               value: selectedDates[0].getTime(),
