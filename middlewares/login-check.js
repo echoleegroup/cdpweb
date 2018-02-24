@@ -55,3 +55,15 @@ module.exports.checkEditPermission = (menuCode) => {
     }
   };
 };
+
+module.exports.checkInternalFileUploadPermission = () => {
+  return (req, res, next) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    if (process.env.FTP_AUTH_USERNAME !== username || process.env.FTP_AUTH_PASS !== password) {
+      winston.warn(`===${req.originalUrl} checkInternalFileUploadPermission: invalid`);
+      return res.json(null, 401, 'access denied');
+    }
+    return next();
+  };
+};
