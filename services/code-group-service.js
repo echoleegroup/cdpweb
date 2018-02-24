@@ -4,31 +4,18 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
 module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
+  const codeGroupSql = `'${codeGroupList.join(`', '`)}'`;
   const sql = 'SELECT codeGroup, codeValue, codeLabel ' +
     'FROM CodeGroup_View ' +
-    'WHERE codeGroup = @codeGroup ' +
+    `WHERE codeGroup in (${codeGroupSql}) ` +
     'ORDER BY codeSort';
 
-  let prepared = _connector.preparedStatement(sql)
-    .setType('codeGroup', _connector.TYPES.NVarChar);
+  let request = _connector.queryRequest();
 
-  codeGroupList.reduce((accumulator, codeGroup) => {
-    return accumulator.then(res => {
-      return Q.nfcall(prepared.execute, {
-        codeGroup: codeGroup
-      }).then(codeGroupRes => (Object.assign(res, {  //return value expected to be {$codeGroupKey: [{code1}, {code2}, {code3}]}
-        [codeGroup]: codeGroupRes
-      })));
-    });
-  }, Q({})).then(codeGroupRes => {
-    //codeGroupRes is expected to be
-    // [{$codeGroupKey1: [{code1}, {code2}, {code3}]}, {$codeGroupKey2: [{code1}, {code2}, {code3}]}]
-    winston.info('===getFeatureCodeGroups codeGroupRes:', codeGroupRes);
-    callback(null, codeGroupRes);
-  }).fail((err) => {
-    winston.error('===getFeatureCodeGroups failed:', err);
-    callback(err, null);
-  }).finally(() => {
-    prepared.release();
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
+  }).fail(err => {
+    winston.error('===getFeatures failed:', err);
+    callback(err);
   });
 };

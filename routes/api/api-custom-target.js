@@ -45,7 +45,7 @@ module.exports = (app) => {
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       return Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroupGroups).then(codeGroupResSet => ({
         features: fields,
-        featurecodeGroupMap: codeGroupResSet
+        featureRefCodeMap: _.keyBy(codeGroupResSet, 'codeGroup')
       }));
     }).then(resSet => {
       res.json(resSet);
@@ -264,7 +264,7 @@ module.exports = (app) => {
           }]
         }
       ],
-      featurecodeGroupMap: {
+      featureRefCodeMap: {
         product: [{
           codeGroup: 'product',
           codeValue: 'abc',

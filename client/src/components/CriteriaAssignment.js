@@ -264,7 +264,7 @@ export default class CriteriaAssignment extends React.PureComponent {
         }}/>;
       case 'refOption':
         console.log('this.state.criteria == refOption: ', this.props.featureRefCodeMap[this.state.criteria.get('ref')]);
-        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')]} ref={(e) => {
+        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')] || []} ref={(e) => {
           this.fieldInput = e;
         }}/>;
     }
