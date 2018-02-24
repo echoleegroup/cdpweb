@@ -2,9 +2,10 @@ import React from 'react';
 import {fromJS, List} from 'immutable';
 import {xor} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
-import {getDate} from '../utils/date-util';
 import PickerMultiple from './PickerMultiple';
-import integratedAction from '../actions/integrated-analysis-action'
+import integratedAction from '../actions/integrated-analysis-action';
+import 'flatpickr/dist/themes/material_green.css';
+import Flatpickr from 'react-flatpickr';
 
 const extractAllNodeId = (nodes) => {
   return nodes.reduce((accumulator, node) => {
@@ -67,18 +68,18 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       }));
     };
 
-    this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
-      $(dom).datepicker({
-        format: 'yyyy/mm/dd'
-      }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
-        .datepicker('onClose', (dateText, picker) => {
-          let data = getDate(picker.datepicker('getDate'));
-          this.setState({
-            [timestampPropsOfState]: data.value,
-            [labelPropsOfState]: data.value_label
-          });
-        });
-    };
+    // this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
+    //   $(dom).datepicker({
+    //     format: 'yyyy/mm/dd'
+    //   }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
+    //     .datepicker('onClose', (dateText, picker) => {
+    //       let data = getDate(picker.datepicker('getDate'));
+    //       this.setState({
+    //         [timestampPropsOfState]: data.value,
+    //         [labelPropsOfState]: data.value_label
+    //       });
+    //     });
+    // };
 
     this.getExportOutputConfig = () => {
       return this.state;
@@ -111,8 +112,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
   };
 
   componentDidMount() {
-    this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
-    this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
+    // this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
+    // this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
   };
 
   render() {
@@ -133,12 +134,26 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           <label htmlFor="inputName" className="col-sm-3 control-label form-inline">明細時間區間</label>
           <div className="col-sm-7">
             <div className="form-inline">
-              <input type="text" className="form-control" id="periodStart" readOnly={true} ref={(e) => {
-                this.periodStart = e;
+              <Flatpickr options={{
+                dateFormat: "Y/m/d",
+                defaultDate: new Date(this.state.periodStart),
+                onChange: (selectedDates, dateStr) => {
+                  this.setState({
+                    periodStart: selectedDates[0].getTime(),
+                    periodStartLabel: dateStr
+                  });
+                }
               }}/>
               <span> ~ </span>
-              <input type="text" className="form-control" id="periodEnd" readOnly={true} ref={(e) => {
-                this.periodEnd = e;
+              <Flatpickr options={{
+                dateFormat: "Y/m/d",
+                defaultDate: new Date(this.state.periodEnd),
+                onChange: (selectedDates, dateStr) => {
+                  this.setState({
+                    periodEnd: selectedDates[0].getTime(),
+                    periodEndLabel: dateStr
+                  });
+                }
               }}/>
             </div>
           </div>

@@ -8,6 +8,9 @@ import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictiona
 // import CustomFilterAction from '../actions/criteria-action';
 import PickerSingle from './PickerSingle'
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
+import 'flatpickr/dist/themes/material_green.css';
+import Flatpickr from 'react-flatpickr';
+import {getDate} from '../utils/date-util';
 
 const INPUT_CRITERIA_OPERATOR = {
   eq: {
@@ -293,32 +296,31 @@ class NumberInput extends InputBase {}
 class TextInput extends InputBase {}
 
 class DateInput extends InputBase {
-  getInputData() {
-    let d = this.datepicker.datepicker('getDate');
-    let value, value_label = null;
-    if (d) {
-      let m = moment(d);
-      value = m.valueOf();
-      value_label = m.format('YYYY/MM/DD')
-    }
-    // console.log('DateInput::getInputData: ', d);
-    return {
-      value,
-      value_label
+  constructor(props) {
+    super(props);
+    let today = getDate();
+    this.state = {
+      value: today.value,
+      value_label: today.value_label
     };
-  }
-
-  componentDidMount() {
-    this.datepicker = $(this.input).datepicker({
-      format: 'yyyy/mm/dd'
-    }).datepicker('setDate', new Date());
   };
+
+  getInputData() {
+    return this.state;
+  }
 
   render() {
     return (
       <div className="radio">
-        <input type="text" className="form-control" readOnly={true} ref={(e) => {
-          this.input = e;
+        <Flatpickr options={{
+          dateFormat: "Y/m/d",
+          defaultDate: new Date(this.state.value),
+          onChange: (selectedDates, dateStr) => {
+            this.setState({
+              value: selectedDates[0].getTime(),
+              value_label: dateStr
+            });
+          }
         }}/>
       </div>
     );

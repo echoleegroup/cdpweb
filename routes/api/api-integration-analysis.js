@@ -133,7 +133,9 @@ module.exports = (app) => {
           }
         }
       });
-    }).splice(0, 0,
+    });
+
+    promises.splice(0, 0,
       Q.nfcall(queryService.insertQueryLog , {
         menuCode: MENU_CODE.INTEGRATED_QUERY,
         criteria: JSON.stringify(criteria.criteria),
@@ -144,7 +146,9 @@ module.exports = (app) => {
       return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
       }));
 
-    Q.all(promises).then((insertLog, ...res) => {
+    Q.all(promises).then(([insertLog, ...res]) => {
+      // winston.info('insertLog: ', insertLog);
+      // winston.info('res: %j', res);
       let relatives = _.assign({}, ...res);
       let backendCriteriaData = {
         criteria: criteria.criteria,
