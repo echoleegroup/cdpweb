@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const winston = require('winston');
 const mailInfo = require("../app-config").get("MAIL_INFO");
 
-module.exports.mail = (infoArray, req, res, callback = () => { }) => {
+module.exports.mail = (infoArray, callback = () => { }) => {
   console.log(infoArray) ;
   console.log(infoArray.to) ;
   let transporter = nodemailer.createTransport({
@@ -25,10 +25,10 @@ module.exports.mail = (infoArray, req, res, callback = () => { }) => {
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       winston.error("mail send error: "+error)
-      callback(error);
+      callback(error,null);
     } else {
       winston.info("Email sent: " + info.response)
-      callback("Email sent: " + info.response);
+      callback(null,"Email sent: " + info.response);
     }
   });
 };

@@ -341,7 +341,7 @@ module.exports = (app) => {
         "text": "http://" + domainName + ":" + process.env.PORT + "/system/user/pwd/change" + url
       }
 
-      mail_util.mail(sendInfo, req, res, function (err, result) {
+      mail_util.mail(sendInfo, function (err, result) {
         if (err) {
           winston.error('===forgetpwd failed:', err);
           res.redirect("/");
