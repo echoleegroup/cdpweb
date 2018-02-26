@@ -26,7 +26,7 @@ set_var()
 }
 
 # DEST_PATH="/Users/hd/Documents/workspace/cdpweb_test"
-DEST_PATH="/opt/cdpweb"
+DEST_PATH="/datadisk/site/cdpweb"
 CURRENT_PATH=$(pwd)
 
 set_var "$@"

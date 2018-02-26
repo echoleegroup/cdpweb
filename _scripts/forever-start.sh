@@ -20,8 +20,8 @@ set_var()
 #  fi
 }
 
-PROJECT_PATH="/opt/cdpweb"
-LOG_PATH="/var/cdpweb"
+PROJECT_PATH="/datadisk/site/cdpweb"
+LOG_PATH="/datadisk/log/cdpweb"
 
 set_var "$@"
 
