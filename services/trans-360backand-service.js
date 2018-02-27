@@ -49,7 +49,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   console.log(JSON.stringify(transJson));
 
   //呼叫API
-
+  /*待聖智完成
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -66,8 +66,8 @@ module.exports.transService = (queryId, JObject, callback) => {
     else if (!error && response.statusCode == 200)
       callback(null, transJson);
   });
-  
-
+  */
+  callback(null, transJson);
 
   function getWhere(Jdata) {
     let whereArray = [];
@@ -161,9 +161,9 @@ module.exports.transService = (queryId, JObject, callback) => {
         for (let i = 0; i < label.length; i++) {
           if (!isNaN(Date.parse(label[i]))) {
             if (i == label.length - 1)
-              returnValue += "'" + label[i] + "',";
+              returnValue += "'" + label[i].replace(/\//g,"") + "',";
             else
-              returnValue += "'" + label[i] + "')";
+              returnValue += "'" + label[i].replace(/\//g,"") + "')";
           }
           else {
             if (i == label.length - 1)
@@ -177,7 +177,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label + "'";
+          returnValue += "'" + label.replace(/\//g,"") + "'";
         else
           returnValue += "'" + value + "'";
       }
@@ -188,7 +188,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label + "')";
+          returnValue += "'" + label.replace(/\//g,"") + "')";
         else
           returnValue += "'" + value + "')";
       }
@@ -196,7 +196,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label + "'";
+          returnValue += "'" + label.replace(/\//g,"") + "'";
         else
           returnValue += "'" + value + "'";
       }
@@ -232,7 +232,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let postWhereObject = new Object();
     postWhereObject.relation = "and";
     postWhereObject.column = feature;
-    postWhereObject.expr = operator + "'" + label + "'";
+    postWhereObject.expr = operator + "'" + label.replace(/\//g,"") + "'";
     return postWhereObject;
   }
 };
