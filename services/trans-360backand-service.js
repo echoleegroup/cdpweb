@@ -49,7 +49,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   console.log(JSON.stringify(transJson));
 
   //呼叫API
-  /*待聖智完成
+  
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -66,8 +66,8 @@ module.exports.transService = (queryId, JObject, callback) => {
     else if (!error && response.statusCode == 200)
       callback(null, transJson);
   });
-  */
-  callback(null, transJson);
+  
+ 
 
   function getWhere(Jdata) {
     let whereArray = [];
