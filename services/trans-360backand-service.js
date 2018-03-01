@@ -75,6 +75,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let clientObject = new Object();
     let clientArray = [];
     let clientJSON = Jdata.client;
+    console.log('clientJSON: ', clientJSON);
     let getClientWhere = getCombo(clientJSON[0]);
     clientArray.push(getClientWhere);
     clientObject.type = "master";

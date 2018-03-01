@@ -163,9 +163,19 @@ module.exports = (app) => {
           relatives: relatives
         }
       };
-      winston.info('backendCriteriaData: %j', backendCriteriaData);
+      // winston.info('backendCriteriaData: %j', backendCriteriaData);
+
+      const integratedAnalysisTransService = require('../../services/trans-360backand-service');
+      return [
+        insertLog.queryID,
+        Q.nfcall(integratedAnalysisTransService.transService, insertLog.queryID, backendCriteriaData)];
+    }).spread((queryId, queryScript) => {
+      Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
+
+      res.json();
     }).fail(err => {
       winston.error(`===/export/query internal server error: ${err}`);
+      console.log(err);
       res.json(null, 500, 'internal service error');
     });
   });
