@@ -4,7 +4,6 @@ const API_360_HOST = require("../app-config").get("API_360_HOST");
 const API_360_PORT = require("../app-config").get("API_360_PORT");
 module.exports.transService = (queryId, JObject, callback) => {
   let transJson = new Object();
-  console.log(JSON.stringify(JObject));
   //開始組select json
   let selectInfo = [];
   let postWhere = [];
@@ -72,12 +71,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   function getWhere(Jdata) {
     let whereArray = [];
     //客戶明細
-    let clientObject = new Object();
-    let clientArray = [];
     let clientJSON = Jdata.client;
-    console.log("HHH:"+getCount(clientJSON));
     if (getCount(clientJSON) > 0) {
-      console.log('clientJSON: ', JSON.stringify(clientJSON[0]));
+      let clientObject = new Object();
+      let clientArray = [];
       let getClientWhere = getCombo(clientJSON[0]);
       clientArray.push(getClientWhere);
       clientObject.type = "master";
@@ -86,10 +83,10 @@ module.exports.transService = (queryId, JObject, callback) => {
     }
 
     //車子明細
-    let vehicleObject = new Object();
-    let vehicleArray = [];
     let vehicleJSON = Jdata.vehicle;
     if (getCount(vehicleJSON) > 0) {
+      let vehicleObject = new Object();
+      let vehicleArray = [];
       let getVehicleWhere = getCombo(vehicleJSON[0]);
       vehicleArray.push(getVehicleWhere);
       vehicleObject.type = "master";
@@ -98,10 +95,10 @@ module.exports.transService = (queryId, JObject, callback) => {
     }
 
     //交易明細
-    let transactionObject = new Object();
-    let transactionArray = [];
     let transactionJSON = Jdata.transaction;
     if (getCount(transactionJSON) > 0) {
+      let transactionObject = new Object();
+      let transactionArray = [];
       let getTransactionWhere = getCombo(transactionJSON[0]);
       transactionArray.push(getTransactionWhere);
       transactionObject.type = "ismain";
@@ -111,7 +108,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     return whereArray;
   }
   function getCombo(Jdata) {
-    if (Jdata.type === "combo") {
+    if ("combo" === Jdata.type) {
       let ComboObject = new Object();
       let children = [];
       for (let i in Jdata.criteria) {
@@ -125,7 +122,7 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   }
   function getContent(Jdata, operator) {
-    if (Jdata.type === "refTransaction" || Jdata.type === "bundle") {
+    if ("refTransaction" === Jdata.type || "bundle" === Jdata.type) {
       let complexObejct = new Object();
       let children = [];
       for (let i in Jdata.criteria) {
@@ -162,7 +159,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let fieldOperator = getOperator(JField.operator);
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
-      if (fieldOperator === "in" || fieldOperator === "not in") {
+      if ("in" === fieldOperator || "not in" === fieldOperator) {
         returnValue += "(";
         let label = JField.value_label;
         let value = JField.value;
@@ -191,7 +188,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       }
     }
     else {
-      if (fieldOperator === "in" || fieldOperator === "not in") {
+      if ("in" === fieldOperator || "not in" === fieldOperator) {
         returnValue += "(";
         let label = JField.value_label;
         let value = JField.value;
