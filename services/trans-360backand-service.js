@@ -4,7 +4,7 @@ const API_360_HOST = require("../app-config").get("API_360_HOST");
 const API_360_PORT = require("../app-config").get("API_360_PORT");
 module.exports.transService = (queryId, JObject, callback) => {
   let transJson = new Object();
-
+  console.log(JSON.stringify(JObject));
   //開始組select json
   let selectInfo = [];
   let postWhere = [];
@@ -23,6 +23,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   filterObject = getPostWhere(filter, "master");
   postWhere.push(filterObject);
 
+
   //開始組其他select欄位
   let keys = Object.keys(JObject.export.relatives);
   for (let i = 0; i < keys.length; i++) {
@@ -38,7 +39,6 @@ module.exports.transService = (queryId, JObject, callback) => {
     postWhere.push(filterObject);
   }
 
-
   //開始組where條件
   let whereArray = [];
   whereArray = getWhere(JObject.criteria);
@@ -49,7 +49,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   console.log(JSON.stringify(transJson));
 
   //呼叫API
-  
+
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -66,8 +66,8 @@ module.exports.transService = (queryId, JObject, callback) => {
     else if (!error && response.statusCode == 200)
       callback(null, transJson);
   });
-  
- 
+
+
 
   function getWhere(Jdata) {
     let whereArray = [];
@@ -75,36 +75,43 @@ module.exports.transService = (queryId, JObject, callback) => {
     let clientObject = new Object();
     let clientArray = [];
     let clientJSON = Jdata.client;
-    console.log('clientJSON: ', clientJSON);
-    let getClientWhere = getCombo(clientJSON[0]);
-    clientArray.push(getClientWhere);
-    clientObject.type = "master";
-    clientObject.condition = clientArray;
-    whereArray.push(clientObject);
+    console.log("HHH:"+getCount(clientJSON));
+    if (getCount(clientJSON) > 0) {
+      console.log('clientJSON: ', JSON.stringify(clientJSON[0]));
+      let getClientWhere = getCombo(clientJSON[0]);
+      clientArray.push(getClientWhere);
+      clientObject.type = "master";
+      clientObject.condition = clientArray;
+      whereArray.push(clientObject);
+    }
 
     //車子明細
     let vehicleObject = new Object();
     let vehicleArray = [];
     let vehicleJSON = Jdata.vehicle;
-    let getVehicleWhere = getCombo(vehicleJSON[0]);
-    vehicleArray.push(getVehicleWhere);
-    vehicleObject.type = "master";
-    vehicleObject.condition = vehicleArray;
-    whereArray.push(vehicleObject);
+    if (getCount(vehicleJSON) > 0) {
+      let getVehicleWhere = getCombo(vehicleJSON[0]);
+      vehicleArray.push(getVehicleWhere);
+      vehicleObject.type = "master";
+      vehicleObject.condition = vehicleArray;
+      whereArray.push(vehicleObject);
+    }
 
     //交易明細
     let transactionObject = new Object();
     let transactionArray = [];
     let transactionJSON = Jdata.transaction;
-    let getTransactionWhere = getCombo(transactionJSON[0]);
-    transactionArray.push(getTransactionWhere);
-    transactionObject.type = "ismain";
-    transactionObject.condition = transactionArray;
-    whereArray.push(transactionObject);
+    if (getCount(transactionJSON) > 0) {
+      let getTransactionWhere = getCombo(transactionJSON[0]);
+      transactionArray.push(getTransactionWhere);
+      transactionObject.type = "ismain";
+      transactionObject.condition = transactionArray;
+      whereArray.push(transactionObject);
+    }
     return whereArray;
   }
   function getCombo(Jdata) {
-    if (Jdata.type == "combo") {
+    if (Jdata.type === "combo") {
       let ComboObject = new Object();
       let children = [];
       for (let i in Jdata.criteria) {
@@ -118,7 +125,7 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   }
   function getContent(Jdata, operator) {
-    if (Jdata.type == "refTransaction" || Jdata.type == "bundle") {
+    if (Jdata.type === "refTransaction" || Jdata.type === "bundle") {
       let complexObejct = new Object();
       let children = [];
       for (let i in Jdata.criteria) {
@@ -134,37 +141,37 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   }
   function getOperator(operator) {
-    if (operator == "eq")
+    if (operator === "eq")
       return "=";
-    else if (operator == "ne")
+    else if (operator === "ne")
       return "!=";
-    else if (operator == "lt")
+    else if (operator === "lt")
       return ">";
-    else if (operator == "le")
+    else if (operator === "le")
       return "<";
-    else if (operator == "gt")
+    else if (operator === "gt")
       return ">=";
-    else if (operator == "ge")
+    else if (operator === "ge")
       return "<=";
     else if (operator == "in")
       return "in";
-    else if (operator == "ni")
+    else if (operator === "ni")
       return "not in";
   }
   function getExpr(JField) {
     let fieldOperator = getOperator(JField.operator);
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
-      if (fieldOperator == "in" || fieldOperator == "not in") {
+      if (fieldOperator === "in" || fieldOperator === "not in") {
         returnValue += "(";
         let label = JField.value_label;
         let value = JField.value;
         for (let i = 0; i < label.length; i++) {
           if (!isNaN(Date.parse(label[i]))) {
             if (i == label.length - 1)
-              returnValue += "'" + label[i].replace(/\//g,"") + "',";
+              returnValue += "'" + label[i].replace(/\//g, "") + "',";
             else
-              returnValue += "'" + label[i].replace(/\//g,"") + "')";
+              returnValue += "'" + label[i].replace(/\//g, "") + "')";
           }
           else {
             if (i == label.length - 1)
@@ -178,18 +185,18 @@ module.exports.transService = (queryId, JObject, callback) => {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g,"") + "'";
+          returnValue += "'" + label.replace(/\//g, "") + "'";
         else
           returnValue += "'" + value + "'";
       }
     }
     else {
-      if (fieldOperator == "in" || fieldOperator == "not in") {
+      if (fieldOperator === "in" || fieldOperator === "not in") {
         returnValue += "(";
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g,"") + "')";
+          returnValue += "'" + label.replace(/\//g, "") + "')";
         else
           returnValue += "'" + value + "')";
       }
@@ -197,7 +204,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g,"") + "'";
+          returnValue += "'" + label.replace(/\//g, "") + "'";
         else
           returnValue += "'" + value + "'";
       }
@@ -233,7 +240,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let postWhereObject = new Object();
     postWhereObject.relation = "and";
     postWhereObject.column = feature;
-    postWhereObject.expr = operator + "'" + label.replace(/\//g,"") + "'";
+    postWhereObject.expr = operator + "'" + label.replace(/\//g, "") + "'";
     return postWhereObject;
   }
 };
