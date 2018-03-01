@@ -7,9 +7,17 @@ import {List} from "immutable";
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
     super(props);
-    this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.COMBO;
-    this.CHILD_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
+    // this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.COMBO;
+    // this.CHILD_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
   }
+
+  myBundleType() {
+    return CRITERIA_COMPONENT_DICT.COMBO;
+  };
+
+  childBundleType() {
+    return CRITERIA_COMPONENT_DICT.BUNDLE;
+  };
 
   // getBundleProperties(criteria) {
   //   console.log('getBundleProperties:criteria: ', criteria);
@@ -70,7 +78,7 @@ export default class CriteriaComboBundle extends CriteriaBundle {
 
   toInsertCriteriaBundle() {
     let criteriaModel = this.getBundleProperties({
-      type: this.CHILD_BUNDLE_TYPE
+      type: this.childBundleType()
     });
 
     this.setState(prevState => ({

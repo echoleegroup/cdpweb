@@ -14,7 +14,7 @@ export default class CriteriaBundle extends React.PureComponent {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
-    this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
+    // this.MY_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.BUNDLE;
     this.BUNDLE_TYPE_LABEL = '條件';
     this.state = {
       isLoaded: true,
@@ -34,12 +34,16 @@ export default class CriteriaBundle extends React.PureComponent {
   getBundleProperties({id, type, operator, ref, ref_label, criteria} = {}) {
     return {
       id: id || shortid.generate(),
-      type: type || this.MY_BUNDLE_TYPE, //combo, ref, field
+      type: type || this.myBundleType(), //combo, ref, field
       operator: operator || 'and',   //and, or, eq, ne, lt, le, gt, ge, not
       ref: ref || null,
       ref_label: ref_label || null,
       criteria: List(criteria)
     };
+  };
+
+  myBundleType() {
+    return CRITERIA_COMPONENT_DICT.BUNDLE;
   };
 
   componentWillMount() {

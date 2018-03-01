@@ -163,7 +163,7 @@ module.exports = (app) => {
           relatives: relatives
         }
       };
-      // winston.info('backendCriteriaData: %j', backendCriteriaData);
+      winston.info('backendCriteriaData: %j', backendCriteriaData);
 
       const integratedAnalysisTransService = require('../../services/trans-360backand-service');
       return [
