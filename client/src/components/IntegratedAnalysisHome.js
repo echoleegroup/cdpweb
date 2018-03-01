@@ -102,7 +102,8 @@ export default class IntegratedAnalysisHome extends BodyLayout {
 
     this.stepTo = (targetStep) => {
       return () => {
-        this.setStep(targetStep);
+        //this.setStep(targetStep);
+        STEP_FORWARD_HANDLERS[this.state.step](targetStep, this);
       };
     };
 
