@@ -11,12 +11,13 @@ const integrationService = require('../../services/integration-analysis-service'
 const integrationTaskService = require('../../services/integration-analysis-task-service');
 const codeGroupService = require('../../services/code-group-service');
 const queryService = require('../../services/query-log-service');
+const fileHelper = require('../../helpers/file-helper');
 const criteriaHelper = require('../../helpers/criteria-helper');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
-// const storage = constants.ASSERTS_ABSOLUTE_PATH;
+// const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 // const multer = require('multer');
 // const upload = multer({ dest: storage });
 
@@ -145,8 +146,8 @@ module.exports = (app) => {
         features: JSON.stringify(criteria.export),
         filters: JSON.stringify(criteria.filter),
         updUser: req.user.userId
-    }).then(insertRes => {
-      return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
+      }).then(insertRes => {
+        return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
       }));
 
     Q.all(promises).then(([insertLog, ...res]) => {
@@ -179,94 +180,6 @@ module.exports = (app) => {
       res.json(null, 500, 'internal service error');
     });
   });
-
-  router.get('/export/query/ready/:queryId', factory.ajax_response_factory(), (req, res) => {
-    const fs = require('fs');
-    const path = require('path');
-    const Minizip = require('minizip-asm.js');
-    let queryId = req.params.queryId;
-    Q.nfcall(fs.readFile, path.join(constants.FTP_FOLDER_PATH, `${queryId}.zip`)).fail(err => {
-      winston.error(`===/export/query/ready/${queryId} internal server error: ${err}`);
-      res.json(null, 404, 'file not found');
-    }).then(zipBuff => {
-      let mz = new Minizip(zipBuff);
-      let dataArray = mz.list().map(item => {
-        let filePath = item.filepath;
-        console.log('filePath: ', filePath);
-        if ('.json' !== path.extname(filePath).toLowerCase())
-          return;
-
-        let content = mz.extract(filePath, {
-          encoding: 'utf8'
-        }).toString();
-        return {
-          [path.basename(filePath, '.json')]: JSON.parse(content)
-        };
-      });
-
-      return Q(_.assign({}, ...dataArray));
-    }).fail(err => {
-      winston.error(`===/export/query/ready/${queryId} invalid file content: ${err}`);
-      res.json(null, 301, 'invalid file content');
-    }).then(zipContentBuffers => {
-      return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(res => {
-        return zipContentBuffers;
-      });
-    }).fail(err => {
-      winston.error(`===/export/query/ready/${queryId} fail to update task status: ${err}`)
-      res.json(null, 302, 'fail to update task status. maybe check if the ID is valid');
-    }).then(zipContentBuffers => {
-      res.json(null, 200, 'success');
-
-      winston.info('dataObj: %j', zipContentBuffers);
-    });
-
-  });
-
-  // router.post(
-  //   '/export/query/ready/:queryId',
-  //   [
-  //     factory.ajax_response_factory(),
-  //     auth.checkInternalFileUploadPermission(),
-  //     upload.single('query_result')],
-  //   (req, res) => {
-  //     const Minizip = require('minizip-asm.js');
-  //     const path = require('path');
-  //     let file = req.file;
-  //     let queryId = req.params.queryId;
-  //     let zipBuff = file.buffer;
-  //     let mz = new Minizip(zipBuff);
-  //     let contentList;
-  //     try{
-  //       contentList = mz.list().reduce((accumulator, item) => {
-  //         let filePath = item.filepath;
-  //         console.log('filePath: ', filePath);
-  //         if ('.json' !== path.extname(filePath).toLowerCase())
-  //           return accumulator;
-  //
-  //         let content = mz.extract(filePath, {
-  //           encoding: 'utf8'
-  //         }).toString();
-  //         return Object.assign(accumulator, {
-  //           [path.basename(filePath, '.json')]: JSON.parse(content)
-  //         });
-  //       }, {});
-  //     } catch (err) {
-  //       winston.error(`===/export/query/ready/${queryId} invalid file content: ${err}`);
-  //       res.json(null, 301, 'invalid file content');
-  //       return ;
-  //     }
-  //
-  //     Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(() => {
-  //       res.json(null, 200, 'success');
-  //
-  //       winston.info('dataObj: %j', contentList);
-  //     }).fail(err => {
-  //       winston.error(`===/export/query/ready/${queryId} fail to update task status: ${err}`)
-  //       res.json(null, 302, 'fail to update task status. maybe check if the ID is valid');
-  //     });
-  //
-  // });
 
   return router;
 };

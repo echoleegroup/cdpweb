@@ -17,7 +17,7 @@ const criteriaHelper = require('../../helpers/criteria-helper');
 const fileHelper = require('../../helpers/file-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
-const storage = constants.ASSERTS_ABSOLUTE_PATH;
+const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 module.exports = (app) => {
@@ -45,7 +45,7 @@ module.exports = (app) => {
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       return Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroupGroups).then(codeGroupResSet => ({
         features: fields,
-        featureRefCodeMap: _.keyBy(codeGroupResSet, 'codeGroup')
+        featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
       }));
     }).then(resSet => {
       res.json(resSet);

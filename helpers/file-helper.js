@@ -1,10 +1,11 @@
 const fs = require('fs');
 const _ = require('lodash');
 const path = require('path');
+const request = require('request');
 const Q = require('q');
 const winston = require('winston');
 const constants = require("../utils/constants");
-const storage = constants.ASSERTS_ABSOLUTE_PATH;
+const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 
 module.exports.buildXlsxBuffer = ({
                                     sheetName='模型名單',
@@ -69,4 +70,83 @@ module.exports.httpResponseArchiveFile = ({
   res.setHeader('Content-Length', zipBuffer.length);
 
   res.end(new Buffer(zipBuffer, 'binary'));
+};
+
+module.exports.downloadRemoteFile = (url, dest, cb) => {
+  try {
+    fs.unlinkSync(sparkZipPath);
+  } catch (err) {
+    winston.warn(`unlink file ${sparkZipPath} failed: ${err}`);
+  }
+
+  let file = fs.createWriteStream(dest);
+  let sendReq = request.get(url);
+
+  // verify response code
+  sendReq.on('response', function(response) {
+    if (response.statusCode !== 200) {
+      winston.info(`download remote file: ${dest} response code: ${response.statusCode}`);
+      fs.unlink(dest, err => {
+        err && winston.warn(`unlink ${dest} failed: ${err}`);
+      });
+      return cb('Response status was ' + response.statusCode);
+    }
+  });
+
+  // check for request errors
+  sendReq.on('error', function (err) {
+    winston.info(`download remote file: ${url} on error: ${err}`);
+    fs.unlink(dest, err => {
+      err && winston.warn(`unlink ${dest} failed: ${err}`);
+    });
+    winston.error(`downloadRemoteFile ${url} failed: ${err}`);
+    return cb(err);
+  });
+
+  sendReq.pipe(file);
+
+  file.on('finish', function() {
+    file.close(cb);  // close() is async, call cb after close completes.
+  });
+
+  file.on('error', function(err) { // Handle errors
+    winston.info(`write file: ${dest} on error: ${err}`);
+    fs.unlink(dest, err => {    // Delete the file async. (But we don't check the result)
+      err && winston.warn(`unlink ${dest} failed: ${err}`);
+    });
+    return cb(err.message);
+  });
+};
+
+module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
+  try {
+    fs.unlinkSync(dest);
+  } catch (err) {
+    winston.warn(`delete file ${dest} failed: ${err}`);
+  }
+  const archiver = require('archiver');
+  const output = fs.createWriteStream(dest);
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Sets the compression level.
+  });
+
+  output.on('close', function() {
+    winston.info(archive.pointer() + ' total bytes');
+    winston.info('archiver has been finalized and the output file descriptor has closed.');
+    // output.end();
+    callback(null, dest);
+  });
+
+  // good practice to catch this error explicitly
+  archive.on('error', function(err) {
+    callback(err);
+  });
+
+  archive.pipe(output);
+
+  srcPaths.forEach(src => {
+    archive.append(fs.createReadStream(src), { name: path.basename(src) });
+  });
+
+  archive.finalize();
 };

@@ -24,7 +24,7 @@ module.exports = () => {
         return '/';
       },
       getRoot: function(connection, callback) {
-        const root = path.join(process.cwd(), constants.FTP_FOLDER_PATH);
+        const root = path.join(process.cwd(), constants.ASSERTS_FTP_FOLDER_PATH);
 
         fs.stat(root, function(err, stats) {
           if (!stats) {

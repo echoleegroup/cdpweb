@@ -106,8 +106,12 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         }
       };
 
-      $(this.inputCriteria).val(JSON.stringify(formDate));
-      $(this.formComponent).submit();
+      integratedAction.exportQuery(formDate, res => {
+        window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
+      });
+
+      // $(this.inputCriteria).val(JSON.stringify(formDate));
+      // $(this.formComponent).submit();
     }
   };
 

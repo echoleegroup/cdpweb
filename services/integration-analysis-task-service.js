@@ -10,6 +10,7 @@ const PROCESS_STATUS = Object.freeze({
   INIT: "INIT",
   REMOTE_PROCESSING: "REMOTE_PROCESSING",
   PARSING: "PARSING",
+  PARSING_FAILED: "PARSING_FAILED",
   COMPLETE: "COMPLETE"
 });
 
@@ -73,7 +74,7 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('updTime', _connector.TYPES.DateTime, new Date())
     .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.REMOTE_PROCESSING)
-    .setInput('queryScript', _connector.TYPES.TEXT, queryScript);
+    .setInput('queryScript', _connector.TYPES.NVarChar, queryScript);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
@@ -82,7 +83,7 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
       throw new Error();
     }
   }).fail(err => {
-    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}`);
+    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status})`);
     winston.error(err);
     callback(err);
   });
@@ -90,6 +91,10 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
 
 module.exports.setQueryTaskStatusParsing = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.PARSING, callback);
+};
+
+module.exports.setQueryTaskStatusParsingFailed = (queryId, callback) => {
+  updateTaskStatus(queryId, PROCESS_STATUS.PARSING_FAILED, callback);
 };
 
 module.exports.setQueryTaskStatusComplete = (queryId, callback) => {

@@ -38,6 +38,10 @@ module.exports = (app) => {
   app.use('/api/model', require('./api/api-model')(app));
   app.use('/api/target', require('./api/api-custom-target')(app));
   app.use('/api/integration', require('./api/api-integration-analysis')(app));
+  app.use('/api/intra/integration', require('./api/api-integration-analysis-intra')(app));
+
+  //hook for test
+  app.use('/api/intra/test', require('../test/api-intra-test')(app));
 
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));

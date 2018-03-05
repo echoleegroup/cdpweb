@@ -7,7 +7,7 @@ const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
-const storage = constants.ASSERTS_ABSOLUTE_PATH;
+const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });;
 
 function toUP(value) {

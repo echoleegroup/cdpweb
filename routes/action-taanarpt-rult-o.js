@@ -10,7 +10,7 @@ const db = require("../utils/sql-server-connector").db;
 const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
 const java_api_service = require('../services/java-api-service');
 const constants = require("../utils/constants");
-const storage = constants.ASSERTS_ABSOLUTE_PATH;
+const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 module.exports = (app) => {
   console.log('[taanarptRoute::create] Creating taanarpt route.');
   const router = express.Router();
