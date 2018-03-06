@@ -74,9 +74,9 @@ module.exports.httpResponseArchiveFile = ({
 
 module.exports.downloadRemoteFile = (url, dest, cb) => {
   try {
-    fs.unlinkSync(sparkZipPath);
+    fs.unlinkSync(dest);
   } catch (err) {
-    winston.warn(`unlink file ${sparkZipPath} failed: ${err}`);
+    winston.warn(`unlink file ${dest} failed: ${err}`);
   }
 
   let file = fs.createWriteStream(dest);
