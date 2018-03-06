@@ -121,9 +121,13 @@ module.exports = (app) => {
   });
 
   router.post('/export/query', middlewares, (req, res) => {
-    let criteria = JSON.parse(req.body.criteria);
+    let criteria = req.body.criteria;
+    let expt = req.body.export;
+    let filter = req.body.filter;
 
-    let promises = _.map(criteria.export.relatives, relativeSetId => {
+    // winston.info(req.body.export);
+
+    let promises = _.map(expt.relatives, relativeSetId => {
       return Q.all([
         Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
         Q.nfcall(integrationService.getDownloadFeatures, relativeSetId)
@@ -133,7 +137,7 @@ module.exports = (app) => {
             features: _.map(features, 'featID'),
             filter: _.assign({
               feature: featureSet.periodCriteriaFeatID
-            }, criteria.filter.relatives)
+            }, filter.relatives)
           }
         }
       });
@@ -142,9 +146,9 @@ module.exports = (app) => {
     promises.splice(0, 0,
       Q.nfcall(queryService.insertQueryLog , {
         menuCode: MENU_CODE.INTEGRATED_QUERY,
-        criteria: JSON.stringify(criteria.criteria),
-        features: JSON.stringify(criteria.export),
-        filters: JSON.stringify(criteria.filter),
+        criteria: JSON.stringify(criteria),
+        features: JSON.stringify(expt),
+        filters: JSON.stringify(filter),
         updUser: req.user.userId
       }).then(insertRes => {
         return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
@@ -155,21 +159,25 @@ module.exports = (app) => {
       // winston.info('res: %j', res);
       let relatives = _.assign({}, ...res);
       let backendCriteriaData = {
-        criteria: criteria.criteria,
+        criteria: criteria,
         export: {
           master: {
-            features: criteria.export.master,
+            features: expt.master,
             filter: {}
           },
           relatives: relatives
         }
       };
-      winston.info('backendCriteriaData: %j', backendCriteriaData);
+      // winston.info('backendCriteriaData: %j', backendCriteriaData);
 
       const integratedAnalysisTransService = require('../../services/trans-360backand-service');
       return [
         insertLog.queryID,
-        Q.nfcall(integratedAnalysisTransService.transService, insertLog.queryID, backendCriteriaData)];
+        Q.nfcall(integratedAnalysisTransService.transService, insertLog.queryID, backendCriteriaData)
+          .fail(err => {
+            Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable, insertLog.queryID);
+            throw err;
+          })];
     }).spread((queryId, queryScript) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
 

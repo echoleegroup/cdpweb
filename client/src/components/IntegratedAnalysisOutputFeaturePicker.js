@@ -108,6 +108,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
       integratedAction.exportQuery(formDate, res => {
         window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
+      }, err => {
+        window.alert('The service is temporarily unavailable. Please try latter again contact us.');
       });
 
       // $(this.inputCriteria).val(JSON.stringify(formDate));
@@ -169,9 +171,9 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
           <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
         </div>
-        <form method="POST" action={integratedAction.EXPORT_QUERY} ref={e => {this.formComponent = e;}}>
-          <input type="hidden" name="criteria" value="" ref={e => this.inputCriteria = e}/>
-        </form>
+        {/*<form method="POST" action={integratedAction.EXPORT_QUERY} ref={e => {this.formComponent = e;}}>*/}
+          {/*<input type="hidden" name="criteria" value="" ref={e => this.inputCriteria = e}/>*/}
+        {/*</form>*/}
       </div>
     );
   };
