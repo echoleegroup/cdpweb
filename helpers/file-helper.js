@@ -150,3 +150,30 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
 
   archive.finalize();
 };
+
+module.exports.archiveStat = (path, callback) => {
+  const unzipper = require('unzipper');
+  let entries = [];
+  let fileSize = 0;
+  Q.nfcall(fs.stat, path).then(stats => {
+    fileSize = stats.size;
+    let zipStream = fs.createReadStream(path);
+    zipStream
+      .pipe(unzipper.Parse())
+      .on('entry', entry => {
+        entries.push(entry.path);
+      })
+      .on('close', () => {
+        winston.info('unzipper close!');
+        callback(null, {
+          fileSize,
+          entries
+        });
+      })
+      .on('error', err => {
+        callback(err);
+      });
+  }).fail(err => {
+    callback(err);
+  });
+};

@@ -107,8 +107,30 @@ module.exports.setQueryTaskStatusParsingFailed = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.PARSING_FAILED, callback);
 };
 
-module.exports.setQueryTaskStatusComplete = (queryId, callback) => {
-  updateTaskStatus(queryId, PROCESS_STATUS.COMPLETE, callback);
+module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, callback) => {
+  const sql = 'UPDATE cu_IntegratedQueryTask ' +
+    'SET archiveSizeInBytes = @archiveSizeInBytes, archiveEntries = @archiveEntries,' +
+    'status = @status, updTime = @updTime ' +
+    'WHERE queryID = @queryId ';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('updTime', _connector.TYPES.DateTime, new Date())
+    .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.COMPLETE)
+    .setInput('archiveSizeInBytes', _connector.TYPES.BIGINT, sizeInBytes)
+    .setInput('archiveSizeInBytes', _connector.TYPES.TINYINT, entries);
+
+  Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
+    if (rowsAffected === 1) {
+      callback(null, queryId);
+    } else {
+      throw new Error();
+    }
+  }).fail(err => {
+    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status})`);
+    winston.error(err);
+    callback(err);
+  });
 };
 
 module.exports.insertQueryTask = (queryID, queryScript, status = PROCESS_STATUS.INIT, updUser, callback) => {

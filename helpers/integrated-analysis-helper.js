@@ -90,7 +90,7 @@ module.exports.entryParser = (entryStream, tempWorkingPath, fileBaseName, callba
     entryStream
       .pipe(es.split())
       .pipe(es.map((line, cb) => {
-        winston.info(`${++lineNum} parsing line ${line} isFirstline ${isFirstline}`);
+        // winston.info(`${++lineNum} parsing line ${line} isFirstline ${isFirstline}`);
         // entryStream.pause();
 
         if (isFirstline) {
@@ -137,8 +137,8 @@ module.exports.entryParser = (entryStream, tempWorkingPath, fileBaseName, callba
       .pipe(outStream)
       // .promise();
       .on('close', () => {
-        outStream.close();
-        entryStream.destroy();
+        // outStream.close();
+        // entryStream.destroy();
         winston.info(`entry close: ${outStreamPath}`);
         callback(null, outStreamPath);
       })
@@ -153,7 +153,8 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, callback)
 
   let promises = [];
   let csvFilePaths = [];
-  let zipStream = fs.createReadStream(zipPath)
+  let zipStream = fs.createReadStream(zipPath);
+  zipStream
     .pipe(unzipper.Parse())
     .on('entry', entry => {
 

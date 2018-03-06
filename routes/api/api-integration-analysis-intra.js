@@ -40,14 +40,18 @@ module.exports = (app) => {
       //delete remote file
       // winston.info(`===delete remote file: ${remoteDeleteUrl}`);
       require('request-promise-native').post(remoteDeleteUrl);
-      Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId);
+      Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
+        winston.error(err);
+      });
       return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath);
     }).then(csvFilePaths => {
       winston.info(`parsing to csv: ${csvFilePaths}`);
       return Q.nfcall(fileHelper.archiveFiles, csvFilePaths, finalZipPath);
     }).then(destZipPath => {
       winston.info(`archive finished: ${destZipPath}`);
-      Q.nfcall(integrationTaskService.setQueryTaskStatusComplete, queryId);
+      return Q.nfcall(fileHelper.archiveStat, destZipPath);
+    }).then(stat => {
+      Q.nfcall(integrationTaskService.setQueryTaskStatusComplete, queryId, stat.fileSize, stat.entries.length);
       //TODO: send mail
     }).fail(err => {
       winston.error(`parsing to csv and archive failed: ${err}`);
