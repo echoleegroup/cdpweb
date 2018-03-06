@@ -9,6 +9,7 @@ const _connector = require('../utils/sql-query-util');
 const PROCESS_STATUS = Object.freeze({
   INIT: "INIT",
   REMOTE_PROCESSING: "REMOTE_PROCESSING",
+  REMOTE_FILE_NOT_FOUND: "REMOTE_FILE_NOT_FOUND",
   PARSING: "PARSING",
   PARSING_FAILED: "PARSING_FAILED",
   COMPLETE: "COMPLETE"
@@ -87,6 +88,10 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
     winston.error(err);
     callback(err);
   });
+};
+
+module.exports.setQueryTaskStatusRemoteFileNotFound = (queryId, callback) => {
+  updateTaskStatus(queryId, PROCESS_STATUS.REMOTE_FILE_NOT_FOUND, callback);
 };
 
 module.exports.setQueryTaskStatusParsing = (queryId, callback) => {

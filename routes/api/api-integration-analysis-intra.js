@@ -8,6 +8,7 @@ const shortid = require('shortid');
 const factory = require("../../middlewares/response-factory");
 const fileHelper = require('../../helpers/file-helper');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
+const integrationTaskService = require('../../services/integration-analysis-task-service');
 const constants = require('../../utils/constants');
 
 module.exports = (app) => {
@@ -31,25 +32,31 @@ module.exports = (app) => {
 
     // winston.info(`===download remote file: ${remoteDownloadUrl}`);
 
-    Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath).then(() => {
+    Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath).fail(err => {
+      Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteFileNotFound, queryId);
+      res.json(null, 404, `${queryId}.zip not found`);
+    }).then(() => {
       res.json();
       //delete remote file
       // winston.info(`===delete remote file: ${remoteDeleteUrl}`);
       require('request-promise-native').post(remoteDeleteUrl);
+      Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId);
       return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath);
-    }).fail(err => {
-      res.json(null, 404, `${queryId}.zip not found`);
     }).then(csvFilePaths => {
       winston.info(`parsing to csv: ${csvFilePaths}`);
       return Q.nfcall(fileHelper.archiveFiles, csvFilePaths, finalZipPath);
     }).then(destZipPath => {
       winston.info(`archive finished: ${destZipPath}`);
+      Q.nfcall(integrationTaskService.setQueryTaskStatusComplete, queryId);
+      //TODO: send mail
+    }).fail(err => {
+      winston.error(`parsing to csv and archive failed: ${err}`);
+      Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId);
+    }).finally(() => {
       const rmdir = require('rimraf');
       rmdir(workingPath, err => {
         err && winston.warn(`remove ${workingPath} failed: ${err}`);
       });
-    }).fail(err => {
-      winston.error(`parsing to csv and archive failed: ${err}`);
     });
   });
 
