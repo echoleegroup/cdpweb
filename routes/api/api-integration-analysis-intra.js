@@ -44,10 +44,10 @@ module.exports = (app) => {
       return Q.nfcall(fileHelper.archiveFiles, csvFilePaths, finalZipPath);
     }).then(destZipPath => {
       winston.info(`archive finished: ${destZipPath}`);
-      // const rmdir = require('rimraf');
-      // rmdir(workingPath, err => {
-      //   err && winston.warn(`remove ${workingPath} failed: ${err}`);
-      // });
+      const rmdir = require('rimraf');
+      rmdir(workingPath, err => {
+        err && winston.warn(`remove ${workingPath} failed: ${err}`);
+      });
     }).fail(err => {
       winston.error(`parsing to csv and archive failed: ${err}`);
     });
