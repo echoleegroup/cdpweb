@@ -23,8 +23,8 @@ module.exports = (app) => {
     // const workingDirectory = shortid.generate();
     const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
     // const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, workingDirectory);
-    const remoteDownloadUrl = `http://${req.params.ip}:${req.params.port}/download/${queryId}`;
-    const remoteDeleteUrl = `http://${req.params.ip}:${req.params.port}/delete/${queryId}`;
+    const remoteDownloadUrl = `http://${req.params.ip}:${req.params.port}/api/intra/test/download/${queryId}`;
+    const remoteDeleteUrl = `http://${req.params.ip}:${req.params.port}/api/intra/test/delete/${queryId}`;
     const finalZipPath = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryId}.zip`);
     const mkdirp = require('mkdirp');
     const tempFolderName = shortid.generate();
@@ -37,15 +37,17 @@ module.exports = (app) => {
     Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
       if (!queryLogData) {
         res.json(null, 401, `task ${queryId} not found`);
+        throw `task ${queryId} not found`;
       } else {
         // winston.info('queryLogData: ', queryLogData);
         featureIdMap = JSON.parse(queryLogData.reserve1).export;
         // winston.info('query log process Data: %j', featureIdMap);
-        return Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath);
+        return Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath).fail(err => {
+          Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteFileNotFound, queryId);
+          res.json(null, 404, `${queryId}.zip not found`);
+          throw `${queryId}.zip not found`;
+        });
       }
-    }).fail(err => {
-      Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteFileNotFound, queryId);
-      res.json(null, 404, `${queryId}.zip not found`);
     }).then(() => {
       res.json();
       //delete remote file
@@ -54,20 +56,25 @@ module.exports = (app) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
         winston.error(err);
       });
-      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap);
-    }).then(csvFilePaths => {
-      winston.info(`parsing to csv: ${csvFilePaths}`);
-      return Q.nfcall(fileHelper.archiveFiles, csvFilePaths, finalZipPath);
-    }).then(destZipPath => {
-      winston.info(`archive finished: ${destZipPath}`);
-      return Q.nfcall(fileHelper.archiveStat, destZipPath);
-    }).then(stat => {
-      winston.info('archive stat: %j', stat);
-      return Q.nfcall(integrationTaskService.setQueryTaskStatusComplete, queryId, stat.size, stat.entries.length);
-      //TODO: send mail
+      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap)
+        .then(csvFilePaths => {
+        winston.info(`parsing to csv: ${csvFilePaths}`);
+        return Q.nfcall(fileHelper.archiveFiles, csvFilePaths, finalZipPath);
+      }).then(destZipPath => {
+        winston.info(`archive finished: ${destZipPath}`);
+        return Q.nfcall(fileHelper.archiveStat, destZipPath);
+      }).then(stat => {
+        winston.info('archive stat: %j', stat);
+        return Q.nfcall(integrationTaskService.setQueryTaskStatusComplete, queryId, stat.size, stat.entries.length);
+        //TODO: send mail
+      }).fail(err => {
+        winston.error(`parsing to csv and archive failed: ${err}`);
+        Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
+          throw `set query task status as parsing-failed failed: ${err}`;
+        });
+      });
     }).fail(err => {
-      winston.error(`parsing to csv and archive failed: ${err}`);
-      Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId);
+      winston.error(`/export/query/ready/:ip/:port/:queryId error: ${err}`);
     }).finally(() => {
       const rmdir = require('rimraf');
       rmdir(workingPath, err => {
