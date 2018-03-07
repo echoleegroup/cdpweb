@@ -41,7 +41,7 @@ module.exports.insertQueryLog = ({
   });
 };
 
-module.exports.updateQueryLog = ({queryId = null, responseTime = new Date(), resultFilename = null}, callback) => {
+module.exports.updateQueryLogResultFileName = ({queryId = null, responseTime = new Date(), resultFilename = null}, callback) => {
   const sql = 'UPDATE cu_QueryLog ' +
     'SET queryResponseTime = @responseTime, queryResultFilename = @resultFilename ' +
     'WHERE queryID = @queryId ; ' +
@@ -61,6 +61,39 @@ module.exports.updateQueryLog = ({queryId = null, responseTime = new Date(), res
   }).fail(err => {
     winston.error(`===update query log failed! (queryId=${queryId}, responseTime=${responseTime}, resultFilename=${resultFilename})`);
     winston.error(err);
+    callback(err);
+  });
+};
+
+module.exports.updateQueryLogProcessingData = (queryId, script, callback) => {
+  const sql = 'UPDATE cu_QueryLog SET reserve1 = @script WHERE queryID = @queryId';
+
+  // winston.info('updateQueryLogProcessingData queryId: ', queryId);
+  // winston.info('updateQueryLogProcessingData script: ', script);
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('script', _connector.TYPES.NVarChar, script);
+
+  request.executeUpdate(sql, callback);
+
+  // Q.nfcall(request.executeUpdate, sql).then(result => {
+  //   callback(null, result);
+  // }).fail(err => {
+  //   callback(err);
+  // });
+};
+
+module.exports.getQueryLogProcessingData = (queryId, callback) => {
+  const sql = 'SELECT reserve1, updUser FROM cu_QueryLog WHERE queryID = @queryId';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    console.log('getQueryLogProcessingData: ', result);
+    callback(null, result[0]);
+  }).fail(err => {
     callback(err);
   });
 };

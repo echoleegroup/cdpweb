@@ -117,8 +117,8 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, call
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('updTime', _connector.TYPES.DateTime, new Date())
     .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.COMPLETE)
-    .setInput('archiveSizeInBytes', _connector.TYPES.BIGINT, sizeInBytes)
-    .setInput('archiveSizeInBytes', _connector.TYPES.TINYINT, entries);
+    .setInput('archiveSizeInBytes', _connector.TYPES.BigInt, sizeInBytes)
+    .setInput('archiveEntries', _connector.TYPES.TinyInt, entries);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
@@ -142,11 +142,11 @@ module.exports.insertQueryTask = (queryID, queryScript, status = PROCESS_STATUS.
   let now = new Date();
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
-    .setInput('queryScript', _connector.TYPES.Text, queryScript)
+    .setInput('queryScript', _connector.TYPES.NVarChar, queryScript)
     .setInput('status', _connector.TYPES.NVarChar, criteria)
     .setInput('crtTime', _connector.TYPES.DateTime, now)
     .setInput('updTime', _connector.TYPES.DateTime, now)
-    .setInput('updUser', _connector.TYPES.DateTime, updUser);
+    .setInput('updUser', _connector.TYPES.NVarChar, updUser);
 
   // Q.nfcall(request.executeQuery, sql).then(result => {
   //   winston.info(`===insertQueryLog result: ${result}`);

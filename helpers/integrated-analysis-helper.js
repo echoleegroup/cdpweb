@@ -76,83 +76,127 @@ module.exports.getCsvFileName = (transFeatSetID, callback) => {
   }
 };
 
-module.exports.entryParser = (entryStream, tempWorkingPath, fileBaseName, callback) => {
-  let isFirstline = true;
-  let featureMap = undefined;
-  let outStream = undefined;
-  let outStreamPath = undefined;
-  let lineNum = 0;
+// module.exports.entryParser = (entryStream, tempWorkingPath, fileBaseName, callback) => {
+//   let isFirstline = true;
+//   let featureMap = undefined;
+//   let outStream = undefined;
+//   let outStreamPath = undefined;
+//   let lineNum = 0;
+//
+//   Q.nfcall(integratedHelper.getCsvFileName, fileBaseName).then(csvFileName => {
+//     outStreamPath = path.resolve(tempWorkingPath, csvFileName);
+//     outStream = fs.createWriteStream(outStreamPath);
+//
+//     entryStream
+//       .pipe(es.split())
+//       .pipe(es.map((line, cb) => {
+//         // winston.info(`${++lineNum} parsing line ${line} isFirstline ${isFirstline}`);
+//         // entryStream.pause();
+//
+//         if (isFirstline) {
+//           isFirstline = false;
+//           //fetch feature map and csv file name
+//           let rowJson = JSON.parse(line);
+//           let header = _.keys(rowJson);
+//
+//           Q.nfcall(integratedHelper.getFeaturesAsMap, header).then(featureResult => {
+//             featureMap = featureResult;
+//             // entryStream.resume();
+//             cb(null, line);
+//           }).fail(err => {
+//             cb(err, null);
+//           });
+//         } else {
+//           cb(null, line);
+//         }
+//       }))
+//       .pipe(es.mapSync((line) => {
+//         //in this line stream, all necessary data has been ready.
+//         // transform data here
+//
+//         let rowJson = undefined;
+//         try {
+//           rowJson = JSON.parse(line);
+//         } catch (e) {
+//           winston.warn(`${fileBaseName}.json parse string to json failed: ${line}`);
+//           // return cb(null, '');
+//           return '';
+//         }
+//
+//         let row = _.map(rowJson, (value, key) => {
+//           let config = featureMap[key];
+//           if (config && !_.isEmpty(config.codeGroup)) {
+//             return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
+//           } else {
+//             return value;
+//           }
+//         });
+//         return row.join(',') + '\n';
+//         // return cb(null, row.join(',') + '\n');
+//       }))
+//       .pipe(outStream)
+//       // .promise();
+//       .on('close', () => {
+//         // outStream.close();
+//         // entryStream.destroy();
+//         winston.info(`entry close: ${outStreamPath}`);
+//         callback(null, outStreamPath);
+//       })
+//       .on('error', err => {
+//         winston.error(`entry on error: ${err}`);
+//         callback(err, null);
+//       });
+//   });
+// };
 
-  Q.nfcall(integratedHelper.getCsvFileName, fileBaseName).then(csvFileName => {
-    outStreamPath = path.resolve(tempWorkingPath, csvFileName);
-    outStream = fs.createWriteStream(outStreamPath);
+module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => {
+  let outStream = fs.createWriteStream(target);
+  // let lineNum = 0;
+  stream
+    .pipe(es.split())
+    .pipe(es.mapSync((line) => {
+      //in this line stream, all necessary data has been ready.
+      // transform data here
+      // winston.info(`${++lineNum} parsing line ${line}`);
 
-    entryStream
-      .pipe(es.split())
-      .pipe(es.map((line, cb) => {
-        // winston.info(`${++lineNum} parsing line ${line} isFirstline ${isFirstline}`);
-        // entryStream.pause();
+      let rowJson = undefined;
+      try {
+        rowJson = JSON.parse(line);
+      } catch (e) {
+        winston.warn(`parse string to json failed: ${line}`);
+        // return cb(null, '');
+        return '';
+      }
 
-        if (isFirstline) {
-          isFirstline = false;
-          //fetch feature map and csv file name
-          let rowJson = JSON.parse(line);
-          let header = _.keys(rowJson);
-
-          Q.nfcall(integratedHelper.getFeaturesAsMap, header).then(featureResult => {
-            featureMap = featureResult;
-            // entryStream.resume();
-            cb(null, line);
-          }).fail(err => {
-            cb(err, null);
-          });
+      let row = _.map(rowJson, (value, key) => {
+        let config = featureMap[key];
+        if (config && !_.isEmpty(config.codeGroup)) {
+          return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
         } else {
-          cb(null, line);
+          return value;
         }
-      }))
-      .pipe(es.mapSync((line) => {
-        //in this line stream, all necessary data has been ready.
-        // transform data here
-
-        let rowJson = undefined;
-        try {
-          rowJson = JSON.parse(line);
-        } catch (e) {
-          winston.warn(`${fileBaseName}.json parse string to json failed: ${line}`);
-          // return cb(null, '');
-          return '';
-        }
-
-        let row = _.map(rowJson, (value, key) => {
-          let config = featureMap[key];
-          if (config && !_.isEmpty(config.codeGroup)) {
-            return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
-          } else {
-            return value;
-          }
-        });
-        return row.join(',') + '\n';
-        // return cb(null, row.join(',') + '\n');
-      }))
-      .pipe(outStream)
-      // .promise();
-      .on('close', () => {
-        // outStream.close();
-        // entryStream.destroy();
-        winston.info(`entry close: ${outStreamPath}`);
-        callback(null, outStreamPath);
-      })
-      .on('error', err => {
-        winston.error(`entry on error: ${err}`);
-        callback(err, null);
       });
-  });
+      return row.join(',') + '\n';
+      // return cb(null, row.join(',') + '\n');
+    }))
+    .pipe(outStream)
+    // .promise();
+    .on('close', () => {
+      // outStream.close();
+      // entryStream.destroy();
+      winston.info(`entry close: ${target}`);
+      callback(null, target);
+    })
+    .on('error', err => {
+      winston.error(`entry on error: ${err}`);
+      callback(err, null);
+    });
 };
 
-module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, callback) => {
+module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, callback) => {
+  winston.info('extractAndParseQueryResultFile featureIdMap: ', featureIdMap);
 
   let promises = [];
-  let csvFilePaths = [];
   let zipStream = fs.createReadStream(zipPath);
   zipStream
     .pipe(unzipper.Parse())
@@ -167,91 +211,17 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, callback)
       if ('.json' === path.extname(entryPath).toLowerCase()  && entryPath.indexOf('__MACOSX') !== 0) {
         winston.info(`NEW ENTRY ${entryPath}`);
 
-        // let isFirstline = true;
-        // let featureMap = undefined;
-        // let outStream = undefined;
-        // let outStreamPath = undefined;
-        // let lineNum = 0;
-        //
-        // let deferred = Q.defer();
-        // Q.nfcall(integratedHelper.getCsvFileName, baseName).then(csvFileName => {
-        //
-        //   outStreamPath = path.resolve(workingPath, csvFileName);
-        //   csvFilePaths.push(outStreamPath);
-        //   outStream = fs.createWriteStream(outStreamPath);
-        //
-        //   entry
-        //     .pipe(es.split())
-        //     .pipe(es.map((line, cb) => {
-        //       // entry.pause();
-        //
-        //       if (isFirstline) {
-        //         isFirstline = false;
-        //         //fetch feature map and csv file name
-        //         let rowJson = JSON.parse(line);
-        //         let header = _.keys(rowJson);
-        //
-        //         Q.nfcall(integratedHelper.getFeaturesAsMap, header).then(featureResult => {
-        //           featureMap = featureResult;
-        //           cb(null, line);
-        //         }).fail(err => {
-        //           cb(err, null);
-        //         }).finally(() => {
-        //           // entry.resume();
-        //         });
-        //       } else {
-        //         cb(null, line);
-        //       }
-        //     }))
-        //     .pipe(es.map((line, cb) => {
-        //       //in this line stream, all necessary data has been ready.
-        //       // transform data here
-        //       winston.info(`${++lineNum} parsing line ${line}`);
-        //       let rowJson = undefined;
-        //       try {
-        //         rowJson = JSON.parse(line);
-        //       } catch (e) {
-        //         winston.warn(`parse string to json failed: ${line}`);
-        //         cb(null, '\n');
-        //       }
-        //
-        //       let row = _.map(rowJson, (value, key) => {
-        //         let config = featureMap[key];
-        //         if (config && !_.isEmpty(config.codeGroup)) {
-        //           return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
-        //         } else {
-        //           return value;
-        //         }
-        //       });
-        //       cb(null, row.join(',') + '\n');
-        //     }))
-        //     .pipe(outStream)
-        //     .on('close', () => {
-        //       outStream.close();
-        //       winston.info('entry close');
-        //       //callback(null, outStreamPath);
-        //       // deferred.resolve(outStreamPath);
-        //     }).on('error', err => {
-        //     callback(err, null);
-        //     // deferred.reject(err);
-        //   });
-        //
-        // });
+        let featureIds = ('master' === baseName)? featureIdMap.master.features:
+          (featureIdMap.relatives[baseName])? featureIdMap.relatives[baseName].features: [];
 
-        // promises.push(deferred.promise);
-
-        //====
-        // this.entryParser(entry, workingPath, baseName, (err, path) => {
-        //   winston.info(`this.entryParser result ${path} and ${err}`);
-        //   if (err) {
-        //     promises.push(Q.reject(err));
-        //   } else {
-        //     promises.push(Q.resolve(path));
-        //   }
-        // });
-        promises.push(Q.nfcall(this.entryParser, entry, workingPath, baseName));
-        //=====
-
+        promises.push(
+          Q.all([
+            Q.nfcall(this.getCsvFileName, baseName),
+            Q.nfcall(this.getFeaturesAsMap, featureIds)
+          ]).spread((csvFileName, featureMap) => {
+            return Q.nfcall(this.streamToCsvProcessor, entry, path.resolve(workingPath, csvFileName), featureMap);
+          })
+        );
       } else {
         entry.autodrain();
       }
@@ -265,16 +235,16 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, callback)
     })
     .on('finish', () => {
       winston.info('unzipper finished! promise length: ', promises);
-      zipStream.destroy();
-      callback(null, csvFilePaths);
-      // Q.all(promises).then(csvFilePaths => {
-      //   //archive all csv in path
-      //   winston.info(`all csvFilePaths : ${csvFilePaths}`);
-      //   callback(null, csvFilePaths);
-      // }).fail(err => {
-      //   //log query task status to parsing fail
-      //   winston.error(err);
-      //   callback(err);
-      // });
+      // zipStream.destroy();
+      // callback(null, csvFilePaths);
+      Q.all(promises).then(csvFilePaths => {
+        //archive all csv in path
+        // winston.info(`all csvFilePaths : ${csvFilePaths}`);
+        callback(null, csvFilePaths);
+      }).fail(err => {
+        //log query task status to parsing fail
+        winston.error(err);
+        callback(err);
+      });
     });
 };

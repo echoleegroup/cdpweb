@@ -45,7 +45,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
-  console.log(JSON.stringify(transJson));
+  // console.log(JSON.stringify(transJson));
 
   //呼叫API
 

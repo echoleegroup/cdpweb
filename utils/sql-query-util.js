@@ -39,6 +39,7 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
     .then(result => {
       callback(null, result);
     }).catch((err) => {
+      console.log('execParameterizedSql error: ', err);
     callback(err);
   });
 };
@@ -71,9 +72,9 @@ const _that = {
       executeUpdate: (sql, callback) => {
         // winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
         Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
-          winston.info(`executeUpdate result: ${result}`);
           callback(null, (result.rowsAffected.length > 1)? result.rowsAffected: result.rowsAffected[0]);
         }).catch(err => {
+          winston.error(err);
           callback(err);
         });
       }

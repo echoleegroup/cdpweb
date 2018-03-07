@@ -154,21 +154,22 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
 module.exports.archiveStat = (path, callback) => {
   const unzipper = require('unzipper');
   let entries = [];
-  let fileSize = 0;
+  // let fileSize = 0;
   Q.nfcall(fs.stat, path).then(stats => {
-    fileSize = stats.size;
+    // winston.info('file stat: ', stats);
+    // fileSize = stats.size;
     let zipStream = fs.createReadStream(path);
     zipStream
       .pipe(unzipper.Parse())
       .on('entry', entry => {
+        winston.info('zip entry: ', entry.path);
         entries.push(entry.path);
+        entry.autodrain();
       })
-      .on('close', () => {
+      .on('finish', () => {
+        stats.entries = entries;
         winston.info('unzipper close!');
-        callback(null, {
-          fileSize,
-          entries
-        });
+        callback(null, stats);
       })
       .on('error', err => {
         callback(err);
