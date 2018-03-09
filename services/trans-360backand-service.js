@@ -62,7 +62,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   }, function (error, response, body) {
     if (error)
       callback(error, null);
-    else if (!error && response.statusCode == 200)
+    else
       callback(null, transJson);
   });
 
