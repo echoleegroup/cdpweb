@@ -107,18 +107,19 @@ module.exports.setQueryTaskStatusParsingFailed = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.PARSING_FAILED, callback);
 };
 
-module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, callback) => {
+module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, records, callback) => {
   const sql = 'UPDATE cu_IntegratedQueryTask ' +
     'SET archiveSizeInBytes = @archiveSizeInBytes, archiveEntries = @archiveEntries,' +
-    'status = @status, updTime = @updTime ' +
+    'status = @status, records = @records, updTime = @updTime ' +
     'WHERE queryID = @queryId ';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('updTime', _connector.TYPES.DateTime, new Date())
     .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.COMPLETE)
+    .setInput('records', _connector.TYPES.BigInt, records)
     .setInput('archiveSizeInBytes', _connector.TYPES.BigInt, sizeInBytes)
-    .setInput('archiveEntries', _connector.TYPES.TinyInt, entries);
+    .setInput('archiveEntries', _connector.TYPES.NVarChar, entries);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
@@ -133,31 +134,18 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, call
   });
 };
 
-module.exports.insertQueryTask = (queryID, queryScript, status = PROCESS_STATUS.INIT, updUser, callback) => {
-  const sql = 'INSERT INTO cu_IntegratedAsyncQueryTask (' +
-    'queryID, queryScript, status, crtTime, updTime, updUser) ' +
-    'VALUES (@queryId, @queryScript, @status, @crtTime, @updTime, @updUser)';
+module.exports.getQueryTask = (queryId, callback) => {
+  const sql = 'SELECT task.queryID, task.status, log.crtTime, log.updUser, ' +
+    'task.archiveSizeInBytes, task.archiveEntries, log.criteria ' +
+    'FROM cu_IntegratedQueryTask as task LEFT JOIN cu_QueryLog as log ' +
+    'on task.queryID = log.queryID WHERE task.queryID = @queryId';
 
-  let queryId = shortid.generate();
-  let now = new Date();
   let request = _connector.queryRequest()
-    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
-    .setInput('queryScript', _connector.TYPES.NVarChar, queryScript)
-    .setInput('status', _connector.TYPES.NVarChar, criteria)
-    .setInput('crtTime', _connector.TYPES.DateTime, now)
-    .setInput('updTime', _connector.TYPES.DateTime, now)
-    .setInput('updUser', _connector.TYPES.NVarChar, updUser);
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
 
-  // Q.nfcall(request.executeQuery, sql).then(result => {
-  //   winston.info(`===insertQueryLog result: ${result}`);
-  // });
   Q.nfcall(request.executeQuery, sql).then(result => {
-    callback(null, {
-      queryID: queryId
-    });
+    callback(null, result[0]);
   }).fail(err => {
-    winston.error(`===insert query task failed! (queryID=${queryID}, queryScript=${queryScript}, status=${status}, updUser=${updUser})`);
-    winston.error(err);
     callback(err);
   });
 };

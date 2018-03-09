@@ -196,5 +196,42 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/export/query/:queryId', middlewares, (req, res) => {
+    let queryId = req.params.queryId;
+    Q.nfcall(integrationTaskService.getQueryTask, queryId).then(queryTask => {
+      if (!queryTask) {
+        return res.json(null, 301, 'task not found!');
+      }
+      queryTask.archiveSizeInBytes = queryTask.archiveSizeInBytes * 1;
+      queryTask.archiveEntries = (queryTask.archiveEntries)? JSON.parse(queryTask.archiveEntries): [];
+      queryTask.criteria = (queryTask.criteria)? JSON.parse(queryTask.criteria): [];
+      res.json(queryTask, 200);
+    }).fail(err => {
+      res.json(null, 500, 'internal service error!');
+    });
+  });
+
+  router.get('/export/download/:queryId', middlewares, (req, res) => {
+    // const fs = require('fs');
+    let queryId = req.params.queryId;
+    let filePath = `${constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE}/${queryId}.zip`;
+
+    Q.nfcall(queryService.insertDownloadLog, {
+      queryId,
+      filePath,
+      userId: req.user.userId
+    }).then(() => {
+      let deferred = Q.defer();
+      res.download(filePath, err => {
+        if (err) deferred.reject(err);
+        else deferred.resolve();
+      });
+      return deferred.promise;
+    }).fail(err => {
+      console.log(err);
+      res.json(null, 500, 'internal service error!');
+    });
+  });
+
   return router;
 };

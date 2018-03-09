@@ -4,6 +4,7 @@ import url from 'url';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import CustomTargetFilterHome from './components/CustomTargetFilterHome';
 import IntegratedAnalysisHome from './components/IntegratedAnalysisHome';
+import IntegratedAnalysisQueryOverview from './components/IntegratedAnalysisQueryOverview';
 
 (function ($) {
   let internalAjax = $.ajax;
@@ -37,6 +38,7 @@ class PortalRoute extends React.Component {
           <Route exact path="/" component={Home}/>
           <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetFilterHome}/>
           <Route exact path="/integration/query" component={IntegratedAnalysisHome}/>
+          <Route exact path="/integration/query/:queryId" component={IntegratedAnalysisQueryOverview}/>
         </Switch>
       </Router>
     );

@@ -197,6 +197,7 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
   winston.info('extractAndParseQueryResultFile featureIdMap: ', featureIdMap);
 
   let promises = [];
+  let records = 0;
   let zipStream = fs.createReadStream(zipPath);
   zipStream
     .pipe(unzipper.Parse())
@@ -237,10 +238,10 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
       winston.info('unzipper finished! promise length: ', promises);
       // zipStream.destroy();
       // callback(null, csvFilePaths);
-      Q.all(promises).then(csvFilePaths => {
+      Q.all(promises).then(entries => {
         //archive all csv in path
         // winston.info(`all csvFilePaths : ${csvFilePaths}`);
-        callback(null, csvFilePaths);
+        callback(null, {records, entries});
       }).fail(err => {
         //log query task status to parsing fail
         winston.error(err);

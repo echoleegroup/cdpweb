@@ -19,7 +19,6 @@
     "pass": "!QAZ1129@",
     "from": "mail@microsoft.com"
   },
-  "DOMAIN_NAME": "10.201.1.130",
   "API_360_HOST":"10.201.2.130",
   "API_360_PORT":"4060"
 }

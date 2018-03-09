@@ -24,5 +24,19 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/query/:queryId', function (req, res, next) {
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+
+    res.render('container', {
+      user: req.user,
+      menuTitle: '顧客數據導出',
+      modelList: modelList,
+      navMenuList: navMenuList,
+      mgrMenuList: mgrMenuList
+    });
+  })
+
   return router;
 };

@@ -98,14 +98,14 @@ module.exports.getQueryLogProcessingData = (queryId, callback) => {
   });
 };
 
-module.exports.insertDownloadLog = ({queryId = null, filename = null, userId = null, downloadDate = new Date()}, callback) => {
-  const sql = 'INSERT INTO sy_DnldLog (queryID, logFilename, userId, dnldDatetime) ' +
-    'VALUES (@queryId, @filename, @userId, @downloadDate) ; ' +
+module.exports.insertDownloadLog = ({queryId = null, filePath = null, userId = null, downloadDate = new Date()}, callback) => {
+  const sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime) ' +
+    'VALUES (@queryId, @filePath, @userId, @downloadDate) ; ' +
     'SELECT SCOPE_IDENTITY() AS logID';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
-    .setInput('filename', _connector.TYPES.NVarChar, filename)
+    .setInput('filePath', _connector.TYPES.NVarChar, filePath)
     .setInput('userId', _connector.TYPES.NVarChar, userId)
     .setInput('downloadDate', _connector.TYPES.DateTime, downloadDate);
 

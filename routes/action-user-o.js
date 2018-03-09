@@ -7,7 +7,6 @@ const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
 const _connector = require('../utils/sql-query-util');
 const Q = require('q');
-const domainName = require("../app-config").get("DOMAIN_NAME");
 const mail_util = require("../utils/mail-util");
 module.exports = (app) => {
   console.log('[userRoute::create] Creating user route.');
@@ -336,12 +335,11 @@ module.exports = (app) => {
     }).then((resultset) => {
       let url = "?userId=" + userId + "&token=" + token;
       let sendInfo = {
-        "to": email,
         "subject": "更改密碼",
-        "text": "http://" + domainName + ":" + process.env.PORT + "/system/user/pwd/change" + url
+        "content": `<a href="http://${process.env.HOST}:${process.env.PORT}/system/user/pwd/change${url}">更改密碼</a>`
       }
 
-      mail_util.mail(sendInfo, function (err, result) {
+      mail_util.mail(email, sendInfo, function (err, result) {
         if (err) {
           winston.error('===forgetpwd failed:', err);
           res.redirect("/");

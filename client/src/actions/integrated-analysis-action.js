@@ -9,6 +9,7 @@ const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/features/criteri
 const EXPORT_FEATURE_POOL = '/api/integration/export/features';
 const EXPORT_TRANSACTION_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
+const EXPORT_QUERY_TASK = '/api/integration/export/query/%s';
 
 const FilterAction = {
   EXPORT_QUERY: EXPORT_QUERY
@@ -66,10 +67,20 @@ FilterAction.getExportFeaturePool = (success, fail) => {
 };
 
 FilterAction.exportQuery = (criteria, success, fail) => {
-  action.ajaxPostObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
+  action.ajaxGetObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===exportQuery failed: ', err);
+    fail && fail(err);
+  });
+};
+
+FilterAction.getQueryTask = (queryId, success, fail) => {
+  let url = format(EXPORT_QUERY_TASK, queryId);
+  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+    success && success(data);
+  }, err => {
+    console.log('===getQueryTask failed: ', err);
     fail && fail(err);
   });
 };

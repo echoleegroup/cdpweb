@@ -1,49 +1,9 @@
 import React from 'react';
-import {isEmpty} from 'lodash';
-import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
-import CriteriaComboBundleList from './CriteriaComboBundleList'
+import CriteriaBaseBodyContainerMute from './CriteriaBaseBodyContainerMute';
 import CriteriaComboBundleMute from "./CriteriaComboBundleMute";
 
-const ComponentEmptyBody = (props) => {
-  return (<p>無條件設定</p>);
-};
-
-const ComponentContentBody = (props) => {
-  return (
-    <div className="level form-inline">
-      <CriteriaComboBundleList
-        isPreview={true}
-        criteria={props.criteria}
-        ComponentCriteriaBundleContainer={props.ComponentCriteriaBundleContainer}/>
-    </div>
-  );
-};
-
 export default class IntegratedAnalysisCriteriaPreview extends React.PureComponent {
-  constructor(props) {
-    super(props);
-  };
-
-  ComponentCriteriaBody(props) {
-    let mapToProps = {};
-    if (isEmpty(props.criteria)) {
-      mapToProps = {
-        styleClass: 'nocondition',
-        ComponentCriteriaBody: ComponentEmptyBody
-      };
-    } else {
-      mapToProps = {
-        styleClass: 'condition',
-        ComponentCriteriaBody: ComponentContentBody,
-        criteria: props.criteria,
-        ComponentCriteriaBundleContainer: props.ComponentCriteriaBundleContainer
-      };
-    }
-    return <CriteriaBaseBodyContainer {...mapToProps}/>
-  };
-
   render() {
-    let ComponentCriteriaBody = this.ComponentCriteriaBody;
     return (
       <div className="table_block">
         <h2>查詢條件</h2>
@@ -53,17 +13,17 @@ export default class IntegratedAnalysisCriteriaPreview extends React.PureCompone
           <h4><i className="fa fa-check" aria-hidden="true"/>顧客屬性條件</h4>
           {/*<p className="customer">顧客對象別：<span>使用人</span></p>*/}
           {/* 條件設定 預覽狀態*/}
-          <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step1)}
+          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step1)}
                                  ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
           <h4><i className="fa fa-check" aria-hidden="true"/>車輛屬性條件</h4>
           {/* 條件設定 預覽狀態*/}
-          <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step2)}
+          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step2)}
                                  ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
           <h4><i className="fa fa-check" aria-hidden="true"/>明細資料指定條件</h4>
           {/* 條件設定 預覽狀態*/}
-          <ComponentCriteriaBody criteria={this.props.criteria.get(this.props.STEPS.step3)}
+          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step3)}
                                  ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
         </div>

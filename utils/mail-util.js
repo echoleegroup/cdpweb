@@ -2,9 +2,9 @@ const nodemailer = require('nodemailer');
 const winston = require('winston');
 const mailInfo = require("../app-config").get("MAIL_INFO");
 
-module.exports.mail = (infoArray, callback = () => { }) => {
-  console.log(infoArray) ;
-  console.log(infoArray.to) ;
+module.exports.mail = (to, options = {}, callback = () => { }) => {
+  console.log(to) ;
+  console.log(options) ;
   let transporter = nodemailer.createTransport({
     host: mailInfo.service,
     port:mailInfo.port,
@@ -17,9 +17,9 @@ module.exports.mail = (infoArray, callback = () => { }) => {
 
   let mailOptions = {
     from:  mailInfo.from,
-    to: infoArray["to"],
-    subject: infoArray["subject"],
-    text: infoArray["text"]
+    to: to,
+    subject: options.subject,
+    html: options.content
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

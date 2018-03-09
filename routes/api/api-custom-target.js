@@ -162,7 +162,7 @@ module.exports = (app) => {
           //write download log to DB
           return Q.nfcall(queryService.insertDownloadLog, {
             queryId: queryLogId,
-            filename: xlsxFilename,
+            filePath: xlsxFileAbsolutePath,
             userId: req.user.userId
           }).then(result => {
             return xlsxBuffer;

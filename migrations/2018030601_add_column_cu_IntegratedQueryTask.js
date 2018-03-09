@@ -5,10 +5,10 @@
 module.exports = {
   up: (query, DataTypes) => {
     return query.addColumn('cu_IntegratedQueryTask', 'archiveSizeInBytes', {
-      type: DataTypes.BIGINT.UNSIGNED.ZEROFILL
+      type: DataTypes.BIGINT
     }).then(() => {
       return query.addColumn('cu_IntegratedQueryTask', 'archiveEntries', {
-        type: DataTypes.TINYINT.UNSIGNED.ZEROFILL
+        type: DataTypes.TEXT
       });
     });
   }
