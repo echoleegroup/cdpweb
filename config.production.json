@@ -19,6 +19,6 @@
     "pass": "!QAZ1129@",
     "from": "mail@microsoft.com"
   },
-  "API_360_HOST":"10.201.2.130",
-  "API_360_PORT":"4060"
+  "API_360_HOST": "10.201.2.130",
+  "API_360_PORT": 11002
 }
