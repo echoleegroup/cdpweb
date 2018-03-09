@@ -44,7 +44,7 @@ const criteriaFeaturePromise = (setId, treeId) => {
     let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
     return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
       features: fields,
-      featureRefCodeMap: _.keyBy(codeGroupResSet, 'codeGroup')
+      featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
     }));
   });
 };

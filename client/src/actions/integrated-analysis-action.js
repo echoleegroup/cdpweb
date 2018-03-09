@@ -67,7 +67,7 @@ FilterAction.getExportFeaturePool = (success, fail) => {
 };
 
 FilterAction.exportQuery = (criteria, success, fail) => {
-  action.ajaxGetObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
+  action.ajaxPostObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===exportQuery failed: ', err);
