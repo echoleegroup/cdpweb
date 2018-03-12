@@ -1,12 +1,13 @@
 const winston = require('winston');
 const _ = require('lodash');
 const Q = require('q');
-const shortid = require('shortid');
+// const shortid = require('shortid');
 const unzipper = require('unzipper');
 const fs = require('fs');
 const path = require('path');
 const es = require('event-stream');
-const integratedHelper = require('../helpers/integrated-analysis-helper');
+const csvWriter = require('csv-write-stream');
+// const integratedHelper = require('../helpers/integrated-analysis-helper');
 const integrationService = require('../services/integration-analysis-service');
 const cdpService = require('../services/customer-data-platform-service');
 const codeGroupService = require('../services/code-group-service');
@@ -43,7 +44,7 @@ module.exports.getFeaturesAsMap = (featureIds, callback) => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
         return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-          feature.codeGroup = _.keyBy(codeGroup, 'codeGroup');
+          feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
           return feature;
         });
       } else {
@@ -54,7 +55,7 @@ module.exports.getFeaturesAsMap = (featureIds, callback) => {
 
     return Q.all(promises);
   }).then(features => {
-    callback(null, features);
+    callback(null, _.keyBy(features, 'featID'));
   }).fail(err => {
     winston.error(`===getFeaturesAsMap: ${err}`);
     callback(err);
@@ -76,88 +77,25 @@ module.exports.getCsvFileName = (transFeatSetID, callback) => {
   }
 };
 
-// module.exports.entryParser = (entryStream, tempWorkingPath, fileBaseName, callback) => {
-//   let isFirstline = true;
-//   let featureMap = undefined;
-//   let outStream = undefined;
-//   let outStreamPath = undefined;
-//   let lineNum = 0;
-//
-//   Q.nfcall(integratedHelper.getCsvFileName, fileBaseName).then(csvFileName => {
-//     outStreamPath = path.resolve(tempWorkingPath, csvFileName);
-//     outStream = fs.createWriteStream(outStreamPath);
-//
-//     entryStream
-//       .pipe(es.split())
-//       .pipe(es.map((line, cb) => {
-//         // winston.info(`${++lineNum} parsing line ${line} isFirstline ${isFirstline}`);
-//         // entryStream.pause();
-//
-//         if (isFirstline) {
-//           isFirstline = false;
-//           //fetch feature map and csv file name
-//           let rowJson = JSON.parse(line);
-//           let header = _.keys(rowJson);
-//
-//           Q.nfcall(integratedHelper.getFeaturesAsMap, header).then(featureResult => {
-//             featureMap = featureResult;
-//             // entryStream.resume();
-//             cb(null, line);
-//           }).fail(err => {
-//             cb(err, null);
-//           });
-//         } else {
-//           cb(null, line);
-//         }
-//       }))
-//       .pipe(es.mapSync((line) => {
-//         //in this line stream, all necessary data has been ready.
-//         // transform data here
-//
-//         let rowJson = undefined;
-//         try {
-//           rowJson = JSON.parse(line);
-//         } catch (e) {
-//           winston.warn(`${fileBaseName}.json parse string to json failed: ${line}`);
-//           // return cb(null, '');
-//           return '';
-//         }
-//
-//         let row = _.map(rowJson, (value, key) => {
-//           let config = featureMap[key];
-//           if (config && !_.isEmpty(config.codeGroup)) {
-//             return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
-//           } else {
-//             return value;
-//           }
-//         });
-//         return row.join(',') + '\n';
-//         // return cb(null, row.join(',') + '\n');
-//       }))
-//       .pipe(outStream)
-//       // .promise();
-//       .on('close', () => {
-//         // outStream.close();
-//         // entryStream.destroy();
-//         winston.info(`entry close: ${outStreamPath}`);
-//         callback(null, outStreamPath);
-//       })
-//       .on('error', err => {
-//         winston.error(`entry on error: ${err}`);
-//         callback(err, null);
-//       });
-//   });
-// };
+module.exports.emptyFeatureStreamToCsvProcessor = (stream, target, callback) => {
+  let writer = csvWriter({sendHeaders: false});
+  writer
+    .pipe(fs.createWriteStream(target))
+    .on('close', () => {
+      // call the callback in writer close event to ensure the file system I/O has done,
+      // preventing incomplete CSV file when archiving in for next step.
+      callback(null, target);
+    })
+    .on('error', err => {
+      winston.error(`csv writer on error: ${err}`);
+      callback(err, null);
+    });
 
-module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => {
-  let outStream = fs.createWriteStream(target);
-  // let lineNum = 0;
   stream
     .pipe(es.split())
     .pipe(es.mapSync((line) => {
       //in this line stream, all necessary data has been ready.
       // transform data here
-      // winston.info(`${++lineNum} parsing line ${line}`);
 
       let rowJson = undefined;
       try {
@@ -165,27 +103,76 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
       } catch (e) {
         winston.warn(`parse string to json failed: ${line}`);
         // return cb(null, '');
-        return '';
+        return null;
       }
 
-      let row = _.map(rowJson, (value, key) => {
-        let config = featureMap[key];
-        if (config && !_.isEmpty(config.codeGroup)) {
-          return config.codeGroup[value] || value;  //transform the codeGroup value to readable term.
-        } else {
-          return value;
-        }
-      });
-      return row.join(',') + '\n';
-      // return cb(null, row.join(',') + '\n');
+      writer.write(rowJson);
+
+      return rowJson;
     }))
-    .pipe(outStream)
-    // .promise();
     .on('close', () => {
-      // outStream.close();
-      // entryStream.destroy();
       winston.info(`entry close: ${target}`);
+      writer.end();
+      // callback(null, target);
+    })
+    .on('error', err => {
+      winston.error(`entry on error: ${err}`);
+      callback(err, null);
+    });
+};
+
+module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => {
+  if (_.isEmpty(featureMap)) {
+    return this.emptyFeatureStreamToCsvProcessor(stream, target, callback);
+  }
+
+  // let outStream = fs.createWriteStream(target);
+  let headers = _.map(featureMap, 'featName');
+  let writer = csvWriter({headers});
+  // let lineNum = 0;
+  writer
+    .pipe(fs.createWriteStream(target))
+    .on('close', () => {
+      // call the callback in writer close event to ensure the file system I/O has done,
+      // preventing incomplete CSV file when archiving in for next step.
       callback(null, target);
+    })
+    .on('error', err => {
+      winston.error(`csv writer on error: ${err}`);
+      callback(err, null);
+    });
+
+  stream
+    .pipe(es.split())
+    .pipe(es.mapSync((line) => {
+      //in this line stream, all necessary data has been ready.
+      // transform data here
+
+      let rowJson = undefined;
+      try {
+        rowJson = JSON.parse(line);
+      } catch (e) {
+        winston.warn(`parse string to json failed: ${line}`);
+        return null;
+      }
+
+      let row = _.map(featureMap, (feature, featId) => {
+        let value = rowJson[featId];
+        return value?
+          feature.codeGroup[value]?
+            feature.codeGroup[value].codeLabel: value:
+          '';
+      });
+
+      writer.write(row);
+
+      return row;
+    }))
+    //.pipe(outStream)
+    .on('close', () => {
+      winston.info(`entry close: ${target}`);
+      writer.end();
+      // callback(null, target);
     })
     .on('error', err => {
       winston.error(`entry on error: ${err}`);
@@ -194,8 +181,6 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
 };
 
 module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, callback) => {
-  winston.info('extractAndParseQueryResultFile featureIdMap: ', featureIdMap);
-
   let promises = [];
   let records = 0;
   let zipStream = fs.createReadStream(zipPath);
@@ -220,6 +205,11 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
             Q.nfcall(this.getCsvFileName, baseName),
             Q.nfcall(this.getFeaturesAsMap, featureIds)
           ]).spread((csvFileName, featureMap) => {
+            if (_.isEmpty(featureMap)) {
+              winston.error(`feature map of ${baseName} not found.`);
+              // return Q.reject(`feature map of ${baseName} not found.`);
+              // throw new Error(`feature map of ${baseName} not found.`);
+            }
             return Q.nfcall(this.streamToCsvProcessor, entry, path.resolve(workingPath, csvFileName), featureMap);
           })
         );
@@ -240,7 +230,7 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
       // callback(null, csvFilePaths);
       Q.all(promises).then(entries => {
         //archive all csv in path
-        // winston.info(`all csvFilePaths : ${csvFilePaths}`);
+        // winston.info(`all csvFilePaths : ${entries}`);
         callback(null, {records, entries});
       }).fail(err => {
         //log query task status to parsing fail

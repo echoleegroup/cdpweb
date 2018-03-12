@@ -16,6 +16,7 @@
     "boom": "^7.1.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
+    "csv-write-stream": "^2.0.0",
     "debug": "~2.2.0",
     "dotenv": "^4.0.0",
     "downloadjs": "^1.4.7",

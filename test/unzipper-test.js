@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const es = require('event-stream');
 const winston = require('winston');
+const csvWriter = require('csv-write-stream');
 // const archiver = require('archiver');
 // const concat = require('concat-stream');
 // const output = fs.createWriteStream(__dirname + '/unzipper-test.zip');
@@ -55,37 +56,48 @@ fs.createReadStream(srcPath)
     if ('.json' === path.extname(entryPath).toLowerCase()  && entryPath.indexOf('__MACOSX') !== 0) {
       winston.info(`NEW ENTRY ${entryPath}`);
       let isFirstline = true;
-      let featureMap = undefined;
-      let output = fs.createWriteStream(`${__dirname}/${baseName}.csv`);
+      let featureMap = {};
+      let writer = csvWriter({headers: ['head1', 'head2', 'head3', 'head4']});
+      writer
+        .pipe(fs.createWriteStream(`${__dirname}/${baseName}.csv`))
+        .on('close', () => {
+          console.log('writer close');
+        })
+        .on('end', () => {
+          console.log('writer end');
+        })
+        .on('finish', () => {
+          console.log('writer finish');
+        });
+      // let output = fs.createWriteStream(`${__dirname}/${baseName}.csv`);
       // let concatLineStream = concat();
       //archive.append(concatLineStream, { name: path.basename(entryPath) });
 
       entry
         .pipe(es.split())
-        .pipe(es.map((line, callback) => {
-          entry.pause();
-          // featureMap = {};
-          // callback(null, line);
-
-          // a through stream which receive each line
-          if (isFirstline) {
-            // if first line, fetch feature map info.
-            winston.info(`NEW ENTRY ${entryPath}: isFirstline: ${isFirstline}`);
-            isFirstline = false;
-            //do async fetch and pipe to next step via callback function
-            //get featureMap and csvFileName
-            setTimeout(() => {
-              featureMap = {};
-              callback(null, line);
-              entry.resume();
-            }, 3000);
-          } else {
-            //if not first line, just pass through it.
-            callback(null, line);
-            // entry.resume();
-          }
-
-        }))
+        // .pipe(es.map((line, callback) => {
+        //   // entry.pause();
+        //   // callback(null, line);
+        //
+        //   // a through stream which receive each line
+        //   if (isFirstline) {
+        //     // if first line, fetch feature map info.
+        //     winston.info(`NEW ENTRY ${entryPath}: isFirstline: ${isFirstline}`);
+        //     isFirstline = false;
+        //     //do async fetch and pipe to next step via callback function
+        //     //get featureMap and csvFileName
+        //     setTimeout(() => {
+        //       featureMap = {};
+        //       callback(null, line);
+        //       entry.resume();
+        //     }, 3000);
+        //   } else {
+        //     //if not first line, just pass through it.
+        //     callback(null, line);
+        //     // entry.resume();
+        //   }
+        //
+        // }))
         // .on('data', line => {
         //   //in this line stream, all necessary data has been ready.
         //   // winston.info(`line: ${line} and isFirstline: ${isFirstline}`);
@@ -103,16 +115,17 @@ fs.createReadStream(srcPath)
         //
         //   output.write(row.join(',') + '\n');
         // })
-        .pipe(es.map((line, callback) => {
+        .pipe(es.mapSync(line => {
           //in this line stream, all necessary data has been ready.
           // winston.info(`line: ${line} and isFirstline: ${isFirstline}`);
           // transform data here
           let rowJson = undefined;
           try {
             rowJson = JSON.parse(line);
-            winston.info(`line: ${line}`);
+            // winston.info(`line: ${line}`);
           } catch (e) {
             winston.info(`line: ${line}`);
+            return null;
           }
 
           let row = _.map(rowJson, (value, key) => {
@@ -123,12 +136,15 @@ fs.createReadStream(srcPath)
               return value;
             }
           });
-          callback(null, row.join(',') + '\n');
+          writer.write(row);
+          return row;
+          // callback(null, row.join(',') + '\n');
           // return row.join(',') + '\n'
         }))
-        .pipe(output)
+        // .pipe(output)
         .on('close', () => {
-          output.close();
+          writer.end();
+          // output.close();
           winston.info('entry close');
         });
     } else {

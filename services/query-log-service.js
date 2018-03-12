@@ -91,7 +91,6 @@ module.exports.getQueryLogProcessingData = (queryId, callback) => {
     .setInput('queryId', _connector.TYPES.NVarChar, queryId);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
-    console.log('getQueryLogProcessingData: ', result);
     callback(null, result[0]);
   }).fail(err => {
     callback(err);
