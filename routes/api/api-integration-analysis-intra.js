@@ -18,7 +18,6 @@ module.exports = (app) => {
   const router = express.Router();
 
   router.get('/export/query/ready/:ip/:port/:queryId', factory.ajax_response_factory(), (req, res) => {
-    const fs = require('fs');
     const path = require('path');
     const mailUtil = require('../../utils/mail-util');
     const queryId = req.params.queryId;

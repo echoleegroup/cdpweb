@@ -19,7 +19,8 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
         status: null,
         queryTime: null,
         fileSize: null,
-        entries: []
+        entries: [],
+        records: undefined
       }),
       criteria: Map()
     };
@@ -32,7 +33,8 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
           status: queryTask.status,
           queryTime: moment(queryTask.crtTime).valueOf(),
           fileSize: queryTask.archiveSizeInBytes,
-          entries: queryTask.archiveEntries
+          entries: queryTask.archiveEntries,
+          records: queryTask.records
         }),
         criteria: Map(queryTask.criteria)
       });
@@ -133,7 +135,7 @@ class ResultInfo extends React.PureComponent {
               <tbody>
               <tr>
                 <td>觀察車牌數：</td>
-                <td>4,158</td>
+                <td>{this.props.task.records}</td>
               </tr>
               </tbody>
             </table>

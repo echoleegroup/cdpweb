@@ -9,7 +9,8 @@ module.exports.check = (redirect) => {
     if (req.isAuthenticated()) {
       return next();
     } else {
-      return res.redirect(redirect || DEFAULT_LOGIN_PATH);
+      console.log('request url: ', req.originalUrl);
+      return res.redirect(redirect || `${DEFAULT_LOGIN_PATH}?redirectURL=${req.originalUrl}`);
     }
   };
 };

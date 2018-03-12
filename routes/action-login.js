@@ -45,13 +45,6 @@ module.exports = (app) => {
   router.get('/logout', function (req, res) {
     req.logout();
     res.redirect(DEFAULT_LOGIN_PATH);
-    /*
-    var userId = req.body.userId || '';
-    var password = req.body.password || '';
-    req.user.userId = "";
-    res.redirect('/');
-    */
-
   });
 
   router.get('/login', function (req, res) {
@@ -59,14 +52,27 @@ module.exports = (app) => {
     message.hasError = req.flash('error');
     res.render('index', {
       layout: 'layout-login',
+      redirectURL: req.query.redirectURL,
       message: message
     });
   });
 
-  app.post('/login', passport.authenticate('local', {
-    failureRedirect: '/login',
-    failureFlash: true
-  }), (req, res, next) => {
+  app.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err)
+        return next(err);
+      // Redirect if it fails
+      if (!user) {
+        req.flash('error', info.message);
+        return res.redirect(`/login?redirectURL=${req.body.redirectURL}`);
+      }
+      req.logIn(user, function(err) {
+        if (err) { return next(err); }
+        // Redirect if it succeeds
+        return next();
+      });
+    })(req, res, next);
+  }, (req, res, next) => {
     let user = req.user;
     let userId = user.userId;
 
@@ -108,7 +114,7 @@ module.exports = (app) => {
       req.session.modelList = models;
       req.session.navMenuList = navMenuList;
       req.session.mgrMenuList = mgrMenuList[0];
-      res.redirect(DEFAULT_HOME_PATH);
+      res.redirect(req.body.redirectURL || DEFAULT_HOME_PATH);
     }).fail(err => {
       winston.error('=== get user login extended data failed: %j', err);
       next(boom.serverUnavailable());

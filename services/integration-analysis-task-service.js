@@ -135,7 +135,7 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
 };
 
 module.exports.getQueryTask = (queryId, callback) => {
-  const sql = 'SELECT task.queryID, task.status, log.crtTime, log.updUser, ' +
+  const sql = 'SELECT task.queryID, task.status, task.records, log.crtTime, log.updUser, ' +
     'task.archiveSizeInBytes, task.archiveEntries, log.criteria ' +
     'FROM cu_IntegratedQueryTask as task LEFT JOIN cu_QueryLog as log ' +
     'on task.queryID = log.queryID WHERE task.queryID = @queryId';

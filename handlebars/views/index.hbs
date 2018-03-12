@@ -15,7 +15,8 @@
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">密碼</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control " id="inputName" name="password" value="" placeholder="請輸入密碼"> {{#if message.hasError}}
+              <input type="password" class="form-control " id="inputName" name="password" value="" placeholder="請輸入密碼">
+              {{#if message.hasError}}
               <div class="isa_error" id="errorpassword">
                 <i class="fa fa-times-circle"></i>
                 {{message.hasError}}
@@ -24,12 +25,14 @@
                 $('.isa_error').click(function (event) {
                   $(this).hide();
                 });
-              </script> {{/if}}
+              </script>
+              {{/if}}
             </div>
           </div>
           <div class="loginForget">
             <a href="/system/user/forget">忘記密碼</a>
           </div>
+          <input type="hidden" name="redirectURL" value="{{redirectURL}}">
           <input type="submit" class="btn btn-lg btn-default" value="登入">
         </form>
 
