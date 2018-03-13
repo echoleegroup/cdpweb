@@ -10,8 +10,11 @@ module.exports = {
       tagID: {
         type: DataTypes.BIGINT
       },
-      tagLabel: {
-        type: DataTypes.STRING(100)
+      ruleType: {
+        type: DataTypes.STRING(20)
+      },
+      rules: {
+        type: DataTypes.STRING(1000)
       },
       isDel: {
         type: DataTypes.STRING(1)
