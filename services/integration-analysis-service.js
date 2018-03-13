@@ -7,9 +7,12 @@ const modelService = require('./model-service');
 module.exports.getCriteriaFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM cd_TargetFeat t_feat, cd_Feature feature ' +
-    'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID';
+    'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID AND isDel = @isDel';
 
-  let request = _connector.queryRequest().setInput('setId', _connector.TYPES.NVarChar, setId);
+  let request = _connector
+    .queryRequest()
+    .setInput('setId', _connector.TYPES.NVarChar, setId)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'N');
   Q.nfcall(request.executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail(err => {
@@ -71,9 +74,13 @@ module.exports.getFeatureSet = (transSetId, setId, callback) => {
 module.exports.getDownloadFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName ' +
     'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
-    'WHERE d_feat.setID = @setId AND d_feat.featID = feature.featID';
+    'WHERE d_feat.setID = @setId AND d_feat.featID = feature.featID AND isDel = @isDel';
 
-  let request = _connector.queryRequest().setInput('setId', _connector.TYPES.NVarChar, setId);
+  let request = _connector
+    .queryRequest()
+    .setInput('setId', _connector.TYPES.NVarChar, setId)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'N');
+
   Q.nfcall(request.executeQuery, sql).then(results => {
     callback(null, results);
   }).fail(err => {

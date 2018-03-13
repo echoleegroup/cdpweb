@@ -8,11 +8,13 @@ const _connector = require('../utils/sql-query-util');
 module.exports.getDownloadFeatures = (setId, callback) => {
   const sql = 'SELECT feat.featID, feat.featName, feat.featNameAbbr ' +
     'FROM cu_DnldFeat dwn, ft_feature feat ' +
-    'WHERE setID = @setId AND dwn.featID = feat.featID ORDER BY seqNO';
+    'WHERE setID = @setId AND dwn.featID = feat.featID AND isDel = @isDel ' +
+    'ORDER BY seqNO';
 
   Q.nfcall(_connector
     .queryRequest()
     .setInput('setId', _connector.TYPES.NVarChar, setId)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'N')
     .executeQuery, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail((err) => {
