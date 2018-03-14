@@ -48,7 +48,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   // console.log(JSON.stringify(transJson));
 
   //呼叫API
-
+  
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -65,6 +65,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     else
       callback(null, transJson);
   });
+  
 
 
 
@@ -142,15 +143,15 @@ module.exports.transService = (queryId, JObject, callback) => {
       return "=";
     else if (operator === "ne")
       return "!=";
-    else if (operator === "lt")
+    else if (operator === "gt")
       return ">";
     else if (operator === "le")
-      return "<";
-    else if (operator === "gt")
-      return ">=";
-    else if (operator === "ge")
       return "<=";
-    else if (operator == "in")
+    else if (operator === "ge")
+      return ">=";
+    else if (operator === "lt")
+      return "<";
+    else if (operator === "in")
       return "in";
     else if (operator === "ni")
       return "not in";
