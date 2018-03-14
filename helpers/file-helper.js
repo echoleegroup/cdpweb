@@ -152,28 +152,21 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
 };
 
 module.exports.archiveStat = (path, callback) => {
-  const unzipper = require('unzipper');
+  const yauzl = require('yauzl');
   let entries = [];
   // let fileSize = 0;
   Q.nfcall(fs.stat, path).then(stats => {
-    // winston.info('file stat: ', stats);
-    // fileSize = stats.size;
-    let zipStream = fs.createReadStream(path);
-    zipStream
-      .pipe(unzipper.Parse())
-      .on('entry', entry => {
-        winston.info('zip entry: ', entry.path);
-        entries.push(entry.path);
-        entry.autodrain();
-      })
-      .on('finish', () => {
+    return Q.nfcall(yauzl.open, path, {lazyEntries: false}).then(zipFile => {
+      // zipFile.readEntry();
+      zipFile.on('entry', entry => {
+        entries.push(entry.fileName);
+      }).on('end', () => {
         stats.entries = entries;
-        winston.info('unzipper close!');
         callback(null, stats);
-      })
-      .on('error', err => {
+      }).on('error', err => {
         callback(err);
       });
+    });
   }).fail(err => {
     callback(err);
   });

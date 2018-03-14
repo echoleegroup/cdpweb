@@ -2,7 +2,7 @@ const winston = require('winston');
 const _ = require('lodash');
 const Q = require('q');
 // const shortid = require('shortid');
-const unzipper = require('unzipper');
+const yauzl = require('yauzl');
 const fs = require('fs');
 const path = require('path');
 const es = require('event-stream');
@@ -182,20 +182,17 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
 
 module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, callback) => {
   let promises = [];
+  // let recordPromise = Q();
   let records = 0;
-  let zipStream = fs.createReadStream(zipPath);
-  zipStream
-    .pipe(unzipper.Parse())
-    .on('entry', entry => {
+  Q.nfcall(yauzl.open, zipPath, {lazyEntries: true}).then(zipFile => {
+    zipFile.readEntry();
+    zipFile.on('entry', entry => {
+      let fileName = entry.fileName;
+      let baseName = path.basename(fileName, '.json');
+      // winston.info('on entry event: ', fileName);
 
-      let entryPath = entry.path;
-      // let extName = path.extname(entryPath);
-      let baseName = path.basename(entryPath, '.json');
-      // let type = entry.type; // 'Directory' or 'File'
-      // let size = entry.size;
-
-      if ('.json' === path.extname(entryPath).toLowerCase()  && entryPath.indexOf('__MACOSX') !== 0) {
-        winston.info(`NEW ENTRY ${entryPath}`);
+      if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
+        winston.info(`NEW ENTRY ${fileName}`);
 
         let featureIds = ('master' === baseName)? featureIdMap.master.features:
           (featureIdMap.relatives[baseName])? featureIdMap.relatives[baseName].features: [];
@@ -205,37 +202,72 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
             Q.nfcall(this.getCsvFileName, baseName),
             Q.nfcall(this.getFeaturesAsMap, featureIds)
           ]).spread((csvFileName, featureMap) => {
+            console.log('csvFileName: ', csvFileName);
+            console.log('featureMap: ', featureMap);
+            let deferred = Q.defer();
             if (_.isEmpty(featureMap)) {
               winston.error(`feature map of ${baseName} not found.`);
               // return Q.reject(`feature map of ${baseName} not found.`);
               // throw new Error(`feature map of ${baseName} not found.`);
             }
-            return Q.nfcall(this.streamToCsvProcessor, entry, path.resolve(workingPath, csvFileName), featureMap);
+
+            zipFile.openReadStream(entry, (err, readStream) => {
+              if (err) {
+                console.log(err);
+                deferred.reject(err);
+              } else {
+                readStream.on("end", () => {
+                  winston.info('entry end');
+                  zipFile.readEntry();
+                });
+
+                Q.nfcall(this.streamToCsvProcessor, readStream, path.resolve(workingPath, csvFileName), featureMap).then(target => {
+                  deferred.resolve(target);
+                }).fail(err => {
+                  deferred.reject(err);
+                });
+              }
+            });
+
+            return deferred.promise;
           })
         );
-      } else {
-        entry.autodrain();
-      }
-    })
-    .on('close', () => {
-      winston.info('unzipper close!');
-    })
-    .on('error', err => {
-      winston.error(`===entry on error ${err}`);
-      callback(err);
-    })
-    .on('finish', () => {
-      winston.info('unzipper finished! promise length: ', promises);
+      } else if ('meta' === fileName) {
+        // let deferred = Q.defer();
+        // recordPromise.then(() => {
+        //   return deferred.promise;
+        // });
+        //
+        // let buff = new Buffer();
+        // zipFile.openReadStream(entry, (err, readStream) => {
+        //   readStream.on('data', chunk => {
+        //     buff.
+        //   });
+        // });
+      } else if (/\/$/.test(fileName)) {
+        // Directory file names end with '/'.
+        // Note that entires for directories themselves are optional.
+        // An entry's fileName implicitly requires its parent directories to exist.
+        zipFile.readEntry();
+      } else {}
+
+
+    }).on('close', () => {
+      winston.info('zip file closed! promise length: ', promises);
       // zipStream.destroy();
       // callback(null, csvFilePaths);
       Q.all(promises).then(entries => {
         //archive all csv in path
-        // winston.info(`all csvFilePaths : ${entries}`);
+        winston.info(`all csvFilePaths : ${entries}`);
         callback(null, {records, entries});
       }).fail(err => {
         //log query task status to parsing fail
         winston.error(err);
         callback(err);
       });
+    }).on('error', err => {
+      winston.error(`===entry on error ${err}`);
+      callback(err);
     });
+  });
 };

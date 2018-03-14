@@ -17,6 +17,70 @@ module.exports = (app) => {
   winston.info('[api-model] Creating api-integration-analysis route.');
   const router = express.Router();
 
+  router.get('/export/query/parsing/:queryId', factory.ajax_response_factory(), (req, res) => {
+    const path = require('path');
+    const mailUtil = require('../../utils/mail-util');
+    const queryId = req.params.queryId;
+    const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
+    const finalZipPath = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryId}.zip`);
+    const mkdirp = require('mkdirp');
+    const tempFolderName = shortid.generate();
+    const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, tempFolderName);
+    const subject = '顧客360查詢完成';
+    mkdirp(workingPath);
+    let featureIdMap = {};
+    let userId = undefined;
+    let records = 0;
+
+    Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
+      if (!queryLogData) {
+        res.json(null, 401, `task ${queryId} not found`);
+        throw `task ${queryId} not found`;
+      } else {
+        res.json();
+
+        Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
+          winston.error(err);
+        });
+
+        return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap)
+          .then(info => {
+            records = info.records;
+            winston.info(`parsing to csv: ${info.entries}`);
+            return Q.nfcall(fileHelper.archiveFiles, info.entries, finalZipPath);
+          }).then(destZipPath => {
+            winston.info(`archive finished: ${destZipPath}`);
+            return Q.nfcall(fileHelper.archiveStat, destZipPath);
+          }).fail(err => {
+            winston.error(`parsing to csv and archive failed: ${err}`);
+            Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
+              throw new Error(`set query task status as parsing-failed failed: ${err}`);
+            });
+            throw err;
+          });
+      }
+    }).then(stat => {
+      winston.info('archive stat: %j', stat);
+      return Q.all([
+        Q.nfcall(userService.getUserInfo, userId),
+        Q.nfcall(
+          integrationTaskService.setQueryTaskStatusComplete, queryId, stat.size,
+          JSON.stringify(stat.entries), records)
+      ]);
+    }).spread((userInfo, ...others) => {
+      let to = userInfo.email;
+      let content = `<a href="http://${process.env.HOST}:${process.env.PORT}/integration/query/${queryId}">查看結果</a>`;
+      Q.nfcall(mailUtil.mail, to, {subject, content});
+    }).fail(err => {
+      winston.error(`/export/query/ready/:ip/:port/:queryId error: ${err}`);
+    }).finally(() => {
+      const rmdir = require('rimraf');
+      rmdir(workingPath, err => {
+        err && winston.warn(`remove ${workingPath} failed: ${err}`);
+      });
+    });
+  });
+
   router.get('/export/query/ready/:ip/:port/:queryId', factory.ajax_response_factory(), (req, res) => {
     const path = require('path');
     const mailUtil = require('../../utils/mail-util');

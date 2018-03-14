@@ -54,9 +54,9 @@
     "serve-favicon": "~2.3.0",
     "shortid": "^2.2.8",
     "umzug": "^2.1.0",
-    "unzipper": "^0.8.11",
     "winston": "^2.4.0",
-    "winston-daily-rotate-file": "^1.7.2"
+    "winston-daily-rotate-file": "^1.7.2",
+    "yauzl": "^2.9.1"
   },
   "devDependencies": {
     "@types/bookshelf": "^0.8.34",
