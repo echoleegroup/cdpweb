@@ -45,10 +45,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
-  // console.log(JSON.stringify(transJson));
+  //console.log(JSON.stringify(transJson));
 
   //呼叫API
-  
+
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -65,7 +65,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     else
       callback(null, transJson);
   });
-  
+
 
 
 
@@ -152,34 +152,15 @@ module.exports.transService = (queryId, JObject, callback) => {
     else if (operator === "lt")
       return "<";
     else if (operator === "in")
-      return "in";
-    else if (operator === "ni")
-      return "not in";
+      return "IS NULL";
+    else if (operator === "nn")
+      return "IS NOT NULL";
   }
   function getExpr(JField) {
     let fieldOperator = getOperator(JField.operator);
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
-      if ("in" === fieldOperator || "not in" === fieldOperator) {
-        returnValue += "(";
-        let label = JField.value_label;
-        let value = JField.value;
-        for (let i = 0; i < label.length; i++) {
-          if (!isNaN(Date.parse(label[i]))) {
-            if (i == label.length - 1)
-              returnValue += "'" + label[i].replace(/\//g, "") + "',";
-            else
-              returnValue += "'" + label[i].replace(/\//g, "") + "')";
-          }
-          else {
-            if (i == label.length - 1)
-              returnValue += "'" + value[i] + "',";
-            else
-              returnValue += "'" + value[i] + "')";
-          }
-        }
-      }
-      else {
+      if("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
@@ -189,16 +170,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       }
     }
     else {
-      if ("in" === fieldOperator || "not in" === fieldOperator) {
-        returnValue += "(";
-        let label = JField.value_label;
-        let value = JField.value;
-        if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g, "") + "')";
-        else
-          returnValue += "'" + value + "')";
-      }
-      else {
+      if("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
