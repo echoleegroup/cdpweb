@@ -45,10 +45,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
-  //console.log(JSON.stringify(transJson));
+  console.log(JSON.stringify(transJson));
 
   //呼叫API
-
+  
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
   request({
@@ -68,31 +68,27 @@ module.exports.transService = (queryId, JObject, callback) => {
 
 
 
-
   function getWhere(Jdata) {
     let whereArray = [];
     //客戶明細
     let clientJSON = Jdata.client;
+    let masterObject = new Object();
+    let masterArray = [];
     if (getCount(clientJSON) > 0) {
-      let clientObject = new Object();
-      let clientArray = [];
       let getClientWhere = getCombo(clientJSON[0]);
-      clientArray.push(getClientWhere);
-      clientObject.type = "master";
-      clientObject.condition = clientArray;
-      whereArray.push(clientObject);
+      masterArray.push(getClientWhere);
     }
 
     //車子明細
     let vehicleJSON = Jdata.vehicle;
     if (getCount(vehicleJSON) > 0) {
-      let vehicleObject = new Object();
-      let vehicleArray = [];
       let getVehicleWhere = getCombo(vehicleJSON[0]);
-      vehicleArray.push(getVehicleWhere);
-      vehicleObject.type = "master";
-      vehicleObject.condition = vehicleArray;
-      whereArray.push(vehicleObject);
+      masterArray.push(getVehicleWhere);
+    }
+    if (getCount(clientJSON) > 0 || getCount(vehicleJSON) > 0) {
+      masterObject.type = "master";
+      masterObject.condition = masterArray;
+      whereArray.push(masterObject);
     }
 
     //交易明細
@@ -160,7 +156,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let fieldOperator = getOperator(JField.operator);
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
-      if("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
+      if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
@@ -170,7 +166,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       }
     }
     else {
-      if("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
+      if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
         let label = JField.value_label;
         let value = JField.value;
         if (!isNaN(Date.parse(label)))
