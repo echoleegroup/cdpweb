@@ -181,10 +181,29 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
     });
 };
 
+module.exports.streamToJson = (stream, callback) => {
+  const streamBuffers = require('stream-buffers');
+  let myWritableStreamBuffer = new streamBuffers.WritableStreamBuffer();
+  stream
+    .on('data', chunk => {
+      winston.info(`meta stream on data: ${chunk}`);
+      myWritableStreamBuffer.write(chunk);
+    })
+    .on('end', () => {
+      winston.info(`meta stream end`);
+      let data = myWritableStreamBuffer.getContentsAsString('utf8').replace(/\s/g, '');
+      callback(null, data);
+    })
+    .on('error', err => {
+      winston.error(`meta stream on error: ${err}`);
+      callback(err, null);
+    });
+};
+
 module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, callback) => {
   let promises = [];
-  // let recordPromise = Q();
-  let records = 0;
+  let metaPromise = undefined;
+  // let metaPromise = Q();
   Q.nfcall(yauzl.open, zipPath, {lazyEntries: true}).then(zipFile => {
     zipFile.readEntry();
     zipFile.on('entry', entry => {
@@ -236,17 +255,33 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
           })
         );
       } else if ('meta' === fileName) {
-        // let deferred = Q.defer();
-        // recordPromise.then(() => {
+        let deferred = Q.defer();
+        // metaPromise.then(record => {
         //   return deferred.promise;
         // });
-        //
-        // let buff = new Buffer();
-        // zipFile.openReadStream(entry, (err, readStream) => {
-        //   readStream.on('data', chunk => {
-        //     buff.
-        //   });
-        // });
+
+        zipFile.openReadStream(entry, (err, readStream) => {
+          if (err) {
+            console.log(err);
+            deferred.reject(err);
+          } else {
+            readStream.on("end", () => {
+              winston.info('meta entry end');
+              metaPromise = deferred.promise;
+              zipFile.readEntry();
+            });
+
+            Q.nfcall(this.streamToJson, readStream).then(data => {
+              winston.info('data: ', data);
+              let meta = JSON.parse(data);
+              winston.info('streamToJson meta: ', meta);
+              deferred.resolve(meta);
+            }).fail(err => {
+              winston.error(`parsing meta failed ${err}`);
+              deferred.reject(err);
+            });
+          }
+        });
       } else if (/\/$/.test(fileName)) {
         // Directory file names end with '/'.
         // Note that entires for directories themselves are optional.
@@ -258,11 +293,14 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
 
 
     }).on('close', () => {
-      winston.info('zip file closed! promise length: ', promises);
+      // winston.info('zip file closed! promise length: ', promises);
       // zipStream.destroy();
       // callback(null, csvFilePaths);
-      Q.all(promises).then(entries => {
+      Q.all([metaPromise, ...promises]).spread((meta, ...entries) => {
+        winston.info('meta: ', meta);
+        let records = meta.rowCounts.master;
         //archive all csv in path
+        winston.info(`records : ${records}`);
         winston.info(`all csvFilePaths : ${entries}`);
         callback(null, {records, entries});
       }).fail(err => {
