@@ -20,7 +20,7 @@ module.exports.getFeature = (featureId, callback) => {
 
 module.exports.getFeatures = (featureIds = [], callback) => {
   let featureSql = `'${featureIds.join(`' , '`)}'`;
-  const sql = `SELECT featID, featName, featNameAbbr FROM cd_Feature WHERE featID in (${featureSql}) AND isDel != @isDel`;
+  const sql = `SELECT featID, featName, featNameAbbr, codeGroup FROM cd_Feature WHERE featID in (${featureSql}) AND isDel != @isDel`;
 
   let request = _connector
     .queryRequest()

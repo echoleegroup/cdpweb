@@ -39,6 +39,10 @@ module.exports = (app) => {
       } else {
         res.json();
 
+        userId = queryLogData.updUser;
+        // winston.info('queryLogData: ', queryLogData);
+        featureIdMap = JSON.parse(queryLogData.reserve1).export;
+        // winston.info('query log process Data: %j', featureIdMap);
         Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
           winston.error(err);
         });
@@ -88,8 +92,8 @@ module.exports = (app) => {
     // const workingDirectory = shortid.generate();
     const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
     // const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, workingDirectory);
-    const remoteDownloadUrl = `http://${req.params.ip}:${req.params.port}/download/${queryId}`;
-    const remoteDeleteUrl = `http://${req.params.ip}:${req.params.port}/delete/${queryId}`;
+    const remoteDownloadUrl = `http://${req.params.ip}:${req.params.port}/api/intra/test/download/${queryId}`;
+    const remoteDeleteUrl = `http://${req.params.ip}:${req.params.port}/api/intra/test/delete/${queryId}`;
     const finalZipPath = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryId}.zip`);
     const mkdirp = require('mkdirp');
     const tempFolderName = shortid.generate();

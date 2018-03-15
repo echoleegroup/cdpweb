@@ -11,6 +11,16 @@ const EXPORT_TRANSACTION_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
 const EXPORT_QUERY_TASK = '/api/integration/export/query/%s';
 
+const TASK_STATUS = {
+  INIT: "初始化",
+  REMOTE_PROCESSING: "搜尋中",
+  REMOTE_SERVICE_UNAVAILABLE: "搜尋服務連線失敗",
+  REMOTE_FILE_NOT_FOUND: "無法取得搜尋結果",
+  PARSING: "資料解析中",
+  PARSING_FAILED: "解析失敗",
+  COMPLETE: "完成"
+};
+
 const FilterAction = {
   EXPORT_QUERY: EXPORT_QUERY
 };
@@ -78,6 +88,7 @@ FilterAction.exportQuery = (criteria, success, fail) => {
 FilterAction.getQueryTask = (queryId, success, fail) => {
   let url = format(EXPORT_QUERY_TASK, queryId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+    data.status = TASK_STATUS[data.status];
     success && success(data);
   }, err => {
     console.log('===getQueryTask failed: ', err);

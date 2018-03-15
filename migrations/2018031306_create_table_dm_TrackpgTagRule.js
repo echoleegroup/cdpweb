@@ -14,7 +14,7 @@ module.exports = {
         ruleType: {
           type: DataTypes.STRING(20)
         },
-        rule: {
+        rules: {
           type: DataTypes.STRING(1000)
         },
         isDel: {

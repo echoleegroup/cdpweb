@@ -129,7 +129,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
   // let outStream = fs.createWriteStream(target);
   let headers = _.map(featureMap, 'featName');
   let writer = csvWriter({headers});
-  // let lineNum = 0;
+  let lineNum = 0;
   writer
     .pipe(fs.createWriteStream(target))
     .on('close', () => {
@@ -147,6 +147,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
     .pipe(es.mapSync((line) => {
       //in this line stream, all necessary data has been ready.
       // transform data here
+      winston.info(`${++lineNum} get line : ${line}`);
 
       let rowJson = undefined;
       try {
@@ -189,9 +190,11 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
     zipFile.on('entry', entry => {
       let fileName = entry.fileName;
       let baseName = path.basename(fileName, '.json');
-      // winston.info('on entry event: ', fileName);
+      winston.info('on entry event: ', fileName);
 
-      if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
+      if (fileName.indexOf('__MACOSX') === 0) {
+        zipFile.readEntry();
+      } else if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
         winston.info(`NEW ENTRY ${fileName}`);
 
         let featureIds = ('master' === baseName)? featureIdMap.master.features:
@@ -249,7 +252,9 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
         // Note that entires for directories themselves are optional.
         // An entry's fileName implicitly requires its parent directories to exist.
         zipFile.readEntry();
-      } else {}
+      } else {
+        zipFile.readEntry();
+      }
 
 
     }).on('close', () => {

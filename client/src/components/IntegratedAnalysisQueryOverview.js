@@ -83,6 +83,12 @@ class QueryTask extends React.PureComponent {
             </div>
           </div>
           <div className="form-group">
+            <label htmlFor="inputName" className="col-sm-3 control-label">狀態</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control " id="inputName" value={moment(this.props.task.status).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
+            </div>
+          </div>
+          <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">資料檔案大小</label>
             <div className="col-sm-8">
               <input type="text" className="form-control " id="inputName" value={filesize(this.props.task.fileSize)} placeholder="" readOnly={true}/>
@@ -96,7 +102,7 @@ class QueryTask extends React.PureComponent {
           </div>
         </form>
         <div className="btn-block center-block">
-          <button type="button" className="btn btn-lg btn-default" onClick={this.download}>下載檔案</button>
+          <button type="button" className="btn btn-lg btn-default" onClick={this.download} disabled={'COMPLETE' !== this.props.task.status}>下載檔案</button>
         </div>
       </div>
     );
