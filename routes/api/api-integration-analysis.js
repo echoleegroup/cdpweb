@@ -154,10 +154,10 @@ module.exports = (app) => {
         return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
       }));
 
-    Q.all(promises).then(([insertLog, ...res]) => {
+    Q.all(promises).then(([insertLog, ...results]) => {
       // winston.info('insertLog: ', insertLog);
-      // winston.info('res: %j', res);
-      let relatives = _.assign({}, ...res);
+      // winston.info('results: %j', results);
+      let relatives = _.assign({}, ...results);
       let backendCriteriaData = {
         criteria: criteria,
         export: {

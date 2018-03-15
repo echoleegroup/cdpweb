@@ -39,7 +39,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       selectedFeatureId: props.output.selectedFeatureId,
       selectedRelativeId: props.output.selectedRelativeId,
       queryId: undefined,
-      error: false
+      showError: false,
+      showModal: false
     };
 
   };
@@ -111,19 +112,28 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
       integratedAction.exportQuery(formDate, res => {
         this.setState({
-          queryId: res.queryId
+          queryId: res.queryId,
+          showModal: true,
+          showError: false
         });
         // window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
       }, err => {
         this.setState({
-          error: true
+          showError: true,
+          showModal: false
         });
         // window.alert('The service is temporarily unavailable. Please try latter again contact us.');
       });
 
       // $(this.inputCriteria).val(JSON.stringify(formDate));
       // $(this.formComponent).submit();
-    }
+    };
+
+    this.modalOnHideHandler = (e) => {
+      this.setState({
+        showModal: false
+      });
+    };
   };
 
   componentDidMount() {
@@ -187,7 +197,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
 
         {/*<!-- Modal -->*/}
-        <Modal show={this.state.queryId} bsSize="large">
+        <Modal show={this.state.showModal} bsSize="large" backdrop onHide={this.modalOnHideHandler} >
+          <Modal.Header closeButton/>
           <Modal.Body>
             <p>查詢正在進行中，請稍候片刻。</p>
             <p>您可隨時檢視<Button bsStyle="link" href={"/integration/query/"+this.state.queryId} target="_blank">查詢結果</Button>，或等候E-mail通知</p>
@@ -195,7 +206,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         </Modal>
 
         {/*<!-- error -->*/}
-        <div style={{display: (this.state.error? '': 'none')}}>
+        <div style={{display: (this.state.showError? '': 'none')}}>
           <Alert bsStyle="danger">
             <p>搜尋失敗，請稍後再試或聯絡相關人員</p>
           </Alert>
