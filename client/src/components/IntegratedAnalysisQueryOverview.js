@@ -17,6 +17,7 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
     this.state = {
       task: Map({
         status: null,
+        statusLabel: undefined,
         queryTime: null,
         fileSize: null,
         entries: [],
@@ -31,6 +32,7 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
       this.setState({
         task: Map({
           status: queryTask.status,
+          statusLabel: queryTask.statusLabel,
           queryTime: moment(queryTask.crtTime).valueOf(),
           fileSize: queryTask.archiveSizeInBytes,
           entries: queryTask.archiveEntries,
@@ -85,7 +87,7 @@ class QueryTask extends React.PureComponent {
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">狀態</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={moment(this.props.task.status).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control " id="inputName" value={this.props.task.statusLabel} placeholder="" readOnly={true}/>
             </div>
           </div>
           <div className="form-group">

@@ -1,5 +1,6 @@
 import React from 'react';
 import {fromJS, List} from 'immutable';
+import { Modal, Button, Alert } from 'react-bootstrap';
 import {xor} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
@@ -11,11 +12,11 @@ const extractAllNodeId = (nodes) => {
   return nodes.reduce((accumulator, node) => {
     switch (node.type) {
       case NODE_TYPE.Branch:
-        accumulator = accumulator.concat(extractAllNodeId(node.children));
+        return accumulator.concat(extractAllNodeId(node.children));
       case NODE_TYPE.Tail:
         accumulator.push(node.id);
+        return accumulator;
     }
-    return accumulator;
   }, []);
 };
 
@@ -36,7 +37,9 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       periodEnd: props.output.periodEnd,
       periodEndLabel: props.output.periodEndLabel,
       selectedFeatureId: props.output.selectedFeatureId,
-      selectedRelativeId: props.output.selectedRelativeId
+      selectedRelativeId: props.output.selectedRelativeId,
+      queryId: undefined,
+      error: false
     };
 
   };
@@ -107,9 +110,15 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       };
 
       integratedAction.exportQuery(formDate, res => {
-        window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
+        this.setState({
+          queryId: res.queryId
+        });
+        // window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
       }, err => {
-        window.alert('The service is temporarily unavailable. Please try latter again contact us.');
+        this.setState({
+          error: true
+        });
+        // window.alert('The service is temporarily unavailable. Please try latter again contact us.');
       });
 
       // $(this.inputCriteria).val(JSON.stringify(formDate));
@@ -118,6 +127,9 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
   };
 
   componentDidMount() {
+    // $(this.successModal).modal({
+    //   show: false
+    // });
     // this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
     // this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
   };
@@ -133,6 +145,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           <button type="button" className="btn btn-sm btn-default" onClick={this.deselectAllHandler}>全不選</button>
         </div>
         <PickerMultiple nodes={this.props.featureOptions}
+                        collapse={false}
                         selectedId={this.state.selectedFeatureId.toJS()}
                         tailClickHandler={this.featureTailClickHandler}/>
         <h4>挑選下載明細資訊</h4>
@@ -169,11 +182,24 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
                         tailClickHandler={this.relativeTailClickHandler}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
-          <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate}>下載資料</button>
+          <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate} disabled={this.state.queryId}>下載資料</button>
         </div>
-        {/*<form method="POST" action={integratedAction.EXPORT_QUERY} ref={e => {this.formComponent = e;}}>*/}
-          {/*<input type="hidden" name="criteria" value="" ref={e => this.inputCriteria = e}/>*/}
-        {/*</form>*/}
+
+
+        {/*<!-- Modal -->*/}
+        <Modal show={this.state.queryId} bsSize="large">
+          <Modal.Body>
+            <p>查詢正在進行中，請稍候片刻。</p>
+            <p>您可隨時檢視<Button bsStyle="link" href={"/integration/query/"+this.state.queryId} target="_blank">查詢結果</Button>，或等候E-mail通知</p>
+          </Modal.Body>
+        </Modal>
+
+        {/*<!-- error -->*/}
+        <div style={{display: (this.state.error? '': 'none')}}>
+          <Alert bsStyle="danger">
+            <p>搜尋失敗，請稍後再試或聯絡相關人員</p>
+          </Alert>
+        </div>
       </div>
     );
   };

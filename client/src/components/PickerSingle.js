@@ -38,6 +38,7 @@ class Tree extends React.PureComponent {
         case NODE_TYPE.Branch:
           return <Branch key={node.id}
                          node={node}
+                         collapse={props.collapse}
                          selectedId={props.selectedId}
                          branchClickHandler={props.branchClickHandler}
                          tailClickHandler={props.tailClickHandler}
@@ -66,7 +67,7 @@ class Branch extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: true
+      collapse: (props.collapse === undefined || props.collapse)
     }
   };
 
@@ -104,6 +105,7 @@ class Branch extends React.PureComponent {
 
   render() {
     let collapseConfig = this.collapseConfig(this.state.collapse);
+    console.log('collapseConfig: ', collapseConfig);
     let node = this.props.node;
     return (
       <li key={node.id}>

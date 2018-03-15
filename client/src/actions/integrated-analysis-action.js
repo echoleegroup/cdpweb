@@ -88,7 +88,7 @@ FilterAction.exportQuery = (criteria, success, fail) => {
 FilterAction.getQueryTask = (queryId, success, fail) => {
   let url = format(EXPORT_QUERY_TASK, queryId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
-    data.status = TASK_STATUS[data.status];
+    data.statusLabel = TASK_STATUS[data.status];
     success && success(data);
   }, err => {
     console.log('===getQueryTask failed: ', err);

@@ -188,7 +188,7 @@ module.exports = (app) => {
     }).spread((queryId, queryScript) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
 
-      res.json();
+      res.json({queryId});
     }).fail(err => {
       winston.error(`===/export/query internal server error: ${err}`);
       console.log(err);
