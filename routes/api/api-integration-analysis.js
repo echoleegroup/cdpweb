@@ -214,7 +214,7 @@ module.exports = (app) => {
   router.get('/export/download/:queryId', middlewares, (req, res) => {
     // const fs = require('fs');
     let queryId = req.params.queryId;
-    let fileName= `${queryId}.zip`;
+    let fileName = `${queryId}.zip`;
     let filePath = `${constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE}/${fileName}`;
 
     Q.nfcall(queryService.insertDownloadLog, {
