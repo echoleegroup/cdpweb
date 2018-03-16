@@ -147,14 +147,14 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
     .pipe(es.mapSync((line) => {
       //in this line stream, all necessary data has been ready.
       // transform data here
-      // winston.info(`${++lineNum} get line : ${line}`);
+      winston.info(`${++lineNum} get line : ${line}`);
 
       let rowJson = undefined;
       try {
         rowJson = JSON.parse(line);
       } catch (e) {
         winston.warn(`parse string to json failed: ${line}`);
-        rowJson = {};
+        return null;
       }
 
       let row = _.map(featureMap, (feature, featId) => {
@@ -298,7 +298,7 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
       // callback(null, csvFilePaths);
       Q.all([metaPromise, ...promises]).spread((meta, ...entries) => {
         winston.info('meta: ', meta);
-        let records = meta? meta.rowCounts.master: 0;
+        let records = meta.rowCounts.master;
         //archive all csv in path
         winston.info(`records : ${records}`);
         winston.info(`all csvFilePaths : ${entries}`);
