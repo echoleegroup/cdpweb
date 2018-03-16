@@ -82,7 +82,7 @@ class QueryTask extends React.PureComponent {
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">查詢送出時間</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={moment(this.props.task.queryTime).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control " id="inputName" value={moment.utc(this.props.task.queryTime).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
             </div>
           </div>
           <div className="form-group">
