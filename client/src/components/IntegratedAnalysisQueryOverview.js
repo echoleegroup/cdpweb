@@ -69,7 +69,8 @@ class QueryTask extends React.PureComponent {
   componentWillMount() {
     this.download = () => {
       const downloadjs = require("downloadjs");
-      downloadjs('/api/integration/export/download/' + this.props.queryId);
+      const queryId = this.props.queryId;
+      downloadjs('/api/integration/export/download/' + queryId, queryId + '.zip');
     };
   };
 
