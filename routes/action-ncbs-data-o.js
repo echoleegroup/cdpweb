@@ -7,7 +7,7 @@ const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
-const storage = constants.ASSERTS_ABSOLUTE_PATH;
+const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });
 
 module.exports = (app) => {
@@ -59,6 +59,7 @@ module.exports = (app) => {
     // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
     uniqName = file.filename;
     filepath = file.path;
+    console.log(filepath);
     var list = xlsx.parse(filepath);
     var p1 = new Promise(function (resolve, reject) {
       total = list[0].data.length - 1;
