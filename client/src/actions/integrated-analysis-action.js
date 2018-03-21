@@ -9,7 +9,7 @@ const CRITERIA_FEATURES_URL_TAG = '/api/integration/features/criteria/tag/set/%s
 const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/features/criteria/transaction/sets';
 const CRITERIA_FEATURE_SETS_URL_TAG = '/api/integration/features/criteria/tag/sets';
 const EXPORT_FEATURE_POOL = '/api/integration/export/features';
-const EXPORT_TRANSACTION_POOL = '/api/integration/export/relative/sets';
+const EXPORT_RELATIVES_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
 const EXPORT_QUERY_TASK = '/api/integration/export/query/%s';
 
@@ -23,9 +23,7 @@ const TASK_STATUS = {
   COMPLETE: "完成"
 };
 
-const FilterAction = {
-  EXPORT_QUERY: EXPORT_QUERY
-};
+const FilterAction = {};
 
 FilterAction.getClientCriteriaFeatures = (success, fail) => {
   action.ajaxGetObservable(CRITERIA_FEATURES_URL_CLIENT, undefined, undefined).subscribe(data => {
@@ -86,8 +84,8 @@ FilterAction.getTagFeatureSets = (success, fail) => {
 //for exports
 FilterAction.getExportFeaturePool = (success, fail) => {
   let fetchExportFeatureOptions = action.ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
-  let fetchExportTransactionOptions = action.ajaxGetObservable(EXPORT_TRANSACTION_POOL, undefined, undefined);
-  Rx.Observable.forkJoin(fetchExportFeatureOptions, fetchExportTransactionOptions).subscribe(res => {
+  let fetchExportRelativeOptions = action.ajaxGetObservable(EXPORT_RELATIVES_POOL, undefined, undefined);
+  Rx.Observable.forkJoin(fetchExportFeatureOptions, fetchExportRelativeOptions).subscribe(res => {
     success({
       featureOptions: res[0],
       relativeSetOptions: res[1]

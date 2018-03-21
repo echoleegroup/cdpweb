@@ -18,7 +18,7 @@ export default class IntegratedAnalysisCriteriaTag extends IntegratedAnalysisCri
   // };
 
   subheadText() {
-    return '第四步 挑選資料標籤指定條件';
+    return '第四步 挑選標籤篩選資料';
   };
 
   fetchPreparedData(props, _this, callback) {

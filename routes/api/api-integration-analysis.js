@@ -25,11 +25,14 @@ const CLIENT_CRITERIA_FEATURE_SET_ID = 'COMMCUST';
 const VEHICLE_CRITERIA_FEATURE_SET_ID = 'COMMCAR';
 
 const INTEGRATION_ANALYSIS_TREE_ID = 'COMM';
+const ANONYMOUS_ANALYSIS_TREE_ID = 'OUCOMM';
 
 const CRITERIA_TRANSACTION_SET_ID = 'COMMTARGETSET';
 const CRITERIA_TAG_SET_ID = 'TAGTARGETSET_CR';
 const EXPORT_DOWNLOAD_FEATURE_SET_ID = 'COMMDNLD';
 const EXPORT_RELATIVE_SET_ID = 'COMMDNLDSET';
+const ANONYMOUS_TAG_SET_ID = 'TAGTARGETSET_OU';
+const ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID = 'OUCOMMDNLD';
 
 const criteriaFeaturePromise = (setId, treeId) => {
   return Q.all([
@@ -286,6 +289,90 @@ module.exports = (app) => {
     }).fail(err => {
       console.log(err);
       res.json(null, 500, 'internal service error!');
+    });
+  });
+
+  router.get('/anonymous/features/criteria/tag/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, ANONYMOUS_TAG_SET_ID).then(resSet => {
+      // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
+      let nodes = criteriaHelper.datasetToNodes(resSet);
+      // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/tag/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/anonymous/export/features', middlewares, (req, res) => {
+    Q.all([
+      Q.nfcall(integrationService.getDownloadFeatures, ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID),
+      Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
+    ]).spread((features, foldingTree) => {
+      // winston.info('/export/features getCriteriaFeatures: ', features);
+      // winston.info('/export/features getCriteriaFeatureTree: ', foldingTree);
+      let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
+      res.json(fields);
+    }).fail(err => {
+      winston.error('===/export/features internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.post('/anonymous/export/query', middlewares, (req, res) => {
+    let criteria = req.body.criteria;
+    let expt = req.body.export;
+    let filter = req.body.filter;
+
+    // winston.info(req.body.export);
+
+    Q.nfcall(queryService.insertQueryLog , {
+      menuCode: MENU_CODE.INTEGRATED_QUERY,
+      criteria: JSON.stringify(criteria),
+      features: JSON.stringify(expt),
+      filters: JSON.stringify(filter),
+      updUser: req.user.userId
+    }).then(insertRes => {
+      return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
+    }).then(insertLog => {
+      // winston.info('insertLog: ', insertLog);
+      // winston.info('results: %j', results);
+      let relatives = {};
+      let backendCriteriaData = {
+        criteria: criteria,
+        export: {
+          master: {
+            features: expt.master,
+            filter: {}
+          },
+          relatives: relatives
+        }
+      };
+
+      return Q.all([
+        backendCriteriaData,
+        insertLog.queryID,
+        Q.nfcall(queryService.updateQueryLogProcessingData, insertLog.queryID, JSON.stringify(backendCriteriaData))
+      ]);
+    }).spread((backendCriteriaData, queryId, ...results) => {
+      // winston.info('queryId: %s', queryId);
+      // winston.info('backendCriteriaData: %j', backendCriteriaData);
+      const integratedAnalysisTransService = require('../../services/trans-360backand-service');
+      return Q.all([
+        queryId,
+        Q.nfcall(integratedAnalysisTransService.transService, queryId, backendCriteriaData)
+          .fail(err => {
+            Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable, queryId);
+            throw err;
+          })]);
+    }).spread((queryId, queryScript) => {
+      Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
+
+      res.json({queryId});
+    }).fail(err => {
+      winston.error(`===/export/query internal server error: ${err}`);
+      console.log(err);
+      res.json(null, 500, 'internal service error');
     });
   });
 

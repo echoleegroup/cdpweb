@@ -2,6 +2,7 @@ import React  from 'react';
 import ReactDOM  from 'react-dom';
 import url from 'url';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import AnonymousAnalysisHome from './components/AnonymousAnalysisHome';
 import CustomTargetFilterHome from './components/CustomTargetFilterHome';
 import IntegratedAnalysisHome from './components/IntegratedAnalysisHome';
 import IntegratedAnalysisQueryOverview from './components/IntegratedAnalysisQueryOverview';
@@ -39,6 +40,7 @@ class PortalRoute extends React.Component {
           <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetFilterHome}/>
           <Route exact path="/integration/query" component={IntegratedAnalysisHome}/>
           <Route exact path="/integration/query/:queryId" component={IntegratedAnalysisQueryOverview}/>
+          <Route exact path="/integration/anonymous/query" component={AnonymousAnalysisHome}/>
         </Switch>
       </Router>
     );

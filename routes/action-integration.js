@@ -38,5 +38,19 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/anonymous/query', function (req, res, next) {
+    let modelList = req.session.modelList;
+    let navMenuList = req.session.navMenuList;
+    let mgrMenuList = req.session.mgrMenuList;
+
+    res.render('container', {
+      user: req.user,
+      menuTitle: '線上用戶分析',
+      modelList: modelList,
+      navMenuList: navMenuList,
+      mgrMenuList: mgrMenuList
+    });
+  });
+
   return router;
 };
