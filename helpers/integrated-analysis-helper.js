@@ -15,12 +15,12 @@ const constants = require('../utils/constants');
 
 module.exports.featureSetsToTreeNodes = (setData) => {
 
-  winston.info('===featureSetsToTreeNodes: %j', setData);
+  // winston.info('===featureSetsToTreeNodes: %j', setData);
   return setData.map(set => {
     return {
       type: 'tail',
-      id: set.transFeatSetID,
-      label: set.transFeatSetName
+      id: set.nodeID,
+      label: set.nodeName
     };
   });
 };

@@ -27,6 +27,7 @@ const VEHICLE_CRITERIA_FEATURE_SET_ID = 'COMMCAR';
 const INTEGRATION_ANALYSIS_TREE_ID = 'COMM';
 
 const CRITERIA_TRANSACTION_SET_ID = 'COMMTARGETSET';
+const CRITERIA_TAG_SET_ID = 'TAGTARGETSET_CR';
 const EXPORT_DOWNLOAD_FEATURE_SET_ID = 'COMMDNLD';
 const EXPORT_RELATIVE_SET_ID = 'COMMDNLDSET';
 
@@ -86,12 +87,66 @@ module.exports = (app) => {
 
   router.get('/features/criteria/transaction/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, CRITERIA_TRANSACTION_SET_ID).then(resSet => {
-      winston.info('/features/criteria/transaction/sets  getFeatureSets: %j', resSet);
+      // winston.info('/features/criteria/transaction/sets  getFeatureSets: %j', resSet);
       let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
-      winston.info('/features/criteria/transaction/sets  featureSetsToTreeNodes: ', nodes);
+      // winston.info('/features/criteria/transaction/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
       winston.error('===/features/criteria/transaction/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  const cr_tag_handler = (setId, keyword) => {
+    switch (setId) {
+      case 'TagActive':
+        return Q.nfcall(integrationService.filterTagActiveSet, keyword);
+      case 'TagQtn':
+        return Q.nfcall(integrationService.filterTagQtnSet, keyword);
+      case 'TagOwnMedia':
+        return Q.nfcall(integrationService.filterTagOwnMediaSet, keyword);
+      case 'TagEInterest':
+        return Q.nfcall(integrationService.filterTagEInterestSet, keyword);
+      case 'TagEIntent':
+        return Q.nfcall(integrationService.filterTagEIntentSet, keyword);
+      case 'TagOuterMedia':
+        return Q.nfcall(integrationService.filterTagOuterMediaSet, keyword);
+      default:
+        return Q();
+    }
+  };
+
+  router.post('/features/criteria/tag/set/:setId', middlewares, (req, res) => {
+    let setId = req.params.setId;
+    let keyword = req.body.keyword || '';
+    let promise = cr_tag_handler(setId, keyword);
+
+    promise.then(resSet => {
+      winston.info('resSet: ', resSet);
+      let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/transaction/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+
+    // Q.nfcall(integrationService.filterCriteriaFeatures, setId, keyword).then(resSet => {
+    //   let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
+    //   res.json(nodes);
+    // }).fail(err => {
+    //   winston.error('===/features/criteria/transaction/sets internal server error: ', err);
+    //   res.json(null, 500, 'internal service error');
+    // });
+  });
+
+  router.get('/features/criteria/tag/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, CRITERIA_TAG_SET_ID).then(resSet => {
+      // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
+      let nodes = criteriaHelper.datasetToNodes(resSet);
+      // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/tag/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -113,7 +168,7 @@ module.exports = (app) => {
 
   router.get('/export/relative/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, EXPORT_RELATIVE_SET_ID).then(resSet => {
-      res.json(criteriaHelper.relativeSetsToNodes(resSet));
+      res.json(criteriaHelper.datasetToNodes(resSet));
     }).fail(err => {
       winston.error('===/export/relative/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');

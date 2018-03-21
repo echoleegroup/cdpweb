@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import PickerSingle from './PickerSingle'
 
-export default class CriteriaTransactionSetPicker extends React.PureComponent {
+export default class IntegratedAnalysisFeatureSetPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

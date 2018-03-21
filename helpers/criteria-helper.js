@@ -226,11 +226,11 @@ module.exports = {
     return foldingNodes;
   },
 
-  relativeSetsToNodes: (sets) => {
+  datasetToNodes: (sets) => {
     return sets.map(set => {
       return _.assign({}, TAIL_MODEL_TEMPLATE, {
-        id: set.transFeatSetID,
-        label: set.transFeatSetName
+        id: set.nodeID,
+        label: set.nodeName
       });
     });
   },

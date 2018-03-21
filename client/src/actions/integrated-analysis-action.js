@@ -5,7 +5,9 @@ import Rx from "rxjs/Rx";
 const CRITERIA_FEATURES_URL_CLIENT = '/api/integration/features/criteria/client';
 const CRITERIA_FEATURES_URL_VEHICLE = '/api/integration/features/criteria/vehicle';
 const CRITERIA_FEATURES_URL_TRANSACTION = '/api/integration/features/criteria/transaction/set/%s';
+const CRITERIA_FEATURES_URL_TAG = '/api/integration/features/criteria/tag/set/%s';
 const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/features/criteria/transaction/sets';
+const CRITERIA_FEATURE_SETS_URL_TAG = '/api/integration/features/criteria/tag/sets';
 const EXPORT_FEATURE_POOL = '/api/integration/export/features';
 const EXPORT_TRANSACTION_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
@@ -62,6 +64,26 @@ FilterAction.getTransactionFeatureSets = (success, fail) => {
   });
 };
 
+FilterAction.getTagCriteriaFeatures = (setId, keyword, success, fail) => {
+  let url = format(CRITERIA_FEATURES_URL_TAG, setId);
+  action.ajaxPostObservable(url, {keyword}, undefined).subscribe(data => {
+    success && success(data);
+  }, err => {
+    console.log('===getTransactionCriteriaFeatures failed: ', err);
+    fail && fail(err);
+  });
+};
+
+FilterAction.getTagFeatureSets = (success, fail) => {
+  action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TAG, undefined, undefined).subscribe(data => {
+    success && success(data);
+  }, err => {
+    console.log('===getTagFeatureSets failed: ', err);
+    fail && fail(err);
+  });
+};
+
+//for exports
 FilterAction.getExportFeaturePool = (success, fail) => {
   let fetchExportFeatureOptions = action.ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
   let fetchExportTransactionOptions = action.ajaxGetObservable(EXPORT_TRANSACTION_POOL, undefined, undefined);

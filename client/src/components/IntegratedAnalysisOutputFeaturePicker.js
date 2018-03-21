@@ -21,7 +21,7 @@ const extractAllNodeId = (nodes) => {
 };
 
 const toggleList = (id, target) => {
-  console.log('toggleList target: ', target);
+  // console.log('toggleList target: ', target);
   return xor(target, [id]);
 };
 

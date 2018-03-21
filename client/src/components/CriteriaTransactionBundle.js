@@ -64,7 +64,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   ComponentBundleBodyTail(props) {
     return (
       <div className="sub_conditon">
-        指定參考：<span>{props.criteria.ref_label}</span>
+        來源：<span>{props.criteria.ref_label}</span>
       </div>
     );
   };

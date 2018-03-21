@@ -105,7 +105,7 @@ class Branch extends React.PureComponent {
 
   render() {
     let collapseConfig = this.collapseConfig(this.state.collapse);
-    console.log('collapseConfig: ', collapseConfig);
+    // console.log('collapseConfig: ', collapseConfig);
     let node = this.props.node;
     return (
       <li key={node.id}>

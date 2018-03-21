@@ -7,7 +7,7 @@ const modelService = require('./model-service');
 module.exports.getCriteriaFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM cd_TargetFeat t_feat, cd_Feature feature ' +
-    'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID AND isDel != @isDel';
+    'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL)';
 
   let request = _connector
     .queryRequest()
@@ -39,7 +39,7 @@ module.exports.getCriteriaFeatureTree = (treeId, callback) => {
 };
 
 module.exports.getFeatureSets = (transSetId, callback) => {
-  const sql = 'SELECT transFeatSetID, transFeatSetName ' +
+  const sql = 'SELECT transFeatSetID AS nodeID, transFeatSetName AS nodeName ' +
     'FROM cd_TransFeatSet ' +
     'WHERE transSetID = @transSetID';
 
@@ -74,7 +74,7 @@ module.exports.getFeatureSet = (transSetId, setId, callback) => {
 module.exports.getDownloadFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName ' +
     'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
-    'WHERE d_feat.setID = @setId AND d_feat.featID = feature.featID AND isDel != @isDel';
+    'WHERE d_feat.setID = @setId AND d_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL)';
 
   let request = _connector
     .queryRequest()
@@ -85,6 +85,114 @@ module.exports.getDownloadFeatures = (setId, callback) => {
     callback(null, results);
   }).fail(err => {
     winston.error('===getDownloadFeatures failed:', err);
+    callback(err);
+  });
+};
+
+module.exports.filterTagActiveSet = (keyword, callback) => {
+  const sql = 'SELECT DISTINCT tagLabel as nodeID, tagLabel as nodeName ' +
+    'FROM cu_OuterListTag ' +
+    `WHERE tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.filterTagQtnSet = (keyword, callback) => {
+  const sql = 'SELECT DISTINCT tagLabel as nodeID, tagLabel as nodeName ' +
+    'FROM cu_NCBSTag ' +
+    `WHERE tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.filterTagOwnMediaSet = (keyword, callback) => {
+  const sql = `SELECT tagLabel as nodeID, tagLabel as nodeName FROM dm_EvtpgTag where tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL) ` +
+    'UNION ' +
+    `SELECT tagLabel as nodeID, tagLabel as nodeName FROM dm_GenpgTag where tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL) ` +
+    'UNION ' +
+    `SELECT tagLabel as nodeID, tagLabel as nodeName FROM dm_TrackpgTag where tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL) ` +
+    'UNION ' +
+    `SELECT tagLabel as nodeID, tagLabel as nodeName FROM dm_APPpgTag where tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL) `;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.filterTagEInterestSet = (keyword, callback) => {
+  const sql = 'SELECT DISTINCT tagLabel as nodeID, tagLabel as nodeName ' +
+    'FROM dm_ElandTag ' +
+    `WHERE elandCategID = @elandCategID AND tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('elandCategID', _connector.TYPES.NVarChar, 'INTEREST')
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.filterTagEIntentSet = (keyword, callback) => {
+  const sql = 'SELECT DISTINCT tagLabel as nodeID, tagLabel as nodeName ' +
+    'FROM dm_ElandTag ' +
+    `WHERE elandCategID = @elandCategID AND tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('elandCategID', _connector.TYPES.NVarChar, 'INTENT')
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.filterTagOuterMediaSet = (keyword, callback) => {
+  const sql = 'SELECT DISTINCT tagLabel as nodeID, tagLabel as nodeName ' +
+    'FROM dm_EvtadTag ' +
+    `WHERE tagLabel like '%' + @keyword + '%' AND (isDel != @isDel or isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('keyword', _connector.TYPES.NVarChar, keyword)
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
     callback(err);
   });
 };
