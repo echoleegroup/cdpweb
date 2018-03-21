@@ -1,6 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {xor, debounce} from 'lodash';
+import {xor, debounce, assign} from 'lodash';
+import shortid from 'shortid';
 import {List} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import PickerMultiple from './PickerMultiple'
@@ -70,17 +71,36 @@ export default class TagPickerModal extends React.PureComponent {
     };
 
     this.abort = () => {
+      $('body').removeClass('noscroll');
+
+      this.composition = false;
+      this.keyword = '';
       this.setState({
         isOpen: false,
         isLoaded: false,
         collapse: true,
         selected: List(),
         options: List()
-      })
+      }, () => {
+        this.dataHandler(null, (data) => {
+          this.setState({
+            isLoaded: true,
+            options: List(data)
+          });
+        });
+      });
     };
 
     this.submit = () => {
-      this.responseCriteria(this.state.selected.toJS());
+      let res = this.state.selected.toJS().map(tag => {
+        return assign({}, INITIAL_CRITERIA, {
+          id: shortid.generate(),
+          value: tag,
+          value_label: tag
+        })
+      });
+
+      this.responseCriteria(res);
       this.abort();
     };
 
@@ -159,13 +179,13 @@ export default class TagPickerModal extends React.PureComponent {
                 </div>
               </div>
             </div>
+            <div className="form-group form-inline" style={{marginBottom: '0px'}}>
+              <h3>查詢結果</h3>
+              <label className="pull-right" style={{marginTop: '-35px'}}>
+                <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
+              </label>
+            </div>
             <Loader loaded={this.state.isLoaded}>
-              <div className="form-group form-inline" style={{marginBottom: '0px'}}>
-                <h3>查詢結果</h3>
-                <label className="pull-right" style={{marginTop: '-35px'}}>
-                  <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
-                </label>
-              </div>
               <PickerMultiple nodes={this.state.options}
                               selectedId={this.state.selected.toJS()}
                               tailClickHandler={this.tailClickHandler}/>

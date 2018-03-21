@@ -4,6 +4,7 @@ import {isEmpty, reduce, assign, map} from 'lodash';
 import shortid from 'shortid';
 import CriteriaField from './CriteriaField';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
+import CriteriaTag from "./CriteriaTag";
 
 const OPERATOR_OPTIONS = {
   and: '全部',
@@ -136,6 +137,7 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
+    let ComponentChildCriteriaBlock = this.ComponentChildCriteriaBlock.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
     return (
       <div>
@@ -147,16 +149,7 @@ export default class CriteriaBundle extends React.PureComponent {
                              ComponentBundleOperator={ComponentBundleOperator}
                              ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
-        <div className="level form-inline">
-          {this.state.properties.get('criteria').map((_criteria, index) => {
-            return this.ComponentChildCriteria(_criteria, index);
-            // console.log('_criteria.id: ', _criteria.id);
-            // return <ComponentChildCriteria key={_criteria.id}
-            //                         isPreview={this.props.isPreview}
-            //                         criteria={_criteria}
-            //                         index={index}/>
-          })}
-        </div>
+        <ComponentChildCriteriaBlock {...this.props}/>
         <ComponentButtonInsertCriteria isPreview={this.props.isPreview}
                                        addCriteriaClickHandler={this.addCriteriaClickHandler.bind(this)}/>
         <ComponentCustomized/>
@@ -215,21 +208,29 @@ export default class CriteriaBundle extends React.PureComponent {
     );
   };
 
-  // ComponentChildCriteriaBlock() {
-  //   return (
-  //     <div className="level form-inline">
-  //       {this.state.properties.get('criteria').map((_criteria, index) => {
-  //         return this.ComponentChildCriteria(_criteria, index);
-  //       })}
-  //     </div>
-  //   );
-  // };
+  ComponentChildCriteriaBlock(props) {
+    return (
+      <div className="level form-inline">
+        {this.state.properties.get('criteria').map((_criteria, index) => {
+          return this.ComponentChildCriteria(_criteria, index);
+        })}
+      </div>
+    );
+  };
 
   ComponentChildCriteria(criteria, index) {
     // console.log('CriteriaBundle::ChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.FIELD:
         return <CriteriaField key={criteria.id}
+                              criteria={criteria}
+                              index={index}
+                              isPreview={this.props.isPreview}
+                              removeCriteria={this.removeCriteria}
+                              collectCriteriaComponents={this.collectCriteriaComponents}
+                              removeCriteriaComponents={this.removeCriteriaComponents}/>;
+      case CRITERIA_COMPONENT_DICT.TAG:
+        return <CriteriaTag key={criteria.id}
                               criteria={criteria}
                               index={index}
                               isPreview={this.props.isPreview}

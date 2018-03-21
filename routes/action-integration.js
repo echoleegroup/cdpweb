@@ -31,12 +31,12 @@ module.exports = (app) => {
 
     res.render('container', {
       user: req.user,
-      menuTitle: '顧客數據導出',
+      menuTitle: '顧客360查詢結果',
       modelList: modelList,
       navMenuList: navMenuList,
       mgrMenuList: mgrMenuList
     });
-  })
+  });
 
   return router;
 };

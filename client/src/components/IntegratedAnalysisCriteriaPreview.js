@@ -26,6 +26,11 @@ export default class IntegratedAnalysisCriteriaPreview extends React.PureCompone
           <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step3)}
                                  ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
+          <h4><i className="fa fa-check" aria-hidden="true"/>標籤條件</h4>
+          {/* 條件設定 預覽狀態*/}
+          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step4)}
+                                         ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
+
         </div>
         <div className="btn-block center-block">
           <button type="submit" className="btn btn-lg btn-default" onClick={this.props.stepNext}>挑選下載欄位</button>

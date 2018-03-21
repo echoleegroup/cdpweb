@@ -36,10 +36,10 @@ export default class CriteriaTagBundle extends CriteriaBundle {
       this.fetchFeatureData(keyword, callback);
     };
 
-    this.insertCriteriaState = (criteria) => {
-      // console.log('CriteriaBundle:insertCriteria: ', criteria);
+    this.insertCriteriaState = (tagList) => {
+      console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
       this.setState(prevState => ({
-        properties: prevState.properties.set('criteria', prevState.properties.get('criteria').push(criteria))
+        properties: prevState.properties.set('criteria', prevState.properties.get('criteria').concat(tagList))
       }));
     };
     // super.componentWillMount();
@@ -105,6 +105,22 @@ export default class CriteriaTagBundle extends CriteriaBundle {
       <TagPickerModal {...mapToProps} ref={(e) => {
         this.slaveModal = e;
       }}/>
+    );
+  };
+
+  ComponentChildCriteriaBlock(props) {
+    return (
+      <div className="level form-inline">
+        <div className="con-option">
+          <div className="tag customize">
+            <ul>
+              {this.state.properties.get('criteria').map((_criteria, index) => {
+                return this.ComponentChildCriteria(_criteria, index);
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
     );
   };
 

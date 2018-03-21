@@ -122,7 +122,7 @@ module.exports = (app) => {
     let promise = cr_tag_handler(setId, keyword);
 
     promise.then(resSet => {
-      winston.info('resSet: ', resSet);
+      // winston.info('resSet: ', resSet);
       let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
       res.json(nodes);
     }).fail(err => {
