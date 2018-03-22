@@ -357,7 +357,7 @@ module.exports = (app) => {
     }).spread((backendCriteriaData, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
       // winston.info('backendCriteriaData: %j', backendCriteriaData);
-      const integratedAnalysisTransService = require('../../services/trans-360backand-service');
+      const integratedAnalysisTransService = require('../../services/spark-api-log-service');
       return Q.all([
         queryId,
         Q.nfcall(integratedAnalysisTransService.transService, queryId, backendCriteriaData)
