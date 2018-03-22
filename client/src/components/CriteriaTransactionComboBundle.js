@@ -13,10 +13,10 @@ export default class CriteriaTransactionComboBundle extends CriteriaComboBundle 
   };
 
   toInsertCriteriaBundle() {
-    this.props.toPickFeatureSet(({setId, setLabel}) => {
+    this.props.toPickFeatureSet(({setId, setLabel, setCategory}) => {
       // console.log(`get setID=${setId} and label=${setLabel}`);
       let criteriaModel = this.getBundleProperties({
-        type: this.childBundleType(),
+        type: this.childBundleType(setCategory),
         ref: setId,
         ref_label: setLabel
       });

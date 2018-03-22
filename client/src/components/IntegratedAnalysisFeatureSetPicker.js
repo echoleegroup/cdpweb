@@ -35,7 +35,8 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
     this.confirmCriteria = () => {
       this.responseCriteria({
         setId: this.state.setId,
-        setLabel: this.state.setLabel
+        setLabel: this.state.setLabel,
+        setCategory: this.state.setCategory
       });
       this.closeModal();
     };
@@ -48,7 +49,8 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
       // console.log('CriteriaTransactionSetPicker tailClickHandler: ', node);
       this.setState({
         setId: node.id,
-        setLabel: node.label
+        setLabel: node.label,
+        setCategory: node.category
       });
     };
   };

@@ -227,7 +227,7 @@ class IntegratedAnalysisNavigator extends React.PureComponent {
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step2)}>第二步：車輛屬性資料</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step3)}>第三步：明細資料指定條件</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step4)}>第四步：標籤篩選</a></li>
-          {/*<li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step5)}>第五步：線上足跡</a></li>*/}
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step5)}>第五步：線上足跡</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step6)}>第六步：條件總覽</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step7)}>第七步：挑選下載欄位</a></li>
         </ul>

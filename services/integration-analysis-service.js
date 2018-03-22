@@ -39,7 +39,7 @@ module.exports.getCriteriaFeatureTree = (treeId, callback) => {
 };
 
 module.exports.getFeatureSets = (transSetId, callback) => {
-  const sql = 'SELECT transFeatSetID AS nodeID, transFeatSetName AS nodeName ' +
+  const sql = 'SELECT transFeatSetID AS nodeID, transFeatSetName AS nodeName, transLogCateg AS nodeCateg ' +
     'FROM cd_TransFeatSet ' +
     'WHERE transSetID = @transSetID';
 

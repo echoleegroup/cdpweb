@@ -29,6 +29,7 @@ const ANONYMOUS_ANALYSIS_TREE_ID = 'OUCOMM';
 
 const CRITERIA_TRANSACTION_SET_ID = 'COMMTARGETSET';
 const CRITERIA_TAG_SET_ID = 'TAGTARGETSET_CR';
+const CRITERIA_TRAIL_SET_ID = 'LOGTARGETSET_CR';
 const EXPORT_DOWNLOAD_FEATURE_SET_ID = 'COMMDNLD';
 const EXPORT_RELATIVE_SET_ID = 'COMMDNLDSET';
 const ANONYMOUS_TAG_SET_ID = 'TAGTARGETSET_OU';
@@ -144,6 +145,18 @@ module.exports = (app) => {
 
   router.get('/features/criteria/tag/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, CRITERIA_TAG_SET_ID).then(resSet => {
+      // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
+      let nodes = criteriaHelper.datasetToNodes(resSet);
+      // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/tag/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/features/criteria/trail/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, CRITERIA_TRAIL_SET_ID).then(resSet => {
       // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
       let nodes = criteriaHelper.datasetToNodes(resSet);
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);

@@ -230,7 +230,8 @@ module.exports = {
     return sets.map(set => {
       return _.assign({}, TAIL_MODEL_TEMPLATE, {
         id: set.nodeID,
-        label: set.nodeName
+        label: set.nodeName,
+        category: set.nodeCateg
       });
     });
   },
