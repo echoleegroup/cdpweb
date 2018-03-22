@@ -30,23 +30,28 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   componentWillMount() {
     super.componentWillMount();
 
-    this.fetchPreparedData = () => {
-      this.fetchFeatureData(({features, featureRefCodeMap}) => {
+    // this.fetchPreparedData = () => {
+    //   this.fetchFeatureData(({features, featureRefCodeMap}) => {
+    //     this.setState({
+    //       isLoaded: true,
+    //       features,
+    //       featureRefCodeMap});
+    //   });
+    // };
+
+    this.fetchPreparedData();
+  };
+
+  fetchPreparedData() {
+    IntegratedAnalysisAction.getTransactionCriteriaFeatures(
+      this.getPropertyState('ref'), ({features, featureRefCodeMap}) => {
         this.setState({
           isLoaded: true,
           features,
           featureRefCodeMap});
       });
-    };
-
-    this.fetchPreparedData();
   };
 
-  fetchFeatureData(callback) {
-    IntegratedAnalysisAction.getTransactionCriteriaFeatures(
-      this.getPropertyState('ref'), callback);
-  };
-  //
   // componentWillUnmount() {
   //   console.log('CriteriaTransactionBundle: componentWillUnmount', this.state);
   //   super.componentWillUnmount()

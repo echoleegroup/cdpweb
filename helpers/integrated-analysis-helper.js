@@ -13,17 +13,17 @@ const cdpService = require('../services/customer-data-platform-service');
 const codeGroupService = require('../services/code-group-service');
 const constants = require('../utils/constants');
 
-module.exports.featureSetsToTreeNodes = (setData) => {
-
-  // winston.info('===featureSetsToTreeNodes: %j', setData);
-  return setData.map(set => {
-    return {
-      type: 'tail',
-      id: set.nodeID,
-      label: set.nodeName
-    };
-  });
-};
+// module.exports.featureSetsToTreeNodes = (setData) => {
+//
+//   // winston.info('===featureSetsToTreeNodes: %j', setData);
+//   return setData.map(set => {
+//     return {
+//       type: 'tail',
+//       id: set.nodeID,
+//       label: set.nodeName
+//     };
+//   });
+// };
 
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {

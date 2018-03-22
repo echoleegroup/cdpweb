@@ -139,6 +139,7 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
     let ComponentChildCriteriaBlock = this.ComponentChildCriteriaBlock.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
+    let ComponentBundleBodyFront = this.ComponentBundleBodyFront.bind(this);
     return (
       <div>
         {/*<!-- head -->*/}
@@ -146,6 +147,7 @@ export default class CriteriaBundle extends React.PureComponent {
                              isPreview={this.props.isPreview}
                              OPERATOR_OPTIONS={this.OPERATOR_OPTIONS}
                              changeOperatorHandler={this.changeOperatorHandler}
+                             ComponentBundleBodyFront={ComponentBundleBodyFront}
                              ComponentBundleOperator={ComponentBundleOperator}
                              ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
@@ -170,11 +172,12 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   ComponentBundleBody(props) {
+    let ComponentBundleBodyFront = props.ComponentBundleBodyFront;
     let ComponentBundleOperator = props.ComponentBundleOperator;
     let ComponentBundleBodyTail = props.ComponentBundleBodyTail;
     return (
       <div className="head">
-        以下{this.BUNDLE_TYPE_LABEL}
+        <ComponentBundleBodyFront/>
         <ComponentBundleOperator criteria={props.criteria}
                                  isPreview={props.isPreview}
                                  OPERATOR_OPTIONS={props.OPERATOR_OPTIONS}
@@ -182,6 +185,12 @@ export default class CriteriaBundle extends React.PureComponent {
         <ComponentBundleBodyTail criteria={props.criteria}
                                  isPreview={props.isPreview}/>
       </div>
+    );
+  };
+
+  ComponentBundleBodyFront(props) {
+    return (
+      <span>以下{this.BUNDLE_TYPE_LABEL}</span>
     );
   };
 

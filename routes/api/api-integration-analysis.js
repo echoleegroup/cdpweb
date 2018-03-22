@@ -92,7 +92,7 @@ module.exports = (app) => {
   router.get('/features/criteria/transaction/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, CRITERIA_TRANSACTION_SET_ID).then(resSet => {
       // winston.info('/features/criteria/transaction/sets  getFeatureSets: %j', resSet);
-      let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
       // winston.info('/features/criteria/transaction/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
@@ -127,7 +127,7 @@ module.exports = (app) => {
 
     promise.then(resSet => {
       // winston.info('resSet: ', resSet);
-      let nodes = integratedHelper.featureSetsToTreeNodes(resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
       res.json(nodes);
     }).fail(err => {
       winston.error('===/features/criteria/transaction/sets internal server error: ', err);
@@ -146,7 +146,7 @@ module.exports = (app) => {
   router.get('/features/criteria/tag/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, CRITERIA_TAG_SET_ID).then(resSet => {
       // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
-      let nodes = criteriaHelper.datasetToNodes(resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
@@ -158,11 +158,34 @@ module.exports = (app) => {
   router.get('/features/criteria/trail/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, CRITERIA_TRAIL_SET_ID).then(resSet => {
       // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
-      let nodes = criteriaHelper.datasetToNodes(resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
       winston.error('===/features/criteria/tag/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  const getTrackRecordTrailFeaturesPromise = (setId) => {
+    switch (setId) {
+      case 'LogGenpg':
+        return Q.nfcall(integrationService.getTrailPeriodLogGenpgFeatures);
+      case 'LogAPPpg':
+        return Q.nfcall(integrationService.getTrailPeriodLogAPPpgFeatures);
+      default:
+        return Q([]);
+    }
+  };
+
+  router.get('/features/criteria/trail/set/:setId', middlewares, (req, res) => {
+    let setId = req.params.setId;
+    getTrackRecordTrailFeaturesPromise(setId).then(resSet => {
+      winston.info('===getTrackRecordTrailFeaturesPromise: ', resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/transaction/set/%s internal server error: ', setId, err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -184,7 +207,7 @@ module.exports = (app) => {
 
   router.get('/export/relative/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, EXPORT_RELATIVE_SET_ID).then(resSet => {
-      res.json(criteriaHelper.datasetToNodes(resSet));
+      res.json(criteriaHelper.dataSetToNodes(resSet));
     }).fail(err => {
       winston.error('===/export/relative/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');
@@ -308,7 +331,7 @@ module.exports = (app) => {
   router.get('/anonymous/features/criteria/tag/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, ANONYMOUS_TAG_SET_ID).then(resSet => {
       // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
-      let nodes = criteriaHelper.datasetToNodes(resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {

@@ -8,7 +8,7 @@ export default class PickerSingle extends React.PureComponent {
     return (
       <li className="radio">
         <label>
-          <input type="radio" name="optradio" onChange={props.clickHandler} checked={node.id === props.selectedId}/>{node.label}<span>{node.category_label}</span></label>
+          <input type="radio" name="optradio" onChange={props.clickHandler} checked={node.id === props.selectedId}/>{node.label}<span className="type">{node.category_label}</span></label>
       </li>
     );
   };

@@ -6,9 +6,12 @@ const CRITERIA_FEATURES_URL_CLIENT = '/api/integration/features/criteria/client'
 const CRITERIA_FEATURES_URL_VEHICLE = '/api/integration/features/criteria/vehicle';
 const CRITERIA_FEATURES_URL_TRANSACTION = '/api/integration/features/criteria/transaction/set/%s';
 const CRITERIA_FEATURES_URL_TAG = '/api/integration/features/criteria/tag/set/%s';
+const CRITERIA_FEATURES_URL_TRAIL = '/api/integration/features/criteria/trail/set/%s';
+
 const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/features/criteria/transaction/sets';
 const CRITERIA_FEATURE_SETS_URL_TAG = '/api/integration/features/criteria/tag/sets';
 const CRITERIA_FEATURE_SETS_URL_TRAIL = '/api/integration/features/criteria/trail/sets';
+
 const EXPORT_FEATURE_POOL = '/api/integration/export/features';
 const EXPORT_RELATIVES_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
@@ -68,7 +71,7 @@ FilterAction.getTagCriteriaFeatures = (setId, keyword, success, fail) => {
   action.ajaxPostObservable(url, {keyword}, undefined).subscribe(data => {
     success && success(data);
   }, err => {
-    console.log('===getTransactionCriteriaFeatures failed: ', err);
+    console.log('===getTagCriteriaFeatures failed: ', err);
     fail && fail(err);
   });
 };
@@ -82,11 +85,12 @@ FilterAction.getTagFeatureSets = (success, fail) => {
   });
 };
 
+const CATEGORY_DICT = {
+  TrackRecord: '歷程資料',
+  List: '名單'
+};
+
 FilterAction.getTrailFeatureSets = (success, fail) => {
-  const CATEGORY_DICT = {
-    TrackRecord: '歷程資料',
-    List: '名單'
-  };
   action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRAIL, undefined, undefined).subscribe(data => {
     let _data = data.map(d => {
       d.category_label = CATEGORY_DICT[d.category] || '';
@@ -94,7 +98,21 @@ FilterAction.getTrailFeatureSets = (success, fail) => {
     });
     success && success(_data);
   }, err => {
-    console.log('===getTagFeatureSets failed: ', err);
+    console.log('===getTrailFeatureSets failed: ', err);
+    fail && fail(err);
+  });
+};
+
+FilterAction.getTrailPeriodCriteriaFeatures = (setId, success, fail) => {
+  let url = format(CRITERIA_FEATURES_URL_TRAIL, setId);
+  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+    let _data = data.map(node => {
+      node.input_type = 'number';
+      return node;
+    });
+    success && success(_data);
+  }, err => {
+    console.log('===getTrailPeriodCriteriaFeatures failed: ', err);
     fail && fail(err);
   });
 };

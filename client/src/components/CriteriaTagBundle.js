@@ -31,10 +31,10 @@ export default class CriteriaTagBundle extends CriteriaBundle {
   componentWillMount() {
     super.componentWillMount();
 
-    this.pickerOptionFilter = (keyword, callback) => {
-      // console.log('pickerOptionFilter');
-      this.fetchFeatureData(keyword, callback);
-    };
+    // this.pickerOptionFilter = (keyword, callback) => {
+    //   // console.log('pickerOptionFilter');
+    //   this.fetchFeatureData(keyword, callback);
+    // };
 
     this.insertCriteriaState = (tagList) => {
       console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);

@@ -196,3 +196,35 @@ module.exports.filterTagOuterMediaSet = (keyword, callback) => {
     callback(err);
   });
 };
+
+module.exports.getTrailPeriodLogGenpgFeatures = (callback) => {
+  const sql = 'SELECT genCategID AS nodeID, categName AS nodeName ' +
+    'FROM dm_GenpgCateg ' +
+    'WHERE isDel != @isDel OR isDel is NULL';
+
+  let request = _connector
+    .queryRequest()
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.getTrailPeriodLogAPPpgFeatures = (callback) => {
+  const sql = 'SELECT apppgID AS nodeID, apppgTitle AS nodeName ' +
+    'FROM dm_APPpgMst ' +
+    'WHERE isDel != @isDel OR isDel is NULL';
+
+  let request = _connector
+    .queryRequest()
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(resSet => {
+    callback(null, resSet);
+  }).fail(err => {
+    callback(err);
+  });
+};

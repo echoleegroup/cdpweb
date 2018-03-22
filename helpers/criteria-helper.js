@@ -13,6 +13,7 @@ const TAIL_MODEL_TEMPLATE = {
   type: 'tail',
   id: undefined,
   label: undefined,
+  category:undefined,
   data_type: undefined,
   input_type: 'text',  //num, text, date, refOption,
   ref: undefined, //for input_type: refOption
@@ -226,7 +227,7 @@ module.exports = {
     return foldingNodes;
   },
 
-  datasetToNodes: (sets) => {
+  dataSetToNodes: (sets) => {
     return sets.map(set => {
       return _.assign({}, TAIL_MODEL_TEMPLATE, {
         id: set.nodeID,
