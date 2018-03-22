@@ -137,7 +137,7 @@ export default class CriteriaBundle extends React.PureComponent {
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
     let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
-    let ComponentChildCriteriaBlock = this.ComponentChildCriteriaBlock.bind(this);
+    // let ComponentChildCriteriaBlock = this.ComponentChildCriteriaBlock.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
     let ComponentBundleBodyFront = this.ComponentBundleBodyFront.bind(this);
     return (
@@ -151,7 +151,8 @@ export default class CriteriaBundle extends React.PureComponent {
                              ComponentBundleOperator={ComponentBundleOperator}
                              ComponentBundleBodyTail={ComponentBundleBodyTail}/>
         {/*<!-- 第二層 -->*/}
-        <ComponentChildCriteriaBlock {...this.props}/>
+        {this.ComponentChildCriteriaBlock()}
+        {/*<ComponentChildCriteriaBlock {...this.props}/>*/}
         <ComponentButtonInsertCriteria isPreview={this.props.isPreview}
                                        addCriteriaClickHandler={this.addCriteriaClickHandler.bind(this)}/>
         <ComponentCustomized/>

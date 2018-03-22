@@ -181,7 +181,7 @@ module.exports = (app) => {
   router.get('/features/criteria/trail/set/:setId', middlewares, (req, res) => {
     let setId = req.params.setId;
     getTrackRecordTrailFeaturesPromise(setId).then(resSet => {
-      winston.info('===getTrackRecordTrailFeaturesPromise: ', resSet);
+      // winston.info('===getTrackRecordTrailFeaturesPromise: ', resSet);
       let nodes = criteriaHelper.dataSetToNodes(resSet);
       res.json(nodes);
     }).fail(err => {

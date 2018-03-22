@@ -61,4 +61,12 @@ class CriteriaTagBundleMute extends CriteriaTagBundle {
   };
 }
 
-class CriteriaTrailPeriodBundleMute extends CriteriaTrailPeriodBundle {}
+class CriteriaTrailPeriodBundleMute extends CriteriaTrailPeriodBundle {
+  fetchPreparedData() {
+    //DO overwrite, but do nothing
+  };
+
+  ComponentCustomized(props) {
+    return <div/>;
+  };
+}
