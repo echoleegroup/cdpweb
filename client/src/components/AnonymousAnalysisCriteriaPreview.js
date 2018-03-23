@@ -10,9 +10,14 @@ export default class AnonymousAnalysisCriteriaPreview extends React.PureComponen
         <h3>第三步 條件總覽</h3>
         <div className="preview">
           <h4>將取出符合以下所有條件的顧客資料</h4>
-          <h4><i className="fa fa-check" aria-hidden="true"/>標籤條件</h4>
+          <h4><i className="fa fa-check" aria-hidden="true"/>標籤篩選</h4>
           {/* 條件設定 預覽狀態*/}
           <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step1)}
+                                         ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
+
+          <h4><i className="fa fa-check" aria-hidden="true"/>線上足跡條件</h4>
+          {/* 條件設定 預覽狀態*/}
+          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.get(this.props.STEPS.step2)}
                                          ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
 
         </div>

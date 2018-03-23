@@ -33,6 +33,7 @@ const CRITERIA_TRAIL_SET_ID = 'LOGTARGETSET_CR';
 const EXPORT_DOWNLOAD_FEATURE_SET_ID = 'COMMDNLD';
 const EXPORT_RELATIVE_SET_ID = 'COMMDNLDSET';
 const ANONYMOUS_TAG_SET_ID = 'TAGTARGETSET_OU';
+const ANONYMOUS_TRAIL_SET_ID = 'LOGTARGETSET_OU';
 const ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID = 'OUCOMMDNLD';
 
 const criteriaFeaturePromise = (setId, treeId) => {
@@ -330,6 +331,18 @@ module.exports = (app) => {
 
   router.get('/anonymous/features/criteria/tag/sets', middlewares, (req, res) => {
     Q.nfcall(integrationService.getFeatureSets, ANONYMOUS_TAG_SET_ID).then(resSet => {
+      // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
+      let nodes = criteriaHelper.dataSetToNodes(resSet);
+      // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/tag/sets internal server error: ', err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  router.get('/anonymous/features/criteria/trail/sets', middlewares, (req, res) => {
+    Q.nfcall(integrationService.getFeatureSets, ANONYMOUS_TRAIL_SET_ID).then(resSet => {
       // winston.info('/features/criteria/tag/sets  getFeatureSets: %j', resSet);
       let nodes = criteriaHelper.dataSetToNodes(resSet);
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);

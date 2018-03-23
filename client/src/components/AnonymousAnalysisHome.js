@@ -3,7 +3,7 @@ import Loader from 'react-loader';
 import BodyLayout from "./BodyLayout";
 import {List, Map} from 'immutable';
 import {assign} from 'lodash';
-import IntegratedAnalysisCriteriaTrail from "./IntegratedAnalysisCriteriaTrail";
+import AnonymousAnalysisCriteriaTrail from "./AnonymousAnalysisCriteriaTrail";
 import anonymousAction from '../actions/anonymous-analysis-action';
 import {getDate} from '../utils/date-util';
 import AnonymousAnalysisCriteriaTag from "./AnonymousAnalysisCriteriaTag";
@@ -156,7 +156,7 @@ export default class AnonymousAnalysisHome extends BodyLayout {
                                               // stepPrev={this.stepTo(STEPS.step3)}
                                               stepNext={this.stepTo(STEPS.step2)}/>;
       case STEPS.step2:
-        return <IntegratedAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
+        return <AnonymousAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
                                                 criteria={this.state.criteria.get(STEPS.step2)}
                                                 params={this.params}
                                                 step={STEPS.step2}
@@ -206,7 +206,7 @@ class AnonymousAnalysisNavigator extends React.PureComponent {
         <h2>設定觀察客群</h2>
         <ul className="step">
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step1)}>第一步：標籤篩選</a></li>
-          {/*<li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step5)}>第五步：線上足跡</a></li>*/}
+          <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step2)}>第二步：線上足跡</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step3)}>第三步：條件總覽</a></li>
           <li><a href="javascript:;" onClick={this.stepToHandler(STEPS.step4)}>第四步：挑選下載欄位</a></li>
         </ul>

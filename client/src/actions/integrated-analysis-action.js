@@ -90,6 +90,8 @@ const CATEGORY_DICT = {
   List: '名單'
 };
 
+FilterAction.CATEGORY_DICT = CATEGORY_DICT;
+
 FilterAction.getTrailFeatureSets = (success, fail) => {
   action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRAIL, undefined, undefined).subscribe(data => {
     let _data = data.map(d => {
