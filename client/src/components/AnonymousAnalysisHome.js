@@ -68,7 +68,7 @@ export default class AnonymousAnalysisHome extends BodyLayout {
         [STEPS.step2]: []
       }),
       output: {
-        selectedFeatureId: List()
+        selectedFeature: List()
         // selectedRelativeId: List(),
         // periodStart: today.value,
         // periodStartLabel: today.value_label,

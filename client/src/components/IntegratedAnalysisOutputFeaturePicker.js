@@ -1,28 +1,28 @@
 import React from 'react';
 import {fromJS, List} from 'immutable';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import {xor} from 'lodash';
+import {xor, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action';
 import 'flatpickr/dist/themes/material_green.css';
 import Flatpickr from 'react-flatpickr';
 
-const extractAllNodeId = (nodes) => {
+const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
     switch (node.type) {
       case NODE_TYPE.Branch:
-        return accumulator.concat(extractAllNodeId(node.children));
+        return accumulator.concat(extractAllNode(node.children));
       case NODE_TYPE.Tail:
-        accumulator.push(node.id);
+        accumulator.push(node);
         return accumulator;
     }
   }, []);
 };
 
-const toggleList = (id, target) => {
+const toggleList = (target, selected) => {
   // console.log('toggleList target: ', target);
-  return xor(target, [id]);
+  return xor([target], selected, 'id');
 };
 
 export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {
@@ -36,8 +36,8 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       periodStartLabel: props.output.periodStartLabel,
       periodEnd: props.output.periodEnd,
       periodEndLabel: props.output.periodEndLabel,
-      selectedFeatureId: props.output.selectedFeatureId,
-      selectedRelativeId: props.output.selectedRelativeId,
+      selectedFeature: props.output.selectedFeature,
+      selectedRelative: props.output.selectedRelative,
       queryId: undefined,
       showError: false,
       showModal: false
@@ -48,27 +48,27 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
   componentWillMount() {
 
     this.selectAllFeatureHandler = () => {
-      let allNodeId = extractAllNodeId(this.props.featureOptions);
+      let allNode = extractAllNode(this.props.featureOptions);
       this.setState({
-        selectedFeatureId: List(allNodeId)
+        selectedFeature: List(allNode)
       });
     };
 
     this.deselectAllHandler = () => {
       this.setState({
-        selectedFeatureId: List()
+        selectedFeature: List()
       });
     };
 
     this.featureTailClickHandler = (node) => {
       this.setState(prevState => ({
-        selectedFeatureId: List(toggleList(node.id, prevState.selectedFeatureId.toJS()))
+        selectedFeature: List(toggleList(node, prevState.selectedFeature.toJS()))
       }));
     };
 
     this.relativeTailClickHandler = (node) => {
       this.setState(prevState => ({
-        selectedRelativeId: List(toggleList(node.id, prevState.selectedRelativeId.toJS()))
+        selectedRelative: List(toggleList(node, prevState.selectedRelative.toJS()))
       }));
     };
 
@@ -91,14 +91,14 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
 
     this.processPostDate = (e) => {
       let criteria = this.props.criteria.toJS();
-      let selectedFeatures = this.state.selectedFeatureId.toJS();
-      let selectedRelativeSets = this.state.selectedRelativeId.toJS();
+      let selectedFeatures = this.state.selectedFeature.toJS();
+      let selectedRelativeSets = this.state.selectedRelative.toJS();
 
       let formDate = {
         criteria,
         export: {
-          master: selectedFeatures,
-          relatives: selectedRelativeSets
+          master: map(selectedFeatures, 'id'),
+          relatives: map(selectedRelativeSets, 'id')
         },
         filter: {
           relatives: {
@@ -156,7 +156,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         </div>
         <PickerMultiple nodes={this.props.featureOptions}
                         collapse={false}
-                        selectedId={this.state.selectedFeatureId.toJS()}
+                        selected={this.state.selectedFeature.toJS()}
                         tailClickHandler={this.featureTailClickHandler}/>
         <h4>挑選下載明細資訊</h4>
         <div className="form-group">
@@ -188,7 +188,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           </div>
         </div>
         <PickerMultiple nodes={this.props.relativeSetOptions}
-                        selectedId={this.state.selectedRelativeId.toJS()}
+                        selected={this.state.selectedRelative.toJS()}
                         tailClickHandler={this.relativeTailClickHandler}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}

@@ -17,8 +17,9 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
       this.responseCriteria = callback;
       this.setState({
         isOpen: true,
-        setId: null,
-        setLabel: null
+        selected: undefined
+        // setId: null,
+        // setLabel: null
       });
       $('body').addClass('noscroll');
     };
@@ -26,17 +27,19 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
     this.closeModal = () => {
       this.setState({
         isOpen: false,
-        setId: null,
-        setLabel: null
+        selected: undefined
+        // setId: null,
+        // setLabel: null
       });
       $('body').removeClass('noscroll');
     };
 
     this.confirmCriteria = () => {
       this.responseCriteria({
-        setId: this.state.setId,
-        setLabel: this.state.setLabel,
-        setCategory: this.state.setCategory
+        setId: this.state.selected.id,
+        setLabel: this.state.selected.label,
+        setCategory: this.state.selected.category,
+        setCategoryLabel: this.state.selected.category_label
       });
       this.closeModal();
     };
@@ -48,9 +51,10 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
     this.tailClickHandler = (node) => {
       // console.log('CriteriaTransactionSetPicker tailClickHandler: ', node);
       this.setState({
-        setId: node.id,
-        setLabel: node.label,
-        setCategory: node.category
+        selected: node
+        // setId: node.id,
+        // setLabel: node.label,
+        // setCategory: node.category
       });
     };
   };
@@ -64,7 +68,7 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
           <div className="modalContent">
             <PickerSingle
               nodes={this.props.featureSets}
-              selectedId={this.state.setId}
+              selected={this.state.selected}
               branchClickHandler={this.branchClickHandler}
               tailClickHandler={this.tailClickHandler}/>
           </div>

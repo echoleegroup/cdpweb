@@ -158,7 +158,7 @@ export default class CriteriaAssignment extends React.PureComponent {
       // console.log('CriteriaAssignment tailClickHandler: ', node);
       this.setState(prevState => {
         return {
-          selectedFeature: node.id,
+          selectedFeature: node,
           criteria: prevState.criteria.merge({
             field_id: node.id,
             field_label: node.label,
@@ -186,7 +186,7 @@ export default class CriteriaAssignment extends React.PureComponent {
               <PickerSingle nodes={this.props.features}
                             branchClickHandler={this.branchClickHandler}
                             tailClickHandler={this.tailClickHandler}
-                            selectedId={this.state.selectedFeature}/>
+                            selected={this.state.selectedFeature}/>
             </div>
             <div className="col-md-2">
               {this.CriteriaOperatorBlock(this.state.criteria)}
@@ -346,7 +346,7 @@ class RefOptionInput extends InputBase {
   render() {
     return (
       <div>
-        <div className="btn-block">
+        <div>
           <button type="button" className="btn btn-sm btn-default" onClick={(e) => {
             $(this.optionDivDom).find('input').attr('checked', true);
           }}>全選</button>

@@ -1,27 +1,27 @@
 import React from 'react';
 import {List} from 'immutable';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import {xor} from 'lodash';
+import {xor, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import anonymousAction from '../actions/anonymous-analysis-action';
 import 'flatpickr/dist/themes/material_green.css';
 
-const extractAllNodeId = (nodes) => {
+const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
     switch (node.type) {
       case NODE_TYPE.Branch:
-        return accumulator.concat(extractAllNodeId(node.children));
+        return accumulator.concat(extractAllNode(node.children));
       case NODE_TYPE.Tail:
-        accumulator.push(node.id);
+        accumulator.push(node);
         return accumulator;
     }
   }, []);
 };
 
-const toggleList = (id, target) => {
+const toggleList = (target={}, selected=[]) => {
   // console.log('toggleList target: ', target);
-  return xor(target, [id]);
+  return xor([target], selected, 'id');
 };
 
 export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComponent {
@@ -35,7 +35,7 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
       // periodStartLabel: props.output.periodStartLabel,
       // periodEnd: props.output.periodEnd,
       // periodEndLabel: props.output.periodEndLabel,
-      selectedFeatureId: props.output.selectedFeatureId,
+      selectedFeature: props.output.selectedFeature,
       // selectedRelativeId: props.output.selectedRelativeId,
       queryId: undefined,
       showError: false,
@@ -47,21 +47,21 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
   componentWillMount() {
 
     this.selectAllFeatureHandler = () => {
-      let allNodeId = extractAllNodeId(this.props.featureOptions);
+      let allNode = extractAllNode(this.props.featureOptions);
       this.setState({
-        selectedFeatureId: List(allNodeId)
+        selectedFeature: List(allNode)
       });
     };
 
     this.deselectAllHandler = () => {
       this.setState({
-        selectedFeatureId: List()
+        selectedFeature: List()
       });
     };
 
     this.featureTailClickHandler = (node) => {
       this.setState(prevState => ({
-        selectedFeatureId: List(toggleList(node.id, prevState.selectedFeatureId.toJS()))
+        selectedFeature: List(toggleList(node, prevState.selectedFeature.toJS()))
       }));
     };
 
@@ -90,13 +90,13 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
 
     this.processPostDate = (e) => {
       let criteria = this.props.criteria.toJS();
-      let selectedFeatures = this.state.selectedFeatureId.toJS();
+      let selectedFeatures = this.state.selectedFeature.toJS();
       // let selectedRelativeSets = this.state.selectedRelativeId.toJS();
 
       let formDate = {
         criteria,
         export: {
-          master: selectedFeatures,
+          master: map(selectedFeatures, 'id'),
           relatives: []
         },
         filter: {
@@ -155,7 +155,7 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
         </div>
         <PickerMultiple nodes={this.props.featureOptions}
                         collapse={false}
-                        selectedId={this.state.selectedFeatureId.toJS()}
+                        selected={this.state.selectedFeature.toJS()}
                         tailClickHandler={this.featureTailClickHandler}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}

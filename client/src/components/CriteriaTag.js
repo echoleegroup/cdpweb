@@ -3,7 +3,7 @@ import React from 'react';
 export default class CriteriaTag extends React.PureComponent {
   componentWillMount() {
     this.criteriaGathering = () => {
-      console.log('CriteriaTag::criteriaGathering: ', this.props.criteria);
+      // console.log('CriteriaTag::criteriaGathering: ', this.props.criteria);
       return this.props.criteria;
     };
   };

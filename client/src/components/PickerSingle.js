@@ -5,10 +5,17 @@ export default class PickerSingle extends React.PureComponent {
 
   TailContainer(props) {
     let node = props.node;
+    let checked = !!props.selected && node.id === props.selected.id;
     return (
       <li className="radio">
         <label>
-          <input type="radio" name="optradio" onChange={props.clickHandler} checked={node.id === props.selectedId}/>{node.label}<span className="type">{node.category_label}</span></label>
+          <input
+            type="radio"
+            name="optradio"
+            onClick={props.clickHandler}
+            checked={checked}/>{node.label}
+            <span className="type">{node.category_label}</span>
+        </label>
       </li>
     );
   };
@@ -39,14 +46,14 @@ class Tree extends React.PureComponent {
           return <Branch key={node.id}
                          node={node}
                          collapse={props.collapse}
-                         selectedId={props.selectedId}
+                         selected={props.selected}
                          branchClickHandler={props.branchClickHandler}
                          tailClickHandler={props.tailClickHandler}
                          TailContainer={props.TailContainer}/>
         case NODE_TYPE.Tail:
           return <Tail key={node.id}
                        node={node}
-                       selectedId={props.selectedId}
+                       selected={props.selected}
                        tailClickHandler={props.tailClickHandler}
                        TailContainer={props.TailContainer}/>
       }
@@ -120,7 +127,7 @@ class Branch extends React.PureComponent {
           <Tree branchClickHandler={this.props.branchClickHandler}
                 tailClickHandler={this.props.tailClickHandler}
                 nodes={node.children}
-                selectedId={this.props.selectedId}
+                selected={this.props.selected}
                 TailContainer={this.props.TailContainer}/>
         </ul>
       </li>
@@ -147,7 +154,7 @@ class Tail extends React.PureComponent {
       <TailContainer
         name="optradio"
         node={node}
-        selectedId={this.props.selectedId}
+        selected={this.props.selected}
         clickHandler={this.selectHandler()}/>
     );
   };

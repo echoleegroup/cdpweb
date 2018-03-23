@@ -227,6 +227,14 @@ module.exports = {
     return foldingNodes;
   },
 
+  dataSetToNode: (id, name, category) => {
+    return _.assign({}, TAIL_MODEL_TEMPLATE, {
+      id: id,
+      label: name,
+      category: category
+    });
+  },
+
   dataSetToNodes: (sets) => {
     return sets.map(set => {
       return _.assign({}, TAIL_MODEL_TEMPLATE, {

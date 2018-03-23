@@ -80,8 +80,8 @@ export default class IntegratedAnalysisHome extends BodyLayout {
         [STEPS.step5]: []
       }),
       output: {
-        selectedFeatureId: List(),
-        selectedRelativeId: List(),
+        selectedFeature: List(),
+        selectedRelative: List(),
         periodStart: today.value,
         periodStartLabel: today.value_label,
         periodEnd: today.value,

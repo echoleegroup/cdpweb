@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const request = require('request');
 const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
-const modelService = require('./model-service');
+const appConfig = require("../app-config");
 
 module.exports.getCriteriaFeatures = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
@@ -226,5 +226,39 @@ module.exports.getTrailPeriodLogAPPpgFeatures = (callback) => {
     callback(null, resSet);
   }).fail(err => {
     callback(err);
+  });
+};
+
+module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodEnd, callback) => {
+  const endpoint = appConfig.get('JAVA_API_ENDPOINT');
+  request({
+    method: 'GET',
+    baseUrl: endpoint,
+    uri: '/jsoninfo/getEdmList.do',
+    json: true
+  }, (error, response, body) => {
+    console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    if (error) {
+      return callback(error);
+    } else {
+      callback(null, body);
+    }
+  });
+};
+
+module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, periodEnd, callback) => {
+  const endpoint = appConfig.get('JAVA_API_ENDPOINT');
+  request({
+    method: 'GET',
+    baseUrl: endpoint,
+    uri: '/jsoninfo/getAppPushList.do',
+    json: true
+  }, (error, response, body) => {
+    console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    if (error) {
+      return callback(error);
+    } else {
+      callback(null, body);
+    }
   });
 };

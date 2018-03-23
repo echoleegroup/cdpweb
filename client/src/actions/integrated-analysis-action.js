@@ -6,7 +6,8 @@ const CRITERIA_FEATURES_URL_CLIENT = '/api/integration/features/criteria/client'
 const CRITERIA_FEATURES_URL_VEHICLE = '/api/integration/features/criteria/vehicle';
 const CRITERIA_FEATURES_URL_TRANSACTION = '/api/integration/features/criteria/transaction/set/%s';
 const CRITERIA_FEATURES_URL_TAG = '/api/integration/features/criteria/tag/set/%s';
-const CRITERIA_FEATURES_URL_TRAIL = '/api/integration/features/criteria/trail/set/%s';
+const CRITERIA_FEATURES_URL_TRAIL_PERIOD = '/api/integration/features/criteria/trail/period/set/%s';
+const CRITERIA_FEATURES_URL_TRAIL_Hit = '/api/integration/features/criteria/trail/hit/set/%s';
 
 const CRITERIA_FEATURE_SETS_URL_TRANSACTION = '/api/integration/features/criteria/transaction/sets';
 const CRITERIA_FEATURE_SETS_URL_TAG = '/api/integration/features/criteria/tag/sets';
@@ -106,13 +107,23 @@ FilterAction.getTrailFeatureSets = (success, fail) => {
 };
 
 FilterAction.getTrailPeriodCriteriaFeatures = (setId, success, fail) => {
-  let url = format(CRITERIA_FEATURES_URL_TRAIL, setId);
+  let url = format(CRITERIA_FEATURES_URL_TRAIL_PERIOD, setId);
   action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     let _data = data.map(node => {
       node.input_type = 'number';
       return node;
     });
     success && success(_data);
+  }, err => {
+    console.log('===getTrailPeriodCriteriaFeatures failed: ', err);
+    fail && fail(err);
+  });
+};
+
+FilterAction.getTrailHitCriteriaFeatures = (setId, keyword, periodStart, periodEnd, success, fail) => {
+  let url = format(CRITERIA_FEATURES_URL_TRAIL_Hit, setId);
+  action.ajaxPostObservable(url, {keyword, periodStart, periodEnd}, undefined).subscribe(data => {
+    success && success(data);
   }, err => {
     console.log('===getTrailPeriodCriteriaFeatures failed: ', err);
     fail && fail(err);

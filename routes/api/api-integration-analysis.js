@@ -168,7 +168,7 @@ module.exports = (app) => {
     });
   });
 
-  const getTrackRecordTrailFeaturesPromise = (setId) => {
+  const getTrailPeriodFeaturesPromise = (setId) => {
     switch (setId) {
       case 'LogGenpg':
         return Q.nfcall(integrationService.getTrailPeriodLogGenpgFeatures);
@@ -179,11 +179,41 @@ module.exports = (app) => {
     }
   };
 
-  router.get('/features/criteria/trail/set/:setId', middlewares, (req, res) => {
+  router.get('/features/criteria/trail/period/set/:setId', middlewares, (req, res) => {
     let setId = req.params.setId;
-    getTrackRecordTrailFeaturesPromise(setId).then(resSet => {
+    getTrailPeriodFeaturesPromise(setId).then(resSet => {
       // winston.info('===getTrackRecordTrailFeaturesPromise: ', resSet);
       let nodes = criteriaHelper.dataSetToNodes(resSet);
+      res.json(nodes);
+    }).fail(err => {
+      winston.error('===/features/criteria/transaction/set/%s internal server error: ', setId, err);
+      res.json(null, 500, 'internal service error');
+    });
+  });
+
+  const getTrailHitFeaturesPromise = (setId, keyword, periodStart, periodEnd) => {
+    switch (setId) {
+      case 'LogEDMRead':
+        return Q.nfcall(integrationService.getTrailPeriodLogEDMReadFeatures, keyword, periodStart, periodEnd);
+      case 'LogPushRead':
+        return Q.nfcall(integrationService.getTrailPeriodLogPushReadFeatures, keyword, periodStart, periodEnd);
+      default:
+        return Q([]);
+    }
+  };
+
+  router.post('/features/criteria/trail/hit/set/:setId', middlewares, (req, res) => {
+    let setId = req.params.setId;
+    let keyword = req.body.keyword;
+    let periodStart = req.body.periodStart;
+    let periodEnd = req.body.periodEnd;
+
+    getTrailHitFeaturesPromise(setId, keyword, periodStart, periodEnd).then(resSet => {
+      // winston.info('===getTrackRecordTrailFeaturesPromise: ', resSet);
+      let nodes = resSet.map(data => {
+        return criteriaHelper.dataSetToNode(data.id, data.name);
+      });
+      // let nodes = criteriaHelper.dataSetToNodes(resSet);
       res.json(nodes);
     }).fail(err => {
       winston.error('===/features/criteria/transaction/set/%s internal server error: ', setId, err);

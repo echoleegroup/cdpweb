@@ -9,7 +9,7 @@ import {NODE_TYPE_DICT as NODE_TYPE} from "../utils/tree-node-util";
 
 const INITIAL_CRITERIA = Object.freeze({
   id: undefined,
-  type: CRITERIA_COMPONENT_DICT.TAG,
+  type: CRITERIA_COMPONENT_DICT.TRAIL_HIT,
   value: undefined,
   value_label: undefined
 });
@@ -44,7 +44,7 @@ const toggleList = (target, selected) => {
   return xor([target], selected, 'id');
 };
 
-export default class TagPickerModal extends React.PureComponent {
+export default class TrailHitPickerModal extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -96,7 +96,7 @@ export default class TagPickerModal extends React.PureComponent {
         return assign({}, INITIAL_CRITERIA, {
           id: shortid.generate(),
           value: node.id,
-          value_label: node.label
+          value_label: node.name
         })
       });
 
@@ -165,8 +165,19 @@ export default class TagPickerModal extends React.PureComponent {
         <div className="table_block">
           <h2>{this.props.title}</h2>
           <div className="modalContent">
+            {/*<div className="form-group">*/}
+              {/*<label htmlFor="inputName" className="col-sm-3 control-label form-inline">活動日期</label>*/}
+              {/*<!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->*/}
+              {/*<div className="col-sm-8">*/}
+                {/*<div className="form-inline">*/}
+                  {/*<input type="text" className="form-control" placeholder=""/>*/}
+                  {/*<span> ~ </span>*/}
+                  {/*<input type="text" className="form-control" placeholder=""/>*/}
+                {/*</div>*/}
+              {/*</div>*/}
+            {/*</div>*/}
             <div className="form-group">
-              <label htmlFor="inputName" className="col-sm-2 control-label">標籤</label>
+              <label htmlFor="inputName" className="col-sm-2 control-label">標題</label>
               <div className="col-sm-9">
                 <div className="form-inline">
                   <input type="text" className="form-control" defaultValue={null}
