@@ -20,5 +20,6 @@ exports.CRITERIA_COMPONENT_DICT = {
   TRAIL_PERIOD: 'refTrailPeriod',
   TRAIL_HIT: 'refTrailHit',
   FIELD: 'field',
-  FIELD_TAG: 'fieldTag'
+  FIELD_TAG: 'fieldTag',
+  FIELD_TRAIL_TAG: 'fieldTrailTag'
 };

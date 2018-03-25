@@ -1,8 +1,6 @@
 import React from 'react';
-import Loader from 'react-loader';
-import {assign} from 'lodash';
-import CriteriaBundle from './CriteriaBundle';
-import CriteriaAssignment from './CriteriaAssignment';
+import {map} from 'lodash';
+import {List} from 'immutable';
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import CriteriaTransactionBundle from "./CriteriaTransactionBundle";
 import TagPickerModal from "./TagPickerModal";
@@ -39,27 +37,18 @@ export default class CriteriaTagBundle extends CriteriaTransactionBundle {
     this.insertCriteriaState = (tagList) => {
       // console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
       this.setState(prevState => ({
-        properties: prevState.properties.set('criteria', prevState.properties.get('criteria').concat(tagList))
+        properties: prevState.properties.set('criteria', List(tagList))
       }));
     };
-    // super.componentWillMount();
-    //
-    // this.fetchPreparedData = () => {
-    //   this.fetchFeatureData(({features, featureRefCodeMap}) => {
-    //     this.setState({
-    //       isLoaded: true,
-    //       features,
-    //       featureRefCodeMap});
-    //   });
-    // };
-    //
-    // this.fetchPreparedData();
+
+    this.fetchFeatureData = (keyword, callback) => {
+      IntegratedAnalysisAction.getTagCriteriaFeatures(
+        this.getPropertyState('ref'), keyword, callback);
+    };
   };
 
-  fetchPreparedData(keyword, callback) {
-    // console.log('fetchFeatureData');
-    IntegratedAnalysisAction.getTagCriteriaFeatures(
-      this.getPropertyState('ref'), keyword, callback);
+  fetchPreparedData() {
+    //do nothing
   };
   //
   // componentWillUnmount() {
@@ -95,7 +84,8 @@ export default class CriteriaTagBundle extends CriteriaTransactionBundle {
   ComponentCustomized(props) {
     let mapToProps = {
       title: this.getPropertyState('ref_label'),
-      dataHandler: this.fetchPreparedData.bind(this),
+      dataHandler: this.fetchFeatureData,
+      selected: map(this.state.properties.get('criteria').toJS(), 'value')
       // dataHandler: this.pickerOptionFilter,
       // loaded: this.state.isLoaded
       // features: this.state.features || [],

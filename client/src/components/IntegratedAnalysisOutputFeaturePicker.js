@@ -1,7 +1,7 @@
 import React from 'react';
 import {fromJS, List} from 'immutable';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import {xor, map} from 'lodash';
+import {xorBy, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action';
@@ -22,7 +22,7 @@ const extractAllNode = (nodes) => {
 
 const toggleList = (target, selected) => {
   // console.log('toggleList target: ', target);
-  return xor([target], selected, 'id');
+  return xorBy([target], selected, 'id');
 };
 
 export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {

@@ -1,29 +1,25 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {xor, debounce, assign} from 'lodash';
+import {xorBy, debounce, assign, uniqBy, filter, differenceBy} from 'lodash';
 import shortid from 'shortid';
-import {List} from "immutable";
+import {List, mergeWith} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import PickerMultiple from './PickerMultiple'
 import {NODE_TYPE_DICT as NODE_TYPE} from "../utils/tree-node-util";
 
 const INITIAL_CRITERIA = Object.freeze({
   id: undefined,
-  type: CRITERIA_COMPONENT_DICT.TRAIL_HIT,
+  type: CRITERIA_COMPONENT_DICT.FIELD_TRAIL_TAG,
   value: undefined,
   value_label: undefined
 });
 
 const extractAllNode = (nodes) => {
-  return nodes.reduce((accumulator, node) => {
-    switch (node.type) {
-      case NODE_TYPE.Branch:
-        return accumulator.concat(extractAllNode(node.children));
-      case NODE_TYPE.Tail:
-        accumulator.push(node);
-        return accumulator;
-    }
-  }, []);
+  let tailNodes = filter(nodes, {type: NODE_TYPE.Tail});
+  // console.log('tailNodes: ', tailNodes);
+  return filter(nodes, {type: NODE_TYPE.Branch}).reduce((accumulator, branchNode) => {
+    return accumulator.concat(extractAllNode(branchNode.children))
+  }, tailNodes);
 };
 
 // const filterNodes = (nodes) => {
@@ -41,7 +37,8 @@ const extractAllNode = (nodes) => {
 
 const toggleList = (target, selected) => {
   // console.log('toggleList target: ', target);
-  return xor([target], selected, 'id');
+  // console.log('toggleList selected: ', selected);
+  return xorBy([target], selected, 'id');
 };
 
 export default class TrailHitPickerModal extends React.PureComponent {
@@ -52,7 +49,8 @@ export default class TrailHitPickerModal extends React.PureComponent {
       isLoaded: false,
       collapse: true,
       selected: List(),
-      options: List()
+      options: [],
+      filteredOptions: []
     };
 
     this.composition = false;
@@ -64,9 +62,9 @@ export default class TrailHitPickerModal extends React.PureComponent {
     this.openModal = (callback) => {
       // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
-      this.setState(prevState => ({
+      this.setState({
         isOpen: true
-      }));
+      });
       $('body').addClass('noscroll');
     };
 
@@ -75,20 +73,14 @@ export default class TrailHitPickerModal extends React.PureComponent {
 
       this.composition = false;
       this.keyword = '';
-      this.setState({
+      this.keywordInput.value = this.keyword;
+      this.setState(prevState => ({
         isOpen: false,
-        isLoaded: false,
+        // isLoaded: false,
         collapse: true,
-        selected: List(),
-        options: List()
-      }, () => {
-        this.dataHandler(null, (data) => {
-          this.setState({
-            isLoaded: true,
-            options: List(data)
-          });
-        });
-      });
+        // selected: List(),
+        filteredOptions: prevState.options
+      }));
     };
 
     this.submit = () => {
@@ -96,7 +88,7 @@ export default class TrailHitPickerModal extends React.PureComponent {
         return assign({}, INITIAL_CRITERIA, {
           id: shortid.generate(),
           value: node.id,
-          value_label: node.name
+          value_label: node.label
         })
       });
 
@@ -105,20 +97,26 @@ export default class TrailHitPickerModal extends React.PureComponent {
     };
 
     this.selectAllOptions = () => {
-      let allNode = extractAllNode(this.state.options.toJS());
-      this.setState({
-        selected: List(allNode)
-      });
+      // const mergeHandler = (oldVal, newVal) => {};
+      // this.setState(prevState => ({
+      //   selected: mergeWith((oldVal, newVal) => {}, this.state)
+      // }));
+
+      let allNode = extractAllNode(this.state.filteredOptions);
+      this.setState(prevState => ({
+        selected: List(uniqBy(prevState.selected.toJS().concat(allNode), 'id'))
+      }));
     };
 
     this.deselectAllOptions = () => {
-      this.setState({
-        selected: List()
-      });
+      let allNode = extractAllNode(this.state.filteredOptions);
+      this.setState(prevState => ({
+        selected: List(differenceBy(prevState.selected.toJS(), allNode, 'id'))
+      }));
     };
 
     this.selectAllOnChangeHandler = (e) => {
-      console.log('selectAllOnChangeHandler: ', e);
+      // console.log('selectAllOnChangeHandler: ', e.target.checked);
       let checked = e.target.checked;
       if (checked) {
         this.selectAllOptions();
@@ -130,17 +128,15 @@ export default class TrailHitPickerModal extends React.PureComponent {
     this.optionsFilter = (e) => {
       let keyword = this.keywordInput.value;
       if (!this.composition && this.keyword !== keyword) {
-        console.log('keyword: ', keyword);
+        // console.log('keyword: ', keyword);
         this.keyword = keyword;
 
         this.setState({isLoaded: false});
 
-        this.dataHandler(this.keyword, (data) => {
-          this.setState({
-            isLoaded: true,
-            options: List(data)
-          });
-        });
+        this.setState(prevState => ({
+          filteredOptions: filter(prevState.options, (option => option.label.indexOf(this.keyword) > -1)),
+          isLoaded: true
+        }));
       }
     };
 
@@ -150,13 +146,19 @@ export default class TrailHitPickerModal extends React.PureComponent {
       }));
     };
 
-    this.dataHandler(null, (data) => {
+    this.dataHandler(undefined, undefined, undefined, (data) => {
       this.setState({
         isLoaded: true,
-        options: List(data)
+        options: data,
+        filteredOptions: data,
+        selected: List(filter(data, option => this.props.selected.indexOf(option.id) > -1))
       });
     });
   };
+
+  componentWillUnmount() {
+    console.log('TrailHitPickerModal will unmount');
+  }
 
   render() {
     let display = (this.state.isOpen)? '': 'none';
@@ -184,7 +186,7 @@ export default class TrailHitPickerModal extends React.PureComponent {
                          ref={(e) => {this.keywordInput = e;}}
                          onCompositionEnd={(e) => {this.composition = false;}}
                          onCompositionStart={(e) => {this.composition = true;}}
-                         onInput={debounce(this.optionsFilter, 300)}
+                         onInput={debounce(this.optionsFilter, 500)}
                   />
                   {/*<button type="button" className="btn btn-default" aria-hidden="true" onClick={this.optionsFilter}>查詢</button>*/}
                 </div>
@@ -197,7 +199,7 @@ export default class TrailHitPickerModal extends React.PureComponent {
               </label>
             </div>
             <Loader loaded={this.state.isLoaded}>
-              <PickerMultiple nodes={this.state.options}
+              <PickerMultiple nodes={this.state.filteredOptions}
                               selected={this.state.selected.toJS()}
                               tailClickHandler={this.tailClickHandler}/>
             </Loader>

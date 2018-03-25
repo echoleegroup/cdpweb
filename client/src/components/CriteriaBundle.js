@@ -155,7 +155,7 @@ export default class CriteriaBundle extends React.PureComponent {
         {/*<ComponentChildCriteriaBlock {...this.props}/>*/}
         <ComponentButtonInsertCriteria isPreview={this.props.isPreview}
                                        addCriteriaClickHandler={this.addCriteriaClickHandler.bind(this)}/>
-        <ComponentCustomized/>
+        {this.ComponentCustomized()}
       </div>
     );
   };
@@ -239,7 +239,8 @@ export default class CriteriaBundle extends React.PureComponent {
                               removeCriteria={this.removeCriteria}
                               collectCriteriaComponents={this.collectCriteriaComponents}
                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
-      case CRITERIA_COMPONENT_DICT.TAG:
+      case CRITERIA_COMPONENT_DICT.FIELD_TAG:
+      case CRITERIA_COMPONENT_DICT.FIELD_TRAIL_TAG:
         return <CriteriaTag key={criteria.id}
                               criteria={criteria}
                               index={index}

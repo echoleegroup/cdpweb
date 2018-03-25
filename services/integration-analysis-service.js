@@ -241,7 +241,7 @@ module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodE
     if (error) {
       return callback(error);
     } else {
-      callback(null, body);
+      callback(null, body.jsonOutput.data);
     }
   });
 };
@@ -258,7 +258,7 @@ module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, period
     if (error) {
       return callback(error);
     } else {
-      callback(null, body);
+      callback(null, body.jsonOutput.data);
     }
   });
 };

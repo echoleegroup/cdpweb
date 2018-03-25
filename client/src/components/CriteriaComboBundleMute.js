@@ -18,6 +18,7 @@ export default class CriteriaComboBundleMute extends CriteriaComboBundle {
                                               collectCriteriaComponents={this.collectCriteriaComponents}
                                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TAG:
+      case CRITERIA_COMPONENT_DICT.TRAIL_HIT:
         return <CriteriaTagBundleMute key={criteria.id}
                                       criteria={criteria}
                                       index={index}

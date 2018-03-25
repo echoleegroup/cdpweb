@@ -4,6 +4,7 @@ import CriteriaTransactionBundle from './CriteriaTransactionBundle';
 import {CRITERIA_COMPONENT_DICT} from '../utils/criteria-dictionary';
 import CriteriaTagBundle from "./CriteriaTagBundle";
 import CriteriaTrailPeriodBundle from "./CriteriaTrailPeriodBundle";
+import CriteriaTrailHitBundle from "./CriteriaTrailHitBundle";
 
 export default class CriteriaComboBundle extends CriteriaBundle {
   constructor(props) {
@@ -89,13 +90,13 @@ export default class CriteriaComboBundle extends CriteriaBundle {
                                   collectCriteriaComponents={this.collectCriteriaComponents}
                                   removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRAIL_HIT:
-        return <CriteriaTagBundle key={criteria.id}
-                                  criteria={criteria}
-                                  index={index}
-                                  isPreview={this.props.isPreview}
-                                  removeCriteria={this.removeCriteria}
-                                  collectCriteriaComponents={this.collectCriteriaComponents}
-                                  removeCriteriaComponents={this.removeCriteriaComponents}/>;
+        return <CriteriaTrailHitBundle key={criteria.id}
+                                       criteria={criteria}
+                                       index={index}
+                                       isPreview={this.props.isPreview}
+                                       removeCriteria={this.removeCriteria}
+                                       collectCriteriaComponents={this.collectCriteriaComponents}
+                                       removeCriteriaComponents={this.removeCriteriaComponents}/>;
       default:
         return super.ComponentChildCriteria(criteria, index);
     }

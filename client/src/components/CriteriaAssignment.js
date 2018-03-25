@@ -174,6 +174,10 @@ export default class CriteriaAssignment extends React.PureComponent {
     };
   };
 
+  componentWillUnmount() {
+    console.log('CriteriaAssignment will unmount');
+  };
+
   render() {
     let display = (this.state.isOpen)? '': 'none';
     return (

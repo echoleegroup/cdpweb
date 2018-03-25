@@ -1,18 +1,14 @@
 import React from 'react';
-import Loader from 'react-loader';
-import {assign} from 'lodash';
-import CriteriaBundle from './CriteriaBundle';
-import CriteriaAssignment from './CriteriaAssignment';
+import {map} from 'lodash';
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
-import CriteriaTransactionBundle from "./CriteriaTransactionBundle";
-import TagPickerModal from "./TagPickerModal";
+import CriteriaTagBundle from "./CriteriaTagBundle";
 import TrailHitPickerModal from "./TrailHitPickerModal";
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
   or: '任一'
 };
-export default class CriteriaTagBundle extends CriteriaTagBundle {
+export default class CriteriaTrailHitBundle extends CriteriaTagBundle {
   constructor(props) {
     super(props);
     // this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
@@ -29,26 +25,24 @@ export default class CriteriaTagBundle extends CriteriaTagBundle {
     // });
   };
 
-  // componentWillMount() {
-  //   super.componentWillMount();
-  //
-  //   this.pickerOptionFilter = (keyword, callback) => {
-  //     // console.log('pickerOptionFilter');
-  //     this.fetchFeatureData(keyword, callback);
-  //   };
-  //
-  //   this.insertCriteriaState = (tagList) => {
-  //     console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
-  //     this.setState(prevState => ({
-  //       properties: prevState.properties.set('criteria', prevState.properties.get('criteria').concat(tagList))
-  //     }));
-  //   };
-  // };
+  componentWillMount() {
+    super.componentWillMount();
+    //
+    // this.insertCriteriaState = (tagList) => {
+    //   console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
+    //   this.setState(prevState => ({
+    //     properties: prevState.properties.set('criteria', tagList)
+    //   }));
+    // };
 
-  fetchPreparedData(keyword, periodStart, periodEnd, callback) {
-    // console.log('fetchFeatureData');
-    IntegratedAnalysisAction.getTrailHitCriteriaFeatures(
-      this.getPropertyState('ref'), keyword, periodStart, periodEnd, callback);
+    this.fetchFeatureData = (keyword, periodStart, periodEnd, callback) => {
+      IntegratedAnalysisAction.getTrailHitCriteriaFeatures(
+        this.getPropertyState('ref'), keyword, periodStart, periodEnd, callback);
+    };
+  };
+
+  fetchPreparedData() {
+    // do nothing
   };
 
   // addCriteriaClickHandler() {
@@ -66,7 +60,8 @@ export default class CriteriaTagBundle extends CriteriaTagBundle {
   ComponentCustomized(props) {
     let mapToProps = {
       title: this.getPropertyState('ref_label'),
-      dataHandler: this.fetchPreparedData.bind(this),
+      dataHandler: this.fetchFeatureData,
+      selected: map(this.state.properties.get('criteria').toJS(), 'value')
       // dataHandler: this.pickerOptionFilter,
       // loaded: this.state.isLoaded
       // features: this.state.features || [],

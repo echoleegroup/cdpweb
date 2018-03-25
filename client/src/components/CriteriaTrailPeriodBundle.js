@@ -47,7 +47,7 @@ export default class CriteriaTrailPeriodBundle extends CriteriaTransactionBundle
     // };
 
     this.insertCriteriaState = (tagList) => {
-      console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
+      // console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
       this.setState(prevState => ({
         properties: prevState.properties.set('criteria', prevState.properties.get('criteria').concat(tagList))
       }));
@@ -69,7 +69,7 @@ export default class CriteriaTrailPeriodBundle extends CriteriaTransactionBundle
   fetchPreparedData(callback) {
     IntegratedAnalysisAction.getTrailPeriodCriteriaFeatures(
       this.getPropertyState('ref'), data => {
-        console.log('fetch trail period data: ', data);
+        // console.log('fetch trail period data: ', data);
         this.setState({
           features: data,
           isLoaded: true

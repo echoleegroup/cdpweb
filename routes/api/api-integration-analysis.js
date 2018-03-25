@@ -163,7 +163,7 @@ module.exports = (app) => {
       // winston.info('/features/criteria/tag/sets  featureSetsToTreeNodes: ', nodes);
       res.json(nodes);
     }).fail(err => {
-      winston.error('===/features/criteria/tag/sets internal server error: ', err);
+      winston.error('===/features/criteria/trail/sets internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -186,7 +186,7 @@ module.exports = (app) => {
       let nodes = criteriaHelper.dataSetToNodes(resSet);
       res.json(nodes);
     }).fail(err => {
-      winston.error('===/features/criteria/transaction/set/%s internal server error: ', setId, err);
+      winston.error('===/features/criteria/trail/period/set/%s internal server error: ', setId, err);
       res.json(null, 500, 'internal service error');
     });
   });
