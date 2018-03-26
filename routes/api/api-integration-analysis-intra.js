@@ -104,6 +104,7 @@ module.exports = (app) => {
     mkdirp(workingPath);
     let featureIdMap = {};
     let userId = undefined;
+    let mod = undefined;
     let records = 0;
 
     // winston.info(`===download remote file: ${remoteDownloadUrl}`);
@@ -116,6 +117,7 @@ module.exports = (app) => {
         userId = queryLogData.updUser;
         // winston.info('queryLogData: ', queryLogData);
         featureIdMap = JSON.parse(queryLogData.reserve1).export;
+        mod = queryLogData.reserve2;
         // winston.info('query log process Data: %j', featureIdMap);
         return Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath).fail(err => {
           Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteFileNotFound, queryId);
@@ -131,7 +133,7 @@ module.exports = (app) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
         winston.error(err);
       });
-      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap)
+      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap, mod)
         .then(info => {
           records = info.records;
           winston.info(`parsing to csv: ${info.entries}`);
