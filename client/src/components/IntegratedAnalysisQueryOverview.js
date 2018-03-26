@@ -117,17 +117,7 @@ class CriteriaOverview extends React.PureComponent {
     return (
       <div className="table_block">{/*<!-- form set Start -->*/}
         <h2>查詢條件總覽</h2>
-        <div className="table-responsive">
-          <h3>顧客屬性條件</h3>
-          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.client}
-                                         ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
-          <h3>車輛屬性標籤篩選條件</h3>
-          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.vehicle}
-                                         ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
-          <h3>車輛屬性標籤篩選條件</h3>
-          <CriteriaBaseBodyContainerMute criteria={this.props.criteria.transaction}
-                                         ComponentCriteriaBundleContainer={CriteriaComboBundleMute}/>
-        </div>
+        <CriteriaOverview criteria={this.props.criteria}/>
       </div>
     );
   };

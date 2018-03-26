@@ -8,7 +8,7 @@ import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehic
 import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
 import IntegratedAnalysisCriteriaTag from "./IntegratedAnalysisCriteriaTag";
 import IntegratedAnalysisCriteriaTrail from "./IntegratedAnalysisCriteriaTrail";
-import IntegratedAnalysisCriteriaPreview from "./IntegratedAnalysisCriteriaPreview";
+import IntegratedAnalysisCriteriaOverview from "./IntegratedAnalysisCriteriaOverview";
 import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisOutputFeaturePicker";
 import integratedAction from '../actions/integrated-analysis-action';
 import {getDate} from '../utils/date-util';
@@ -180,7 +180,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
                                                 stepPrev={this.stepTo(STEPS.step4)}
                                                 stepNext={this.stepTo(STEPS.step6)}/>;
       case STEPS.step6:
-        return <IntegratedAnalysisCriteriaPreview ref={this.storeCurrentStepComponent}
+        return <IntegratedAnalysisCriteriaOverview ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria}
                                                   params={this.params}
                                                   step={STEPS.step6}
