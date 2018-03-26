@@ -1,11 +1,10 @@
 import React from 'react';
 import {map as _map} from 'lodash';
-import {Map, List} from 'immutable';
+import {Map} from 'immutable';
 import moment from 'moment';
 import filesize from 'filesize';
+import CriteriaOverview from './CriteriaOverview';
 import integratedAction from '../actions/integrated-analysis-action';
-import CriteriaComboBundleMute from "./CriteriaComboBundleMute";
-import CriteriaBaseBodyContainerMute from './CriteriaBaseBodyContainerMute';
 
 const getQueryTask = (queryId, callback) => {
   integratedAction.getQueryTask(queryId, callback)
@@ -53,7 +52,7 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
           {/*<!-- 左欄 Start -->*/}
           <div className="col-md-8 col-sm-7 col-xs-12">
             <QueryTask task={task} queryId={this.props.match.params.queryId}/>
-            <CriteriaOverview criteria={criteria}/>
+            <CriteriaView criteria={criteria}/>
           </div>
           <div className="col-md-4 col-sm-5 col-xs-12">
             <ResultInfo task={task}/>
@@ -112,8 +111,9 @@ class QueryTask extends React.PureComponent {
   };
 }
 
-class CriteriaOverview extends React.PureComponent {
+class CriteriaView extends React.PureComponent {
   render() {
+    console.log('this.props.criteria: ', this.props.criteria);
     return (
       <div className="table_block">{/*<!-- form set Start -->*/}
         <h2>查詢條件總覽</h2>
