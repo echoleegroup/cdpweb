@@ -94,6 +94,7 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
       // let selectedRelativeSets = this.state.selectedRelativeId.toJS();
 
       let formDate = {
+        mod: 'anonymous',
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),

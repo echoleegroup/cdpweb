@@ -9,11 +9,14 @@ const _connector = require('../utils/sql-query-util');
 module.exports.insertQueryLog = ({
                                    menuCode = null, criteria = null,
                                    features = null, filters = null,
-                                   updUser,
+                                   reserve1 = null, reserve2 = null,
+                                   reserve3 = null, updUser
                                  }, callback) => {
   const sql = 'INSERT INTO cu_QueryLog (' +
-    'queryID, menuCode, criteria, exportFeats, exportFilters, crtTime, updTime, updUser) ' +
-    'VALUES (@queryId, @menuCode, @criteria, @exportFeats, @exportFilters, @crtTime, @updTime, @updUser)';
+    'queryID, menuCode, criteria, exportFeats, exportFilters, reserve1, ' +
+    'reserve2, reserve3, crtTime, updTime, updUser) ' +
+    'VALUES (@queryId, @menuCode, @criteria, @exportFeats, @exportFilters, ' +
+    '@reserve1, @reserve2, @reserve3, @crtTime, @updTime, @updUser)';
 
   let queryId = shortid.generate();
   let now = new Date();
@@ -23,6 +26,9 @@ module.exports.insertQueryLog = ({
     .setInput('criteria', _connector.TYPES.NVarChar, criteria)
     .setInput('exportFeats', _connector.TYPES.NVarChar, features)
     .setInput('exportFilters', _connector.TYPES.NVarChar, filters)
+    .setInput('reserve1', _connector.TYPES.NVarChar, reserve1)
+    .setInput('reserve2', _connector.TYPES.NVarChar, reserve2)
+    .setInput('reserve3', _connector.TYPES.NVarChar, reserve3)
     .setInput('crtTime', _connector.TYPES.DateTime, now)
     .setInput('updTime', _connector.TYPES.DateTime, now)
     .setInput('updUser', _connector.TYPES.NVarChar, updUser);

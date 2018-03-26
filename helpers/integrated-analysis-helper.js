@@ -62,10 +62,15 @@ module.exports.getFeaturesAsMap = (featureIds, callback) => {
   });
 };
 
-module.exports.getCsvFileName = (transFeatSetID, callback) => {
+const MASTER_FILE_NAME_MAPPER = {
+  identified: '客戶車輛主表',
+  anonymous: '線上用戶主檔'
+};
+
+module.exports.getCsvFileName = (transFeatSetID, mod, callback) => {
   // winston.info(`transFeatSetID: ${transFeatSetID}`);
   if ('master' === transFeatSetID) {
-    callback(null, '客戶車輛主表.csv');
+    callback(null, `${MASTER_FILE_NAME_MAPPER[mod]}.csv`);
   } else {
     Q.nfcall(integrationService.getFeatureSet, constants.EXPORT_RELATIVE_SET_ID, transFeatSetID).then(setInfo => {
       // winston.info(`${transFeatSetID} getFeatureSet: ${setInfo}`);
@@ -200,7 +205,7 @@ module.exports.streamToJson = (stream, callback) => {
     });
 };
 
-module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, callback) => {
+module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, mod, callback) => {
   let promises = [];
   let metaPromise = undefined;
   // let metaPromise = Q();
@@ -221,7 +226,7 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
 
         promises.push(
           Q.all([
-            Q.nfcall(this.getCsvFileName, baseName),
+            Q.nfcall(this.getCsvFileName, baseName, mod),
             Q.nfcall(this.getFeaturesAsMap, featureIds)
           ]).spread((csvFileName, featureMap) => {
             console.log('csvFileName: ', csvFileName);

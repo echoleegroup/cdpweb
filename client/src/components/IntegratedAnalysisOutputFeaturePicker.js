@@ -1,7 +1,7 @@
 import React from 'react';
 import {fromJS, List} from 'immutable';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import {xorBy, map} from 'lodash';
+import {xorBy, map, keyBy, mapValues} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action';
@@ -95,6 +95,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       let selectedRelativeSets = this.state.selectedRelative.toJS();
 
       let formDate = {
+        mod: 'identified',
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),

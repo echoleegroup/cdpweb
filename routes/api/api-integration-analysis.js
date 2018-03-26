@@ -249,6 +249,7 @@ module.exports = (app) => {
     let criteria = req.body.criteria;
     let expt = req.body.export;
     let filter = req.body.filter;
+    let mod = req.body.mod;
 
     // winston.info(req.body.export);
 
@@ -274,6 +275,7 @@ module.exports = (app) => {
         criteria: JSON.stringify(criteria),
         features: JSON.stringify(expt),
         filters: JSON.stringify(filter),
+        reserve2: mod,
         updUser: req.user.userId
       }).then(insertRes => {
         return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
