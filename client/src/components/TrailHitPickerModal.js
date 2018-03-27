@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {xorBy, debounce, assign, uniqBy, filter, differenceBy} from 'lodash';
+import {xorBy, debounce, assign, uniqBy, filter, differenceBy, difference} from 'lodash';
 import shortid from 'shortid';
 import {List, mergeWith} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
@@ -154,6 +154,22 @@ export default class TrailHitPickerModal extends React.PureComponent {
         selected: List(filter(data, option => this.props.selected.indexOf(option.id) > -1))
       });
     });
+  };
+
+  componentWillReceiveProps(nextProps) {
+    // this.setState(prevState => ({
+    //   selected: List(filter(prevState.options, option => nextProps.selected.indexOf(option.id) > -1))
+    // }));
+    if (this.props.selected.length !== nextProps.selected.length ||
+      difference(this.props.selected, nextProps.selected).length > 0) {
+      this.setState(prevState => ({
+        selected: List(filter(prevState.options, option => nextProps.selected.indexOf(option.id) > -1))
+      }));
+    }
+  };
+
+  componentWillUpdate() {
+    console.log('TagPickerModal will update');
   };
 
   componentWillUnmount() {
