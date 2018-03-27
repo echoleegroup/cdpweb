@@ -171,7 +171,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
                                               params={this.params}
                                               step={STEPS.step4}
                                               stepPrev={this.stepTo(STEPS.step3)}
-                                              stepNext={this.stepTo(STEPS.step6)}/>;
+                                              stepNext={this.stepTo(STEPS.step5)}/>;
       case STEPS.step5:
         return <IntegratedAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
                                                 criteria={this.state.criteria.get(STEPS.step5)}

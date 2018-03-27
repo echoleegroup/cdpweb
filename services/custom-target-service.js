@@ -71,7 +71,7 @@ module.exports.getCustomCriteriaFeatures = (mdId, batId, mdFeatCateg, setId, cal
 };
 
 module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
-  const sql = 'SELECT nodeID, parentID, treeLevel, nodeName ' +
+  const sql = 'SELECT nodeID, parentID, treeLevel, nodeName, isDummy ' +
     'FROM ft_CategTree ' +
     'WHERE treeID = @treeId ' +
     'ORDER BY treeLevel, treeSeq';

@@ -167,6 +167,33 @@ const ChildSqlCriteriaComposer = (statements, paramsIndex=0) => {
   }, collector);
 };
 
+const foldedTree = (featureMap, foldingTree, level = 0, parentId = 'ROOT') => {
+  return _.filter(foldingTree, {
+    treeLevel: level,
+    parentID: parentId
+  }).reduce((sibling, node) => {
+    switch (node.isDummy) {
+      case 'Y':
+        let children = foldedTree(featureMap, foldingTree, level + 1, node.nodeID);
+        if (children.length > 0) {
+          sibling.push(_.assign({}, BRANCH_MODEL_TEMPLATE, {
+            id: node.nodeID,
+            label: node.nodeName,
+            children
+          }));
+        }
+        return sibling;
+      default:
+        let feature = featureMap[node.nodeID];
+        if (feature) {
+          sibling.push(TailModelWrapper(feature));
+          delete featureMap[node.nodeID];
+        }
+        return sibling;
+    }
+  }, []);
+};
+
 module.exports = {
   CUSTOMER_FEATURE_SET_ID: CUSTOMER_FEATURE_SET_ID,
   MODEL_FEATURE_CATEGORY_ID: MODEL_FEATURE_CATEGORY_ID,
@@ -176,52 +203,19 @@ module.exports = {
   //TABLE_MODEL_LIST_DETAIL: TABLE_MODEL_LIST_DETAIL,
 
   featuresToTreeNodes: (features, foldingTree) => {
-    // winston.info('===featuresToTreeNodes: ', features);
-    let foldingNodes = foldingTree.reduce((foldingNodes, node) => {
-      // winston.info('===featuresToTreeNodes::foldingTree ', node);
-      if ('ROOT' === node.parentID) { // virtual node: folder
+    let featureMap = _.keyBy(features, 'featID');
+    let foldingNodes = foldedTree(featureMap, foldingTree);
 
-        // extract all the raw features, who's featID is referenced to node's nodeID
-        // and its parentID references to current folder node
-        let childFeatures = _.remove(features, (feature) => {
-          return _.findIndex(foldingTree, {
-            nodeID: feature.featID,
-            parentID: node.nodeID
-          }) > -1;
-        });
+    let unfoldedNodes = _.values(featureMap).map(feature => {
+      return TailModelWrapper(feature);
+    });
 
-        if (childFeatures.length > 0) {
-          //create a folder model
-          let branchModel = _.assign({}, BRANCH_MODEL_TEMPLATE, {
-            id: node.nodeID,
-            label: node.nodeName
-          });
-
-          branchModel.children = childFeatures.map(feature => {
-            return TailModelWrapper(feature);
-          });
-
-          foldingNodes.push(branchModel);  //push current folder model to result set
-        }
-      } else {
-        // ignore features
-      }
-      return foldingNodes; //return and reduce to next node
-    }, []);
-
-    //put all un-folded field to an virtual node
-    if(features.length > 0) {
-      //create a folder model
-      let branchModel = _.assign({}, BRANCH_MODEL_TEMPLATE, {
+    if (unfoldedNodes.length > 0) {
+      foldingNodes.push(_.assign({}, BRANCH_MODEL_TEMPLATE, {
         id: shortid.generate(),
-        label: LABEL_UNFOLDED
-      });
-      //push all un-folded field in this virtual node.
-      //** use ... to spread the features array
-      branchModel.children = features.map(feature => {
-        return TailModelWrapper(feature);
-      });
-      foldingNodes.push(branchModel);
+        label: LABEL_UNFOLDED,
+        children: unfoldedNodes
+      }));
     }
 
     return foldingNodes;

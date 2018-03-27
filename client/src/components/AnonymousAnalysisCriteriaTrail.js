@@ -13,6 +13,6 @@ export default class AnonymousAnalysisCriteriaTrail extends IntegratedAnalysisCr
   };
 
   subheadText() {
-    return '第二步 挑選標籤篩選資料';
+    return '第二步 挑選顧客行為軌跡指定條件';
   };
 }

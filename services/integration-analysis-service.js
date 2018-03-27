@@ -22,7 +22,7 @@ module.exports.getCriteriaFeatures = (setId, callback) => {
 };
 
 module.exports.getCriteriaFeatureTree = (treeId, callback) => {
-  const sql = 'SELECT nodeID, parentID, treeLevel, nodeName ' +
+  const sql = 'SELECT nodeID, parentID, treeLevel, nodeName, isDummy ' +
     'FROM cd_CategTree ' +
     'WHERE treeID = @treeId ' +
     'ORDER BY treeLevel, treeSeq';
