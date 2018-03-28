@@ -1,14 +1,10 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {assign, reduce, isEmpty} from 'lodash';
-//import {nfcall, all} from 'q';
+import {assign, isEmpty} from 'lodash';
 import CriteriaAssignment from './CriteriaAssignment';
-// import CriteriaView from './CriteriaView';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import CriteriaComboBundleList from './CriteriaComboBundleList';
 import CriteriaBaseContainer from "./CriteriaBaseContainer";
-//import CustomFilterAction from '../actions/criteria-action'
-//import {default as _test} from '../../test/preferred-criteria-test'
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -20,17 +16,21 @@ export default class CriteriaBase extends React.PureComponent {
     this.state = {
       isPreview: true,
       isLoaded: false,
+      message_success: undefined,
+      message_warning: undefined,
+      message_error: undefined,
       criteria: props.criteria || []
     };
+
     this.ComponentModals = this.ComponentModals.bind(this);
     this.ComponentContentBody = this.ComponentContentBody.bind(this);
     this.ComponentCriteriaBundleContainer = this.ComponentCriteriaBundleContainer.bind(this);
     this.ComponentHeadline = this.ComponentHeadline.bind(this);
     this.ComponentSideHead = this.ComponentSideHead.bind(this);
     this.ComponentEmptyBody = this.ComponentEmptyBody.bind(this);
-    this.ComponentPreviewEmpty = this.ComponentPreviewEmpty.bind(this);
-    this.ComponentPreviewContent = this.ComponentPreviewContent.bind(this);
-    this.ComponentEditContent = this.ComponentEditContent.bind(this);
+    // this.ComponentPreviewEmpty = this.ComponentPreviewEmpty.bind(this);
+    // this.ComponentPreviewContent = this.ComponentPreviewContent.bind(this);
+    // this.ComponentEditContent = this.ComponentEditContent.bind(this);
     this.ComponentPreviewControlButton = this.ComponentPreviewControlButton.bind(this);
     this.ComponentEditControlButton = this.ComponentEditControlButton.bind(this);
 
@@ -47,19 +47,22 @@ export default class CriteriaBase extends React.PureComponent {
     return this.state.isPreview;
   };
 
-  validate() {
+  validate(criteria) {
     return true;
   };
 
   componentWillMount() {
     //inner properties definition
     this.toPreview = () => {
-      let valid = this.validate();
+      let criteria = this.criteriaWrapper.criteriaGathering();
+      let valid = this.validate(criteria);
       if (valid) {
-        let criteria = this.criteriaWrapper.criteriaGathering();
         // console.log('this.criteriaWrapper.criteriaGathering(): ', criteria);
         this.setState({
           isPreview: true,
+          message_success: undefined,
+          message_warning: undefined,
+          message_error: undefined,
           criteria: criteria
         });
       }
@@ -106,6 +109,7 @@ export default class CriteriaBase extends React.PureComponent {
   render() {
     let ComponentModals = this.ComponentModals;
     let mapToProps = {
+      // isPreview: this.state.isPreview,
       ComponentHeadline: this.ComponentHeadline,
       ComponentSideHead: this.ComponentSideHead,
       ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
@@ -120,6 +124,9 @@ export default class CriteriaBase extends React.PureComponent {
       } else {
         mapToProps = assign(mapToProps, {
           styleClass: 'condition',
+          message_success: this.state.message_success,
+          message_warning: this.state.message_warning,
+          message_error: this.state.message_error,
           ComponentCriteriaBody: this.ComponentContentBody,
           ComponentControlButton: this.ComponentPreviewControlButton
         });
@@ -127,6 +134,9 @@ export default class CriteriaBase extends React.PureComponent {
     } else {  //edit view
       mapToProps = assign(mapToProps, {
         styleClass: 'condition edit',
+        message_success: this.state.message_success,
+        message_warning: this.state.message_warning,
+        message_error: this.state.message_error,
         ComponentCriteriaBody: this.ComponentContentBody,
         ComponentControlButton: this.ComponentEditControlButton
       });
@@ -188,46 +198,46 @@ export default class CriteriaBase extends React.PureComponent {
     return <CriteriaComboBundle {...props}/>;
   };
 
-  ComponentPreviewEmpty(props) {
-    let mapToProps = {
-      styleClass: 'nocondition',
-      ComponentHeadline: this.ComponentHeadline,
-      ComponentSideHead: this.ComponentSideHead,
-      ComponentCriteriaBody: this.ComponentEmptyBody,
-      ComponentControlButton: this.ComponentPreviewControlButton,
-      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-    };
-
-    return <CriteriaBaseContainer {...mapToProps}/>
-  };
+  // ComponentPreviewEmpty(props) {
+  //   let mapToProps = {
+  //     styleClass: 'nocondition',
+  //     ComponentHeadline: this.ComponentHeadline,
+  //     ComponentSideHead: this.ComponentSideHead,
+  //     ComponentCriteriaBody: this.ComponentEmptyBody,
+  //     ComponentControlButton: this.ComponentPreviewControlButton,
+  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
+  //   };
+  //
+  //   return <CriteriaBaseContainer {...mapToProps}/>
+  // };
 
   ComponentEmptyBody(props) {
     return (<p>無條件設定</p>);
   };
 
-  ComponentEditContent(props) {
-    let mapToProps = {
-      styleClass: 'condition edit',
-      ComponentHeadline: this.ComponentHeadline,
-      ComponentSideHead: this.ComponentSideHead,
-      ComponentCriteriaBody: this.ComponentContentBody,
-      ComponentControlButton: this.ComponentEditControlButton,
-      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-    };
-    return <CriteriaBaseContainer {...mapToProps}/>
-  };
+  // ComponentEditContent(props) {
+  //   let mapToProps = {
+  //     styleClass: 'condition edit',
+  //     ComponentHeadline: this.ComponentHeadline,
+  //     ComponentSideHead: this.ComponentSideHead,
+  //     ComponentCriteriaBody: this.ComponentContentBody,
+  //     ComponentControlButton: this.ComponentEditControlButton,
+  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
+  //   };
+  //   return <CriteriaBaseContainer {...mapToProps}/>
+  // };
 
-  ComponentPreviewContent(props) {
-    let mapToProps = {
-      styleClass: 'condition',
-      ComponentHeadline: this.ComponentHeadline,
-      ComponentSideHead: this.ComponentSideHead,
-      ComponentCriteriaBody: this.ComponentContentBody,
-      ComponentControlButton: this.ComponentPreviewControlButton,
-      ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-    };
-    return <CriteriaBaseContainer {...mapToProps}/>
-  };
+  // ComponentPreviewContent(props) {
+  //   let mapToProps = {
+  //     styleClass: 'condition',
+  //     ComponentHeadline: this.ComponentHeadline,
+  //     ComponentSideHead: this.ComponentSideHead,
+  //     ComponentCriteriaBody: this.ComponentContentBody,
+  //     ComponentControlButton: this.ComponentPreviewControlButton,
+  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
+  //   };
+  //   return <CriteriaBaseContainer {...mapToProps}/>
+  // };
 
   ComponentPreviewControlButton(props) {
     return (

@@ -9,13 +9,13 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     super(props);
   };
 
-  validate() {
+  validate(criteria) {
     const MAIN_TARGET_FINDER = (criteria) => {
       if (isEmpty(criteria)) {
         return false;
       }
 
-      reduce(criteria, (isFound, c) => {
+      return reduce(criteria, (isFound, c) => {
         if (isFound) {
           return true;
         }
@@ -28,7 +28,15 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
       }, false)
     };
 
-    return MAIN_TARGET_FINDER(this.state.criteria);
+    let isFound = MAIN_TARGET_FINDER(criteria);
+    console.log('isFound: ', isFound);
+    if (!isFound) {
+      this.setState({
+        message_error: '必須指定對象別條件'
+      });
+    } else {
+      return isFound;
+    }
   };
 
   subheadText() {
