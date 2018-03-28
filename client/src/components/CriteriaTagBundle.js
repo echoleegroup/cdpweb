@@ -6,7 +6,6 @@ import CriteriaTransactionBundle from "./CriteriaTransactionBundle";
 import TagPickerModal from "./TagPickerModal";
 
 const OPERATOR_OPTIONS =  {
-  and: '全部',
   or: '任一'
 };
 export default class CriteriaTagBundle extends CriteriaTransactionBundle {
