@@ -73,8 +73,8 @@ const REF_OPTION_CRITERIA_OPERATOR = pick(INPUT_CRITERIA_OPERATOR, ['eq', 'ne', 
 REF_OPTION_CRITERIA_OPERATOR.eq.label = '為';
 REF_OPTION_CRITERIA_OPERATOR.ne.label = '不為';
 
-const GetOperatorSet = (dataType) => {
-  switch (dataType) {
+const GetOperatorSet = (input_type) => {
+  switch (input_type) {
     case 'number':
     case 'text':
       return INPUT_CRITERIA_OPERATOR;
@@ -139,17 +139,23 @@ export default class CriteriaAssignment extends React.PureComponent {
     };
 
     this.confirmCriteria = () => {
-      let data = this.fieldInput? this.fieldInput.getInputData(): {};
-      // console.log('confirmCriteria this.state.criteria.operator: ', this.state.criteria.get('operator'));
-      // console.log('confirmCriteria this.operatorSet[this.state.criteria.operator]: ', this.operatorSet[this.state.criteria.get('operator')]);
-      let dataProcessor = this.operatorSet[this.state.criteria.get('operator')].dataProcessor;
-      let c = this.state.criteria.merge({
-        value: dataProcessor(data.value),
-        value_label: data.value_label
-      });
-      // console.log('CriteriaAssignment::confirmCriteria: ', c);
-      this.responseCriteria(c.toJSON());
-      this.closeModal();
+      let data = this.valueSetter.getInputData();
+      if (isEmpty(data.message_error)) {
+        // console.log('confirmCriteria this.state.criteria.operator: ', this.state.criteria.get('operator'));
+        // console.log('confirmCriteria this.operatorSet[this.state.criteria.operator]: ', this.operatorSet[this.state.criteria.get('operator')]);
+        let dataProcessor = this.operatorSet[this.state.criteria.get('operator')].dataProcessor;
+        let c = this.state.criteria.merge({
+          value: dataProcessor(data.value),
+          value_label: data.value_label
+        });
+        // console.log('CriteriaAssignment::confirmCriteria: ', c);
+        this.responseCriteria(c.toJSON());
+        this.closeModal();
+      } else {
+        this.setState({
+          message_error: data.message_error
+        })
+      }
     };
 
     this.branchClickHandler = (node) => {
@@ -174,6 +180,14 @@ export default class CriteriaAssignment extends React.PureComponent {
         }
       });
     };
+
+    this.operatorChangeHandler = (value) => {
+      this.setState((prevState) => {
+        return {
+          criteria: prevState.criteria.set('operator', value)
+        };
+      });
+    };
   };
 
   componentWillUnmount() {
@@ -182,6 +196,7 @@ export default class CriteriaAssignment extends React.PureComponent {
 
   render() {
     let display = (this.state.isOpen)? '': 'none';
+    this.operatorSet = GetOperatorSet(this.state.criteria.get('input_type'));
     return (
       <div className="modal" style={{display: display}}>
         <div className="table_block">
@@ -195,10 +210,14 @@ export default class CriteriaAssignment extends React.PureComponent {
                             selected={this.state.selectedFeature}/>
             </div>
             <div className="col-md-2">
-              {this.CriteriaOperatorBlock(this.state.criteria)}
+              <OperatorSelector criteria={this.state.criteria}
+                                operators={this.operatorSet}
+                                operatorChangeHandler={this.operatorChangeHandler}/>
             </div>
             <div className="col-md-4">
-              {this.CriteriaInputBlock(this.state.criteria)}
+              <FieldValueSetter criteria={this.state.criteria}
+                                refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')] || []}
+                                ref={(e) => {this.valueSetter = e;}}/>
             </div>
           </div>
           <AlertMessenger message_error={this.state.message_error}/>
@@ -211,81 +230,98 @@ export default class CriteriaAssignment extends React.PureComponent {
       </div>
     );
   };
+};
 
-  CriteriaOperatorBlock(criteria) {
+class FieldValueSetter extends React.PureComponent {
+  componentWillMount() {
+
+    this.inputComponentDispatcher = (inputType) => {
+      switch (inputType) {
+        case 'number':
+          return NumberInput;
+        case 'text':
+          return TextInput;
+        case 'date':
+          return DateInput;
+        case 'refOption':
+          return RefOptionInput;
+      }
+    };
+
+    this.getInputData = () => {
+      return this.valueInput.getInputData();
+    };
+  };
+
+  render() {
+    const excludes = ['in', 'nn'];
+    let criteria = this.props.criteria;
     let inputType = criteria.get('input_type');
-    // console.log('CriteriaAssignment::CriteriaOperatorBlock.inputType: ', inputType);
-    if (isEmpty(inputType)) {
+    let ComponentValueInput = this.inputComponentDispatcher(inputType);
+
+    if (inputType && excludes.indexOf(criteria.get('operator')) < 0) {
+      return (
+        <div>
+          <h3>條件值</h3>
+          <ComponentValueInput criteria={criteria}
+                               refOptions={this.props.refOptions}
+                               ref={(e) => {this.valueInput = e;}}/>
+        </div>
+      );
+    }
+    return null;
+  };
+}
+
+class OperatorSelector extends React.PureComponent {
+  render() {
+    let criteria = this.props.criteria;
+    let optionsMap = this.props.operators;
+    if (isEmpty(optionsMap)) {
       return null;
     }
-    let operatorSet = this.operatorSet = GetOperatorSet(inputType);
+    // let operatorSet = this.operatorSet = GetOperatorSet(inputType);
     // console.log('CriteriaOperatorBlock this.operatorSet: ', this.operatorSet);
     return (
       <div>
         <h3>條件</h3>
         <select className="form-control judgment" onChange={(e) => {
           let inputValue = e.target.value;
-          this.setState((prevState) => {
-            return {
-              criteria: prevState.criteria.set('operator', inputValue)
-            };
-          });
+          this.props.operatorChangeHandler(inputValue);
         }} value={criteria.get('operator')}>
-          {Object.keys(operatorSet).map((key) => {
+          {Object.keys(optionsMap).map(key => {
             return (
-              <option key={key} value={key}>{operatorSet[key].label}</option>
+              <option key={key} value={key}>{optionsMap[key].label}</option>
             );
           })}
         </select>
       </div>
     );
   };
-
-  CriteriaInputBlock(criteria) {
-    const excludes = ['in', 'nn'];
-    let input_type = criteria.get('input_type');
-    if (input_type && excludes.indexOf(criteria.get('operator')) < 0) {
-      return (
-        <div>
-          <h3>條件值</h3>
-          {this.CriteriaFieldInput(criteria, input_type)}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  CriteriaFieldInput(criteria) {
-    switch (criteria.get('input_type')) {
-      case 'number':
-        return <NumberInput criteria={criteria} ref={(e) => {
-          this.fieldInput = e;
-        }}/>;
-      case 'text':
-        return <TextInput criteria={criteria} ref={(e) => {
-          this.fieldInput = e;
-        }}/>;
-      case 'date':
-        return <DateInput criteria={criteria} ref={(e) => {
-          this.fieldInput = e;
-        }}/>;
-      case 'refOption':
-        console.log('this.state.criteria == refOption: ', this.props.featureRefCodeMap[this.state.criteria.get('ref')]);
-        return <RefOptionInput criteria={criteria} refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')] || []} ref={(e) => {
-          this.fieldInput = e;
-        }}/>;
-    }
-  };
 };
 
 class InputBase extends React.PureComponent {
   getInputData() {
-    let value = $(this.input).val();
-    return {
+    let value = this.getValue(this.input);
+    return this.validate(value)? {
       value,
-      value_label: value
+      value_label: this.getValueLabel(value)
+    }: {
+      message_error: '請輸入條件值'
     };
   }
+
+  validate(value) {
+    return !isEmpty(value);
+  };
+
+  getValue(inputElement) {
+    return $(inputElement).val();
+  }
+
+  getValueLabel(value) {
+    return value;
+  };
 
   render() {
     return (
@@ -336,18 +372,18 @@ class DateInput extends InputBase {
 }
 
 class RefOptionInput extends InputBase {
-  getInputData() {
-    let values = $(this.optionDivDom).find('input:checked').map((i, e) => {
+
+  getValue(element) {
+    return $(element).find('input:checked').map((i, e) => {
       return e.value;
     }).get();
-    let labels = values.map((value) => {
+  }
+
+  getValueLabel(values) {
+    return values.map(value => {
       let t = find(this.props.refOptions, {codeValue: value});
       return t? t.codeLabel: '';
     });
-    return {
-      value: values,
-      value_label: labels
-    };
   }
 
   render() {
@@ -355,14 +391,14 @@ class RefOptionInput extends InputBase {
       <div>
         <div>
           <button type="button" className="btn btn-sm btn-default" onClick={(e) => {
-            $(this.optionDivDom).find('input').attr('checked', true);
+            $(this.input).find('input').attr('checked', true);
           }}>全選</button>
           <button type="button" className="btn btn-sm btn-default" onClick={(e) => {
-            $(this.optionDivDom).find('input').attr('checked', false);
+            $(this.input).find('input').attr('checked', false);
           }}>全不選</button>
         </div>
         <div className="category_select" ref={(e) => {
-          this.optionDivDom = e;
+          this.input = e;
         }}>
           {this.props.refOptions.map(opt => {
             return (
