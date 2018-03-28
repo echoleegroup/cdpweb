@@ -105,7 +105,7 @@ module.exports = (app) => {
     Q.all([
       Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY),
       //Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
-      Q.nfcall(exportService.getDownloadFeatures, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
+      Q.nfcall(exportService.getDownloadFeaturesOfSet, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       //write query log to DB
       Q.nfcall(queryService.insertQueryLog, {
         menuCode: MENU_CODE.CUSTOM_TARGET_FILTER,

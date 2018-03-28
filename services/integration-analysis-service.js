@@ -71,7 +71,7 @@ module.exports.getFeatureSet = (transSetId, setId, callback) => {
   });
 };
 
-module.exports.getDownloadFeatures = (setId, callback) => {
+module.exports.getDownloadFeaturesOfSet = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName ' +
     'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
     'WHERE d_feat.setID = @setId AND d_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL)';
@@ -84,7 +84,26 @@ module.exports.getDownloadFeatures = (setId, callback) => {
   Q.nfcall(request.executeQuery, sql).then(results => {
     callback(null, results);
   }).fail(err => {
-    winston.error('===getDownloadFeatures failed:', err);
+    winston.error('===getDownloadFeaturesOfSet failed:', err);
+    callback(err);
+  });
+};
+
+module.exports.getDownloadFeaturesByIds = (featIds, callback) => {
+  const sql = 'SELECT feature.featID, feature.featName, feature.featNameAbbr, feature.codeGroup ' +
+    'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
+    `WHERE d_feat.featID in ('${featIds.join(`','`)}') ` +
+    'AND d_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL) ' +
+    'ORDER BY d_feat.seqNO ';
+
+  let request = _connector
+    .queryRequest()
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+
+  Q.nfcall(request.executeQuery, sql).then(results => {
+    callback(null, results);
+  }).fail(err => {
+    winston.error('===getDownloadFeaturesOfSet failed:', err);
     callback(err);
   });
 };

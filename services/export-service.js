@@ -5,7 +5,7 @@ const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
-module.exports.getDownloadFeatures = (setId, callback) => {
+module.exports.getDownloadFeaturesOfSet = (setId, callback) => {
   const sql = 'SELECT feat.featID, feat.featName, feat.featNameAbbr ' +
     'FROM cu_DnldFeat dwn, ft_feature feat ' +
     'WHERE setID = @setId AND dwn.featID = feat.featID AND isDel != @isDel ' +
@@ -18,7 +18,7 @@ module.exports.getDownloadFeatures = (setId, callback) => {
     .executeQuery, sql).then((resultSet) => {
     callback(null, resultSet);
   }).fail((err) => {
-    winston.error('===getDownloadFeatures failed:', err);
+    winston.error('===getDownloadFeaturesOfSet failed:', err);
     callback(err);
   });
 };

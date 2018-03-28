@@ -223,7 +223,7 @@ module.exports = (app) => {
 
   router.get('/export/features', middlewares, (req, res) => {
     Q.all([
-      Q.nfcall(integrationService.getDownloadFeatures, EXPORT_DOWNLOAD_FEATURE_SET_ID),
+      Q.nfcall(integrationService.getDownloadFeaturesOfSet, EXPORT_DOWNLOAD_FEATURE_SET_ID),
       Q.nfcall(integrationService.getCriteriaFeatureTree, INTEGRATION_ANALYSIS_TREE_ID)
     ]).spread((features, foldingTree) => {
       // winston.info('/export/features getCriteriaFeatures: ', features);
@@ -256,7 +256,7 @@ module.exports = (app) => {
     let promises = _.map(expt.relatives, relativeSetId => {
       return Q.all([
         Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
-        Q.nfcall(integrationService.getDownloadFeatures, relativeSetId)
+        Q.nfcall(integrationService.getDownloadFeaturesOfSet, relativeSetId)
       ]).spread((featureSet, features) => {
         return {
           [relativeSetId]: {
@@ -387,7 +387,7 @@ module.exports = (app) => {
 
   router.get('/anonymous/export/features', middlewares, (req, res) => {
     Q.all([
-      Q.nfcall(integrationService.getDownloadFeatures, ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID),
+      Q.nfcall(integrationService.getDownloadFeaturesOfSet, ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID),
       Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
     ]).spread((features, foldingTree) => {
       // winston.info('/export/features getCriteriaFeatures: ', features);

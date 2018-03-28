@@ -40,7 +40,7 @@ module.exports.getFeatureAsMap = (featureId, callback) => {
 };
 
 module.exports.getFeaturesAsMap = (featureIds, callback) => {
-  Q.nfcall(cdpService.getFeatures, featureIds).then(features => {
+  Q.nfcall(integrationService.getDownloadFeaturesByIds, featureIds).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
         return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {

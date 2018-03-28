@@ -47,7 +47,7 @@ module.exports.getModel = (mdId, callback=() => {}) => {
 module.exports.getBatchCategoryFeatures = (featureIds, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM ft_Feature feature ' +
-    'WHERE feature.featID in (\'' + featureIds.join('\',\'') + '\') ';
+    `WHERE feature.featID in ('${featureIds.join(`','`)}') `;
 
   Q.nfcall(_connector.execSql, sql).then((result) => {
     callback(null, result);
