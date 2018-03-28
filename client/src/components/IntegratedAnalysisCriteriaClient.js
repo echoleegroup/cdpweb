@@ -3,10 +3,32 @@ import {isEmpty, reduce} from 'lodash';
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
+import shrotid from "shortid";
 
 export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysisCriteriaBase {
   constructor(props) {
     super(props);
+    if (isEmpty(this.state.criteria)) {
+      this.state.criteria.push({
+        id: shrotid.generate(),
+        operator: "and",
+        ref: null,
+        ref_label: null,
+        type: "combo",
+        criteria: [{
+          data_type: "text",
+          field_id: "MAIN_TARGET",
+          field_label: "對象別",
+          id: shrotid.generate(),
+          input_type: "refOption",
+          operator: "eq",
+          ref: "CMMCODEFILE-25",
+          type: "field",
+          value: ["2"],
+          value_label: ["使用人"]
+        }]
+      });
+    }
   };
 
   validate(criteria) {

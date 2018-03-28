@@ -74,25 +74,7 @@ export default class IntegratedAnalysisHome extends BodyLayout {
       featureOptions: [],
       relativeSetOptions: [],
       criteria: Map({
-        [STEPS.step1]: [{
-          id: shrotid.generate(),
-          operator: "and",
-          ref: null,
-          ref_label: null,
-          type: "combo",
-          criteria: [{
-            data_type: "text",
-            field_id: "MAIN_TARGET",
-            field_label: "對象別",
-            id: shrotid.generate(),
-            input_type: "refOption",
-            operator: "eq",
-            ref: "CMMCODEFILE-25",
-            type: "field",
-            value: ["2"],
-            value_label: ["使用人"]
-          }]
-        }],
+        [STEPS.step1]: [],
         [STEPS.step2]: [],
         [STEPS.step3]: [],
         [STEPS.step4]: [],

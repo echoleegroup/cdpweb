@@ -19,7 +19,7 @@ export default class CriteriaBase extends React.PureComponent {
       message_success: undefined,
       message_warning: undefined,
       message_error: undefined,
-      criteria: props.criteria || []
+      criteria: props.criteria
     };
 
     this.ComponentModals = this.ComponentModals.bind(this);
