@@ -10,6 +10,7 @@ import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import 'flatpickr/dist/themes/material_green.css';
 import Flatpickr from 'react-flatpickr';
 import {getDate} from '../utils/date-util';
+import AlertMessenger from "./AlertMessenger";
 
 const INPUT_CRITERIA_OPERATOR = {
   eq: {
@@ -109,7 +110,8 @@ export default class CriteriaAssignment extends React.PureComponent {
       criteria: Map(INITIAL_CRITERIA).merge({
         id: shortid.generate()
       }),
-      selectedFeature: null
+      selectedFeature: null,
+      message_error: undefined
     };
   };
 
@@ -130,7 +132,8 @@ export default class CriteriaAssignment extends React.PureComponent {
         criteria: Map(INITIAL_CRITERIA).merge({
           id: shortid.generate()
         }),
-        selectedFeature: null
+        selectedFeature: null,
+        message_error: undefined
       });
       $('body').removeClass('noscroll');
     };
@@ -198,6 +201,7 @@ export default class CriteriaAssignment extends React.PureComponent {
               {this.CriteriaInputBlock(this.state.criteria)}
             </div>
           </div>
+          <AlertMessenger message_error={this.state.message_error}/>
           <div className="btn-block center-block">
             <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
             <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>

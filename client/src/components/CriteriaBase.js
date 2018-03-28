@@ -28,15 +28,8 @@ export default class CriteriaBase extends React.PureComponent {
     this.ComponentHeadline = this.ComponentHeadline.bind(this);
     this.ComponentSideHead = this.ComponentSideHead.bind(this);
     this.ComponentEmptyBody = this.ComponentEmptyBody.bind(this);
-    // this.ComponentPreviewEmpty = this.ComponentPreviewEmpty.bind(this);
-    // this.ComponentPreviewContent = this.ComponentPreviewContent.bind(this);
-    // this.ComponentEditContent = this.ComponentEditContent.bind(this);
     this.ComponentPreviewControlButton = this.ComponentPreviewControlButton.bind(this);
     this.ComponentEditControlButton = this.ComponentEditControlButton.bind(this);
-
-    //this.criteria = _test.criteria.custom_target || [];
-    //this.fields = _test.fields.custom_target;
-    //this.refOptions = _test.refs;
   };
 
   fetchPreparedData(props, _this, callback) {
@@ -81,12 +74,6 @@ export default class CriteriaBase extends React.PureComponent {
     };
 
     this.getCriteria = () => {
-      // let criteria = this.state.criteria;
-      // if (!this.state.isPreview) {  //edit mode
-      //   //fetch all criteria tree
-      //   criteria = this.criteriaWrapper.criteriaGathering();
-      // }
-      // return criteria;
       return this.state.criteria;
     };
 
@@ -198,46 +185,9 @@ export default class CriteriaBase extends React.PureComponent {
     return <CriteriaComboBundle {...props}/>;
   };
 
-  // ComponentPreviewEmpty(props) {
-  //   let mapToProps = {
-  //     styleClass: 'nocondition',
-  //     ComponentHeadline: this.ComponentHeadline,
-  //     ComponentSideHead: this.ComponentSideHead,
-  //     ComponentCriteriaBody: this.ComponentEmptyBody,
-  //     ComponentControlButton: this.ComponentPreviewControlButton,
-  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-  //   };
-  //
-  //   return <CriteriaBaseContainer {...mapToProps}/>
-  // };
-
   ComponentEmptyBody(props) {
     return (<p>無條件設定</p>);
   };
-
-  // ComponentEditContent(props) {
-  //   let mapToProps = {
-  //     styleClass: 'condition edit',
-  //     ComponentHeadline: this.ComponentHeadline,
-  //     ComponentSideHead: this.ComponentSideHead,
-  //     ComponentCriteriaBody: this.ComponentContentBody,
-  //     ComponentControlButton: this.ComponentEditControlButton,
-  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-  //   };
-  //   return <CriteriaBaseContainer {...mapToProps}/>
-  // };
-
-  // ComponentPreviewContent(props) {
-  //   let mapToProps = {
-  //     styleClass: 'condition',
-  //     ComponentHeadline: this.ComponentHeadline,
-  //     ComponentSideHead: this.ComponentSideHead,
-  //     ComponentCriteriaBody: this.ComponentContentBody,
-  //     ComponentControlButton: this.ComponentPreviewControlButton,
-  //     ComponentCriteriaBundleContainer: this.ComponentCriteriaBundleContainer
-  //   };
-  //   return <CriteriaBaseContainer {...mapToProps}/>
-  // };
 
   ComponentPreviewControlButton(props) {
     return (
