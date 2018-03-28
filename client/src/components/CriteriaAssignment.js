@@ -1,5 +1,4 @@
 import React from 'react';
-import Loader from 'react-loader';
 import shortid from 'shortid';
 import moment from 'moment';
 import {find, assign, pick, isEmpty} from 'lodash';

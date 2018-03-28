@@ -1,10 +1,34 @@
 import React from 'react';
+import {isEmpty, reduce} from 'lodash';
 import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
 import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
+import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
 export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysisCriteriaBase {
   constructor(props) {
     super(props);
+  };
+
+  validate() {
+    const MAIN_TARGET_FINDER = (criteria) => {
+      if (isEmpty(criteria)) {
+        return false;
+      }
+
+      reduce(criteria, (isFound, c) => {
+        if (isFound) {
+          return true;
+        }
+        switch (c.type) {
+          case CRITERIA_COMPONENT_DICT.FIELD:
+            return isFound || 'MAIN_TARGET' === c.field_id;
+          default:
+            return isFound || MAIN_TARGET_FINDER(c.criteria)
+        }
+      }, false)
+    };
+
+    return MAIN_TARGET_FINDER(this.state.criteria);
   };
 
   subheadText() {
