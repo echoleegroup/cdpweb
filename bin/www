@@ -7,20 +7,29 @@
 const path = require("path");
 const app = require('../server');
 const debug = require('debug')('forestage:server');
-const http = require('http');
+let http =  require('http');
+const fs = require('fs');
+if (process.env.NODE_ENV === "production")
+  http = require('https');
 
 /**
  * Get port from environment and store in Express.
  */
-
+const options = {
+  pfx: fs.readFileSync(process.env.PFX_PATH),
+  passphrase: process.env.PFX_PASS
+};
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-
-const server = http.createServer(app);
+let server;
+if (process.env.NODE_ENV === "production")
+  server = http.createServer(options, app);
+else 
+   server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
