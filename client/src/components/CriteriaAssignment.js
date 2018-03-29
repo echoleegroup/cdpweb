@@ -249,7 +249,11 @@ class FieldValueSetter extends React.PureComponent {
     };
 
     this.getInputData = () => {
-      return this.valueInput.getInputData();
+      if (this.valueInput) {
+        return this.valueInput.getInputData();
+      } else {
+        return {};
+      }
     };
   };
 

@@ -66,10 +66,10 @@ export default class CriteriaField extends React.PureComponent {
     return (
       <div className="con-option">
         <div className="form-group">
-          <input type="text" className="form-control" id="" value={this.field_label} disabled={true}/>
+          <input type="text" className="form-control" value={this.field_label} disabled={true}/>
         </div>
         <div className="form-group">
-          <input type="text" className="form-control judgment" id="" defaultValue={this.OPERATOR_DICT[criteria.operator]} disabled={true}/>
+          <input type="text" className="form-control judgment" defaultValue={this.OPERATOR_DICT[criteria.operator]} disabled={true}/>
         </div>
         <div className="form-group">
           <input type="text"
