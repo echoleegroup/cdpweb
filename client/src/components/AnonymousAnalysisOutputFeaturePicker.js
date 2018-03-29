@@ -38,7 +38,7 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
       selectedFeature: props.output.selectedFeature,
       // selectedRelativeId: props.output.selectedRelativeId,
       queryId: undefined,
-      showError: false,
+      message_error: undefined,
       showModal: false
     };
 
@@ -114,15 +114,13 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
         this.setState({
           queryId: res.queryId,
           showModal: true,
-          showError: false
+          message_error: undefined
         });
-        // window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
       }, err => {
         this.setState({
-          showError: true,
+          message_error: '搜尋失敗，請稍後再試或聯絡相關人員',
           showModal: false
         });
-        // window.alert('The service is temporarily unavailable. Please try latter again contact us.');
       });
 
       // $(this.inputCriteria).val(JSON.stringify(formDate));
@@ -158,6 +156,7 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
                         collapse={false}
                         selected={this.state.selectedFeature.toJS()}
                         tailClickHandler={this.featureTailClickHandler}/>
+        <AlertMessenger message_error={this.state.message_error}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
           <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate} disabled={this.state.queryId}>下載資料</button>
@@ -172,13 +171,6 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
             <p>您可隨時檢視<Button bsStyle="link" href={"/integration/query/"+this.state.queryId} target="_blank">查詢結果</Button>，或等候E-mail通知</p>
           </Modal.Body>
         </Modal>
-
-        {/*<!-- error -->*/}
-        <div style={{display: (this.state.showError? '': 'none')}}>
-          <Alert bsStyle="danger">
-            <p>搜尋失敗，請稍後再試或聯絡相關人員</p>
-          </Alert>
-        </div>
       </div>
     );
   };

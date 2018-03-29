@@ -118,13 +118,11 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           showModal: true,
           message_error: undefined
         });
-        // window.alert('The acquirement is in processing. System would send e-mail when things get ready.');
       }, err => {
         this.setState({
           message_error: '搜尋失敗，請稍後再試或聯絡相關人員',
           showModal: false
         });
-        // window.alert('The service is temporarily unavailable. Please try latter again contact us.');
       });
 
       // $(this.inputCriteria).val(JSON.stringify(formDate));
