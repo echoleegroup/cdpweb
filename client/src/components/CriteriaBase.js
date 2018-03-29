@@ -47,6 +47,7 @@ export default class CriteriaBase extends React.PureComponent {
   componentWillMount() {
     //inner properties definition
     this.toPreview = () => {
+      this.props.alertMessageAdaptor();
       let criteria = this.criteriaWrapper.criteriaGathering();
       let valid = this.validate(criteria);
       if (valid) {

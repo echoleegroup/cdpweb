@@ -16,6 +16,8 @@ export default class CriteriaHomeLayout extends React.PureComponent {
       output: {
         selectedFeature: List()
       },
+      message_success: undefined,
+      message_warning: undefined,
       message_error: undefined
     };
     this.ComponentContent = this.ComponentContent.bind(this);
@@ -76,6 +78,15 @@ export default class CriteriaHomeLayout extends React.PureComponent {
       this.setState({
         output: exportConfig,
         step: targetStep
+      });
+    };
+
+    // message adaptor
+    this.alertMessageAdaptor = (message_error, message_warning, message_success) => {
+      this.setState({
+        message_error,
+        message_warning,
+        message_success
       });
     };
 

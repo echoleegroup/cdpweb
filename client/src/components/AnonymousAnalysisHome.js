@@ -53,25 +53,25 @@ export default class AnonymousAnalysisHome extends CriteriaHomeLayout {
     switch (this.state.step) {
       case STEPS.step1:
         return <AnonymousAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
-                                              criteria={this.state.criteria.get(STEPS.step1)}
-                                              params={this.params}
-                                              step={STEPS.step1}
-                                              // stepPrev={this.stepTo(STEPS.step3)}
-                                              stepNext={this.stepTo(STEPS.step2)}/>;
+                                             criteria={this.state.criteria.get(STEPS.step1)}
+                                             params={this.params}
+                                             alertMessageAdaptor={this.alertMessageAdaptor}
+                                             step={STEPS.step1}
+                                             stepNext={this.stepTo(STEPS.step2)}/>;
       case STEPS.step2:
         return <AnonymousAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
-                                                criteria={this.state.criteria.get(STEPS.step2)}
-                                                params={this.params}
-                                                step={STEPS.step2}
-                                                stepPrev={this.stepTo(STEPS.step1)}
-                                                stepNext={this.stepTo(STEPS.step3)}/>;
+                                               criteria={this.state.criteria.get(STEPS.step2)}
+                                               params={this.params}
+                                               alertMessageAdaptor={this.alertMessageAdaptor}
+                                               step={STEPS.step2}
+                                               stepPrev={this.stepTo(STEPS.step1)}
+                                               stepNext={this.stepTo(STEPS.step3)}/>;
       case STEPS.step3:
         return <AnonymousAnalysisCriteriaOverview ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria}
                                                   params={this.params}
                                                   step={STEPS.step3}
                                                   STEPS={STEPS}
-                                                  //stepPrev={this.stepTo(STEPS.step5)}
                                                   stepNext={this.stepTo(STEPS.step4)}/>;
       case STEPS.step4:
         return (
