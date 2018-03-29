@@ -11,10 +11,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     url: url,
     method: "POST",
     json: true,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(JObject)
+    body: JObject
   }, function (error, response, body) {
     if (error)
       callback(error, null);
