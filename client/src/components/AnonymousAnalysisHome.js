@@ -1,125 +1,55 @@
 import React from 'react';
 import Loader from 'react-loader';
-import BodyLayout from "./BodyLayout";
-import {List, Map} from 'immutable';
-import {assign} from 'lodash';
+import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import AnonymousAnalysisCriteriaTrail from "./AnonymousAnalysisCriteriaTrail";
 import anonymousAction from '../actions/anonymous-analysis-action';
-import {getDate} from '../utils/date-util';
 import AnonymousAnalysisCriteriaTag from "./AnonymousAnalysisCriteriaTag";
 import AnonymousAnalysisCriteriaOverview from "./AnonymousAnalysisCriteriaOverview";
 import AnonymousAnalysisOutputFeaturePicker from "./AnonymousAnalysisOutputFeaturePicker";
 
-const criteriaStepForwardHandler = (targetStep, _that) => {
-  let isReady = _that.stepComponent.isReadyToLeave();
-
-  if (isReady) {
-    let criteria = _that.stepComponent.getCriteria();
-    _that.setState(prevState => {
-      return {
-        criteria: prevState.criteria.set(prevState.step, criteria)
-      };
-    });
-    _that.setStep(targetStep);
-  } else {
-    window.alert('Please confirm your criteria before leaving.');
-  }
-};
-
-const featurePickerStepForwardHandler = (targetStep, _that) => {
-  let exportConfig = _that.stepComponent.getExportOutputConfig();
-  _that.setState(prevState => ({
-    output: exportConfig,
-    step: targetStep
-  }));
-};
-
-const stepForwardHandler = (targetStep, _that) => {
-  _that.setStep(targetStep);
-};
-
-const STEPS = {
-  step1: 'tag',
-  step2: 'trail',
-  step3: '_preview',
-  step4: '_features'
-};
-
-const STEP_FORWARD_HANDLERS = Object.freeze({
-  [STEPS.step1]: criteriaStepForwardHandler,
-  [STEPS.step2]: criteriaStepForwardHandler,
-  [STEPS.step3]: stepForwardHandler,
-  [STEPS.step4]: featurePickerStepForwardHandler,
-});
-
-export default class AnonymousAnalysisHome extends BodyLayout {
+export default class AnonymousAnalysisHome extends CriteriaHomeLayout {
   constructor(props) {
     super(props);
+  };
 
-    let today = getDate();
-
-    this.state = {
-      isLoaded:false,
-      step: STEPS.step1,
-      featureOptions: [],
-      // relativeSetOptions: [],
-      criteria: Map({
-        [STEPS.step1]: [],
-        [STEPS.step2]: []
-      }),
-      output: {
-        selectedFeature: List()
-        // selectedRelativeId: List(),
-        // periodStart: today.value,
-        // periodStartLabel: today.value_label,
-        // periodEnd: today.value,
-        // periodEndLabel: today.value_label,
-      }
+  getDefaultStepCriteria(steps) {
+    return {
+      [steps.step1]: [],
+      [steps.step2]: []
     };
   };
 
-  componentWillMount() {
-
-    this.setStep = (targetStep) => {
-      // console.log('IntegratedAnalysisHome::stepTo: ' , targetStep);
-
-      this.setState({
-        step: targetStep
-      });
-    };
-
-    this.stepTo = (targetStep) => {
-      return () => {
-        //this.setStep(targetStep);
-        STEP_FORWARD_HANDLERS[this.state.step](targetStep, this);
-      };
-    };
-
-    this.stepToHandler = () => {
-      return (targetStep) => {
-        STEP_FORWARD_HANDLERS[this.state.step](targetStep, this);
-      };
-    };
-
-    this.storeCurrentStepComponent = (e) => {
-      this.stepComponent = e;
-    };
-
-    this.fetchPreparedData = (callback) => {
-      anonymousAction.getAnonymousExportFeaturePool(data => callback({
-        featureOptions: data
-      }));
-    };
-
-    // execute
-    this.fetchPreparedData(data => {
-      this.setState(assign({
-        isLoaded: true,
-      }, data));
+  getStepMapper() {
+    return Object.freeze({
+      step1: 'tag',
+      step2: 'trail',
+      step3: '_preview',
+      step4: '_features'
     });
   };
 
-  ComponentContent() {
+  getStepForwardHandler(step) {
+    switch (step) {
+      case this.STEPS.step1:
+      case this.STEPS.step2:
+        return this.criteriaStepForwardHandler;
+      case this.STEPS.step3:
+        return this.stepForwardHandler;
+      case this.STEPS.step4:
+        return this.featurePickerStepForwardHandler;
+      default:
+        return this.stepForwardHandler;
+    }
+  };
+
+  fetchPreparedData(callback) {
+    anonymousAction.getAnonymousExportFeaturePool(data => callback({
+      featureOptions: data
+    }));
+  };
+
+  ComponentContent(props) {
+    let STEPS = this.STEPS;
     switch (this.state.step) {
       case STEPS.step1:
         return <AnonymousAnalysisCriteriaTag ref={this.storeCurrentStepComponent}
@@ -147,19 +77,20 @@ export default class AnonymousAnalysisHome extends BodyLayout {
         return (
           <Loader loaded={this.state.isLoaded}>
             <AnonymousAnalysisOutputFeaturePicker ref={this.storeCurrentStepComponent}
-                                             criteria={this.state.criteria}
-                                             output={this.state.output}
-                                             featureOptions={this.state.featureOptions}
-                                             params={this.params}
-                                             step={STEPS.step4}/>
+                                                  criteria={this.state.criteria}
+                                                  output={this.state.output}
+                                                  featureOptions={this.state.featureOptions}
+                                                  params={this.params}
+                                                  step={STEPS.step4}/>
           </Loader>
         );
 
     }
   };
 
-  ComponentSideBar() {
-    return <AnonymousAnalysisNavigator stepTo={this.stepToHandler()}/>
+  ComponentSideBar(props) {
+    return <AnonymousAnalysisNavigator STEPS={this.STEPS}
+                                       stepTo={this.stepToHandler}/>
   };
 };
 
@@ -174,6 +105,7 @@ class AnonymousAnalysisNavigator extends React.PureComponent {
   };
 
   render() {
+    let STEPS = this.props.STEPS;
     return (
       <div className="table_block table-responsive">
         <h2>設定觀察客群</h2>

@@ -5,6 +5,7 @@ import {xorBy, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import anonymousAction from '../actions/anonymous-analysis-action';
+import AlertMessenger from './AlertMessenger';
 import 'flatpickr/dist/themes/material_green.css';
 
 const extractAllNode = (nodes) => {

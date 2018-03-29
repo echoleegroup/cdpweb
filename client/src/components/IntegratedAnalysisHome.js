@@ -1,7 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
-import shrotid from 'shortid';
-import BodyLayout from "./BodyLayout";
+import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import {List, Map} from 'immutable';
 import {assign} from 'lodash';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
@@ -14,137 +13,93 @@ import IntegratedAnalysisFeaturePicker from "./IntegratedAnalysisOutputFeaturePi
 import integratedAction from '../actions/integrated-analysis-action';
 import {getDate} from '../utils/date-util';
 
-const criteriaStepForwardHandler = (targetStep, _that) => {
-  let isReady = _that.stepComponent.isReadyToLeave();
 
-  if (isReady) {
-    let criteria = _that.stepComponent.getCriteria();
-    _that.setState(prevState => {
-      return {
-        criteria: prevState.criteria.set(prevState.step, criteria)
-      };
-    });
-    _that.setStep(targetStep);
-  } else {
-    window.alert('Please confirm your criteria before leaving.');
-  }
-};
+// const STEPS = {
+//   step1: 'client',
+//   step2: 'vehicle',
+//   step3: 'transaction',
+//   step4: 'tag',
+//   step5: 'trail',
+//   step6: '_preview',
+//   step7: '_features'
+// };
 
-const featurePickerStepForwardHandler = (targetStep, _that) => {
-  let exportConfig = _that.stepComponent.getExportOutputConfig();
-  _that.setState(prevState => ({
-    output: exportConfig,
-    step: targetStep
-  }));
-};
+// const STEP_FORWARD_HANDLERS = Object.freeze({
+//   [STEPS.step1]: criteriaStepForwardHandler,
+//   [STEPS.step2]: criteriaStepForwardHandler,
+//   [STEPS.step3]: criteriaStepForwardHandler,
+//   [STEPS.step4]: criteriaStepForwardHandler,
+//   [STEPS.step5]: criteriaStepForwardHandler,
+//   [STEPS.step6]: stepForwardHandler,
+//   [STEPS.step7]: featurePickerStepForwardHandler,
+// });
 
-const stepForwardHandler = (targetStep, _that) => {
-  _that.setStep(targetStep);
-};
-
-const STEPS = {
-  step1: 'client',
-  step2: 'vehicle',
-  step3: 'transaction',
-  step4: 'tag',
-  step5: 'trail',
-  step6: '_preview',
-  step7: '_features'
-};
-
-const STEP_FORWARD_HANDLERS = Object.freeze({
-  [STEPS.step1]: criteriaStepForwardHandler,
-  [STEPS.step2]: criteriaStepForwardHandler,
-  [STEPS.step3]: criteriaStepForwardHandler,
-  [STEPS.step4]: criteriaStepForwardHandler,
-  [STEPS.step5]: criteriaStepForwardHandler,
-  [STEPS.step6]: stepForwardHandler,
-  [STEPS.step7]: featurePickerStepForwardHandler,
-});
-
-export default class IntegratedAnalysisHome extends BodyLayout {
+export default class IntegratedAnalysisHome extends CriteriaHomeLayout {
   constructor(props) {
     super(props);
 
     let today = getDate();
 
-    this.state = {
-      isLoaded:false,
-      step: STEPS.step1,
-      featureOptions: [],
+    this.state = assign({}, this.state, {
       relativeSetOptions: [],
-      criteria: Map({
-        [STEPS.step1]: [],
-        [STEPS.step2]: [],
-        [STEPS.step3]: [],
-        [STEPS.step4]: [],
-        [STEPS.step5]: []
-      }),
-      output: {
-        selectedFeature: List(),
+      output: assign({}, this.state.output, {
         selectedRelative: List(),
         periodStart: today.value,
         periodStartLabel: today.value_label,
         periodEnd: today.value,
         periodEndLabel: today.value_label,
-      }
-    };
-  };
-
-  componentWillMount() {
-
-    this.setStep = (targetStep) => {
-      // console.log('IntegratedAnalysisHome::stepTo: ' , targetStep);
-
-      this.setState({
-        step: targetStep
-      });
-    };
-
-    this.stepTo = (targetStep) => {
-      return () => {
-        //this.setStep(targetStep);
-        STEP_FORWARD_HANDLERS[this.state.step](targetStep, this);
-      };
-    };
-
-    this.stepToHandler = () => {
-      return (targetStep) => {
-        STEP_FORWARD_HANDLERS[this.state.step](targetStep, this);
-      };
-    };
-
-    this.storeCurrentStepComponent = (e) => {
-      this.stepComponent = e;
-    };
-
-    this.fetchExportFeatureOptions = (callback) => {
-      integratedAction.getExportFeaturePool(callback);
-    };
-
-    this.fetchPreparedData = (callback) => {
-      this.fetchExportFeatureOptions(data => callback({
-        featureOptions: data.featureOptions,
-        relativeSetOptions: data.relativeSetOptions
-      }));
-    };
-
-    // execute
-    this.fetchPreparedData(data => {
-      this.setState(assign({
-        isLoaded: true,
-      }, data));
+      })
     });
   };
-  //
-  // componentWillUpdate(nextProps, nextState) {
-  //   console.log('IntegratedAnalysisHome::componentWillUpdate this.props: ', this.props);
-  //   console.log('IntegratedAnalysisHome::componentWillUpdate nextProps: ', nextProps);
-  //   console.log('IntegratedAnalysisHome::componentWillUpdate this.state: ', this.state);
-  //   console.log('IntegratedAnalysisHome::componentWillUpdate nextState: ', nextState);
-  // };
 
-  ComponentContent() {
+  getDefaultStepCriteria(steps) {
+    return {
+      [steps.step1]: [],
+      [steps.step2]: [],
+      [steps.step3]: [],
+      [steps.step4]: [],
+      [steps.step5]: []
+    };
+  };
+
+  getStepMapper() {
+    return Object.freeze({
+      step1: 'client',
+      step2: 'vehicle',
+      step3: 'transaction',
+      step4: 'tag',
+      step5: 'trail',
+      step6: '_preview',
+      step7: '_features'
+    });
+  };
+
+  getStepForwardHandler(step) {
+    switch (step) {
+      case this.STEPS.step1:
+      case this.STEPS.step2:
+      case this.STEPS.step3:
+      case this.STEPS.step4:
+      case this.STEPS.step5:
+        return this.criteriaStepForwardHandler;
+      case this.STEPS.step6:
+        return this.stepForwardHandler;
+      case this.STEPS.step7:
+        return this.featurePickerStepForwardHandler;
+      default:
+        return this.stepForwardHandler;
+    }
+  };
+
+  fetchPreparedData(callback) {
+    integratedAction.getExportFeaturePool(data => callback({
+      featureOptions: data.featureOptions,
+      relativeSetOptions: data.relativeSetOptions
+    }));
+  };
+
+  ComponentContent(props) {
+    let STEPS = this.STEPS;
     switch (this.state.step) {
       case STEPS.step1:
         return <IntegratedAnalysisCriteriaClient ref={this.storeCurrentStepComponent}
@@ -204,8 +159,9 @@ export default class IntegratedAnalysisHome extends BodyLayout {
     }
   };
 
-  ComponentSideBar() {
-    return <IntegratedAnalysisNavigator stepTo={this.stepToHandler()}/>
+  ComponentSideBar(props) {
+    return <IntegratedAnalysisNavigator STEPS={this.STEPS}
+                                        stepTo={this.stepToHandler}/>
   };
 };
 
@@ -220,6 +176,7 @@ class IntegratedAnalysisNavigator extends React.PureComponent {
   };
 
   render() {
+    let STEPS = this.props.STEPS;
     return (
       <div className="table_block table-responsive">
         <h2>設定觀察客群</h2>
