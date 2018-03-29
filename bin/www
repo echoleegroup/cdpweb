@@ -12,17 +12,16 @@ const fs = require('fs');
 /**
  * Get port from environment and store in Express.
  */
-const options = isProduction? {
-  pfx: fs.readFileSync(process.env.PFX_PATH),
-  passphrase: process.env.PFX_PASS
-}: {};
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-const server = http.createServer(options, app);
+const server = isProduction? http.createServer({
+  pfx: fs.readFileSync(process.env.PFX_PATH),
+  passphrase: process.env.PFX_PASS
+}, app): http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
