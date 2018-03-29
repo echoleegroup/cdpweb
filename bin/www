@@ -1,35 +1,28 @@
 #!/usr/bin/env node
-'use strict'
 
 /**
  * Module dependencies.
  */
-const path = require("path");
 const app = require('../server');
 const debug = require('debug')('forestage:server');
-let http =  require('http');
+const isProduction = (process.env.NODE_ENV === "production");
+const http =  isProduction?require('https'): require('http');
 const fs = require('fs');
-if (process.env.NODE_ENV === "production")
-  http = require('https');
 
 /**
  * Get port from environment and store in Express.
  */
-const options = {
+const options = isProduction? {
   pfx: fs.readFileSync(process.env.PFX_PATH),
   passphrase: process.env.PFX_PASS
-};
+}: {};
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-let server;
-if (process.env.NODE_ENV === "production")
-  server = http.createServer(options, app);
-else 
-   server = http.createServer(app);
+const server = http.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
