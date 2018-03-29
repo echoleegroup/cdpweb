@@ -4,7 +4,6 @@ import moment from 'moment';
 import {find, assign, pick, isEmpty} from 'lodash';
 import {Map} from 'immutable';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
-// import CustomFilterAction from '../actions/criteria-action';
 import PickerSingle from './PickerSingle'
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import 'flatpickr/dist/themes/material_green.css';

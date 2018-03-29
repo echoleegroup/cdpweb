@@ -1,8 +1,6 @@
 import React from 'react';
-// import CriteriaComboBundle from './CriteriaComboBundle';
-import {reduce, isEmpty, assign} from 'lodash';
+import {reduce, isEmpty} from 'lodash';
 import shortid from 'shortid';
-// import {List} from "immutable";
 
 const getDefaultBundleProps = () => {
   // console.log('DEFAULT_BUNDLE_PROPS: ', DEFAULT_BUNDLE_PROPS);

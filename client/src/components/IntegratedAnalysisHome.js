@@ -1,7 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
-import {List, Map} from 'immutable';
+import {List} from 'immutable';
 import {assign} from 'lodash';
 import IntegratedAnalysisCriteriaClient from './IntegratedAnalysisCriteriaClient';
 import IntegratedAnalysisCriteriaVehicle from "./IntegratedAnalysisCriteriaVehicle";
