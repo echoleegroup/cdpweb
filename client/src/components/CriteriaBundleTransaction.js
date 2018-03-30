@@ -2,15 +2,15 @@ import React from 'react';
 import Loader from 'react-loader';
 import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
-import CriteriaAssignment from './CriteriaAssignment';
-import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
+import ModalCriteriaSetter from './ModalCriteriaSetter';
+import integratedAnalysisAction from "../actions/integrated-analysis-action";
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
   or: '任一',
   not: '皆不'
 };
-export default class CriteriaTransactionBundle extends CriteriaBundle {
+export default class CriteriaBundleTransaction extends CriteriaBundle {
   constructor(props) {
     super(props);
     this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
@@ -31,7 +31,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     super.componentWillMount();
 
     this.fetchFeatureData = (callback) => {
-      IntegratedAnalysisAction.getTransactionCriteriaFeatures(
+      integratedAnalysisAction.getTransactionCriteriaFeatures(
         this.getPropertyState('ref'), callback);
     };
 
@@ -47,16 +47,6 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     });
   };
 
-  // componentWillUnmount() {
-  //   console.log('CriteriaTransactionBundle: componentWillUnmount', this.state);
-  //   super.componentWillUnmount()
-  // };
-
-  // render() {
-  //   // console.log('CriteriaTransactionBundle render');
-  //   return super.render();
-  // };
-
   addCriteriaClickHandler() {
     this.slaveModal.openModal(this.insertCriteriaState);
   };
@@ -70,9 +60,6 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
   };
 
   ComponentCustomized(props) {
-    // if (this.props.isPreview) {
-    //   return <div/>;
-    // }
 
     let mapToProps = {
       features: this.state.features || [],
@@ -80,7 +67,7 @@ export default class CriteriaTransactionBundle extends CriteriaBundle {
     };
     return (
       <Loader loaded={this.state.isLoaded}>
-        <CriteriaAssignment {...mapToProps} ref={(e) => {
+        <ModalCriteriaSetter {...mapToProps} ref={(e) => {
           this.slaveModal = e;
         }}/>
       </Loader>

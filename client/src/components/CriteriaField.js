@@ -20,18 +20,6 @@ export default class CriteriaField extends React.PureComponent {
     //this.state = assign({}, props.criteria);
 
     this.OPERATOR_DICT = OPERATOR_DICT;
-    /**
-     * {
-          id: 'xdsfa',
-          type: 'field',
-          cate: null,
-          field_id: 'last_visit_date',
-          field_label: '最近訪問日',
-          value: Date.now(),
-          input_type: 'date',
-          operator: 'lt'
-        }
-     */
   }
 
   componentWillMount() {
@@ -60,9 +48,6 @@ export default class CriteriaField extends React.PureComponent {
 
   render() {
     let criteria = this.props.criteria;
-    // console.log('this.props.fieldDictionary: ', this.props.fieldDictionary);
-    // console.log('criteria.id: ', criteria.id);
-    // console.log('this.props.refOptions: ', this.props.refOptions);
     return (
       <div className="con-option">
         <div className="form-group">
@@ -86,10 +71,6 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   displayTextFormatter(inputType, value, valueLabel) {
-    // console.log('value: ', value);
-    // console.log('field.ref: ', field);
-    // console.log('refOptions: ', refOptions);
-    // console.log('refOptions[field.ref]: ', refOptions[field.ref]);
     if(!value)
       return null;
 

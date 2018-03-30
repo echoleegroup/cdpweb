@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import ModelAction from '../actions/model-action';
 
-export default class PreferredTargetIllustration extends React.PureComponent {
+export default class CustomTargetIllustration extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

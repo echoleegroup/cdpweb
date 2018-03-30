@@ -1,11 +1,11 @@
 import React from 'react';
 import {assign} from 'lodash';
-import CriteriaTransactionComboBundle from './CriteriaTransactionComboBundle';
-import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
-import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
-import IntegratedAnalysisFeatureSetPicker from "./IntegratedAnalysisFeatureSetPicker";
+import CriteriaTransactionComboBundle from './CriteriaComboBundleTransaction';
+import IntegratedCriteriaBase from "./IntegratedCriteriaBase";
+import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import IntegratedCriteriaFeatureSetPicker from "./IntegratedCriteriaFeatureSetPicker";
 
-export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAnalysisCriteriaBase {
+export default class IntegratedCriteriaTransaction extends IntegratedCriteriaBase {
 
   componentWillMount() {
     super.componentWillMount();
@@ -21,9 +21,9 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
     return '第三步 挑選明細資料指定條件';
   };
 
-  fetchPreparedData(props, _this, callback) {
-    // IntegratedAnalysisAction.getVehicleCriteriaFeatures(callback);
-    IntegratedAnalysisAction.getTransactionFeatureSets(data => {
+  fetchPreparedData(callback) {
+    // integratedAnalysisAction.getVehicleCriteriaFeatures(callback);
+    integratedAnalysisAction.getTransactionFeatureSets(data => {
       callback({
         featureSets: data
       });
@@ -40,10 +40,10 @@ export default class IntegratedAnalysisCriteriaTransaction extends IntegratedAna
 
   ComponentModals(props) {
     let mapToProps = {
-      featureSets: props.featureSets
+      featureSets: this.state.featureSets
     };
     return (
-      <IntegratedAnalysisFeatureSetPicker {...mapToProps} ref={(e) => {
+      <IntegratedCriteriaFeatureSetPicker {...mapToProps} ref={(e) => {
         this.featureSetPickerModal = e;
       }}/>
     );

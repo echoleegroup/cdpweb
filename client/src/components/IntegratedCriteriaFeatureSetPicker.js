@@ -1,8 +1,7 @@
 import React from 'react';
-import Loader from 'react-loader';
 import PickerSingle from './PickerSingle'
 
-export default class IntegratedAnalysisFeatureSetPicker extends React.PureComponent {
+export default class IntegratedCriteriaFeatureSetPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,13 +12,10 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
 
   componentWillMount() {
     this.openModal = (callback) => {
-      // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
       this.setState({
         isOpen: true,
         selected: undefined
-        // setId: null,
-        // setLabel: null
       });
       $('body').addClass('noscroll');
     };
@@ -28,8 +24,6 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
       this.setState({
         isOpen: false,
         selected: undefined
-        // setId: null,
-        // setLabel: null
       });
       $('body').removeClass('noscroll');
     };
@@ -52,9 +46,6 @@ export default class IntegratedAnalysisFeatureSetPicker extends React.PureCompon
       // console.log('CriteriaTransactionSetPicker tailClickHandler: ', node);
       this.setState({
         selected: node
-        // setId: node.id,
-        // setLabel: node.label,
-        // setCategory: node.category
       });
     };
   };

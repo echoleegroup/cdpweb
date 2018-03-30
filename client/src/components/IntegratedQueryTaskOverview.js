@@ -10,7 +10,7 @@ const getQueryTask = (queryId, callback) => {
   integratedAction.getQueryTask(queryId, callback)
 };
 
-export default class IntegratedAnalysisQueryOverview extends React.PureComponent {
+export default class IntegratedQueryTaskOverview extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,8 +67,6 @@ export default class IntegratedAnalysisQueryOverview extends React.PureComponent
 class QueryTask extends React.PureComponent {
   componentWillMount() {
     this.download = () => {
-      // const downloadjs = require("downloadjs");
-      // downloadjs('/api/integration/export/download/' + this.props.queryId);
       window.open('/api/integration/export/download/' + this.props.queryId);
     };
   };

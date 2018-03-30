@@ -3,20 +3,12 @@ import CriteriaBaseBodyContainer from './CriteriaBaseBodyContainer';
 import AlertMessenger from "./AlertMessenger";
 
 export default class CriteriaBaseContainer extends React.PureComponent {
-  // componentWillReceiveProps(nextProps) {
-  //   console.log('nextProps: ', nextProps);
-  // };
 
   render() {
     let props = this.props;
     let ComponentHeadline = props.ComponentHeadline;
     let ComponentSideHead = props.ComponentSideHead;
     let ComponentControlButton = props.ComponentControlButton;
-
-    // console.log('styleClass: ', props.styleClass);
-    // console.log('ComponentAlert', ComponentAlert);
-    // console.log('ComponentControlButton', ComponentControlButton);
-    // console.log('ComponentCriteriaBundleContainer', props.ComponentCriteriaBundleContainer);
 
     return (
       <div className="table_block">

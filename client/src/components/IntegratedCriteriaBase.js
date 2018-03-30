@@ -1,10 +1,22 @@
 import React from 'react';
-import {assign} from 'lodash';
+import ModalCriteriaSetter from './ModalCriteriaSetter';
 import CriteriaBase from "./CriteriaBase";
 
-export default class IntegratedAnalysisCriteriaBase extends CriteriaBase {
+export default class IntegratedCriteriaBase extends CriteriaBase {
   headlineText() {
     return '查詢條件';
+  };
+
+  ComponentModals(props) {
+    let mapToProps = {
+      features: this.state.features || [],
+      featureRefCodeMap: this.state.featureRefCodeMap || {}
+    };
+    return (
+      <ModalCriteriaSetter {...mapToProps} ref={(e) => {
+        this.masterModal = e;
+      }}/>
+    );
   };
 
   ComponentPreviewControlButton() {

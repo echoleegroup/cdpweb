@@ -1,7 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader';
 import {assign, isEmpty} from 'lodash';
-import CriteriaAssignment from './CriteriaAssignment';
+import ModalCriteriaSetter from './ModalCriteriaSetter';
 import CriteriaComboBundle from './CriteriaComboBundle';
 import CriteriaComboBundleList from './CriteriaComboBundleList';
 import CriteriaBaseContainer from "./CriteriaBaseContainer";
@@ -32,7 +32,7 @@ export default class CriteriaBase extends React.PureComponent {
     this.ComponentEditControlButton = this.ComponentEditControlButton.bind(this);
   };
 
-  fetchPreparedData(props, _this, callback) {
+  fetchPreparedData(callback) {
     callback({});
   };
 
@@ -83,7 +83,7 @@ export default class CriteriaBase extends React.PureComponent {
     };
 
     //init work
-    this.fetchPreparedData(this.props, this, (data) => {
+    this.fetchPreparedData(data => {
       this.setState(assign({
         isLoaded: true
       }, data));
@@ -134,21 +134,13 @@ export default class CriteriaBase extends React.PureComponent {
       <Loader loaded={this.state.isLoaded}>
         <CriteriaBaseContainer {...mapToProps}/>
         {/*<!-- 新增條件組合 -->*/}
-        <ComponentModals {...this.state}/>
+        <ComponentModals/>
       </Loader>
     );
   };
 
   ComponentModals(props) {
-    let mapToProps = {
-      features: props.features || [],
-      featureRefCodeMap: props.featureRefCodeMap || {}
-    };
-    return (
-      <CriteriaAssignment {...mapToProps} ref={(e) => {
-        this.masterModal = e;
-      }}/>
-    );
+    return <div/>;
   };
 
   ComponentHeadline(props) {

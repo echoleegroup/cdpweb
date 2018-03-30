@@ -4,10 +4,10 @@ import numeral from 'numeral';
 import {format} from 'util';
 import {Map} from 'immutable';
 import AlertMessenger from './AlertMessenger';
-import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
+import CustomTargetFilterCriteria from './CustomTargetCriteria';
 import CustomFilterAction from '../actions/custom-filter-action';
 
-export default class CustomTargetFilterPrimaryContent extends React.PureComponent {
+export default class CustomTargetFilter extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

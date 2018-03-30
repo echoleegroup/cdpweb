@@ -1,13 +1,13 @@
 import React from 'react';
 import Loader from 'react-loader';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
-import AnonymousAnalysisCriteriaTrail from "./AnonymousAnalysisCriteriaTrail";
+import AnonymousAnalysisCriteriaTrail from "./AnonymousCriteriaTrail";
 import anonymousAction from '../actions/anonymous-analysis-action';
-import AnonymousAnalysisCriteriaTag from "./AnonymousAnalysisCriteriaTag";
-import AnonymousAnalysisCriteriaOverview from "./AnonymousAnalysisCriteriaOverview";
-import AnonymousAnalysisOutputFeaturePicker from "./AnonymousAnalysisOutputFeaturePicker";
+import AnonymousAnalysisCriteriaTag from "./AnonymousCriteriaTag";
+import AnonymousAnalysisCriteriaOverview from "./AnonymousCriteriaOverview";
+import AnonymousAnalysisOutputFeaturePicker from "./AnonymousCriteriaExportFeaturePicker";
 
-export default class AnonymousAnalysisHome extends CriteriaHomeLayout {
+export default class AnonymousQueryHome extends CriteriaHomeLayout {
   constructor(props) {
     super(props);
   };

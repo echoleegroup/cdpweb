@@ -7,6 +7,8 @@ import PickerMultiple from './PickerMultiple';
 import anonymousAction from '../actions/anonymous-analysis-action';
 import AlertMessenger from './AlertMessenger';
 import 'flatpickr/dist/themes/material_green.css';
+import {INTEGRATED_ANALYSIS_MOD} from "../utils/criteria-dictionary";
+import IntegratedCriteriaExportFeaturePicker from "./IntegratedCriteriaExportFeaturePicker";
 
 const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
@@ -25,19 +27,12 @@ const toggleList = (target={}, selected=[]) => {
   return xorBy([target], selected, 'id');
 };
 
-export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComponent {
+export default class AnonymousCriteriaExportFeaturePicker extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      // featureOptions: fromJS(props.outputFeatures.featureOptions),
-      // relativeSetOptions: fromJS(props.outputFeatures.relativeSetOptions),
-      // periodStart: props.output.periodStart,
-      // periodStartLabel: props.output.periodStartLabel,
-      // periodEnd: props.output.periodEnd,
-      // periodEndLabel: props.output.periodEndLabel,
       selectedFeature: props.output.selectedFeature,
-      // selectedRelativeId: props.output.selectedRelativeId,
       queryId: undefined,
       message_error: undefined,
       showModal: false
@@ -66,25 +61,6 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
       }));
     };
 
-    // this.relativeTailClickHandler = (node) => {
-    //   this.setState(prevState => ({
-    //     selectedRelativeId: List(toggleList(node.id, prevState.selectedRelativeId.toJS()))
-    //   }));
-    // };
-
-    // this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
-    //   $(dom).datepicker({
-    //     format: 'yyyy/mm/dd'
-    //   }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
-    //     .datepicker('onClose', (dateText, picker) => {
-    //       let data = getDate(picker.datepicker('getDate'));
-    //       this.setState({
-    //         [timestampPropsOfState]: data.value,
-    //         [labelPropsOfState]: data.value_label
-    //       });
-    //     });
-    // };
-
     this.getExportOutputConfig = () => {
       return this.state;
     };
@@ -95,19 +71,14 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
       // let selectedRelativeSets = this.state.selectedRelativeId.toJS();
 
       let formDate = {
-        mod: 'anonymous',
+        mod: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),
           relatives: []
         },
         filter: {
-          relatives: {
-            // period_start_value: this.state.periodStart,
-            // period_start_label: this.state.periodStartLabel,
-            // period_end_value: this.state.periodEnd,
-            // period_end_label: this.state.periodEndLabel
-          }
+          relatives: {}
         }
       };
 
@@ -123,9 +94,6 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
           showModal: false
         });
       });
-
-      // $(this.inputCriteria).val(JSON.stringify(formDate));
-      // $(this.formComponent).submit();
     };
 
     this.modalOnHideHandler = (e) => {
@@ -133,14 +101,6 @@ export default class AnonymousAnalysisOutputFeaturePicker extends React.PureComp
         showModal: false
       });
     };
-  };
-
-  componentDidMount() {
-    // $(this.successModal).modal({
-    //   show: false
-    // });
-    // this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
-    // this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
   };
 
   render() {

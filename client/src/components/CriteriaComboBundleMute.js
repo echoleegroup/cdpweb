@@ -1,16 +1,15 @@
 import React from 'react';
-import CriteriaTransactionBundle from './CriteriaTransactionBundle';
-import CriteriaTagBundle from './CriteriaTagBundle';
+import CriteriaBundleTransaction from './CriteriaBundleTransaction';
+import CriteriaBundleTag from './CriteriaBundleTag';
 import CriteriaComboBundle from "./CriteriaComboBundle";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
-import CriteriaTrailPeriodBundle from "./CriteriaTrailPeriodBundle";
+import CriteriaBundleTrailPeriod from "./CriteriaBundleTrailPeriod";
 
 export default class CriteriaComboBundleMute extends CriteriaComboBundle {
   ComponentChildCriteria(criteria, index) {
-    // console.log('ComponentChildCriteria: ', criteria);
     switch(criteria.type) {
       case CRITERIA_COMPONENT_DICT.TRANSACTION:
-        return <CriteriaTransactionBundleMute key={criteria.id}
+        return <CriteriaBundleTransactionMute key={criteria.id}
                                               criteria={criteria}
                                               index={index}
                                               isPreview={this.props.isPreview}
@@ -19,7 +18,7 @@ export default class CriteriaComboBundleMute extends CriteriaComboBundle {
                                               removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TAG:
       case CRITERIA_COMPONENT_DICT.TRAIL_HIT:
-        return <CriteriaTagBundleMute key={criteria.id}
+        return <CriteriaBundleTagMute key={criteria.id}
                                       criteria={criteria}
                                       index={index}
                                       isPreview={this.props.isPreview}
@@ -27,7 +26,7 @@ export default class CriteriaComboBundleMute extends CriteriaComboBundle {
                                       collectCriteriaComponents={this.collectCriteriaComponents}
                                       removeCriteriaComponents={this.removeCriteriaComponents}/>;
       case CRITERIA_COMPONENT_DICT.TRAIL_PERIOD:
-        return <CriteriaTrailPeriodBundleMute key={criteria.id}
+        return <CriteriaBundleTrailPeriodMute key={criteria.id}
                                               criteria={criteria}
                                               index={index}
                                               isPreview={this.props.isPreview}
@@ -40,7 +39,7 @@ export default class CriteriaComboBundleMute extends CriteriaComboBundle {
   };
 }
 
-class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
+class CriteriaBundleTransactionMute extends CriteriaBundleTransaction {
 
   fetchPreparedData() {
     //DO overwrite, but do nothing
@@ -51,18 +50,14 @@ class CriteriaTransactionBundleMute extends CriteriaTransactionBundle {
   };
 }
 
-class CriteriaTagBundleMute extends CriteriaTagBundle {
-
-  fetchFeatureData() {
-    //DO overwrite, but do nothing
-  };
+class CriteriaBundleTagMute extends CriteriaBundleTag {
 
   ComponentCustomized(props) {
     return <div/>;
   };
 }
 
-class CriteriaTrailPeriodBundleMute extends CriteriaTrailPeriodBundle {
+class CriteriaBundleTrailPeriodMute extends CriteriaBundleTrailPeriod {
   fetchPreparedData() {
     //DO overwrite, but do nothing
   };

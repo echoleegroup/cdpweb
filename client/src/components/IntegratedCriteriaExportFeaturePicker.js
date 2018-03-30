@@ -1,13 +1,14 @@
 import React from 'react';
-import {fromJS, List} from 'immutable';
-import { Modal, Button, Alert } from 'react-bootstrap';
-import {xorBy, map, keyBy, mapValues} from 'lodash';
+import {List} from 'immutable';
+import { Modal, Button } from 'react-bootstrap';
+import {xorBy, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
 import integratedAction from '../actions/integrated-analysis-action';
 import AlertMessenger from './AlertMessenger';
 import 'flatpickr/dist/themes/material_green.css';
 import Flatpickr from 'react-flatpickr';
+import {INTEGRATED_ANALYSIS_MOD} from '../utils/criteria-dictionary';
 
 const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
@@ -26,13 +27,11 @@ const toggleList = (target, selected) => {
   return xorBy([target], selected, 'id');
 };
 
-export default class IntegratedAnalysisFeaturePicker extends React.PureComponent {
+export default class IntegratedCriteriaExportFeaturePicker extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      // featureOptions: fromJS(props.outputFeatures.featureOptions),
-      // relativeSetOptions: fromJS(props.outputFeatures.relativeSetOptions),
       periodStart: props.output.periodStart,
       periodStartLabel: props.output.periodStartLabel,
       periodEnd: props.output.periodEnd,
@@ -73,19 +72,6 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       }));
     };
 
-    // this.initDatePicker = (dom, timestampPropsOfState, labelPropsOfState) => {
-    //   $(dom).datepicker({
-    //     format: 'yyyy/mm/dd'
-    //   }).datepicker('setDate', new Date(this.state[timestampPropsOfState]))
-    //     .datepicker('onClose', (dateText, picker) => {
-    //       let data = getDate(picker.datepicker('getDate'));
-    //       this.setState({
-    //         [timestampPropsOfState]: data.value,
-    //         [labelPropsOfState]: data.value_label
-    //       });
-    //     });
-    // };
-
     this.getExportOutputConfig = () => {
       return this.state;
     };
@@ -96,7 +82,7 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
       let selectedRelativeSets = this.state.selectedRelative.toJS();
 
       let formDate = {
-        mod: 'identified',
+        mod: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),
@@ -124,9 +110,6 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
           showModal: false
         });
       });
-
-      // $(this.inputCriteria).val(JSON.stringify(formDate));
-      // $(this.formComponent).submit();
     };
 
     this.modalOnHideHandler = (e) => {
@@ -134,14 +117,6 @@ export default class IntegratedAnalysisFeaturePicker extends React.PureComponent
         showModal: false
       });
     };
-  };
-
-  componentDidMount() {
-    // $(this.successModal).modal({
-    //   show: false
-    // });
-    // this.initDatePicker(this.periodStart, 'periodStart', 'periodStartLabel');
-    // this.initDatePicker(this.periodEnd, 'periodEnd', 'periodEndLabel');
   };
 
   render() {

@@ -1,42 +1,25 @@
 import React from 'react';
 import {map} from 'lodash';
-import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
-import CriteriaTagBundle from "./CriteriaTagBundle";
-import TrailHitPickerModal from "./TrailHitPickerModal";
+import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import CriteriaBundleTag from "./CriteriaBundleTag";
+import ModalTrailHitPicker from "./ModalTrailHitPicker";
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
   or: '任一'
 };
-export default class CriteriaTrailHitBundle extends CriteriaTagBundle {
+export default class CriteriaBundleTrailHit extends CriteriaBundleTag {
   constructor(props) {
     super(props);
     // this.OPERATOR_OPTIONS = OPERATOR_OPTIONS;
     this.BUNDLE_TYPE_LABEL = '線上足跡';
-    // state from super:
-    // this.state = {
-    //   isLoaded: true,
-    //   properties: Map(this.getBundleProperties(props.criteria))
-    // };
-    // this.state = assign(this.state, {
-    //   // isLoaded: false,
-    //   features: [],
-    //   featureRefCodeMap: {}
-    // });
   };
 
   componentWillMount() {
     super.componentWillMount();
-    //
-    // this.insertCriteriaState = (tagList) => {
-    //   console.log('CriteriaTagBundle:insertCriteriaState: ', tagList);
-    //   this.setState(prevState => ({
-    //     properties: prevState.properties.set('criteria', tagList)
-    //   }));
-    // };
 
     this.fetchFeatureData = (keyword, periodStart, periodEnd, callback) => {
-      IntegratedAnalysisAction.getTrailHitCriteriaFeatures(
+      integratedAnalysisAction.getTrailHitCriteriaFeatures(
         this.getPropertyState('ref'), keyword, periodStart, periodEnd, callback);
     };
   };
@@ -45,30 +28,14 @@ export default class CriteriaTrailHitBundle extends CriteriaTagBundle {
     // do nothing
   };
 
-  // addCriteriaClickHandler() {
-  //   this.slaveModal.openModal(this.insertCriteriaState);
-  // };
-
-  // ComponentBundleBodyTail(props) {
-  //   return (
-  //     <div className="sub_conditon">
-  //       來源：<span>{props.criteria.ref_label}</span>
-  //     </div>
-  //   );
-  // };
-
   ComponentCustomized(props) {
     let mapToProps = {
       title: this.getPropertyState('ref_label'),
       dataHandler: this.fetchFeatureData,
       selected: map(this.state.properties.get('criteria').toJS(), 'value')
-      // dataHandler: this.pickerOptionFilter,
-      // loaded: this.state.isLoaded
-      // features: this.state.features || [],
-      // featureRefCodeMap: this.state.featureRefCodeMap || {}
     };
     return (
-      <TrailHitPickerModal {...mapToProps} ref={(e) => {
+      <ModalTrailHitPicker {...mapToProps} ref={(e) => {
         this.slaveModal = e;
       }}/>
     );

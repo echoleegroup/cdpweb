@@ -2,10 +2,10 @@ import React  from 'react';
 import ReactDOM  from 'react-dom';
 import url from 'url';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import AnonymousAnalysisHome from './components/AnonymousAnalysisHome';
-import CustomTargetFilterHome from './components/CustomTargetFilterHome';
-import IntegratedAnalysisHome from './components/IntegratedAnalysisHome';
-import IntegratedAnalysisQueryOverview from './components/IntegratedAnalysisQueryOverview';
+import AnonymousAnalysisHome from './components/AnonymousQueryHome';
+import CustomTargetHomeLayout from './components/CustomTargetLayout';
+import IntegratedAnalysisHome from './components/IntegratedQueryHome';
+import IntegratedAnalysisQueryOverview from './components/IntegratedQueryTaskOverview';
 
 (function ($) {
   let internalAjax = $.ajax;
@@ -37,10 +37,13 @@ class PortalRoute extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetFilterHome}/>
+          <Route exact path="/target/custom/filter/:mdId/:batId" component={CustomTargetHomeLayout}/>
           <Route exact path="/integration/query" component={IntegratedAnalysisHome}/>
           <Route exact path="/integration/query/:queryId" component={IntegratedAnalysisQueryOverview}/>
           <Route exact path="/integration/anonymous/query" component={AnonymousAnalysisHome}/>
+
+          {/*<Route exact path="/integration/query/:queryId/analysis/identified/large" component={IntegratedQueryAnalysisLarge}/>*/}
+          {/*<Route exact path="/integration/query/:queryId/analysis/anonymous/large" component={AnonymousQueryAnalysisLarge}/>*/}
         </Switch>
       </Router>
     );

@@ -2,11 +2,7 @@ import React from 'react';
 import CriteriaComboBundle from "./CriteriaComboBundle";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
-export default class CriteriaTransactionComboBundle extends CriteriaComboBundle {
-  // constructor(props) {
-  //   super(props);
-  //   // this.CHILD_BUNDLE_TYPE = CRITERIA_COMPONENT_DICT.TRANSACTION;
-  // }
+export default class CriteriaComboBundleTransaction extends CriteriaComboBundle {
 
   childBundleType() {
     return CRITERIA_COMPONENT_DICT.TRANSACTION;

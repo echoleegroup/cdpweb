@@ -98,7 +98,7 @@ const INITIAL_CRITERIA = Object.freeze({
   operator: 'eq'  //for default value
 });
 
-export default class CriteriaAssignment extends React.PureComponent {
+export default class ModalCriteriaSetter extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -116,7 +116,6 @@ export default class CriteriaAssignment extends React.PureComponent {
 
   componentWillMount() {
     this.openModal = (callback) => {
-      // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
       this.setState(prevState => ({
         isOpen: true
@@ -125,7 +124,6 @@ export default class CriteriaAssignment extends React.PureComponent {
     };
 
     this.closeModal = () => {
-      // console.log('CriteriaAssignment closeModal');
       this.setState({
         isOpen: false,
         criteria: Map(INITIAL_CRITERIA).merge({
@@ -147,7 +145,6 @@ export default class CriteriaAssignment extends React.PureComponent {
           value: dataProcessor(data.value),
           value_label: data.value_label
         });
-        // console.log('CriteriaAssignment::confirmCriteria: ', c);
         this.responseCriteria(c.toJSON());
         this.closeModal();
       } else {
@@ -162,7 +159,6 @@ export default class CriteriaAssignment extends React.PureComponent {
     };
 
     this.tailClickHandler = (node) => {
-      // console.log('CriteriaAssignment tailClickHandler: ', node);
       this.setState(prevState => {
         return {
           selectedFeature: node,
@@ -187,10 +183,6 @@ export default class CriteriaAssignment extends React.PureComponent {
         };
       });
     };
-  };
-
-  componentWillUnmount() {
-    console.log('CriteriaAssignment will unmount');
   };
 
   render() {

@@ -1,9 +1,6 @@
 import React from 'react';
 
 export default class CriteriaBaseBodyContainer extends React.PureComponent {
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return (this.props.isPreview !== nextProps.isPreview);
-  // };
 
   render() {
     let props = this.props;

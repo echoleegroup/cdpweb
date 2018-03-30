@@ -1,11 +1,12 @@
 import React from 'react';
 import {isEmpty, reduce} from 'lodash';
-import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
-import IntegratedAnalysisCriteriaBase from "./IntegratedAnalysisCriteriaBase";
+import ModalCriteriaSetter from './ModalCriteriaSetter';
+import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import IntegratedCriteriaBase from "./IntegratedCriteriaBase";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import shrotid from "shortid";
 
-export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysisCriteriaBase {
+export default class IntegratedCriteriaClient extends IntegratedCriteriaBase {
   constructor(props) {
     super(props);
     if (isEmpty(this.state.criteria)) {
@@ -51,7 +52,6 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     };
 
     let isFound = MAIN_TARGET_FINDER(criteria);
-    console.log('isFound: ', isFound);
     if (!isFound) {
       this.setState({
         message_error: '必須指定對象別條件'
@@ -65,8 +65,13 @@ export default class IntegratedAnalysisCriteriaClient extends IntegratedAnalysis
     return '第一步 挑選顧客屬性資料';
   };
 
-  fetchPreparedData(props, _this, callback) {
-    IntegratedAnalysisAction.getClientCriteriaFeatures(callback);
+  fetchPreparedData(callback) {
+    integratedAnalysisAction.getClientCriteriaFeatures(data => {
+      callback({
+        features: data.features,
+        featureRefCodeMap: data.featureRefCodeMap
+      });
+    });
   };
 
   ComponentPreviewControlButton() {

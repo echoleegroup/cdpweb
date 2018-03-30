@@ -57,19 +57,13 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.removeCriteriaComponents = (id) => {
-      // console.log('CriteriaBundle::removeCriteriaComponents: ', id);
       delete this.criteriaComponents[id];
-      // console.log('CriteriaBundle::removeCriteriaComponents: ', component);
-      // let index = indexOf(this.criteriaComponents, component);
-      // console.log('CriteriaBundle::removeCriteriaComponents::findIndex ', index);
-      // this.criteriaComponents.splice(index, 1);
-      // console.log('CriteriaBundle::removeCriteriaComponents: ', this.criteriaComponents);
     };
 
     this.gatheringChildCriteria = () => {
       return reduce(this.criteriaComponents, (collector, comp, id) => {
         let crite = comp.criteriaGathering(); //immutable Map
-        // console.log('CriteriaBundle::criteriaGathering::crite ', crite);
+
         if (!isEmpty(crite))
           collector.push(crite);
         return collector
@@ -77,18 +71,14 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.criteriaGathering = () => {
-      // console.log('CriteriaBundle::criteriaGathering: ', this.criteriaComponents);
       let subCrits = this.gatheringChildCriteria();
 
-      // console.log('CriteriaBundle::criteriaGathering::subCrits ', subCrits);
-      // console.log('CriteriaBundle::criteriaGathering::subCrits.length ', subCrits.length);
       return (subCrits.length === 0)? {}: assign({}, this.state.properties.toJSON(), {
         criteria: subCrits
       });
     };
 
     this.insertCriteriaState = (criteria) => {
-      // console.log('CriteriaBundle:insertCriteria: ', criteria);
       this.setState(prevState => ({
         properties: prevState.properties.set('criteria', prevState.properties.get('criteria').push(criteria))
       }));
@@ -108,24 +98,13 @@ export default class CriteriaBundle extends React.PureComponent {
       this.setState(prevState => ({
         properties: prevState.properties.set('operator', value)
       }));
-      // this.updatePropertyState('criteria', childCriteria);
-      // this.updatePropertyState('operator', value);
     };
 
-    // this.updatePropertyState = (key, value) => {
-    //   this.setState(prevState => ({
-    //     properties: prevState.properties.set(key, value)
-    //   }));
-    // };
   };
 
   componentDidMount() {
     this.props.collectCriteriaComponents(this.getPropertyState('id'), this);
   };
-
-  // componentWillUpdate(nextProps, nextState) {
-  //   console.log('CriteriaBundle: componentWillUpdate: ', nextState);
-  // };
 
   componentWillUnmount() {
     // console.log('CriteriaBundle::componentWillUnmount: ', this.state);
@@ -135,7 +114,7 @@ export default class CriteriaBundle extends React.PureComponent {
   render() {
     let ComponentBundleBody = this.ComponentBundleBody.bind(this);
     let ComponentButtonInsertCriteria = this.ComponentButtonInsertCriteria.bind(this);
-    let ComponentCustomized = this.ComponentCustomized.bind(this);
+    // let ComponentCustomized = this.ComponentCustomized.bind(this);
     let ComponentBundleOperator = this.ComponentBundleOperator.bind(this);
     // let ComponentChildCriteriaBlock = this.ComponentChildCriteriaBlock.bind(this);
     let ComponentBundleBodyTail = this.ComponentBundleBodyTail.bind(this);
@@ -200,7 +179,6 @@ export default class CriteriaBundle extends React.PureComponent {
   };
 
   ComponentBundleOperator(props) {
-    // console.log('ComponentBundleOperator::CriteriaBundle: ', typeof this.state);
     return (
       <select className="form-control"
               defaultValue={props.criteria.operator}

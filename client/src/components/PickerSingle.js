@@ -19,14 +19,6 @@ export default class PickerSingle extends React.PureComponent {
       </li>
     );
   };
-  //
-  // componentWillMount() {
-  //   console.log('===TailContainer componentWillMount');
-  // };
-  //
-  // componentWillUpdate() {
-  //   console.log('===TailContainer componentWillUpdate');
-  // };
 
   render() {
     return (

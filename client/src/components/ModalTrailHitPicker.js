@@ -1,46 +1,32 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {xorBy, debounce, assign, filter, uniqBy, differenceBy, difference} from 'lodash';
+import {xorBy, debounce, assign, uniqBy, filter, differenceBy, difference} from 'lodash';
 import shortid from 'shortid';
-import {List} from "immutable";
+import {List, mergeWith} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import PickerMultiple from './PickerMultiple'
 import {NODE_TYPE_DICT as NODE_TYPE} from "../utils/tree-node-util";
 
 const INITIAL_CRITERIA = Object.freeze({
   id: undefined,
-  type: CRITERIA_COMPONENT_DICT.FIELD_TAG,
+  type: CRITERIA_COMPONENT_DICT.FIELD_TRAIL_TAG,
   value: undefined,
   value_label: undefined
 });
 
 const extractAllNode = (nodes) => {
   let tailNodes = filter(nodes, {type: NODE_TYPE.Tail});
-  // console.log('tailNodes: ', tailNodes);
+
   return filter(nodes, {type: NODE_TYPE.Branch}).reduce((accumulator, branchNode) => {
     return accumulator.concat(extractAllNode(branchNode.children))
   }, tailNodes);
 };
 
-// const filterNodes = (nodes) => {
-//   return nodes.reduce((accumulator, node) => {
-//     switch (node.type) {
-//       case NODE_TYPE.Branch:
-//         node
-//         return accumulator.concat(filterNodes(node.children));
-//       case NODE_TYPE.Tail:
-//         accumulator.push(node);
-//         return accumulator;
-//     }
-//   }, []);
-// };
-
 const toggleList = (target, selected) => {
-  // console.log('toggleList target: ', target);
   return xorBy([target], selected, 'id');
 };
 
-export default class TagPickerModal extends React.PureComponent {
+export default class ModalTrailHitPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,8 +45,8 @@ export default class TagPickerModal extends React.PureComponent {
 
   componentWillMount() {
     this.openModal = (callback) => {
-      // console.log('CriteriaAssignment::openModal');
       this.responseCriteria = callback;
+
       this.setState({
         isOpen: true
       });
@@ -75,9 +61,7 @@ export default class TagPickerModal extends React.PureComponent {
       this.keywordInput.value = this.keyword;
       this.setState(prevState => ({
         isOpen: false,
-        // isLoaded: false,
         collapse: true,
-        // selected: List(),
         filteredOptions: prevState.options
       }));
     };
@@ -96,10 +80,6 @@ export default class TagPickerModal extends React.PureComponent {
     };
 
     this.selectAllOptions = () => {
-      // const mergeHandler = (oldVal, newVal) => {};
-      // this.setState(prevState => ({
-      //   selected: mergeWith((oldVal, newVal) => {}, this.state)
-      // }));
 
       let allNode = extractAllNode(this.state.filteredOptions);
       this.setState(prevState => ({
@@ -127,7 +107,7 @@ export default class TagPickerModal extends React.PureComponent {
     this.optionsFilter = (e) => {
       let keyword = this.keywordInput.value;
       if (!this.composition && this.keyword !== keyword) {
-        console.log('keyword: ', keyword);
+        // console.log('keyword: ', keyword);
         this.keyword = keyword;
 
         this.setState({isLoaded: false});
@@ -136,13 +116,6 @@ export default class TagPickerModal extends React.PureComponent {
           filteredOptions: filter(prevState.options, (option => option.label.indexOf(this.keyword) > -1)),
           isLoaded: true
         }));
-
-        // this.dataHandler(this.keyword, (data) => {
-        //   this.setState({
-        //     isLoaded: true,
-        //     options: List(data)
-        //   });
-        // });
       }
     };
 
@@ -152,9 +125,7 @@ export default class TagPickerModal extends React.PureComponent {
       }));
     };
 
-    this.dataHandler(null, (data) => {
-      // console.log('this.props.selected', this.props.selected);
-      // let optionImmutable = List(data);
+    this.dataHandler(undefined, undefined, undefined, (data) => {
       this.setState({
         isLoaded: true,
         options: data,
@@ -165,9 +136,6 @@ export default class TagPickerModal extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    // this.setState(prevState => ({
-    //   selected: List(filter(prevState.options, option => nextProps.selected.indexOf(option.id) > -1))
-    // }));
     if (this.props.selected.length !== nextProps.selected.length ||
       difference(this.props.selected, nextProps.selected).length > 0) {
       this.setState(prevState => ({
@@ -175,14 +143,6 @@ export default class TagPickerModal extends React.PureComponent {
       }));
     }
   };
-
-  componentWillUpdate() {
-    console.log('TagPickerModal will update');
-  };
-
-  componentWillUnmount() {
-    console.log('TagPickerModal will unmount');
-  }
 
   render() {
     let display = (this.state.isOpen)? '': 'none';
@@ -192,7 +152,7 @@ export default class TagPickerModal extends React.PureComponent {
           <h2>{this.props.title}</h2>
           <div className="modalContent">
             <div className="form-group">
-              <label htmlFor="inputName" className="col-sm-2 control-label">標籤</label>
+              <label htmlFor="inputName" className="col-sm-2 control-label">標題</label>
               <div className="col-sm-9">
                 <div className="form-inline">
                   <input type="text" className="form-control" defaultValue={null}
@@ -201,7 +161,6 @@ export default class TagPickerModal extends React.PureComponent {
                          onCompositionStart={(e) => {this.composition = true;}}
                          onInput={debounce(this.optionsFilter, 500)}
                   />
-                  {/*<button type="button" className="btn btn-default" aria-hidden="true" onClick={this.optionsFilter}>查詢</button>*/}
                 </div>
               </div>
             </div>

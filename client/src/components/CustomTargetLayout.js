@@ -1,9 +1,9 @@
 import React  from 'react';
 import AlertMessenger from './AlertMessenger';
-import CustomTargetFilterPrimaryContent from './CustomTargetFilterPrimaryContent';
-import CustomTargetFilterIllustration from './CustomTargetFilterIllustration';
+import CustomTargetFilterPrimaryContent from './CustomTargetFilter';
+import CustomTargetFilterIllustration from './CustomTargetIllustration';
 
-export default class CustomTargetFilterHome extends React.PureComponent {
+export default class CustomTargetLayout extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

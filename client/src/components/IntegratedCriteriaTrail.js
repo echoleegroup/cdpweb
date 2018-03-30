@@ -1,18 +1,17 @@
 import React from 'react';
 import {assign} from 'lodash';
-import IntegratedAnalysisCriteriaTransaction from "./IntegratedAnalysisCriteriaTransaction";
-import IntegratedAnalysisAction from "../actions/integrated-analysis-action";
-import CriteriaTransactionComboBundle from "./CriteriaTransactionComboBundle";
+import IntegratedCriteriaTransaction from "./IntegratedCriteriaTransaction";
+import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import CriteriaTransactionComboBundle from "./CriteriaComboBundleTransaction";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
-export default class IntegratedAnalysisCriteriaTrail extends IntegratedAnalysisCriteriaTransaction {
+export default class IntegratedCriteriaTrail extends IntegratedCriteriaTransaction {
   subheadText() {
     return '第五步 挑選顧客行為軌跡指定條件';
   };
 
-  fetchPreparedData(props, _this, callback) {
-    // console.log('TAG fetchPreparedData');
-    IntegratedAnalysisAction.getTrailFeatureSets(data => {
+  fetchPreparedData(callback) {
+    integratedAnalysisAction.getTrailFeatureSets(data => {
       callback({
         featureSets: data
       });
