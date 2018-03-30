@@ -339,8 +339,13 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
+            let CustIDValue = (list[0].data[i][uCustIDindex] != undefined) 
+            ? list[0].data[i][uCustIDindex].toString().toUpperCase() : null;
+            let LicsNOValue = ( list[0].data[i][uLicsNOindex] != undefined) 
+            ? list[0].data[i][uLicsNOindex].toString().toUpperCase() : null;
+
             db.query("INSERT INTO cu_OuterListDet (outerListID,uName,uCustID,uLicsNO,uTel,uMail,uAdd,uAtName,uAtTel,uAtMail,uAtAdd)"
-              + " VALUES(" + outerListID + ",'" + list[0].data[i][uNameindex] + "','" + list[0].data[i][uCustIDindex].toUpperCase() + "','" + list[0].data[i][uLicsNOindex].toUpperCase() + "','" + list[0].data[i][uTelindex] + "','" + list[0].data[i][uMailindex] + "','" + list[0].data[i][uAddindex] + "','" + list[0].data[i][uAtNameindex] + "','" + list[0].data[i][uAtTelindex] + "','" + list[0].data[i][uAtMailindex] + "','" + list[0].data[i][uAtAddindex] + "')", function (err, recordset) {
+              + " VALUES(" + outerListID + ",'" + list[0].data[i][uNameindex] + "','" + CustIDValue + "','" + LicsNOValue + "','" + list[0].data[i][uTelindex] + "','" + list[0].data[i][uMailindex] + "','" + list[0].data[i][uAddindex] + "','" + list[0].data[i][uAtNameindex] + "','" + list[0].data[i][uAtTelindex] + "','" + list[0].data[i][uAtMailindex] + "','" + list[0].data[i][uAtAddindex] + "')", function (err, recordset) {
                 if (err) {
                   console.log(err);
                 }
@@ -437,7 +442,7 @@ module.exports = (app) => {
       .setInput('userID', _connector.TYPES.NVarChar, req.user.userId)
       .setInput('outerListID', _connector.TYPES.Int, outerListID);
     Q.nfcall(request.executeQuery, sql).then((resultSet) => {
-      res.redirect("/feeddata/outdata/edit?outerListID="+outerListID);
+      res.redirect("/feeddata/outdata/edit?outerListID=" + outerListID);
     }).fail((err) => {
       winston.error('====[modelUpload] query modelUpload failed: ', err);
       res.send(err);
