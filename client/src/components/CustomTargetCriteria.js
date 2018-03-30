@@ -15,7 +15,7 @@ export default class CustomTargetCriteria extends CriteriaBase {
     return '名單條件設定';
   };
 
-  fetchPreparedData(props, _this, callback) {
-    CustomFilterAction.getCustomCriteriaFeatures(props.params.mdId, props.params.batId, callback);
+  fetchPreparedData(callback) {
+    CustomFilterAction.getCustomCriteriaFeatures(this.props.params.mdId, this.props.params.batId, callback);
   };
 };

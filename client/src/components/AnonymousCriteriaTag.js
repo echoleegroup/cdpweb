@@ -2,7 +2,7 @@ import IntegratedAnalysisCriteriaTag from './IntegratedCriteriaTag';
 import AnonymousAnalysisAction from "../actions/anonymous-analysis-action";
 
 export default class AnonymousCriteriaTag extends IntegratedAnalysisCriteriaTag {
-  fetchPreparedData(props, _this, callback) {
+  fetchPreparedData(callback) {
     // console.log('TAG fetchPreparedData');
     AnonymousAnalysisAction.getAnonymousTagFeatureSets(data => {
       callback({
