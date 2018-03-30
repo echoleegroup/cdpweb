@@ -16,6 +16,8 @@ export default class CriteriaBase extends React.PureComponent {
     this.state = {
       isPreview: true,
       isLoaded: false,
+      features: [],
+      featureRefCodeMap: {},
       message_success: undefined,
       message_warning: undefined,
       message_error: undefined,
@@ -90,10 +92,6 @@ export default class CriteriaBase extends React.PureComponent {
     });
   };
 
-  // componentWillUnmount() {
-  //   console.log('CriteriaBase::componentWillUnmount: ');
-  // };
-
   render() {
     let ComponentModals = this.ComponentModals;
     let mapToProps = {
@@ -140,7 +138,15 @@ export default class CriteriaBase extends React.PureComponent {
   };
 
   ComponentModals(props) {
-    return <div/>;
+    let mapToProps = {
+      features: this.state.features,
+      featureRefCodeMap: this.state.featureRefCodeMap
+    };
+    return (
+      <ModalCriteriaSetter {...mapToProps} ref={(e) => {
+        this.masterModal = e;
+      }}/>
+    );
   };
 
   ComponentHeadline(props) {

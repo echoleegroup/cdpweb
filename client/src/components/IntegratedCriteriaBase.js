@@ -7,18 +7,6 @@ export default class IntegratedCriteriaBase extends CriteriaBase {
     return '查詢條件';
   };
 
-  ComponentModals(props) {
-    let mapToProps = {
-      features: this.state.features || [],
-      featureRefCodeMap: this.state.featureRefCodeMap || {}
-    };
-    return (
-      <ModalCriteriaSetter {...mapToProps} ref={(e) => {
-        this.masterModal = e;
-      }}/>
-    );
-  };
-
   ComponentPreviewControlButton() {
     return (
       <div className="btn-block center-block">

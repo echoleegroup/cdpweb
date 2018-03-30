@@ -37,12 +37,12 @@ export default class CriteriaHomeLayout extends React.PureComponent {
     this.stepTo = (targetStep) => {
       return () => {
         //this.setStep(targetStep);
-        this.getStepForwardHandler(this.state.step)(targetStep);
+        this.stepForward(this.state.step, targetStep);
       };
     };
 
     this.stepToHandler = (targetStep) => {
-      return this.getStepForwardHandler(this.state.step)(targetStep);
+      this.stepForward(this.state.step, targetStep);
     };
 
     this.storeCurrentStepComponent = (e) => {
@@ -112,8 +112,8 @@ export default class CriteriaHomeLayout extends React.PureComponent {
     });
   };
 
-  getStepForwardHandler(step) {
-    return (currComp, allowHandler, denyHandler) => {};
+  stepForward(step, targetStep) {
+    return (currComp) => {};
   }
 
   render() {

@@ -28,17 +28,20 @@ export default class AnonymousQueryHome extends CriteriaHomeLayout {
     });
   };
 
-  getStepForwardHandler(step) {
+  stepForward(step, targetStep) {
+    if (targetStep === step)
+      return ;
+
     switch (step) {
       case this.STEPS.step1:
       case this.STEPS.step2:
-        return this.criteriaStepForwardHandler;
+        return this.criteriaStepForwardHandler(targetStep);
       case this.STEPS.step3:
-        return this.stepForwardHandler;
+        return this.stepForwardHandler(targetStep);
       case this.STEPS.step4:
-        return this.featurePickerStepForwardHandler;
+        return this.featurePickerStepForwardHandler(targetStep);
       default:
-        return this.stepForwardHandler;
+        return this.stepForwardHandler(targetStep);
     }
   };
 
