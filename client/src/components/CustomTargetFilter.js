@@ -59,7 +59,6 @@ export default class CustomTargetFilter extends React.PureComponent {
             .set('statements', criteria.statements)
         }));
 
-        console.log('CustomTargetFilterWorker::filterResultPreview: ', criteria);
         CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
           this.setState({
             isLoaded: true,
@@ -113,11 +112,6 @@ export default class CustomTargetFilter extends React.PureComponent {
       });
     };
 
-    //this.getHistory();
-  };
-
-  componentWillUpdate() {
-    console.log('CustomTargetFilterWorker::componentWillUpdate');
   };
 
   render() {

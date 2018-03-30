@@ -33,7 +33,6 @@ FilterAction.getCriteriaHistory = (mdId, batId, success, fail) => {
 FilterAction.getCustomTargetFilterPreview = (mdId, batId, criteria, success, fail) => {
   let url = format(FILTER_RESULT_PREVIEW, mdId, batId);
   action.ajaxPostObservable(url, criteria, undefined).subscribe(data => {
-    console.log('ajaxPostObservable subscribe: ', data);
     success && success(data);
   }, err => {
     console.log('===getCustomTargetFilterPreview failed: ', err);
