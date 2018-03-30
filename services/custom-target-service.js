@@ -81,8 +81,7 @@ module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
     .executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===criteria-service::' +
-      'getCustomCriteriaFeatureTree(treeId=%s) failed: %j',
+    winston.error('===criteria-service::getCustomCriteriaFeatureTree(treeId=%s) failed: %j',
       treeId, err);
     callback(err);
   });

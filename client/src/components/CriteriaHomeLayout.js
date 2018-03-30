@@ -120,16 +120,22 @@ export default class CriteriaHomeLayout extends React.PureComponent {
     let ComponentContent = this.ComponentContent;
     let ComponentSideBar = this.ComponentSideBar;
     return (
-      <div className="row">
-        {/*<!-- 左欄 Start -->*/}
-        <div className="col-md-8 col-sm-7 col-xs-12">
-          <AlertMessenger message_error={this.state.message_error}/>
-          <ComponentContent/>
+      <div>
+        <div className="row">
+          <div className="col-md-12 col-sm-12 col-xs-12">
+            <AlertMessenger message_error={this.state.message_error}/>
+          </div>
         </div>
-        {/*<!-- 右欄 Start -->*/}
-        <div className="col-md-4 col-sm-5 col-xs-12">
-          {/*<!-- table set Start -->*/}
-          <ComponentSideBar/>
+        <div className="row">
+          {/*<!-- 左欄 Start -->*/}
+          <div className="col-md-8 col-sm-7 col-xs-12">
+            <ComponentContent/>
+          </div>
+          {/*<!-- 右欄 Start -->*/}
+          <div className="col-md-4 col-sm-5 col-xs-12">
+            {/*<!-- table set Start -->*/}
+            <ComponentSideBar/>
+          </div>
         </div>
       </div>
     );

@@ -3,6 +3,7 @@ import Loader from 'react-loader';
 import numeral from 'numeral';
 import {format} from 'util';
 import {Map} from 'immutable';
+import AlertMessenger from './AlertMessenger';
 import CustomTargetFilterCriteria from './CustomTargetFilterCriteria';
 import CustomFilterAction from '../actions/custom-filter-action';
 
@@ -18,7 +19,8 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
       prediction: {
         size: 0,
         model_target: 0
-      }
+      },
+      message_error: undefined
     };
   };
 
@@ -64,11 +66,14 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
             prediction: {
               sizeOfResults: data.sizeOfCriteriaResult,
               sizeOfResultsInTarget: data.sizeOfResultsInTarget
-            }
+            },
+            message_error: undefined
           });
         });
       } else {
-        window.alert('Please confirm your criteria before submit request.');
+        this.setState({
+          message_error: '請先完成條件編輯'
+        });
       }
     };
 
@@ -86,7 +91,9 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
         $(this.inputCriteria).val(JSON.stringify(criteria));
         $(this.formComponent).submit();
       } else {
-        window.alert('Please confirm your criteria before submit request.');
+        this.setState({
+          message_error: '請先完成條件編輯'
+        });
       }
     };
 
@@ -140,6 +147,7 @@ export default class CustomTargetFilterPrimaryContent extends React.PureComponen
             </div>
             <CustomTargetFilterPreview prediction={this.state.prediction}/>
           </form>
+          <AlertMessenger message_error={this.state.message_error}/>
           <div className="btn-block center-block">
             <button type="submit" className="btn btn-lg btn-default" onClick={this.filterResultPreview}>名單數試算</button>
             <button type="submit" className="btn btn-lg btn-default" onClick={this.filterResultExport}>自定名單下載</button>

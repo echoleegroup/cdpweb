@@ -36,13 +36,11 @@ module.exports = (app) => {
       Q.nfcall(criteriaService.getCustomCriteriaFeatures, mdId, batId, criteriaHelper.MODEL_FEATURE_CATEGORY_ID, criteriaHelper.CUSTOMER_FEATURE_SET_ID),
       Q.nfcall(criteriaService.getCustomCriteriaFeatureTree, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
     ]).spread((features, foldingTree) => {
-      winston.info('getCustomCriteriaFeatures: ', features);
-      winston.info('getCustomCriteriaFeatureTree: ', foldingTree);
-      // get code group from features
-      // ** IMPORTANT: get code group before transforming features to tree nodes **
-      // ** because featuresToTreeNodes is a mutated function, which move folded fields out of features **
-      let codeGroupGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
+      // winston.info('getCustomCriteriaFeatures: ', features);
+      // winston.info('getCustomCriteriaFeatureTree: ', foldingTree);
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
+      // get code group from features
+      let codeGroupGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
       return Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroupGroups).then(codeGroupResSet => ({
         features: fields,
         featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')

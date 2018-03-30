@@ -43,11 +43,9 @@ const criteriaFeaturePromise = (setId, treeId) => {
   ]).spread((features, foldingTree) => {
     // winston.info('criteriaFeaturePromise getCriteriaFeatures: ', features);
     // winston.info('criteriaFeaturePromise getCriteriaFeatureTree: ', foldingTree);
-    // get code group from features
-    // ** IMPORTANT: get code group before transforming features to tree nodes **
-    // ** because featuresToTreeNodes is a mutated function, which move folded fields out of features **
-    let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
     let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
+    // get code group from features
+    let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
     return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
       features: fields,
       featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
