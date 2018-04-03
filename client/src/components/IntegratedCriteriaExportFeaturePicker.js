@@ -82,7 +82,7 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
       let selectedRelativeSets = this.state.selectedRelative.toJS();
 
       let formDate = {
-        mod: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
+        // mode: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),

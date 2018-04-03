@@ -10,12 +10,12 @@ const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
 const integrationTaskService = require('../../services/integration-analysis-task-service');
 const codeGroupService = require('../../services/code-group-service');
-const queryService = require('../../services/query-log-service');
-const fileHelper = require('../../helpers/file-helper');
-const criteriaHelper = require('../../helpers/criteria-helper');
+const queryLogService = require('../../services/query-log-service');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
+const criteriaHelper = require('../../helpers/criteria-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
+const INTEGRATED_MODE = constants.INTEGRATED_MODE;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 // const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 // const multer = require('multer');
@@ -24,7 +24,10 @@ const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 const CLIENT_CRITERIA_FEATURE_SET_ID = 'COMMCUST';
 const VEHICLE_CRITERIA_FEATURE_SET_ID = 'COMMCAR';
 
+const INTEGRATION_ANALYSIS_SET_ID = 'COMMANA';
 const INTEGRATION_ANALYSIS_TREE_ID = 'COMM';
+
+const ANONYMOUS_ANALYSIS_SET_ID = 'OUCOMMANA';
 const ANONYMOUS_ANALYSIS_TREE_ID = 'OUCOMM';
 
 const CRITERIA_TRANSACTION_SET_ID = 'COMMTARGETSET';
@@ -38,10 +41,10 @@ const ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID = 'OUCOMMDNLD';
 
 const criteriaFeaturePromise = (setId, treeId) => {
   return Q.all([
-    Q.nfcall(integrationService.getCriteriaFeatures, setId),
+    Q.nfcall(integrationService.getCriteriaFeaturesOfSet, setId),
     Q.nfcall(integrationService.getCriteriaFeatureTree, treeId)
   ]).spread((features, foldingTree) => {
-    // winston.info('criteriaFeaturePromise getCriteriaFeatures: ', features);
+    // winston.info('criteriaFeaturePromise getCriteriaFeaturesOfSet: ', features);
     // winston.info('criteriaFeaturePromise getCriteriaFeatureTree: ', foldingTree);
     let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
     // get code group from features
@@ -224,7 +227,7 @@ module.exports = (app) => {
       Q.nfcall(integrationService.getDownloadFeaturesOfSet, EXPORT_DOWNLOAD_FEATURE_SET_ID),
       Q.nfcall(integrationService.getCriteriaFeatureTree, INTEGRATION_ANALYSIS_TREE_ID)
     ]).spread((features, foldingTree) => {
-      // winston.info('/export/features getCriteriaFeatures: ', features);
+      // winston.info('/export/features getCriteriaFeaturesOfSet: ', features);
       // winston.info('/export/features getCriteriaFeatureTree: ', foldingTree);
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       res.json(fields);
@@ -247,61 +250,46 @@ module.exports = (app) => {
     let criteria = req.body.criteria;
     let expt = req.body.export;
     let filter = req.body.filter;
-    let mod = req.body.mod;
+    let mode = INTEGRATED_MODE.IDENTIFIED;
 
-    // winston.info(req.body.export);
-
-    let promises = _.map(expt.relatives, relativeSetId => {
-      return Q.all([
-        Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
-        Q.nfcall(integrationService.getDownloadFeaturesOfSet, relativeSetId)
-      ]).spread((featureSet, features) => {
-        return {
-          [relativeSetId]: {
-            features: _.map(features, 'featID'),
-            filter: _.assign({
-              feature: featureSet.periodCriteriaFeatID
-            }, filter.relatives)
+    let promises = [
+      Q.nfcall(integratedHelper.initializeQueryTaskLog, MENU_CODE.INTEGRATED_QUERY,
+        JSON.stringify(criteria), JSON.stringify(expt), JSON.stringify(filter), mode, req.user.userId),
+      Q.nfcall(integrationService.getCriteriaFeaturesOfSet, INTEGRATION_ANALYSIS_SET_ID)
+    ].concat(
+      _.map(expt.relatives, relativeSetId => {
+        return Q.all([
+          Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
+          Q.nfcall(integrationService.getDownloadFeaturesOfSet, relativeSetId)
+        ]).spread((featureSet, features) => {
+          return {
+            [relativeSetId]: {
+              features: _.map(features, 'featID'),
+              filter: _.assign({
+                feature: featureSet.periodCriteriaFeatID
+              }, filter.relatives)
+            }
           }
-        }
-      });
-    });
+        });
+      })
+    );
 
-    promises.splice(0, 0,
-      Q.nfcall(queryService.insertQueryLog , {
-        menuCode: MENU_CODE.INTEGRATED_QUERY,
-        criteria: JSON.stringify(criteria),
-        features: JSON.stringify(expt),
-        filters: JSON.stringify(filter),
-        reserve2: mod,
-        updUser: req.user.userId
-      }).then(insertRes => {
-        return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
-      }));
-
-    Q.all(promises).then(([insertLog, ...results]) => {
+    Q.all(promises).then(([insertLog, analyzableFeatures, ...results]) => {
       // winston.info('insertLog: ', insertLog);
       // winston.info('results: %j', results);
+      let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = _.assign({}, ...results);
-      let backendCriteriaData = {
-        criteria: criteria,
-        export: {
-          master: {
-            features: expt.master,
-            filter: {}
-          },
-          relatives: relatives
-        }
-      };
+      let backendCriteriaData = integratedHelper.backendCriteriaDataWrapper(
+        criteria, expt.master, {}, analyzableFeatureIds, relatives);
 
       return Q.all([
         backendCriteriaData,
         insertLog.queryID,
-        Q.nfcall(queryService.updateQueryLogProcessingData, insertLog.queryID, JSON.stringify(backendCriteriaData))
+        Q.nfcall(queryLogService.updateQueryLogProcessingData, insertLog.queryID, JSON.stringify(backendCriteriaData))
       ]);
     }).spread((backendCriteriaData, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
-      // winston.info('backendCriteriaData: %j', backendCriteriaData);
+      winston.info('backendCriteriaData: %j', backendCriteriaData);
       const integratedAnalysisTransService = require('../../services/trans-360backand-service');
       return Q.all([
         queryId,
@@ -342,7 +330,7 @@ module.exports = (app) => {
     let fileName = `${queryId}.zip`;
     let filePath = `${constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE}/${fileName}`;
 
-    Q.nfcall(queryService.insertDownloadLog, {
+    Q.nfcall(queryLogService.insertDownloadLog, {
       queryId,
       filePath,
       userId: req.user.userId
@@ -388,7 +376,7 @@ module.exports = (app) => {
       Q.nfcall(integrationService.getDownloadFeaturesOfSet, ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID),
       Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
     ]).spread((features, foldingTree) => {
-      // winston.info('/export/features getCriteriaFeatures: ', features);
+      // winston.info('/export/features getCriteriaFeaturesOfSet: ', features);
       // winston.info('/export/features getCriteriaFeatureTree: ', foldingTree);
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       res.json(fields);
@@ -402,40 +390,34 @@ module.exports = (app) => {
     let criteria = req.body.criteria;
     let expt = req.body.export;
     let filter = req.body.filter;
+    let mode = INTEGRATED_MODE.ANONYMOUS;
 
     // winston.info(req.body.export);
-
-    Q.nfcall(queryService.insertQueryLog , {
-      menuCode: MENU_CODE.INTEGRATED_QUERY,
-      criteria: JSON.stringify(criteria),
-      features: JSON.stringify(expt),
-      filters: JSON.stringify(filter),
-      updUser: req.user.userId
-    }).then(insertRes => {
-      return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, req.user.userId)
-    }).then(insertLog => {
+    Q.all([
+      Q.nfcall(integrationService.getCriteriaFeaturesOfSet, ANONYMOUS_ANALYSIS_SET_ID),
+      Q.nfcall(integratedHelper.initializeQueryTaskLog,
+        MENU_CODE.ANONYMOUS_QUERY,
+        JSON.stringify(criteria),
+        JSON.stringify(expt),
+        JSON.stringify(filter),
+        mode,
+        req.user.userId)
+    ]).then(([insertLog, analyzableFeatures]) => {
       // winston.info('insertLog: ', insertLog);
       // winston.info('results: %j', results);
+      let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = {};
-      let backendCriteriaData = {
-        criteria: criteria,
-        export: {
-          master: {
-            features: expt.master,
-            filter: {}
-          },
-          relatives: relatives
-        }
-      };
+      let backendCriteriaData =
+        integratedHelper.backendCriteriaDataWrapper(criteria, expt.master, {}, analyzableFeatureIds, relatives);
 
       return Q.all([
         backendCriteriaData,
         insertLog.queryID,
-        Q.nfcall(queryService.updateQueryLogProcessingData, insertLog.queryID, JSON.stringify(backendCriteriaData))
+        Q.nfcall(queryLogService.updateQueryLogProcessingData, insertLog.queryID, JSON.stringify(backendCriteriaData))
       ]);
     }).spread((backendCriteriaData, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
-      // winston.info('backendCriteriaData: %j', backendCriteriaData);
+      winston.info('backendCriteriaData: %j', backendCriteriaData);
       const integratedAnalysisTransService = require('../../services/spark-api-log-service');
       return Q.all([
         queryId,
@@ -453,6 +435,17 @@ module.exports = (app) => {
       console.log(err);
       res.json(null, 500, 'internal service error');
     });
+  });
+
+  // chart
+
+  router.get('/:mode/query/:queryId/analysis/tree', middlewares, (req, res) => {
+    let queryId = req.params.queryId;
+    let mode = req.params.mode;
+    Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
+      let featureIds = JSON.parse(queryLogData.reserve1).export.master.features;
+      return Q.nfcall(integratedHelper.getFeaturesAsMap, featureIds);
+    }).then(featureMap => {});
   });
 
   return router;

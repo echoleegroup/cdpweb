@@ -288,6 +288,10 @@
           "feature": "____"
         }
       }
+    },
+    "analyzable": {
+      "features": [],
+      "filter": {}
     }
   }
 }

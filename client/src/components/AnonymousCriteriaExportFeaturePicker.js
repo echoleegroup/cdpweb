@@ -71,7 +71,7 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
       // let selectedRelativeSets = this.state.selectedRelativeId.toJS();
 
       let formDate = {
-        mod: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
+        // mode: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),

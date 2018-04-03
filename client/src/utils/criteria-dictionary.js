@@ -23,8 +23,8 @@ exports.CRITERIA_COMPONENT_DICT = {
   FIELD_TAG: 'fieldTag',
   FIELD_TRAIL_TAG: 'fieldTrailTag'
 };
-
-exports.INTEGRATED_ANALYSIS_MOD = {
-  IDENTIFIED: 'identified',
-  ANONYMOUS: 'anonymous'
-};
+//
+// exports.INTEGRATED_ANALYSIS_MOD = {
+//   IDENTIFIED: 'identified',
+//   ANONYMOUS: 'anonymous'
+// };

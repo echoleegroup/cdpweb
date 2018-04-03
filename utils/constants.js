@@ -50,7 +50,13 @@ module.exports = Object.freeze({
     EVENT_PAGE_Analysis:"actad_actAnalysis",
     CUSTOM_TARGET_FILTER: "_targetFilter",
     INTEGRATED_QUERY: "_integratedQry",
-    INTEGRATED_EXPORT: "_integratedExp"
+    INTEGRATED_EXPORT: "_integratedExp",
+    ANONYMOUS_QUERY: "_anonymousQry"
+  },
+
+  INTEGRATED_MODE: {
+    IDENTIFIED: 'IDENTIFIED',
+    ANONYMOUS: 'ANONYMOUS'
   }
 });
 

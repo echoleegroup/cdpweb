@@ -4,7 +4,7 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 const appConfig = require("../app-config");
 
-module.exports.getCriteriaFeatures = (setId, callback) => {
+module.exports.getCriteriaFeaturesOfSet = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM cd_TargetFeat t_feat, cd_Feature feature ' +
     'WHERE t_feat.setID = @setId AND t_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL)';

@@ -7,23 +7,12 @@ const fs = require('fs');
 const path = require('path');
 const es = require('event-stream');
 const csvWriter = require('csv-write-stream');
-// const integratedHelper = require('../helpers/integrated-analysis-helper');
 const integrationService = require('../services/integration-analysis-service');
 const cdpService = require('../services/customer-data-platform-service');
 const codeGroupService = require('../services/code-group-service');
 const constants = require('../utils/constants');
-
-// module.exports.featureSetsToTreeNodes = (setData) => {
-//
-//   // winston.info('===featureSetsToTreeNodes: %j', setData);
-//   return setData.map(set => {
-//     return {
-//       type: 'tail',
-//       id: set.nodeID,
-//       label: set.nodeName
-//     };
-//   });
-// };
+const queryLogService = require('../services/query-log-service');
+const integrationTaskService = require('../services/integration-analysis-task-service');
 
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {
@@ -318,4 +307,34 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
       callback(err);
     });
   });
+};
+
+module.exports.initializeQueryTaskLog = (menuCode, criteria, features, filters, mode, userId, callback) => {
+  Q.nfcall(queryLogService.insertQueryLog , {
+    menuCode: menuCode,
+    criteria,
+    features,
+    filters,
+    reserve2: mode,
+    updUser: userId
+  }).then(insertRes => {
+    return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, userId)
+  }).then(resData => callback(null, resData)).fail(err => callback(err));
+};
+
+module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatureIds, relatives) => {
+  return {
+    criteria: criteria,
+    export: {
+      master: {
+        features: masterFeature,
+        filter: masterFilter
+      },
+      relatives: relatives,
+      analyzable: {
+        features: analyzableFeatureIds,
+        filter: {}
+      }
+    }
+  }
 };
