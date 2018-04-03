@@ -1,4 +1,4 @@
-exports.OPERATOR_DICT = {
+const OPERATOR_DICT = {
   and: '全部',
   or: '任一',
   not: '皆不',
@@ -12,7 +12,7 @@ exports.OPERATOR_DICT = {
   nn: '有資料'
 };
 
-exports.CRITERIA_COMPONENT_DICT = {
+const CRITERIA_COMPONENT_DICT = {
   COMBO: 'combo',
   BUNDLE: 'bundle',
   TRANSACTION: 'refTransaction',
@@ -23,8 +23,5 @@ exports.CRITERIA_COMPONENT_DICT = {
   FIELD_TAG: 'fieldTag',
   FIELD_TRAIL_TAG: 'fieldTrailTag'
 };
-//
-// exports.INTEGRATED_ANALYSIS_MOD = {
-//   IDENTIFIED: 'identified',
-//   ANONYMOUS: 'anonymous'
-// };
+
+export {OPERATOR_DICT, CRITERIA_COMPONENT_DICT}

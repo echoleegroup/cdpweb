@@ -5,7 +5,7 @@ import {format} from 'util';
 import {Map} from 'immutable';
 import AlertMessenger from './AlertMessenger';
 import CustomTargetFilterCriteria from './CustomTargetCriteria';
-import CustomFilterAction from '../actions/custom-filter-action';
+import {FILTER_RESULT_EXPORT, getCustomTargetFilterPreview, getCriteriaHistory} from '../actions/custom-filter-action';
 
 export default class CustomTargetFilter extends React.PureComponent {
   constructor(props) {
@@ -59,7 +59,7 @@ export default class CustomTargetFilter extends React.PureComponent {
             .set('statements', criteria.statements)
         }));
 
-        CustomFilterAction.getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
+        getCustomTargetFilterPreview(this.props.params.mdId, this.props.params.batId, criteria, data => {
           this.setState({
             isLoaded: true,
             prediction: {
@@ -101,7 +101,7 @@ export default class CustomTargetFilter extends React.PureComponent {
         isLoaded: false
       });
 
-      CustomFilterAction.getCriteriaHistory(this.props.params.mdId, this.props.params.batId, data => {
+      getCriteriaHistory(this.props.params.mdId, this.props.params.batId, data => {
         this.setState(prevState => ({
           isLoaded: true,
           criteria: {
@@ -127,7 +127,7 @@ export default class CustomTargetFilter extends React.PureComponent {
           <form className="form-horizontal"
                 method="POST"
                 target="_blank"
-                action={format(CustomFilterAction.FILTER_RESULT_EXPORT, this.props.params.mdId, this.props.params.batId)}
+                action={format(FILTER_RESULT_EXPORT, this.props.params.mdId, this.props.params.batId)}
                 ref={e => {this.formComponent = e;}}>
             <input type="hidden" name="criteria" ref={e => this.inputCriteria = e}/>
             <div className="form-group">

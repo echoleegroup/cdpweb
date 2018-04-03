@@ -1,10 +1,10 @@
 import IntegratedAnalysisCriteriaTrail from './IntegratedCriteriaTrail';
-import anonymousAnalysisAction from "../actions/anonymous-analysis-action";
+import {getAnonymousTrailFeatureSets} from "../actions/anonymous-analysis-action";
 
 export default class AnonymousCriteriaTrail extends IntegratedAnalysisCriteriaTrail {
   fetchPreparedData(callback) {
     // console.log('TAG fetchPreparedData');
-    anonymousAnalysisAction.getAnonymousTrailFeatureSets(data => {
+    getAnonymousTrailFeatureSets(data => {
       callback({
         featureSets: data
       });

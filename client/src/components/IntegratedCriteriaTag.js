@@ -1,6 +1,6 @@
 import React from 'react';
 import {assign} from 'lodash';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTagFeatureSets} from "../actions/integrated-analysis-action";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import CriteriaTransactionComboBundle from "./CriteriaComboBundleTransaction";
 import IntegratedCriteriaTransaction from "./IntegratedCriteriaTransaction";
@@ -13,7 +13,7 @@ export default class IntegratedCriteriaTag extends IntegratedCriteriaTransaction
 
   fetchPreparedData(callback) {
     // console.log('TAG fetchPreparedData');
-    integratedAnalysisAction.getTagFeatureSets(data => {
+    getTagFeatureSets(data => {
       callback({
         featureSets: data
       });

@@ -3,7 +3,7 @@ import Loader from 'react-loader';
 import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
 import ModalCriteriaSetter from './ModalCriteriaSetter';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTransactionCriteriaFeatures} from "../actions/integrated-analysis-action";
 
 const OPERATOR_OPTIONS =  {
   and: '全部',
@@ -31,7 +31,7 @@ export default class CriteriaBundleTransaction extends CriteriaBundle {
     super.componentWillMount();
 
     this.fetchFeatureData = (callback) => {
-      integratedAnalysisAction.getTransactionCriteriaFeatures(
+      getTransactionCriteriaFeatures(
         this.getPropertyState('ref'), callback);
     };
 

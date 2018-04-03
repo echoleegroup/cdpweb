@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
-import ModelAction from '../actions/model-action';
+import {getPotentialTargetSummary} from '../actions/model-action';
 
 export default class CustomTargetIllustration extends React.PureComponent {
   constructor(props) {
@@ -15,7 +15,7 @@ export default class CustomTargetIllustration extends React.PureComponent {
   };
 
   componentWillMount() {
-    ModelAction.getPotentialTargetSummary(
+    getPotentialTargetSummary(
       this.props.params.mdId,
       this.props.params.batId,
       ({popName = '', popDesc = '', categCount = 0, lastTimeBatch = ''}) => {

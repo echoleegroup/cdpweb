@@ -1,5 +1,5 @@
 import React from 'react';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getVehicleCriteriaFeatures} from "../actions/integrated-analysis-action";
 import IntegratedCriteriaBase from "./IntegratedCriteriaBase";
 
 export default class IntegratedCriteriaVehicle extends IntegratedCriteriaBase {
@@ -12,7 +12,7 @@ export default class IntegratedCriteriaVehicle extends IntegratedCriteriaBase {
   };
 
   fetchPreparedData(callback) {
-    integratedAnalysisAction.getVehicleCriteriaFeatures(data => {
+    getVehicleCriteriaFeatures(data => {
       callback({
         features: data.features,
         featureRefCodeMap: data.featureRefCodeMap

@@ -1,7 +1,7 @@
 import React from 'react';
 import {map} from 'lodash';
 import {List} from 'immutable';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTagCriteriaFeatures} from "../actions/integrated-analysis-action";
 import CriteriaBundleTransaction from "./CriteriaBundleTransaction";
 import TagPickerModal from "./ModalTagPicker";
 
@@ -26,7 +26,7 @@ export default class CriteriaBundleTag extends CriteriaBundleTransaction {
     };
 
     this.fetchFeatureData = (keyword, callback) => {
-      integratedAnalysisAction.getTagCriteriaFeatures(
+      getTagCriteriaFeatures(
         this.getPropertyState('ref'), keyword, callback);
     };
   };

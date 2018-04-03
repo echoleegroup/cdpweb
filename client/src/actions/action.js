@@ -1,7 +1,6 @@
 import Rx from 'rxjs';
 import {assign} from 'lodash';
 
-const Action = {};
 const _AJAX = (options, callback) => {
   $.ajax(options).done(result => {
     (result.code < 300)?
@@ -12,7 +11,7 @@ const _AJAX = (options, callback) => {
   });
 };
 
-Action.ajaxGet = (url, data = {}, options = {}, callback) => {
+const ajaxGet = (url, data = {}, options = {}, callback) => {
   _AJAX(assign(options, {
     url: url,
     type: 'GET',
@@ -21,9 +20,9 @@ Action.ajaxGet = (url, data = {}, options = {}, callback) => {
   }), callback);
 };
 
-Action.ajaxGetObservable = Rx.Observable.bindNodeCallback(Action.ajaxGet);
+exports.ajaxGetObservable = Rx.Observable.bindNodeCallback(ajaxGet);
 
-Action.ajaxPut = (url, data = {}, options = {}, callback) => {
+const ajaxPut = (url, data = {}, options = {}, callback) => {
   _AJAX(assign(options, {
     url: url,
     type: 'PUT',
@@ -33,9 +32,9 @@ Action.ajaxPut = (url, data = {}, options = {}, callback) => {
   }), callback);
 };
 
-Action.ajaxPutObservable = Rx.Observable.bindNodeCallback(Action.ajaxPut);
+exports.ajaxPutObservable = Rx.Observable.bindNodeCallback(ajaxPut);
 
-Action.ajaxPost = (url, data = {}, options = {}, callback) => {
+const ajaxPost = (url, data = {}, options = {}, callback) => {
   _AJAX(assign(options, {
     url: url,
     type: 'POST',
@@ -45,6 +44,4 @@ Action.ajaxPost = (url, data = {}, options = {}, callback) => {
   }), callback);
 };
 
-Action.ajaxPostObservable = Rx.Observable.bindNodeCallback(Action.ajaxPost);
-
-export default Action;
+exports.ajaxPostObservable = Rx.Observable.bindNodeCallback(ajaxPost);

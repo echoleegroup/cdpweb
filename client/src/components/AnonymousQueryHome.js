@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import AnonymousAnalysisCriteriaTrail from "./AnonymousCriteriaTrail";
-import anonymousAction from '../actions/anonymous-analysis-action';
+import {getAnonymousExportFeaturePool} from '../actions/anonymous-analysis-action';
 import AnonymousAnalysisCriteriaTag from "./AnonymousCriteriaTag";
 import AnonymousAnalysisCriteriaOverview from "./AnonymousCriteriaOverview";
 import AnonymousAnalysisOutputFeaturePicker from "./AnonymousCriteriaExportFeaturePicker";
@@ -46,7 +46,7 @@ export default class AnonymousQueryHome extends CriteriaHomeLayout {
   };
 
   fetchPreparedData(callback) {
-    anonymousAction.getAnonymousExportFeaturePool(data => callback({
+    getAnonymousExportFeaturePool(data => callback({
       featureOptions: data
     }));
   };

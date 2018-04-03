@@ -10,7 +10,7 @@ import IntegratedCriteriaTag from "./IntegratedCriteriaTag";
 import IntegratedCriteriaTrail from "./IntegratedCriteriaTrail";
 import IntegratedCriteriaOverview from "./IntegratedCriteriaOverview";
 import IntegratedCriteriaExportFeaturePicker from "./IntegratedCriteriaExportFeaturePicker";
-import integratedAction from '../actions/integrated-analysis-action';
+import {getExportFeaturePool} from '../actions/integrated-analysis-action';
 import {getDate} from '../utils/date-util';
 
 export default class IntegratedQueryHome extends CriteriaHomeLayout {
@@ -74,7 +74,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
   };
 
   fetchPreparedData(callback) {
-    integratedAction.getExportFeaturePool(data => callback({
+    getExportFeaturePool(data => callback({
       featureOptions: data.featureOptions,
       relativeSetOptions: data.relativeSetOptions
     }));

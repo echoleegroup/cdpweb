@@ -2,7 +2,7 @@ import React from 'react';
 import {assign} from 'lodash';
 import CriteriaTransactionComboBundle from './CriteriaComboBundleTransaction';
 import IntegratedCriteriaBase from "./IntegratedCriteriaBase";
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTransactionFeatureSets} from "../actions/integrated-analysis-action";
 import IntegratedCriteriaFeatureSetPicker from "./IntegratedCriteriaFeatureSetPicker";
 
 export default class IntegratedCriteriaTransaction extends IntegratedCriteriaBase {
@@ -23,7 +23,7 @@ export default class IntegratedCriteriaTransaction extends IntegratedCriteriaBas
 
   fetchPreparedData(callback) {
     // integratedAnalysisAction.getVehicleCriteriaFeatures(callback);
-    integratedAnalysisAction.getTransactionFeatureSets(data => {
+    getTransactionFeatureSets(data => {
       callback({
         featureSets: data
       });

@@ -4,11 +4,10 @@ import { Modal, Button } from 'react-bootstrap';
 import {xorBy, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
-import integratedAction from '../actions/integrated-analysis-action';
+import {exportQuery} from '../actions/integrated-analysis-action';
 import AlertMessenger from './AlertMessenger';
 import 'flatpickr/dist/themes/material_green.css';
 import Flatpickr from 'react-flatpickr';
-import {INTEGRATED_ANALYSIS_MOD} from '../utils/criteria-dictionary';
 
 const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
@@ -82,7 +81,6 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
       let selectedRelativeSets = this.state.selectedRelative.toJS();
 
       let formDate = {
-        // mode: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),
@@ -98,7 +96,7 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
         }
       };
 
-      integratedAction.exportQuery(formDate, res => {
+      exportQuery(formDate, res => {
         this.setState({
           queryId: res.queryId,
           showModal: true,

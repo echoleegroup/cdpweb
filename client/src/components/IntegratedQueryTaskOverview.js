@@ -4,11 +4,7 @@ import {Map} from 'immutable';
 import moment from 'moment';
 import filesize from 'filesize';
 import CriteriaOverview from './CriteriaOverview';
-import integratedAction from '../actions/integrated-analysis-action';
-
-const getQueryTask = (queryId, callback) => {
-  integratedAction.getQueryTask(queryId, callback)
-};
+import {getQueryTask} from '../actions/integrated-analysis-action';
 
 export default class IntegratedQueryTaskOverview extends React.PureComponent {
   constructor(props) {

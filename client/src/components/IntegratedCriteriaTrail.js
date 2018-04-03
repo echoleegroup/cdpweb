@@ -1,7 +1,7 @@
 import React from 'react';
 import {assign} from 'lodash';
 import IntegratedCriteriaTransaction from "./IntegratedCriteriaTransaction";
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTrailFeatureSets} from "../actions/integrated-analysis-action";
 import CriteriaTransactionComboBundle from "./CriteriaComboBundleTransaction";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
@@ -11,7 +11,7 @@ export default class IntegratedCriteriaTrail extends IntegratedCriteriaTransacti
   };
 
   fetchPreparedData(callback) {
-    integratedAnalysisAction.getTrailFeatureSets(data => {
+    getTrailFeatureSets(data => {
       callback({
         featureSets: data
       });

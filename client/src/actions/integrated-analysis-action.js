@@ -1,5 +1,5 @@
 import {format} from 'util';
-import action from './action';
+import {ajaxGetObservable, ajaxPostObservable} from './action';
 import Rx from "rxjs/Rx";
 
 const CRITERIA_FEATURES_URL_CLIENT = '/api/integration/features/criteria/client';
@@ -28,10 +28,15 @@ const TASK_STATUS = {
   COMPLETE: "完成"
 };
 
-const FilterAction = {};
+const CATEGORY_DICT = {
+  TrackRecord: '歷程資料',
+  List: '名單'
+};
 
-FilterAction.getClientCriteriaFeatures = (success, fail) => {
-  action.ajaxGetObservable(CRITERIA_FEATURES_URL_CLIENT, undefined, undefined).subscribe(data => {
+exports.CATEGORY_DICT = CATEGORY_DICT;
+
+exports.getClientCriteriaFeatures = (success, fail) => {
+  ajaxGetObservable(CRITERIA_FEATURES_URL_CLIENT, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getClientCriteriaFeatures failed: ', err);
@@ -39,8 +44,8 @@ FilterAction.getClientCriteriaFeatures = (success, fail) => {
   });
 };
 
-FilterAction.getVehicleCriteriaFeatures = (success, fail) => {
-  action.ajaxGetObservable(CRITERIA_FEATURES_URL_VEHICLE, undefined, undefined).subscribe(data => {
+exports.getVehicleCriteriaFeatures = (success, fail) => {
+  ajaxGetObservable(CRITERIA_FEATURES_URL_VEHICLE, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getVehicleCriteriaFeatures failed: ', err);
@@ -48,9 +53,9 @@ FilterAction.getVehicleCriteriaFeatures = (success, fail) => {
   });
 };
 
-FilterAction.getTransactionCriteriaFeatures = (setId, success, fail) => {
+exports.getTransactionCriteriaFeatures = (setId, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL_TRANSACTION, setId);
-  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+  ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getTransactionCriteriaFeatures failed: ', err);
@@ -58,8 +63,8 @@ FilterAction.getTransactionCriteriaFeatures = (setId, success, fail) => {
   });
 };
 
-FilterAction.getTransactionFeatureSets = (success, fail) => {
-  action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRANSACTION, undefined, undefined).subscribe(data => {
+exports.getTransactionFeatureSets = (success, fail) => {
+  ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRANSACTION, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getTransactionFeatureSets failed: ', err);
@@ -67,9 +72,9 @@ FilterAction.getTransactionFeatureSets = (success, fail) => {
   });
 };
 
-FilterAction.getTagCriteriaFeatures = (setId, keyword, success, fail) => {
+exports.getTagCriteriaFeatures = (setId, keyword, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL_TAG, setId);
-  action.ajaxPostObservable(url, {keyword}, undefined).subscribe(data => {
+  ajaxPostObservable(url, {keyword}, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getTagCriteriaFeatures failed: ', err);
@@ -77,8 +82,8 @@ FilterAction.getTagCriteriaFeatures = (setId, keyword, success, fail) => {
   });
 };
 
-FilterAction.getTagFeatureSets = (success, fail) => {
-  action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TAG, undefined, undefined).subscribe(data => {
+exports.getTagFeatureSets = (success, fail) => {
+  ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TAG, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getTagFeatureSets failed: ', err);
@@ -86,15 +91,8 @@ FilterAction.getTagFeatureSets = (success, fail) => {
   });
 };
 
-const CATEGORY_DICT = {
-  TrackRecord: '歷程資料',
-  List: '名單'
-};
-
-FilterAction.CATEGORY_DICT = CATEGORY_DICT;
-
-FilterAction.getTrailFeatureSets = (success, fail) => {
-  action.ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRAIL, undefined, undefined).subscribe(data => {
+exports.getTrailFeatureSets = (success, fail) => {
+  ajaxGetObservable(CRITERIA_FEATURE_SETS_URL_TRAIL, undefined, undefined).subscribe(data => {
     let _data = data.map(d => {
       d.category_label = CATEGORY_DICT[d.category] || '';
       return d;
@@ -106,9 +104,9 @@ FilterAction.getTrailFeatureSets = (success, fail) => {
   });
 };
 
-FilterAction.getTrailPeriodCriteriaFeatures = (setId, success, fail) => {
+exports.getTrailPeriodCriteriaFeatures = (setId, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL_TRAIL_PERIOD, setId);
-  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+  ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     let _data = data.map(node => {
       node.input_type = 'number';
       return node;
@@ -120,9 +118,9 @@ FilterAction.getTrailPeriodCriteriaFeatures = (setId, success, fail) => {
   });
 };
 
-FilterAction.getTrailHitCriteriaFeatures = (setId, keyword, periodStart, periodEnd, success, fail) => {
+exports.getTrailHitCriteriaFeatures = (setId, keyword, periodStart, periodEnd, success, fail) => {
   let url = format(CRITERIA_FEATURES_URL_TRAIL_Hit, setId);
-  action.ajaxPostObservable(url, {keyword, periodStart, periodEnd}, undefined).subscribe(data => {
+  ajaxPostObservable(url, {keyword, periodStart, periodEnd}, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getTrailPeriodCriteriaFeatures failed: ', err);
@@ -131,9 +129,9 @@ FilterAction.getTrailHitCriteriaFeatures = (setId, keyword, periodStart, periodE
 };
 
 //for exports
-FilterAction.getExportFeaturePool = (success, fail) => {
-  let fetchExportFeatureOptions = action.ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
-  let fetchExportRelativeOptions = action.ajaxGetObservable(EXPORT_RELATIVES_POOL, undefined, undefined);
+exports.getExportFeaturePool = (success, fail) => {
+  let fetchExportFeatureOptions = ajaxGetObservable(EXPORT_FEATURE_POOL, undefined, undefined);
+  let fetchExportRelativeOptions = ajaxGetObservable(EXPORT_RELATIVES_POOL, undefined, undefined);
   Rx.Observable.forkJoin(fetchExportFeatureOptions, fetchExportRelativeOptions).subscribe(res => {
     success({
       featureOptions: res[0],
@@ -145,8 +143,8 @@ FilterAction.getExportFeaturePool = (success, fail) => {
   });
 };
 
-FilterAction.exportQuery = (criteria, success, fail) => {
-  action.ajaxPostObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
+exports.exportQuery = (criteria, success, fail) => {
+  ajaxPostObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===exportQuery failed: ', err);
@@ -154,9 +152,9 @@ FilterAction.exportQuery = (criteria, success, fail) => {
   });
 };
 
-FilterAction.getQueryTask = (queryId, success, fail) => {
+exports.getQueryTask = (queryId, success, fail) => {
   let url = format(EXPORT_QUERY_TASK, queryId);
-  action.ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+  ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     data.statusLabel = TASK_STATUS[data.status];
     success && success(data);
   }, err => {
@@ -164,5 +162,3 @@ FilterAction.getQueryTask = (queryId, success, fail) => {
     fail && fail(err);
   });
 };
-
-export default FilterAction;

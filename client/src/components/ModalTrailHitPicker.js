@@ -2,7 +2,7 @@ import React from 'react';
 import Loader from 'react-loader';
 import {xorBy, debounce, assign, uniqBy, filter, differenceBy, difference} from 'lodash';
 import shortid from 'shortid';
-import {List, mergeWith} from "immutable";
+import {List} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import PickerMultiple from './PickerMultiple'
 import {NODE_TYPE_DICT as NODE_TYPE} from "../utils/tree-node-util";

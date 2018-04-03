@@ -2,7 +2,7 @@ import React from 'react';
 import monent from 'moment';
 import {assign} from 'lodash';
 import Flatpickr from 'react-flatpickr';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTrailPeriodCriteriaFeatures} from "../actions/integrated-analysis-action";
 import CriteriaBundleTransaction from "./CriteriaBundleTransaction";
 
 const OPERATOR_OPTIONS =  {
@@ -40,7 +40,7 @@ export default class CriteriaBundleTrailPeriod extends CriteriaBundleTransaction
   };
 
   fetchPreparedData(callback) {
-    integratedAnalysisAction.getTrailPeriodCriteriaFeatures(
+    getTrailPeriodCriteriaFeatures(
       this.getPropertyState('ref'), data => {
         // console.log('fetch trail period data: ', data);
         this.setState({

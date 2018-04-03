@@ -4,11 +4,9 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 import {xorBy, map} from 'lodash';
 import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 import PickerMultiple from './PickerMultiple';
-import anonymousAction from '../actions/anonymous-analysis-action';
+import {exportAnonymousQuery} from '../actions/anonymous-analysis-action';
 import AlertMessenger from './AlertMessenger';
 import 'flatpickr/dist/themes/material_green.css';
-import {INTEGRATED_ANALYSIS_MOD} from "../utils/criteria-dictionary";
-import IntegratedCriteriaExportFeaturePicker from "./IntegratedCriteriaExportFeaturePicker";
 
 const extractAllNode = (nodes) => {
   return nodes.reduce((accumulator, node) => {
@@ -71,7 +69,6 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
       // let selectedRelativeSets = this.state.selectedRelativeId.toJS();
 
       let formDate = {
-        // mode: INTEGRATED_ANALYSIS_MOD.IDENTIFIED,
         criteria,
         export: {
           master: map(selectedFeatures, 'id'),
@@ -82,7 +79,7 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
         }
       };
 
-      anonymousAction.exportAnonymousQuery(formDate, res => {
+      exportAnonymousQuery(formDate, res => {
         this.setState({
           queryId: res.queryId,
           showModal: true,

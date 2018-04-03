@@ -1,6 +1,6 @@
 import React from 'react';
 import {map} from 'lodash';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getTrailHitCriteriaFeatures} from "../actions/integrated-analysis-action";
 import CriteriaBundleTag from "./CriteriaBundleTag";
 import ModalTrailHitPicker from "./ModalTrailHitPicker";
 
@@ -19,7 +19,7 @@ export default class CriteriaBundleTrailHit extends CriteriaBundleTag {
     super.componentWillMount();
 
     this.fetchFeatureData = (keyword, periodStart, periodEnd, callback) => {
-      integratedAnalysisAction.getTrailHitCriteriaFeatures(
+      getTrailHitCriteriaFeatures(
         this.getPropertyState('ref'), keyword, periodStart, periodEnd, callback);
     };
   };

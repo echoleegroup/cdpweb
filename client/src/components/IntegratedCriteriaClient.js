@@ -1,7 +1,6 @@
 import React from 'react';
 import {isEmpty, reduce} from 'lodash';
-import ModalCriteriaSetter from './ModalCriteriaSetter';
-import integratedAnalysisAction from "../actions/integrated-analysis-action";
+import {getClientCriteriaFeatures} from "../actions/integrated-analysis-action";
 import IntegratedCriteriaBase from "./IntegratedCriteriaBase";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 import shrotid from "shortid";
@@ -66,7 +65,7 @@ export default class IntegratedCriteriaClient extends IntegratedCriteriaBase {
   };
 
   fetchPreparedData(callback) {
-    integratedAnalysisAction.getClientCriteriaFeatures(data => {
+    getClientCriteriaFeatures(data => {
       callback({
         features: data.features,
         featureRefCodeMap: data.featureRefCodeMap

@@ -1,6 +1,6 @@
 import React from 'react';
 import CriteriaBase from './CriteriaBase';
-import CustomFilterAction from '../actions/custom-filter-action';
+import {getCustomCriteriaFeatures} from '../actions/custom-filter-action';
 
 /**
  * only control display mode between preview and edit. Never keep criteria data in state.
@@ -16,6 +16,6 @@ export default class CustomTargetCriteria extends CriteriaBase {
   };
 
   fetchPreparedData(callback) {
-    CustomFilterAction.getCustomCriteriaFeatures(this.props.params.mdId, this.props.params.batId, callback);
+    getCustomCriteriaFeatures(this.props.params.mdId, this.props.params.batId, callback);
   };
 };
