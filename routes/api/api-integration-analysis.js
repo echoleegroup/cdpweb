@@ -289,7 +289,7 @@ module.exports = (app) => {
       ]);
     }).spread((backendCriteriaData, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
-      winston.info('backendCriteriaData: %j', backendCriteriaData);
+      // winston.info('backendCriteriaData: %j', backendCriteriaData);
       const integratedAnalysisTransService = require('../../services/trans-360backand-service');
       return Q.all([
         queryId,
@@ -394,17 +394,13 @@ module.exports = (app) => {
 
     // winston.info(req.body.export);
     Q.all([
-      Q.nfcall(integrationService.getCriteriaFeaturesOfSet, ANONYMOUS_ANALYSIS_SET_ID),
-      Q.nfcall(integratedHelper.initializeQueryTaskLog,
-        MENU_CODE.ANONYMOUS_QUERY,
-        JSON.stringify(criteria),
-        JSON.stringify(expt),
-        JSON.stringify(filter),
-        mode,
-        req.user.userId)
+      Q.nfcall(
+        integratedHelper.initializeQueryTaskLog, MENU_CODE.ANONYMOUS_QUERY, JSON.stringify(criteria),
+        JSON.stringify(expt), JSON.stringify(filter), mode, req.user.userId),
+      Q.nfcall(integrationService.getCriteriaFeaturesOfSet, ANONYMOUS_ANALYSIS_SET_ID)
     ]).then(([insertLog, analyzableFeatures]) => {
       // winston.info('insertLog: ', insertLog);
-      // winston.info('results: %j', results);
+      // winston.info('analyzableFeatures: %j', analyzableFeatures);
       let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = {};
       let backendCriteriaData =
@@ -417,7 +413,7 @@ module.exports = (app) => {
       ]);
     }).spread((backendCriteriaData, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
-      winston.info('backendCriteriaData: %j', backendCriteriaData);
+      // winston.info('backendCriteriaData: %j', backendCriteriaData);
       const integratedAnalysisTransService = require('../../services/spark-api-log-service');
       return Q.all([
         queryId,

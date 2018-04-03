@@ -120,7 +120,10 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
         <AlertMessenger message_error={this.state.message_error}/>
         <div className="btn-block center-block">
           {/*<button type="submit" className="btn btn-lg btn-default">重新挑選客群</button>*/}
-          <button type="button" className="btn btn-lg btn-default" onClick={this.processPostDate} disabled={this.state.queryId}>下載資料</button>
+          <button type="button"
+                  className="btn btn-lg btn-default"
+                  onClick={this.processPostDate}
+                  disabled={this.state.queryId || this.state.selectedFeature.size === 0}>下載資料</button>
         </div>
 
 
