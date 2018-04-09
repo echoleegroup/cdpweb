@@ -1,5 +1,6 @@
 'use strict';
 const winston = require('winston');
+const _ = require('lodash');
 const API_360_HOST = require("../app-config").get("API_360_HOST");
 const API_360_PORT = require("../app-config").get("API_360_PORT");
 module.exports.transService = (queryId, JObject, callback) => {
@@ -8,13 +9,17 @@ module.exports.transService = (queryId, JObject, callback) => {
   let selectInfo = [];
   let postWhere = [];
   let column;
+  let analyzableColumn ;
   let filter;
   let filterObject = new Object();
   //先組Master 
   column = JObject.export.master.features;
+  analyzableColumn = JObject.export.analyzable.features
+  let mergeColumn = column.concat(analyzableColumn);
+  console.log(JSON.stringify(JObject));
   selectInfo.push({
     "type": "master",
-    "column": column
+    "column": _.uniq(mergeColumn)
   })
 
   //組filter(master)
@@ -65,6 +70,8 @@ module.exports.transService = (queryId, JObject, callback) => {
     else
       callback(null, transJson);
   });
+  
+
 
 
 
