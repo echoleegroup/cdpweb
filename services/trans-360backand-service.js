@@ -9,9 +9,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   let selectInfo = [];
   let postWhere = [];
   let column;
-  let analyzableColumn ;
+  let analyzableColumn;
   let filter;
   let filterObject = new Object();
+  let haveTag = false;
   //先組Master 
   column = JObject.export.master.features;
   analyzableColumn = JObject.export.analyzable.features
@@ -36,6 +37,9 @@ module.exports.transService = (queryId, JObject, callback) => {
       "type": keys[i],
       "column": column
     });
+    haveTag = keys[i] === "TagQtn" || keys[i] === "TagOwnMedia" || keys[i] === "TagOuterMedia" || keys[i] === "TagEInterest"
+      || keys[i] === "TagEIntent" || keys[i] === "TagActive";
+
 
     //組filter(其他)
     filter = JObject.export.relatives[keys[i]].filter;
@@ -47,32 +51,54 @@ module.exports.transService = (queryId, JObject, callback) => {
   let whereArray = [];
   whereArray = getWhere(JObject.criteria);
 
+  //判斷是否有tag或trail 
+  haveTag = haveTag || (getCount(JObject.criteria.tag) > 0 || getCount(JObject.criteria.trail) > 0);
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
   console.log(JSON.stringify(transJson));
 
+
+  /*
   //呼叫API
-  
   let request = require('request');
-  let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId
-  request({
-    url: url,
-    method: "POST",
-    json: true,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(transJson)
-  }, function (error, response, body) {
-    if (error)
-      callback(error, null);
-    else
-      callback(null, transJson);
-  });
-  
-
-
+  let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId;
+  if (!haveTag) {
+    request({
+      url: url,
+      method: "POST",
+      json: true,
+      body: JSON.stringify(transJson)
+    }, function (error, response, body) {
+      if (error)
+        callback(error, null);
+      else
+        callback(null, transJson);
+    });
+  }
+  else {
+    url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query_all/" + queryId;
+    let formdata = {
+      req_owner: JSON.stringify(transJson),
+      req_log: JObject
+    };
+    request({
+      url: url,
+      method: "POST",
+      json: true,
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      body: formdata
+    }, function (error, response, body) {
+      if (error)
+        callback(error, null);
+      else
+        callback(null, transJson);
+    });
+  }
+*/
+  callback(null, transJson);
 
 
   function getWhere(Jdata) {
