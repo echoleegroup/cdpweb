@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');
 const _ = require('lodash');
+const moment = require("moment");
 const API_360_HOST = require("../app-config").get("API_360_HOST");
 const API_360_PORT = require("../app-config").get("API_360_PORT");
 module.exports.transService = (queryId, JObject, callback) => {
@@ -59,7 +60,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   console.log(JSON.stringify(transJson));
 
 
-  
+/*
   //呼叫API
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId;
@@ -97,7 +98,8 @@ module.exports.transService = (queryId, JObject, callback) => {
         callback(null, transJson);
     });
   }
-
+  */
+  callback(null, transJson);
 
 
   function getWhere(Jdata) {
@@ -189,20 +191,21 @@ module.exports.transService = (queryId, JObject, callback) => {
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
       if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
-        let label = JField.value_label;
+        let input_type = JField.input_type;
         let value = JField.value;
-        if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g, "") + "'";
+        if (input_type === "date"){
+          returnValue += "'" + moment(new Date(value)).format("YYYYMMDD") + "'";
+        }
         else
           returnValue += "'" + value + "'";
       }
     }
     else {
       if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
-        let label = JField.value_label;
+        let input_type = JField.input_type;
         let value = JField.value;
-        if (!isNaN(Date.parse(label)))
-          returnValue += "'" + label.replace(/\//g, "") + "'";
+        if (input_type === "date")
+          returnValue += "'" + moment(new Date(value)).format("YYYYMMDD") + "'";
         else
           returnValue += "'" + value + "'";
       }
