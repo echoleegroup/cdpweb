@@ -57,10 +57,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
-  console.log(JSON.stringify(transJson));
 
 
-/*
+
+
   //呼叫API
   let request = require('request');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId;
@@ -98,8 +98,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         callback(null, transJson);
     });
   }
-  */
-  callback(null, transJson);
+  
 
 
   function getWhere(Jdata) {
@@ -147,7 +146,6 @@ module.exports.transService = (queryId, JObject, callback) => {
       }
       ComboObject.children = children;
       ComboObject.relation = Jdata.operator;
-      //console.log(ComboObject);
       return ComboObject;
     }
 
