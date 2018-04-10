@@ -52,7 +52,7 @@
               <tbody>
                 <tr>
                   <th rowspan="2">模型受眾</th>
-                  <td>{{modelinfo.taName}}
+                  <td>{{modelInfo.taName}}
                   </td>
                 </tr>
                 <tr>
@@ -61,7 +61,9 @@
                 <tr>
                   <th rowspan="2">已購客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-                  <td>{{modelinfo.splName}}</td>
+                  <td>{{modelInfo.splName}}
+                    <i flow="down" tooltip="{{modelInfo.splDesc}}"></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -71,7 +73,9 @@
                 <tr>
                   <th rowspan="2">潛在客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-                  <td>{{modelinfo.popName}}</td>
+                  <td>{{modelInfo.popName}}
+                    <i flow="down" tooltip="{{modelInfo.popDesc}}"></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -199,6 +203,10 @@
   });
 </script>
 <script>
+  function formatFloat(num, pos) {
+    var size = Math.pow(10, pos);
+    return Math.round(num * size) / size;
+  }
   function getinfo(mdID, batID, featID) {
     $.ajax({
       url: "/target/cal/getFeat",
@@ -219,7 +227,12 @@
         document.getElementById("desc").innerHTML = myObj.featDesc;
 
         var chartData = myObj.cpinfolist;
-
+        var totalSpl = 0;
+        var totalPop = 0;
+        for (i in chartData) {
+          totalSpl += chartData[i].totalspl;
+          totalPop += chartData[i].totalpop
+        }
         if (myObj.chartType == '1') {
           // SERIAL CHART
           chart = new AmCharts.AmSerialChart();
@@ -259,6 +272,10 @@
           graph.bullet = "Not set";
           graph.lineColor = "#f56b58";
           graph.lineThickness = 2;
+           graph.balloonFunction = function (graphDataItem, graph) {
+            var value = graphDataItem.values.value;
+            return "模型受眾:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100  , 0);
+          }
           chart.addGraph(graph);
 
           var graph = new AmCharts.AmGraph();
@@ -268,6 +285,10 @@
           graph.bullet = "Not set";
           graph.lineColor = "#d4d4d4";
           graph.lineThickness = 2;
+           graph.balloonFunction = function (graphDataItem, graph) {
+            var value = graphDataItem.values.value;
+            return "現有潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100  , 0);
+          }
           chart.addGraph(graph);
 
           // CURSOR
