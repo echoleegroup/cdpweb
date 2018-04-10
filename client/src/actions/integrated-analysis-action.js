@@ -18,6 +18,8 @@ const EXPORT_RELATIVES_POOL = '/api/integration/export/relative/sets';
 const EXPORT_QUERY = '/api/integration/export/query';
 const EXPORT_QUERY_TASK = '/api/integration/export/query/%s';
 
+const ANALYSIS_NAVIGATE_FEATURES = '/api/integration/%s/query/%s/navigate/features';
+
 const TASK_STATUS = {
   INIT: "初始化",
   REMOTE_PROCESSING: "搜尋中",
@@ -156,6 +158,16 @@ exports.getQueryTask = (queryId, success, fail) => {
   let url = format(EXPORT_QUERY_TASK, queryId);
   ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     data.statusLabel = TASK_STATUS[data.status];
+    success && success(data);
+  }, err => {
+    console.log('===getQueryTask failed: ', err);
+    fail && fail(err);
+  });
+};
+
+exports.getNavigateFeatures = (queryId, mode, success, fail) => {
+  let url = format(ANALYSIS_NAVIGATE_FEATURES, mode, queryId);
+  ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
     console.log('===getQueryTask failed: ', err);

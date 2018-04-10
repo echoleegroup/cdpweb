@@ -4,6 +4,19 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 const appConfig = require("../app-config");
 
+module.exports.getFeaturesById = (idList, callback) => {
+  const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup ' +
+    'FROM cd_Feature feature ' +
+    `WHERE feature.featID in ('${idList.join(`','`)}') AND (isDel != @isDel OR isDel is NULL)`;
+
+  let request = _connector
+    .queryRequest()
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+  Q.nfcall(request.executeQuery, sql)
+    .then(result => callback(null, result))
+    .fail(err => {callback(err)});
+};
+
 module.exports.getCriteriaFeaturesOfSet = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM cd_TargetFeat t_feat, cd_Feature feature ' +
@@ -13,7 +26,7 @@ module.exports.getCriteriaFeaturesOfSet = (setId, callback) => {
     .queryRequest()
     .setInput('setId', _connector.TYPES.NVarChar, setId)
     .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
-  Q.nfcall(request.executeQuery, sql).then((result) => {
+  Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
   }).fail(err => {
     winston.error('===getCustomCriteriaFeatures failed:', err);

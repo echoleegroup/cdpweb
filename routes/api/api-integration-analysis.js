@@ -435,13 +435,32 @@ module.exports = (app) => {
 
   // chart
 
-  router.get('/:mode/query/:queryId/analysis/tree', middlewares, (req, res) => {
+  router.get('/:mode/query/:queryId/navigate/features', middlewares, (req, res) => {
     let queryId = req.params.queryId;
     let mode = req.params.mode;
     Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
-      let featureIds = JSON.parse(queryLogData.reserve1).export.master.features;
-      return Q.nfcall(integratedHelper.getFeaturesAsMap, featureIds);
-    }).then(featureMap => {});
+      let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
+      winston.info('featureIds: %j', featureIds);
+      return Q.all([
+        Q.nfcall(integrationService.getFeaturesById, featureIds),
+        Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
+      ]);
+    }).spread((features, foldingTree) => {
+      // winston.info('criteriaFeaturePromise getCriteriaFeaturesOfSet: ', features);
+      // winston.info('criteriaFeaturePromise getCriteriaFeatureTree: ', foldingTree);
+      let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
+      res.json({features: fields});
+      // get code group from features
+      // let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
+      // return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
+      //   features: fields,
+      //   featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
+      // }));
+    }).fail(err => {
+      winston.error(`===/:mode/query/:queryId/navigate/features internal server error: ${err}`);
+      console.log(err);
+      res.json(null, 500, 'internal service error');
+    });
   });
 
   return router;
