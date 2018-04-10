@@ -1,4 +1,4 @@
-{{> title title='廣告排程上傳'}}
+{{> title title='Cue表上傳'}}
 <!--
 <div class="title">
 	<div class="container">
@@ -15,14 +15,13 @@
 		<div class="col-md-8 col-sm-7 col-xs-12">
 			<!-- form set Start -->
 			<div class="form_block">
-				<h2>廣告排程上傳</h2>
+				<h2>Cue表上傳</h2>
 				<form id="reg" action="/actad/ad/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="inputName" class="col-sm-3 control-label">品牌</label>
 						<div class="col-sm-8">
 							<select class="form-control custom" id="client" name="client">
 								<option value="TOYOTA">TOYOTA</option>
-								<option value="LEXUS">LEXUS</option>
 							</select>
 						</div>
 					</div>
@@ -38,10 +37,10 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="inputName" class="col-sm-3 control-label">活動名稱</label>
+						<label for="inputName" class="col-sm-3 control-label">活動頁面名稱</label>
 						<div class="col-sm-8">
 							<select id="evtpgID" name="evtpgID" class="form-control custom">
-                <option value ="{{mainInfo.evtpgID}}">{{mainInfo.msm_tpc}}({{mainInfo.sdt}}~{{mainInfo.edt}})</option>
+                <option value ="{{mainInfo.evtpgID}}">{{mainInfo.tpc}}({{mainInfo.sdt}}~{{mainInfo.edt}})</option>
 							</select>
 						</div>
 					</div>

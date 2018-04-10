@@ -11,6 +11,7 @@ const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });
 const _connector = require('../utils/sql-query-util');
 const Q = require('q');
+const moment = require("moment");
 module.exports = (app) => {
   console.log('[EvtadRoute::create] Creating Evtad route.');
   const router = express.Router();
@@ -149,7 +150,10 @@ module.exports = (app) => {
             checkandinsert(i + 1);
           }
           else {
-            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + list[0].data[i][Fromindex] + "','" + list[0].data[i][Toindex] + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
+            let adSdt = moment(new Date(1900, 0, list[0].data[i][Fromindex])).format("YYYY/MM/DD");
+            let adEdt = moment(new Date(1900, 0, list[0].data[i][Toindex])).format("YYYY/MM/DD");
+            console.log(adSdt);
+            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + adSdt + "','" + adEdt + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
               if (err) {
                 console.log(err);
               }

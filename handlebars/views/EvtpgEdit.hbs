@@ -22,6 +22,7 @@
             <label for="inputName" class="col-sm-3 control-label">屬性類別</label>
             <div class="col-sm-8">
               <select class="form-control custom" id="funcCatge" name="funcCatge" disabled>
+                <option value=""></option>
                 {{#each funcCatge as |Categ|}}
                 <option value="{{Categ.codeValue}}">{{Categ.codeLabel}}</option>
                 {{/each}}
@@ -30,7 +31,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label">名單名稱</label>
+            <label for="inputName" class="col-sm-3 control-label">活動頁面名稱</label>
             <div class="col-sm-8">
               <input type="text" class="form-control " id="msm_tpc" name="msm_tpc" value="{{maininfo.[0].msm_tpc}}" disabled>
             </div>
@@ -68,11 +69,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="inputName" class="col-sm-3 control-label">停用註記</label>
+            <label for="inputName" class="col-sm-3 control-label"></label>
             <div class="col-sm-8">
               <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="checkbox" id="isDel" name="isDel" disabled> 停用
+                  <input class="form-check-input" type="checkbox" id="isDel" name="isDel" disabled> 不列入標籤計算
                 </label>
               </div>
             </div>
@@ -153,7 +154,7 @@
             <a href="/actad/ad/upload?evtpgID={{evtpgID}}">
               <button type="button" class="btn btn-lg btn-default">廣告排程上傳</button>
             </a>
-            <a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].msm_tpc}}">
+            <a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].tpc}}">
               <button type="button" class="btn btn-lg btn-default">廣告清單</button>
             </a>
           </div>
@@ -230,6 +231,7 @@
             });
           });
         }
+        document.getElementById("newtag").value = "" ;
       }
     });
   }
