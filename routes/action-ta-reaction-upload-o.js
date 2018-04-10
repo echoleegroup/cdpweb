@@ -119,6 +119,8 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
+              if (errornum === 0)
+                errormsg = "";
               var currentdate = new Date();
               var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                 + currentdate.getHours() + ":"
@@ -164,6 +166,8 @@ module.exports = (app) => {
                     errormsg += list[0].data[i][j] + ",";
                 }
                 if (i == list[0].data.length - 1) {
+                  if (errornum === 0)
+                    errormsg = "";
                   var currentdate = new Date();
                   var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                     + currentdate.getHours() + ":"
@@ -184,6 +188,8 @@ module.exports = (app) => {
                 db.query("INSERT INTO cu_RespListDet (mdID,batID,respListID,uCustID,uLicsNO,uVIN,uRespTime,rptKey) values('" + mdID + "','" + batID + "'," + newindex + ",'" + CustID + "','" + LISCNO + "','" + list[0].data[i][VINindex] + "','" + datatime + "','" + data1 + "')", function (err, recordset) {
                   successnum++;
                   if (i == list[0].data.length - 1) {
+                    if (errornum === 0)
+                      errormsg = "";
                     var currentdate = new Date();
                     var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                       + currentdate.getHours() + ":"

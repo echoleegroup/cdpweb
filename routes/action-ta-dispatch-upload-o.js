@@ -11,9 +11,9 @@ const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });;
 
 function toUP(value) {
-  if( value == undefined) 
-   return "" ;
-  else 
+  if (value == undefined)
+    return "";
+  else
     return value.toUpperCase();
 };
 module.exports = (app) => {
@@ -119,6 +119,8 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
+              if (errornum === 0)
+                errormsg = "";
               var currentdate = new Date();
               var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                 + currentdate.getHours() + ":"
@@ -162,6 +164,8 @@ module.exports = (app) => {
                     errormsg += list[0].data[i][j] + ",";
                 }
                 if (i == list[0].data.length - 1) {
+                  if (errornum === 0)
+                    errormsg = "";
                   var currentdate = new Date();
                   var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                     + currentdate.getHours() + ":"
@@ -177,6 +181,8 @@ module.exports = (app) => {
                 db.query("INSERT INTO cu_SentListDet (mdID,batID,sentListID,uCustID,uLicsNO,uVIN,rptKey,sentListScore) values('" + mdID + "','" + batID + "'," + newindex + ",'" + CustID + "','" + LISCNO + "','" + list[0].data[i][VINindex] + "','" + data1 + "',(select max(mdListScore) from md_ListDet mld where mld.mdID ='" + mdID + "' and mld.batID ='" + batID + "' and mld.mdListKey1 = '" + data1 + "'))", function (err, recordset) {
                   successnum++;
                   if (i == list[0].data.length - 1) {
+                    if (errornum === 0)
+                      errormsg = "";
                     var currentdate = new Date();
                     var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
                       + currentdate.getHours() + ":"
