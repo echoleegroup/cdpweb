@@ -13,40 +13,36 @@ module.exports = (app) => {
   const router = express.Router();
 
   router.post('/user/role/add_act', [middleware.check(), middleware.checkEditPermission(permission.USER_ROLE)], function (req, res) {
-    if (req.user && req.user.userId != '') {
-      if (req.session.userRole_Edit == 'Y') {
-        var ugrpId;
-        var ugrpClass = req.body.ugrpClass || '';
-        var ugrpName = req.body.ugrpName || '';
-        var remark = req.body.remark || '';
-        var isstop = req.body.isstop || '';
-        var checked = 'N';
-        if (isstop == 'on')
-          checked = 'Y';
-        var p1 = new Promise(function (resolve, reject) {
-          db.query("INSERT INTO sy_ugrp(ugrpClass,ugrpName,remark,regdate,modifyDate,signer,isStop) values('" + ugrpClass + "','" + ugrpName + "','" + remark + "',GETDATE(),GETDATE(),'" + req.user.userId + "','" + checked + "')", function (err, recordset) {
-            if (err) {
-              console.log(err);
-              reject(2);
-            }
+    var ugrpId;
+    var ugrpClass = req.body.ugrpClass || '';
+    var ugrpName = req.body.ugrpName || '';
+    var remark = req.body.remark || '';
+    var isstop = req.body.isstop || '';
+    var checked = 'N';
+    if (isstop == 'on')
+      checked = 'Y';
+    var p1 = new Promise(function (resolve, reject) {
+      db.query("INSERT INTO sy_ugrp(ugrpClass,ugrpName,remark,regdate,modifyDate,signer,isStop) values('" + ugrpClass + "','" + ugrpName + "','" + remark + "',GETDATE(),GETDATE(),'" + req.user.userId + "','" + checked + "')", function (err, recordset) {
+        if (err) {
+          console.log(err);
+          reject(2);
+        }
 
-            resolve(1);
+        resolve(1);
 
-          });
-        });
-        Promise.all([p1]).then(function (results) {
-          db.query('select top 1 ugrpId from sy_ugrp order by ugrpId desc ', function (err, recordset) {
-            if (err) console.log(err);
-            res.redirect('/userRole/UserRoleInfoEdit?ugrpId=' + recordset.recordset[0].ugrpId);
-          });
-        }).catch(function (e) {
-          console.log(e);
-        });
-      }
-    }
-    else {
-      res.render('index', { 'title': req.user.userId, 'items': "" });
-    }
+      });
+    });
+    Promise.all([p1]).then(function (results) {
+      db.query('select top 1 ugrpId from sy_ugrp order by ugrpId desc ', function (err, recordset) {
+        if (err) console.log(err);
+        res.redirect('/system/user/role/edit?ugrpId=' + recordset.recordset[0].ugrpId);
+      });
+    }).catch(function (e) {
+      console.log(e);
+    });
+
+
+
   });
 
   router.get('/user/role/add', function (req, res) {
