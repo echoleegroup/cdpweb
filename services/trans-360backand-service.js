@@ -2,31 +2,30 @@
 const winston = require('winston');
 const _ = require('lodash');
 const moment = require("moment");
-const API_360_HOST = require("../app-config").get("API_360_HOST");
-const API_360_PORT = require("../app-config").get("API_360_PORT");
+const appConfig = require("../app-config");
+const API_360_HOST = appConfig.get("API_360_HOST");
+const API_360_PORT = appConfig.get("API_360_PORT");
 module.exports.transService = (queryId, JObject, callback) => {
-  let transJson = new Object();
+  let transJson = {};
   //開始組select json
   let selectInfo = [];
   let postWhere = [];
   let column;
   let analyzableColumn;
-  let filter;
-  let filterObject = new Object();
   let haveTag = false;
   //先組Master 
   column = JObject.export.master.features;
-  analyzableColumn = JObject.export.analyzable.features
+  analyzableColumn = _.map(JObject.statistic.features, 'feature_id');
   let mergeColumn = column.concat(analyzableColumn);
   console.log(JSON.stringify(JObject));
   selectInfo.push({
     "type": "master",
     "column": _.uniq(mergeColumn)
-  })
+  });
 
   //組filter(master)
-  filter = JObject.export.master.filter;
-  filterObject = getPostWhere(filter, "master");
+  let filter = JObject.export.master.filter;
+  let filterObject = getPostWhere(filter, "master");
   postWhere.push(filterObject);
 
 
@@ -49,14 +48,14 @@ module.exports.transService = (queryId, JObject, callback) => {
   }
 
   //開始組where條件
-  let whereArray = [];
-  whereArray = getWhere(JObject.criteria);
+  let whereArray = getWhere(JObject.criteria);
 
   //判斷是否有tag或trail 
   haveTag = haveTag || (getCount(JObject.criteria.tag) > 0 || getCount(JObject.criteria.trail) > 0);
   transJson.select = selectInfo;
   transJson.where = whereArray;
   transJson.postWhere = postWhere;
+  transJson.statistic = JObject.statistic;
 
 
 
@@ -105,7 +104,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let whereArray = [];
     //客戶明細
     let clientJSON = Jdata.client;
-    let masterObject = new Object();
+    let masterObject = {};
     let masterArray = [];
     if (getCount(clientJSON) > 0) {
       let getClientWhere = getCombo(clientJSON[0]);
@@ -127,7 +126,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     //交易明細
     let transactionJSON = Jdata.transaction;
     if (getCount(transactionJSON) > 0) {
-      let transactionObject = new Object();
+      let transactionObject = {};
       let transactionArray = [];
       let getTransactionWhere = getCombo(transactionJSON[0]);
       transactionArray.push(getTransactionWhere);
@@ -139,7 +138,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   }
   function getCombo(Jdata) {
     if ("combo" === Jdata.type) {
-      let ComboObject = new Object();
+      let ComboObject = {};
       let children = [];
       for (let i in Jdata.criteria) {
         children.push(getContent(Jdata.criteria[i], Jdata.operator));
@@ -152,7 +151,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   }
   function getContent(Jdata, operator) {
     if ("refTransaction" === Jdata.type || "bundle" === Jdata.type) {
-      let complexObejct = new Object();
+      let complexObejct = {};
       let children = [];
       for (let i in Jdata.criteria) {
         children.push(getField(Jdata.criteria[i], Jdata.operator));
@@ -188,7 +187,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     let fieldOperator = getOperator(JField.operator);
     let returnValue = fieldOperator + " ";
     if (!JField.ref) {
-      if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
+      if ("IS NULL" !== fieldOperator && "IS NOT NULL" !== fieldOperator) {
         let input_type = JField.input_type;
         let value = JField.value;
         if (input_type === "date"){
@@ -199,7 +198,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       }
     }
     else {
-      if ("IS NULL" != fieldOperator && "IS NOT NULL" != fieldOperator) {
+      if ("IS NULL" !== fieldOperator && "IS NOT NULL" !== fieldOperator) {
         let input_type = JField.input_type;
         let value = JField.value;
         if (input_type === "date")
@@ -211,7 +210,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     return returnValue;
   }
   function getField(JField, operator) {
-    let fieldObject = new Object();
+    let fieldObject = {};
     fieldObject.relation = operator;
     fieldObject.column = JField.field_id;
     fieldObject.expr = getExpr(JField);
@@ -219,7 +218,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   }
 
   function getPostWhere(Jdata, source) {
-    let object = new Object();
+    let object = {};
     object.type = source;
     let conditionArray = [];
     let count = getCount(Jdata);
@@ -236,7 +235,7 @@ module.exports.transService = (queryId, JObject, callback) => {
     return count;
   }
   function getPostWhereField(feature, label, operator) {
-    let postWhereObject = new Object();
+    let postWhereObject = {};
     postWhereObject.relation = "and";
     postWhereObject.column = feature;
     postWhereObject.expr = operator + "'" + label.replace(/\//g, "") + "'";

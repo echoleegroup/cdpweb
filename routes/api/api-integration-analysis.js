@@ -253,10 +253,13 @@ module.exports = (app) => {
     let mode = INTEGRATED_MODE.IDENTIFIED;
 
     let promises = [
+      // insert a new query task log
       Q.nfcall(integratedHelper.initializeQueryTaskLog, MENU_CODE.INTEGRATED_QUERY,
         JSON.stringify(criteria), JSON.stringify(expt), JSON.stringify(filter), mode, req.user.userId),
+      // get feature information for analysis chart
       Q.nfcall(integrationService.getCriteriaFeaturesOfSet, INTEGRATION_ANALYSIS_SET_ID)
     ].concat(
+      // get features of related data
       _.map(expt.relatives, relativeSetId => {
         return Q.all([
           Q.nfcall(integrationService.getFeatureSet, EXPORT_RELATIVE_SET_ID, relativeSetId),
@@ -277,10 +280,10 @@ module.exports = (app) => {
     Q.all(promises).then(([insertLog, analyzableFeatures, ...results]) => {
       // winston.info('insertLog: ', insertLog);
       // winston.info('results: %j', results);
-      let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
+      // let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = _.assign({}, ...results);
       let backendCriteriaData = integratedHelper.backendCriteriaDataWrapper(
-        criteria, expt.master, {}, analyzableFeatureIds, relatives);
+        criteria, expt.master, {}, analyzableFeatures, relatives);
 
       return Q.all([
         backendCriteriaData,
@@ -401,10 +404,10 @@ module.exports = (app) => {
     ]).then(([insertLog, analyzableFeatures]) => {
       // winston.info('insertLog: ', insertLog);
       // winston.info('analyzableFeatures: %j', analyzableFeatures);
-      let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
+      // let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = {};
       let backendCriteriaData =
-        integratedHelper.backendCriteriaDataWrapper(criteria, expt.master, {}, analyzableFeatureIds, relatives);
+        integratedHelper.backendCriteriaDataWrapper(criteria, expt.master, {}, analyzableFeatures, relatives);
 
       return Q.all([
         backendCriteriaData,

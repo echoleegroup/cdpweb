@@ -322,7 +322,19 @@ module.exports.initializeQueryTaskLog = (menuCode, criteria, features, filters, 
   }).then(resData => callback(null, resData)).fail(err => callback(err));
 };
 
-module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatureIds, relatives) => {
+const getMinPeriod = (chartType, minPeriod) => {
+  switch (chartType) {
+    case 'category':
+    case 'continuous':
+      return minPeriod*1;
+    case 'date':
+      return minPeriod;
+    default:
+      return minPeriod;
+  }
+};
+
+module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatures, relatives) => {
   return {
     criteria: criteria,
     export: {
@@ -331,9 +343,19 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
         filter: masterFilter
       },
       relatives: relatives,
-      analyzable: {
-        features: analyzableFeatureIds,
-        filter: {}
+      statistic: {
+        features: _.map(analyzableFeatures, feature => {
+          let chartType = feature.chartType.slice(0, feature.chartType.indexOf('_')); // categ_bar類別型, cont_line數值型, date_line日期型
+
+          return {
+            feature_id: feature.featID,  // 欄位ID
+            chart_type: chartType,
+            ref: feature.codeGroup,
+            min_period: getMinPeriod(chartType, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+            // aggregate: ["total", "percentage"],
+            // statistic: ["average", "median", "std_dev", "upper_bound", "lower_bound"]
+          }
+        })
       }
     }
   }

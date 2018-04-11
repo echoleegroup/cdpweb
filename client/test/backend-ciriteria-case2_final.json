@@ -238,10 +238,22 @@
           "feature": "____"
         }
       }
-    },
-    "analyzable": {
-      "features": [],
-      "filter": {}
     }
+  },
+  "statistic": {
+    "features": [
+      {
+        "feature_id": "CRCAMF_SEDLDT",  // 欄位ID
+        "chart_type": "continuous",   // category類別型, continuous連續數值型, date日期型
+        "ref": null,
+        "min_period": 5   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+      },
+      {
+        "feature_id": "CRAURF_TARGET",  // 欄位ID
+        "chart_type": "category",   // category 類別型, continuous 連續數值型, date 日期型
+        "ref": "____",
+        "min_period": 3   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+      }
+    ]
   }
 }

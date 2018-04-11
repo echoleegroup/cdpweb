@@ -6,7 +6,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   //呼叫API
   
   let request = require('request');
-  let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query_nonowner/" + queryId
+  let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query_nonowner/" + queryId;
   request({
     url: url,
     method: "POST",
