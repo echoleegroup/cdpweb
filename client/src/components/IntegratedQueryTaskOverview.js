@@ -12,7 +12,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
     this.state = {
       task: Map({
         status: null,
-        statusLabel: undefined,
+        statusLabel: '',
         queryTime: null,
         fileSize: null,
         entries: [],
@@ -75,25 +75,25 @@ class QueryTask extends React.PureComponent {
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">查詢送出時間</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={moment.utc(this.props.task.queryTime).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control" value={moment.utc(this.props.task.queryTime).format('YYYY/MM/DD HH:mm:ss')} placeholder="" readOnly={true}/>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">狀態</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={this.props.task.statusLabel} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control" value={this.props.task.statusLabel} placeholder="" readOnly={true}/>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">資料檔案大小</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={filesize(this.props.task.fileSize)} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control" value={filesize(this.props.task.fileSize)} placeholder="" readOnly={true}/>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="inputName" className="col-sm-3 control-label">包含檔案數</label>
             <div className="col-sm-8">
-              <input type="text" className="form-control " id="inputName" value={this.props.task.entries.length} placeholder="" readOnly={true}/>
+              <input type="text" className="form-control" value={this.props.task.entries.length} placeholder="" readOnly={true}/>
             </div>
           </div>
         </form>
@@ -107,7 +107,7 @@ class QueryTask extends React.PureComponent {
 
 class CriteriaView extends React.PureComponent {
   render() {
-    console.log('this.props.criteria: ', this.props.criteria);
+    // console.log('this.props.criteria: ', this.props.criteria);
     return (
       <div className="table_block">{/*<!-- form set Start -->*/}
         <h2>查詢條件總覽</h2>
@@ -133,9 +133,9 @@ class ResultInfo extends React.PureComponent {
               </tbody>
             </table>
           </div>
-          <div className="btn-block">
-            <a className="btn btn-default btn-lg" href="#">客戶樣貌總覽</a>
-          </div>
+          {/*<div className="btn-block">*/}
+            {/*<a className="btn btn-default btn-lg" href="#">客戶樣貌總覽</a>*/}
+          {/*</div>*/}
         </div>
       </div>
     );
