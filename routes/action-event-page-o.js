@@ -346,7 +346,7 @@ module.exports = (app) => {
     if (edt != '')
       where += " and dem.edt <= '" + edt + " 23:59:59' ";
     if (tpc != '')
-      where += " and dem.msm_tpc like '%" + tpc + "%' ";
+      where += " and dem.tpc like '%" + tpc + "%' ";
 
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, evtpgID,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,convert(varchar, dem.updTime, 120)updTime,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
@@ -385,7 +385,7 @@ module.exports = (app) => {
         for (var i = 0; i < recordset.rowsAffected; i++) {
           ad.push({
             no: recordset.recordset[i].no,
-            evtadID: recordset.recordset[i].evtadID,
+            evtadID: recordset.recordset[i].evtadID, 
             evtpgID: recordset.recordset[i].evtpgID,
             adSource: recordset.recordset[i].adSource,
             adChannel: recordset.recordset[i].adChannel,
