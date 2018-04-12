@@ -83,82 +83,52 @@ module.exports = (app) => {
       filepath = file.path;
       var list = xlsx.parse(filepath);
       total = list[0].data.length - 1;
-      for (var i = 0; i < list[0].data[0].length; i++) {
-        if (list[0].data[0][i] == "From") {
-          Fromindex = i;
+      try {
+        for (var i = 0; i < list[0].data[0].length; i++) {
+          if (list[0].data[0][i].toLowerCase() === "from") {
+            Fromindex = i;
 
-        }
-        else if (list[0].data[0][i] == "To") {
-          Toindex = i;
+          }
+          else if (list[0].data[0][i].toLowerCase() === "to") {
+            Toindex = i;
 
+          }
+          else if (list[0].data[0][i].toLowerCase() === "website") {
+            Websiteindex = i;
+          }
+          else if (list[0].data[0][i].toLowerCase() === "channel") {
+            Channelindex = i;
+          }
+          else if (list[0].data[0][i].toLowerCase() === "position") {
+            Positionindex = i;
+          }
+          else if (list[0].data[0][i].toLowerCase() === "size") {
+            Sizeindex = i;
+          }
+          else if (list[0].data[0][i].toLowerCase() === "url") {
+            Urlindex = i;
+          }
         }
-        else if (list[0].data[0][i] == "Website") {
-          Websiteindex = i;
-        }
-        else if (list[0].data[0][i] == "Channel") {
-          Channelindex = i;
-        }
-        else if (list[0].data[0][i] == "Position") {
-          Positionindex = i;
-        }
-        else if (list[0].data[0][i] == "Size") {
-          Sizeindex = i;
-        }
-        else if (list[0].data[0][i] == "Url") {
-          Urlindex = i;
-        }
+      } catch (error) {
+        winston.error(error);
+        res.redirect("/");
+        return;
       }
-      i = 1
+      i = 1;
       checkandinsert(i);
       function checkandinsert(i) {
-        if (i < list[0].data.length) {
-          if (list[0].data[i][Websiteindex] == undefined || list[0].data[i][Urlindex] == undefined) {
-            errornum++;
-            var linenum = i + 1;
-            errormsg += 'Line ' + linenum.toString() + ','
-            for (var j = 0; j < list[0].data[i].length; j++) {
-              if (j == list[0].data[i].length - 1)
-                errormsg += list[0].data[i][j] + "\r\n";
-              else
-                errormsg += list[0].data[i][j] + ",";
-            }
-            if (i == list[0].data.length - 1) {
-              if (errornum === 0)
-                errormsg = "";
-              db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
-                updUser = recordset.recordset[0].updUser;
-                updTime = recordset.recordset[0].updTime;
-                adCount = recordset.recordset[0].adcount
-                var currentdate = new Date();
-                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                  + currentdate.getHours() + ":"
-                  + currentdate.getMinutes() + ":"
-                  + currentdate.getSeconds();
-                res.render('Evtad_upload', {
-                  'user': req.user,
-                  'modelList': modelList,
-                  'navMenuList': navMenuList,
-                  'mgrMenuList': mgrMenuList,
-                  "successnum": successnum,
-                  'errormsg': errormsg,
-                  'errornum': errornum,
-                  'total': total,
-                  'dispaly': 'block',
-                  'datetime': datetime
-                });
-              });
-            }
-            checkandinsert(i + 1);
-          }
-          else {
-            let adSdt = moment(new Date(1900, 0, list[0].data[i][Fromindex])).format("YYYY/MM/DD");
-            let adEdt = moment(new Date(1900, 0, list[0].data[i][Toindex])).format("YYYY/MM/DD");
-            console.log(adSdt);
-            db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + adSdt + "','" + adEdt + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
-              if (err) {
-                console.log(err);
+        try {
+          if (i < list[0].data.length) {
+            if (list[0].data[i][Websiteindex] == undefined || list[0].data[i][Urlindex] == undefined) {
+              errornum++;
+              var linenum = i + 1;
+              errormsg += 'Line ' + linenum.toString() + ','
+              for (var j = 0; j < list[0].data[i].length; j++) {
+                if (j == list[0].data[i].length - 1)
+                  errormsg += list[0].data[i][j] + "\r\n";
+                else
+                  errormsg += list[0].data[i][j] + ",";
               }
-              successnum++;
               if (i == list[0].data.length - 1) {
                 if (errornum === 0)
                   errormsg = "";
@@ -181,23 +151,63 @@ module.exports = (app) => {
                     'errornum': errornum,
                     'total': total,
                     'dispaly': 'block',
-                    'datetime': datetime,
-                    'mainInfo': mainInfo,
-                    'updUser': updUser,
-                    'updTime': updTime,
-                    'adCount': adCount,
-                    'funcCatge': funcCatge
+                    'datetime': datetime
                   });
                 });
               }
               checkandinsert(i + 1);
-            });
+            }
+            else {
+              let adSdt = moment(new Date(1900, 0, list[0].data[i][Fromindex])).format("YYYY/MM/DD");
+              let adEdt = moment(new Date(1900, 0, list[0].data[i][Toindex])).format("YYYY/MM/DD");
+              db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + adSdt + "','" + adEdt + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
+                if (err) {
+                  console.log(err);
+                }
+                successnum++;
+                if (i == list[0].data.length - 1) {
+                  if (errornum === 0)
+                    errormsg = "";
+                  db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
+                    updUser = recordset.recordset[0].updUser;
+                    updTime = recordset.recordset[0].updTime;
+                    adCount = recordset.recordset[0].adcount
+                    var currentdate = new Date();
+                    var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                      + currentdate.getHours() + ":"
+                      + currentdate.getMinutes() + ":"
+                      + currentdate.getSeconds();
+                    res.render('Evtad_upload', {
+                      'user': req.user,
+                      'modelList': modelList,
+                      'navMenuList': navMenuList,
+                      'mgrMenuList': mgrMenuList,
+                      "successnum": successnum,
+                      'errormsg': errormsg,
+                      'errornum': errornum,
+                      'total': total,
+                      'dispaly': 'block',
+                      'datetime': datetime,
+                      'mainInfo': mainInfo,
+                      'updUser': updUser,
+                      'updTime': updTime,
+                      'adCount': adCount,
+                      'funcCatge': funcCatge
+                    });
+                  });
+                }
+                checkandinsert(i + 1);
+              });
+            }
           }
+        } catch (error) {
+          winston.error(error);
+          return res.redirect("/");
         }
       }
 
     }).catch(function (e) {
-      console.log(e);
+      winston.info(e);
     });
   });
 
