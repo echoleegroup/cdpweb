@@ -62,6 +62,7 @@ module.exports.transService = (queryId, JObject, callback) => {
 
   //呼叫API
   let request = require('request');
+  let querystring = require('querystring');
   let url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query/" + queryId;
   if (!haveTag) {
     request({
@@ -82,6 +83,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       req_owner: JSON.stringify(transJson),
       req_log: JObject
     };
+    let formInfo = querystring.stringify(formdata);
     request({
       url: url,
       method: "POST",
@@ -89,7 +91,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       headers: {
         "content-type": "application/x-www-form-urlencoded",
       },
-      body: formdata
+      body: formInfo
     }, function (error, response, body) {
       if (error)
         callback(error, null);
