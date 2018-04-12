@@ -345,6 +345,10 @@
           graph1.lineAlpha = 0;
           graph1.fillColors = "#f2b530";
           graph1.fillAlphas = 1;
+          graph1.balloonFunction = function (graphDataItem, graph) {
+            var value = graphDataItem.values.value;
+            return "已購客群:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100, 0);
+          }
           chart.addGraph(graph1);
 
           // second graph
@@ -356,6 +360,10 @@
           graph2.lineAlpha = 0;
           graph2.fillColors = "#d4d4d4";
           graph2.fillAlphas = 1;
+          graph2.balloonFunction = function (graphDataItem, graph) {
+            var value = graphDataItem.values.value;
+            return "潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100, 0);
+          }
           chart.addGraph(graph2);
 
           // LEGEND
