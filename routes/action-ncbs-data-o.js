@@ -9,6 +9,8 @@ const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });
+const _connector = require('../utils/sql-query-util');
+const Q = require('q');
 
 module.exports = (app) => {
   console.log('[NCBSDataRoute::create] Creating NCBSData route.');
@@ -124,20 +126,20 @@ module.exports = (app) => {
                 + currentdate.getHours() + ":"
                 + currentdate.getMinutes() + ":"
                 + currentdate.getSeconds();
-                res.render('NCBSDataEdit', {
-                  'user': req.user,
-                  'modelList': modelList,
-                  'navMenuList': navMenuList,
-                  'mgrMenuList': mgrMenuList,
-                  'maininfo': maininfo,
-                  'ncbsID': ncbsID,
-                  'dispaly': 'block',
-                  'successnum': successnum,
-                  'errormsg': errormsg,
-                  'errornum': errornum,
-                  'total': total,
-                  'datetime': datetime
-                });
+              res.render('NCBSDataEdit', {
+                'user': req.user,
+                'modelList': modelList,
+                'navMenuList': navMenuList,
+                'mgrMenuList': mgrMenuList,
+                'maininfo': maininfo,
+                'ncbsID': ncbsID,
+                'dispaly': 'block',
+                'successnum': successnum,
+                'errormsg': errormsg,
+                'errornum': errornum,
+                'total': total,
+                'datetime': datetime
+              });
             }
             checkandinsert(i + 1);
           }
@@ -180,20 +182,20 @@ module.exports = (app) => {
                     + currentdate.getHours() + ":"
                     + currentdate.getMinutes() + ":"
                     + currentdate.getSeconds();
-                    res.render('NCBSDataEdit', {
-                      'user': req.user,
-                      'modelList': modelList,
-                      'navMenuList': navMenuList,
-                      'mgrMenuList': mgrMenuList,
-                      'maininfo': maininfo,
-                      'ncbsID': ncbsID,
-                      'dispaly': 'block',
-                      'successnum': successnum,
-                      'errormsg': errormsg,
-                      'errornum': errornum,
-                      'total': total,
-                      'datetime': datetime
-                    });
+                  res.render('NCBSDataEdit', {
+                    'user': req.user,
+                    'modelList': modelList,
+                    'navMenuList': navMenuList,
+                    'mgrMenuList': mgrMenuList,
+                    'maininfo': maininfo,
+                    'ncbsID': ncbsID,
+                    'dispaly': 'block',
+                    'successnum': successnum,
+                    'errormsg': errormsg,
+                    'errornum': errornum,
+                    'total': total,
+                    'datetime': datetime
+                  });
                 }
                 checkandinsert(i + 1);
               }
@@ -218,20 +220,20 @@ module.exports = (app) => {
                         + currentdate.getHours() + ":"
                         + currentdate.getMinutes() + ":"
                         + currentdate.getSeconds();
-                        res.render('NCBSDataEdit', {
-                          'user': req.user,
-                          'modelList': modelList,
-                          'navMenuList': navMenuList,
-                          'mgrMenuList': mgrMenuList,
-                          'maininfo': maininfo,
-                          'ncbsID': ncbsID,
-                          'dispaly': 'block',
-                          'successnum': successnum,
-                          'errormsg': errormsg,
-                          'errornum': errornum,
-                          'total': total,
-                          'datetime': datetime
-                        });
+                      res.render('NCBSDataEdit', {
+                        'user': req.user,
+                        'modelList': modelList,
+                        'navMenuList': navMenuList,
+                        'mgrMenuList': mgrMenuList,
+                        'maininfo': maininfo,
+                        'ncbsID': ncbsID,
+                        'dispaly': 'block',
+                        'successnum': successnum,
+                        'errormsg': errormsg,
+                        'errornum': errornum,
+                        'total': total,
+                        'datetime': datetime
+                      });
                     }
                     checkandinsert(i + 1);
                   });
@@ -294,11 +296,16 @@ module.exports = (app) => {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
     var mgrMenuList = req.session.mgrMenuList;
-    res.render('NCBSData_upload', {
-      'user': req.user,
-      'modelList': modelList,
-      'navMenuList': navMenuList,
-      'mgrMenuList': mgrMenuList,
+    let sql = "select ncbsDesc from cu_NCBSQus";
+    let request = _connector.queryRequest();
+    Q.nfcall(request.executeQuery, sql).then((resultSet) => {
+      res.render('NCBSData_upload', {
+        'user': req.user,
+        'modelList': modelList,
+        'navMenuList': navMenuList,
+        'mgrMenuList': mgrMenuList,
+        'ncbsDesc':resultSet
+      });
     });
   });
 

@@ -116,7 +116,6 @@ module.exports = (app) => {
             errornum++;
             var linenum = i + 1;
             errormsg += 'Line ' + linenum.toString() + ','
-            console.log(errormsg);
             for (var j = 0; j < list[0].data[i].length; j++) {
               if (j == list[0].data[i].length - 1)
                 errormsg += list[0].data[i][j] + "\r\n";
@@ -124,6 +123,8 @@ module.exports = (app) => {
                 errormsg += list[0].data[i][j] + ",";
             }
             if (i == list[0].data.length - 1) {
+              if (errornum === 0)
+                errormsg = "";
               db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
                 updUser = recordset.recordset[0].updUser;
                 updTime = recordset.recordset[0].updTime;
@@ -159,6 +160,8 @@ module.exports = (app) => {
               }
               successnum++;
               if (i == list[0].data.length - 1) {
+                if (errornum === 0)
+                  errormsg = "";
                 db.query("SELECT top 1 convert(varchar,updTime,120)updTime,updUser,(select count(*) from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "') adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'  order by updTime desc ", function (err, recordset) {
                   updUser = recordset.recordset[0].updUser;
                   updTime = recordset.recordset[0].updTime;
@@ -203,7 +206,7 @@ module.exports = (app) => {
     var client = req.body.client;
     var data = [];
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID,msm_tpc,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt FROM dm_EvtpgMst_View where client = '" + client + "'  and funcCatge = '" + funcCatge + "' order by msm_tpc asc ", function (err, recordset) {
+      db.query("SELECT evtpgID,tpc,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt FROM dm_EvtpgMst_View where client = '" + client + "'  and funcCatge = '" + funcCatge + "' order by tpc asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -211,7 +214,7 @@ module.exports = (app) => {
         for (var i = 0; i < recordset.rowsAffected; i++) {
           data.push({
             value: recordset.recordset[i].evtpgID,
-            msm_tpc: recordset.recordset[i].msm_tpc + "(" + recordset.recordset[i].sdt + "~" + recordset.recordset[i].edt + ")"
+            msm_tpc: recordset.recordset[i].tpc + "(" + recordset.recordset[i].sdt + "~" + recordset.recordset[i].edt + ")"
           });
         }
         resolve(1);
@@ -282,7 +285,7 @@ module.exports = (app) => {
     });
     var p4 = new Promise(function (resolve, reject) {
       if (evtpgID != '') {
-        db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, msm_tpc FROM dm_EvtpgMst_View where evtpgID = '" + evtpgID + "'", function (err, recordset) {
+        db.query("SELECT evtpgID, client, funcCatge, convert(varchar, sdt, 111)sdt, convert(varchar, edt, 111)edt, tpc FROM dm_EvtpgMst_View where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (recordset.rowsAffected > 0) {
             mainInfo = recordset.recordset[0];
           }
@@ -537,10 +540,10 @@ module.exports = (app) => {
       "sc.codeLabel,CONVERT(varchar,demv.trkSdt,111) trksdt,CONVERT(varchar,demv.trkEdt,111) trkedt," +
       "deams.browseCount,deams.cookieCount,deams.canvasCount " +
       "FROM dm_EvtadMst deam " +
-      "LEFT JOIN dm_EvtpgMst_View demv on demv.evtpgID = deam.evtpgID "+where+ 
+      "LEFT JOIN dm_EvtpgMst_View demv on demv.evtpgID = deam.evtpgID " + where +
       "LEFT JOIN sy_CodeTable sc on sc.codeValue = demv.funcCatge and sc.codeGroup ='funcCatge' " +
       "LEFT JOIN dm_EvtadMst_statistic deams on deams.evtadID = deam.evtadID " +
-      "WHERE deam.evtadID in ( SELECT distinct(deat.evtadID) FROM dm_EvtadTag deat) "+
+      "WHERE deam.evtadID in ( SELECT distinct(deat.evtadID) FROM dm_EvtadTag deat) " +
       "ORDER BY demv.funcCatge desc ";
     let request = _connector.queryRequest()
       .setInput('client', _connector.TYPES.NVarChar, client)
@@ -564,10 +567,10 @@ module.exports = (app) => {
   });
 
   router.post('/ad/analysis/tag/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
-    let evtadID = req.body.evtadID ;
+    let evtadID = req.body.evtadID;
     let sql = "SELECT tagLabel " +
       " FROM dm_EvtadTag " +
-      " where evtadID = @evtadID " ;
+      " where evtadID = @evtadID ";
     let request = _connector.queryRequest()
       .setInput('evtadID', _connector.TYPES.NVarChar, evtadID)
     Q.nfcall(request.executeQuery, sql).then((resultSet) => {
