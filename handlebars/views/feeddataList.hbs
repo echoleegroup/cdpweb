@@ -19,15 +19,15 @@
           <th>#</th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-            <i class="fa fa-sort" aria-hidden="true"></i> 品牌
+             品牌
           </th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-            <i class="fa fa-sort" aria-hidden="true"></i> 分類
+             分類
           </th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-            <i class="fa fa-sort" aria-hidden="true"></i> 名單名稱
+           名單名稱
           </th>
           <th>活動期間</th>
           <th>資料筆數</th>
@@ -76,7 +76,7 @@
       x += '<div class="col-sm-8"><div class="form-inline"><input type="text" class="form-control" id="newtag' + o[i].feeddata[0].ListID + '" placeholder=""><button type="button" onclick ="addtag(' + o[i].feeddata[0].ListID + ')" class="btn btn-default fa fa-plus" aria-hidden="true"></button></div></div>';
       x += '</div></form>';
     }
-    x += '<h3>資料基本資訊</h3><table class="table table-hover table-striped"><tbody><tr><td>註記</td><td>' + o[i].feeddata[0].ListDesc + '</td></tr><tr><td>最後更新時間</td><td>' + o[i].feeddata[0].updTime + '</td></tr><tr><td>最後更新人員</td><td>' + o[i].feeddata[0].updUser + '</td></tr></tbody></table>';
+    x += '<h3>資料基本資訊</h3><table class="table table-hover table-striped"><tbody><tr><td>活動內容說明</td><td>' + o[i].feeddata[0].ListDesc + '</td></tr><tr><td>最後更新時間</td><td>' + o[i].feeddata[0].updTime + '</td></tr><tr><td>最後更新人員</td><td>' + o[i].feeddata[0].updUser + '</td></tr></tbody></table>';
     if (o[i].feeddata[0].funcCatge != 'NCBS') {
       x += '<div class="btn-block center-block">';
       x += '<a href="/feeddata/outdata/edit?outerListID=' + o[i].feeddata[0].ListID + '">';

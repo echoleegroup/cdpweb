@@ -1,4 +1,4 @@
-{{> title title='數位媒體成效報表'}}
+{{> title title='數位媒體成效'}}
 <!--
 <div class="title">
   <div class="container">
@@ -9,7 +9,7 @@
 <div class="container">
   <!-- table set Start -->
   <div class="table_block table-responsive">
-    <h2>數位媒體成效報表</h2>
+    <h2>數位媒體成效</h2>
     <a href="/actad/act/analysis/search" title="重新查詢">
       <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
     </a>
@@ -19,12 +19,12 @@
           <th>#</th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-            <i class="fa fa-sort" aria-hidden="true"></i> 類別
+            類別
           </th>
           <th>活動名稱</th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-            <i class="fa fa-sort" aria-hidden="true"></i> 報表計算期間
+             報表計算期間
           </th>
           <th>頁面訪問數</th>
           <th>cookie ID追蹤數</th>
@@ -50,10 +50,22 @@
     x += "<td>" + o[i].maininfo[0].codeLabel + "</td>";
     x += "<td>" + o[i].maininfo[0].msm_tpc + "</td>";
     x += "<td>" + o[i].maininfo[0].sdt + "~" + o[i].maininfo[0].edt + "</td>";
-    x += "<td>" + o[i].maininfo[0].browseCount + "</td>";
-    x += "<td>" + o[i].maininfo[0].cookieCount + "</td>";
-    x += "<td>" + o[i].maininfo[0].dxidCount + "</td>";
-    x += "<td>" + o[i].maininfo[0].canvasCount + "</td>";
+    if (o[i].maininfo[0].browseCount != null)
+      x += "<td>" + o[i].maininfo[0].browseCount + "</td>";
+    else
+      x += "<td>-</td>";
+    if (o[i].maininfo[0].cookieCount != null)
+      x += "<td>" + o[i].maininfo[0].cookieCount + "</td>";
+    else
+      x += "<td>-</td>";
+    if (o[i].maininfo[0].dxidCount != null)
+      x += "<td>" + o[i].maininfo[0].dxidCount + "</td>";
+    else
+      x += "<td>-</td>";
+    if (o[i].maininfo[0].canvasCount != null)
+      x += "<td>" + o[i].maininfo[0].canvasCount + "</td>";
+    else
+      x += "<td>-</td>";
     x += "<td><a href='javascript:urlopen(\"" + o[i].maininfo[0].url + "\");'>開啟連結</a></td>";
     x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
     x += '<tr class="sub_info"><td colspan="7">';
@@ -64,9 +76,18 @@
       x += '<td>' + o[i].maininfo[1].adlist[j].ad.adSource + '</td>';
       x += '<td>' + o[i].maininfo[1].adlist[j].ad.adChannel + '</td>';
       x += '<td>' + o[i].maininfo[1].adlist[j].ad.adPos + '</td>';
-      x += '<td>' + o[i].maininfo[1].adlist[j].ad.browseCount + '</td>';
-      x += '<td>' + o[i].maininfo[1].adlist[j].ad.cookieCount + '</td>';
-      x += '<td>' + o[i].maininfo[1].adlist[j].ad.canvasCount + '</td>';
+      if (o[i].maininfo[1].adlist[j].ad.browseCount != null)
+        x += '<td>' + o[i].maininfo[1].adlist[j].ad.browseCount + '</td>';
+      else
+        x += "<td>-</td>";
+      if (o[i].maininfo[1].adlist[j].ad.cookieCount != null)
+        x += '<td>' + o[i].maininfo[1].adlist[j].ad.cookieCount + '</td>';
+      else
+        x += "<td>-</td>";
+      if (o[i].maininfo[1].adlist[j].ad.canvasCount != null)
+        x += '<td>' + o[i].maininfo[1].adlist[j].ad.canvasCount + '</td>';
+      else
+        x += "<td>-</td>";
       x += '</tr>'
     }
     x += "</tbody></table>";
