@@ -41,7 +41,7 @@ module.exports = () => {
       json: false,
       prepend: true,
       timestamp: () => {
-        return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+        return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       },
       formatter: (options) => {
         return winston.config.colorize(options.level, options.timestamp() + ' ') +
@@ -58,7 +58,7 @@ module.exports = () => {
       json: false,
       prepend: true,
       timestamp: () => {
-        return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+        return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       },
       formatter: (options) => {
         return winston.config.colorize(options.level, options.timestamp() + ' ') +

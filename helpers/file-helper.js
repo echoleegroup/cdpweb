@@ -5,7 +5,6 @@ const request = require('request');
 const Q = require('q');
 const winston = require('winston');
 const constants = require("../utils/constants");
-const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 
 module.exports.buildXlsxBuffer = ({
                                     sheetName='模型名單',
