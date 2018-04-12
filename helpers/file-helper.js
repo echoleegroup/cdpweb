@@ -99,7 +99,7 @@ module.exports.downloadRemoteFile = (url, dest, cb) => {
     fs.unlink(dest, err => {
       err && winston.warn(`unlink ${dest} failed: ${err}`);
     });
-    winston.error(`downloadRemoteFile ${url} failed: ${err}`);
+    winston.error(`downloadRemoteFile ${url} failed: `, err);
     return cb(err);
   });
 

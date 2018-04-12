@@ -46,7 +46,7 @@ module.exports.getCriteriaFeatureTree = (treeId, callback) => {
     .executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===integrated-analysis-service::getCriteriaFeatureTree(treeId=%s) failed: %j',
+    winston.error('===integrated-analysis-service::getCriteriaFeatureTree(treeId=%s) failed: ',
       treeId, err);
     callback(err);
   });
@@ -63,7 +63,7 @@ module.exports.getFeatureSets = (transSetId, callback) => {
     .executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===integrated-analysis-service::getFeatureSets(transSetId=%s) failed: %j', transSetId, err);
+    winston.error('===integrated-analysis-service::getFeatureSets(transSetId=%s) failed: ', transSetId, err);
     callback(err);
   });
 };
@@ -80,7 +80,7 @@ module.exports.getFeatureSet = (transSetId, setId, callback) => {
     .executeQuery, sql).then((result) => {
     callback(null, result[0]);
   }).fail((err) => {
-    winston.error(`===integrated-analysis-service::getFeatureSet(transSetId=${transSetId}, setId=${setId}) failed: ${err}`);
+    winston.error(`===integrated-analysis-service::getFeatureSet(transSetId=${transSetId}, setId=${setId}) failed: `, err);
     callback(err);
   });
 };

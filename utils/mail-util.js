@@ -24,7 +24,7 @@ module.exports.mail = (to, options = {}, callback = () => { }) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      winston.error("mail send error: "+error)
+      winston.error("mail send error: ", error)
       callback(error,null);
     } else {
       winston.info("Email sent: " + info.response)

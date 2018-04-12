@@ -46,14 +46,14 @@ module.exports.getFeaturesAsMap = (featureIds, callback) => {
   }).then(features => {
     callback(null, _.keyBy(features, 'featID'));
   }).fail(err => {
-    winston.error(`===getFeaturesAsMap: ${err}`);
+    winston.error('===getFeaturesAsMap: ', err);
     callback(err);
   });
 };
 
 const MASTER_FILE_NAME_MAPPER = {
-  identified: '客戶車輛主表',
-  anonymous: '線上用戶主檔'
+  IDENTIFIED: '客戶車輛主表',
+  ANONYMOUS: '線上用戶主檔'
 };
 
 module.exports.getCsvFileName = (transFeatSetID, mod, callback) => {
@@ -65,8 +65,7 @@ module.exports.getCsvFileName = (transFeatSetID, mod, callback) => {
       // winston.info(`${transFeatSetID} getFeatureSet: ${setInfo}`);
       callback(null, setInfo? `${setInfo.transFeatSetName}.csv`: `${transFeatSetID}.csv`);
     }).fail(err => {
-      winston.error(`${transFeatSetID} getFeatureSet: ${err}`);
-      callback(err);
+      winston.error(`${transFeatSetID} getFeatureSet: `, err);
     });
   }
 };
@@ -81,7 +80,7 @@ module.exports.emptyFeatureStreamToCsvProcessor = (stream, target, callback) => 
       callback(null, target);
     })
     .on('error', err => {
-      winston.error(`csv writer on error: ${err}`);
+      winston.error('csv writer on error: ', err);
       callback(err, null);
     });
 
@@ -110,7 +109,7 @@ module.exports.emptyFeatureStreamToCsvProcessor = (stream, target, callback) => 
       // callback(null, target);
     })
     .on('error', err => {
-      winston.error(`entry on error: ${err}`);
+      winston.error('entry on error: ', err);
       callback(err, null);
     });
 };
@@ -132,7 +131,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
       callback(null, target);
     })
     .on('error', err => {
-      winston.error(`csv writer on error: ${err}`);
+      winston.error('csv writer on error: ', err);
       callback(err, null);
     });
 
@@ -170,7 +169,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
       // callback(null, target);
     })
     .on('error', err => {
-      winston.error(`entry on error: ${err}`);
+      winston.error('entry on error: ', err);
       callback(err, null);
     });
 };
@@ -189,7 +188,7 @@ module.exports.streamToJson = (stream, callback) => {
       callback(null, data);
     })
     .on('error', err => {
-      winston.error(`meta stream on error: ${err}`);
+      winston.error('meta stream on error: ', err);
       callback(err, null);
     });
 };
@@ -271,7 +270,7 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
               winston.info('streamToJson meta: ', meta);
               deferred.resolve(meta);
             }).fail(err => {
-              winston.error(`parsing meta failed ${err}`);
+              winston.error('parsing meta failed ', err);
               deferred.reject(err);
             });
           }
@@ -298,12 +297,12 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
         winston.info(`all csvFilePaths : ${entries}`);
         callback(null, {records, entries});
       }).fail(err => {
-        //log query task status to parsing fail
-        winston.error(err);
+        //fail to parse zip entry
+        winston.error('fail to parse zip entry', err);
         callback(err);
       });
     }).on('error', err => {
-      winston.error(`===entry on error ${err}`);
+      winston.error('===entry on error ', err);
       callback(err);
     });
   });
@@ -342,21 +341,21 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
         features: masterFeature,
         filter: masterFilter
       },
-      relatives: relatives,
-      statistic: {
-        features: _.map(analyzableFeatures, feature => {
-          let chartType = feature.chartType.slice(0, feature.chartType.indexOf('_')); // categ_bar類別型, cont_line數值型, date_line日期型
+      relatives: relatives
+    },
+    statistic: {
+      features: _.map(analyzableFeatures, feature => {
+        let chartType = feature.chartType.slice(0, feature.chartType.indexOf('_')); // categ_bar類別型, cont_line數值型, date_line日期型
 
-          return {
-            feature_id: feature.featID,  // 欄位ID
-            chart_type: chartType,
-            ref: feature.codeGroup,
-            min_period: getMinPeriod(chartType, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
-            // aggregate: ["total", "percentage"],
-            // statistic: ["average", "median", "std_dev", "upper_bound", "lower_bound"]
-          }
-        })
-      }
+        return {
+          feature_id: feature.featID,  // 欄位ID
+          chart_type: chartType,
+          ref: feature.codeGroup,
+          min_period: getMinPeriod(chartType, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+          // aggregate: ["total", "percentage"],
+          // statistic: ["average", "median", "std_dev", "upper_bound", "lower_bound"]
+        }
+      })
     }
   }
 };

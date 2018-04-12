@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
+const moment = require('moment');
 const DailyRotateFile = require('winston-daily-rotate-file');
 
 const constants = require('../utils/constants');
@@ -14,16 +15,14 @@ module.exports = () => {
 
   const consoleLogger = new winston.transports.Console({
     timestamp: () => {
-      return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+      //return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+      return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
     },
     formatter: (options) => {
       return winston.config.colorize(options.level, options.timestamp() + ' ') +
         winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
         (options.message ? options.message : '') +
-        (options.meta && Object.keys(options.meta).length ?
-          '\n\t' + JSON.stringify(options.meta) :
-          (options.meta && options.meta instanceof Error && options.meta.stack ?
-            options.meta.stack : ''));
+        (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
     }
   });
   transports.push(consoleLogger);
@@ -40,7 +39,16 @@ module.exports = () => {
       datePattern: 'yyyy-MM-dd.',
       level: 'info',
       json: false,
-      prepend: true
+      prepend: true,
+      timestamp: () => {
+        return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+      },
+      formatter: (options) => {
+        return winston.config.colorize(options.level, options.timestamp() + ' ') +
+          winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+          (options.message ? options.message : '') +
+          (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
+      }
     });
     const dailyRotateLoggerError = new DailyRotateFile({
       name: 'dailyRotateLoggerError',
@@ -48,7 +56,16 @@ module.exports = () => {
       datePattern: 'yyyy-MM-dd.error.',
       level: 'error',
       json: false,
-      prepend: true
+      prepend: true,
+      timestamp: () => {
+        return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+      },
+      formatter: (options) => {
+        return winston.config.colorize(options.level, options.timestamp() + ' ') +
+          winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+          (options.message ? options.message : '') +
+          (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
+      }
     });
 
     transports.push(dailyRotateLoggerInfo);

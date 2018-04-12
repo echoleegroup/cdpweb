@@ -48,7 +48,7 @@ module.exports = (app) => {
     }).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/fields internal server error: ', mdId, batId, err);
+      winston.error(`===/${mdId}/${batId}/criteria/fields internal server error: `, err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -83,7 +83,7 @@ module.exports = (app) => {
 
     }).fail(err => {
       if (err) {
-        winston.error(`===/${mdId}/${batId}/criteria/preview : ${err}`);
+        winston.error(`===/${mdId}/${batId}/criteria/preview: `, err);
         res.json(req.params, 500, 'internal service error');
       }
     });
@@ -178,7 +178,7 @@ module.exports = (app) => {
       })
     }).fail(err => {
       if (err) {
-        winston.error(`===/${mdId}/${batId}/criteria/export : ${err}`);
+        winston.error(`===/${mdId}/${batId}/criteria/export: `, err);
         res.json(req.params, 500, 'internal service error');
       }
     });
@@ -191,7 +191,7 @@ module.exports = (app) => {
     Q.nfcall(modelService.getBatchTargetSummaryOfCategory, mdId, batId, criteriaHelper.MODEL_LIST_CATEGORY).then(summary => {
       res.json(_.pick(summary, ['popName', 'popDesc', 'categCount', 'lastTimeBatch']));
     }).fail(err => {
-      winston.error('===/%s/%s/criteria/fields internal server error: ', mdId, batId, err);
+      winston.error(`===/${mdId}/${batId}/criteria/fields internal server error: `, err);
       res.json(null, 500, 'internal service error');
     });
   });

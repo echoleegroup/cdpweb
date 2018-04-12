@@ -13,7 +13,7 @@ module.exports.getFeature = (featureId, callback) => {
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result[0]);
   }).fail(err => {
-    winston.error('===getFeature failed:', err);
+    winston.error('===getFeature failed: ', err);
     callback(err);
   });
 };
@@ -29,7 +29,7 @@ module.exports.getFeatures = (featureIds = [], callback) => {
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
   }).fail(err => {
-    winston.error('===getFeatures failed:', err);
+    winston.error('===getFeatures failed: ', err);
     callback(err);
   });
 };

@@ -25,7 +25,7 @@ const pool = new mssql.ConnectionPool(config);
 // });
 
 pool.connect((err) => {
-  err && winston.error('connect db failed: %j', err);
+  err && winston.error('connect db failed: ', err);
 });
 
 winston.info('mssql connection pool established.');
@@ -74,7 +74,7 @@ const _that = {
         Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
           callback(null, (result.rowsAffected.length > 1)? result.rowsAffected: result.rowsAffected[0]);
         }).catch(err => {
-          winston.error(err);
+          winston.error('sql util executeUpdate error: ', err);
           callback(err);
         });
       }

@@ -52,7 +52,7 @@ module.exports.getBatchCategoryFeatures = (featureIds, callback) => {
   Q.nfcall(_connector.execSql, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===model-service::getBatchCategoryFeatures(featureIds=%j) failed: %j', featureIds, err);
+    winston.error('===model-service::getBatchCategoryFeatures(featureIds=%j) failed: ', featureIds, err);
     callback(err);
   });
 };

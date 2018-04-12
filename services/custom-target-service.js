@@ -81,8 +81,7 @@ module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
     .executeQuery, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
-    winston.error('===criteria-service::getCustomCriteriaFeatureTree(treeId=%s) failed: %j',
-      treeId, err);
+    winston.error('===criteria-service::getCustomCriteriaFeatureTree(treeId=%s) failed: ', treeId, err);
     callback(err);
   });
 };
@@ -137,8 +136,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
     // winston.info('===queryTargetByCustomCriteria::executeQuery::result: ', result);
     callback(null, result);
   }).fail((err) => {
-    winston.error('===criteria-service::' +
-      'queryTargetByCustomCriteria(%j) failed: %j',
+    winston.error('===criteria-service::queryTargetByCustomCriteria(%j) failed: ',
       {mdId, batId, statements, model, downloadFeatureIds}, err);
     callback(err);
   });

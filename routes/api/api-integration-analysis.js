@@ -306,8 +306,7 @@ module.exports = (app) => {
 
       res.json({queryId});
     }).fail(err => {
-      winston.error(`===/export/query internal server error: ${err}`);
-      console.log(err);
+      winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -430,8 +429,7 @@ module.exports = (app) => {
 
       res.json({queryId});
     }).fail(err => {
-      winston.error(`===/export/query internal server error: ${err}`);
-      console.log(err);
+      winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -460,8 +458,7 @@ module.exports = (app) => {
       //   featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
       // }));
     }).fail(err => {
-      winston.error(`===/:mode/query/:queryId/navigate/features internal server error: ${err}`);
-      console.log(err);
+      winston.error('===/:mode/query/:queryId/navigate/features internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });

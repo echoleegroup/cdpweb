@@ -46,7 +46,7 @@ module.exports = (app) => {
         mod = queryLogData.reserve2;
         // winston.info('query log process Data: %j', featureIdMap);
         Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
-          winston.error(err);
+          winston.error('fail to update query task status: ', err);
         });
 
         return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap, mod)
@@ -58,9 +58,9 @@ module.exports = (app) => {
             winston.info(`archive finished: ${destZipPath}`);
             return Q.nfcall(fileHelper.archiveStat, destZipPath);
           }).fail(err => {
-            winston.error(`parsing to csv and archive failed: ${err}`);
+            winston.error('parsing to csv and archive failed: ', err);
             Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
-              throw new Error(`set query task status as parsing-failed failed: ${err}`);
+              winston.error('set query task status as parsing-failed failed: ', err);
             });
             throw err;
           });
@@ -78,7 +78,7 @@ module.exports = (app) => {
       let content = `<a href="http://${process.env.HOST}:${process.env.PORT}/integration/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
-      winston.error(`/export/query/ready/:ip/:port/:queryId error: ${err}`);
+      winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
     }).finally(() => {
       const rmdir = require('rimraf');
       rmdir(workingPath, err => {
@@ -131,7 +131,7 @@ module.exports = (app) => {
       // winston.info(`===delete remote file: ${remoteDeleteUrl}`);
       require('request-promise-native').post(remoteDeleteUrl);
       Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
-        winston.error(err);
+        winston.error('fail to update query task status: ', err);
       });
       return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap, mod)
         .then(info => {
@@ -142,9 +142,9 @@ module.exports = (app) => {
           winston.info(`archive finished: ${destZipPath}`);
           return Q.nfcall(fileHelper.archiveStat, destZipPath);
         }).fail(err => {
-          winston.error(`parsing to csv and archive failed: ${err}`);
+          winston.error('parsing to csv and archive failed: ', err);
           Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
-            throw new Error(`set query task status as parsing-failed failed: ${err}`);
+            winston.error('set query task status as parsing-failed failed: ', err);
           });
           throw err;
         });
@@ -161,11 +161,11 @@ module.exports = (app) => {
       let content = `<a href="http://${process.env.HOST}:${process.env.PORT}/integration/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
-      winston.error(`/export/query/ready/:ip/:port/:queryId error: ${err}`);
+      winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
     }).finally(() => {
       const rmdir = require('rimraf');
       rmdir(workingPath, err => {
-        err && winston.warn(`remove ${workingPath} failed: ${err}`);
+        err && winston.warn(`remove ${workingPath} failed: `, err);
       });
     });
   });

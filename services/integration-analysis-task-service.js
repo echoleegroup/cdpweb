@@ -33,8 +33,7 @@ const updateTaskStatus = (queryId, status, callback) => {
       throw new Error();
     }
   }).fail(err => {
-    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}`);
-    winston.error(err);
+    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}: `, err);
     callback(err);
   });
 };
@@ -61,8 +60,7 @@ module.exports.initQueryTask = (queryId, userId, callback) => {
       queryID: queryId
     });
   }).fail(err => {
-    winston.error(`===insert query task failed! (queryID=${queryId}, userId=${userId}`);
-    winston.error(err);
+    winston.error(`===insert query task failed! (queryID=${queryId}, userId=${userId}: `, err);
     callback(err);
   });
 };
@@ -85,8 +83,7 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
       throw new Error();
     }
   }).fail(err => {
-    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status})`);
-    winston.error(err);
+    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}): `, err);
     callback(err);
   });
 };
@@ -128,8 +125,7 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
       throw new Error();
     }
   }).fail(err => {
-    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status})`);
-    winston.error(err);
+    winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}): `, err);
     callback(err);
   });
 };

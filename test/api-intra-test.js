@@ -57,12 +57,10 @@ module.exports = (app) => {
       }).on('close', () => {
         winston.info('entry closed');
       }).on('error', err => {
-        winston.error(`entry error ${err}`);
-        console.log(err);
+        winston.error('entry error: ', err);
       });
     }).fail(err => {
-      winston.error(`open zip error ${err}`);
-      console.log(err);
+      winston.error('open zip error: ', err);
     });
     // fs.createReadStream(sparkZipPath)
     //   .pipe(unzipper.Extract({ path: workingPath }))
@@ -100,8 +98,7 @@ module.exports = (app) => {
       winston.info(`archive finished: ${destZipPath}`);
       return Q.nfcall(fileHelper.archiveStat, destZipPath);
     }).fail(err => {
-      winston.error(`parsing to csv and archive failed: ${err}`);
-      console.log(err);
+      winston.error('parsing to csv and archive failed: ', err);
       // Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
       //   throw new Error(`set query task status as parsing-failed failed: ${err}`);
       // });

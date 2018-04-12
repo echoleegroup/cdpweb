@@ -14,6 +14,6 @@ stream
     console.log(data)
   })
   .on('error', err => {
-    winston.error(`entry on error: ${err}`);
+    winston.error('entry on error: ', err);
     console.log(err);
   });
