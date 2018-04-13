@@ -26,6 +26,8 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
     getQueryTask(this.props.match.params.queryId, (queryTask) => {
       this.setState({
         task: Map({
+          queryId: queryTask.queryID,
+          mode: queryTask.mode,
           status: queryTask.status,
           statusLabel: queryTask.statusLabel,
           queryTime: moment(queryTask.crtTime).valueOf(),
@@ -47,7 +49,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
         <div className="row">
           {/*<!-- 左欄 Start -->*/}
           <div className="col-md-8 col-sm-7 col-xs-12">
-            <QueryTask task={task} queryId={this.props.match.params.queryId}/>
+            <QueryTask task={task}/>
             <CriteriaView criteria={criteria}/>
           </div>
           <div className="col-md-4 col-sm-5 col-xs-12">
@@ -63,7 +65,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
 class QueryTask extends React.PureComponent {
   componentWillMount() {
     this.download = () => {
-      window.open('/api/integration/export/download/' + this.props.queryId);
+      window.open('/api/integration/export/download/' + this.props.task.queryId);
     };
   };
 
@@ -133,9 +135,14 @@ class ResultInfo extends React.PureComponent {
               </tbody>
             </table>
           </div>
-          {/*<div className="btn-block">*/}
-            {/*<a className="btn btn-default btn-lg" href="#">客戶樣貌總覽</a>*/}
-          {/*</div>*/}
+          <div className="btn-block">
+            {this.props.task.mode?
+              <a className="btn btn-default btn-lg"
+                 href={`/integration/${this.props.task.mode.toLowerCase()}/query/${this.props.task.queryId}/analysis/large`}>
+                客戶樣貌總覽
+              </a>: null}
+
+          </div>
         </div>
       </div>
     );

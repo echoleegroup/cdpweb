@@ -55,8 +55,8 @@ module.exports = Object.freeze({
   },
 
   INTEGRATED_MODE: {
-    IDENTIFIED: 'IDENTIFIED',
-    ANONYMOUS: 'ANONYMOUS'
+    IDENTIFIED: 'identified',
+    ANONYMOUS: 'anonymous'
   }
 });
 

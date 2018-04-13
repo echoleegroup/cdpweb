@@ -39,7 +39,7 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
     .then(result => {
       callback(null, result);
     }).catch((err) => {
-      console.log('execParameterizedSql error: ', err);
+      winston.error('execParameterizedSql error: ', err);
     callback(err);
   });
 };

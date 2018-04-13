@@ -51,15 +51,19 @@ module.exports.getFeaturesAsMap = (featureIds, callback) => {
   });
 };
 
-const MASTER_FILE_NAME_MAPPER = {
-  IDENTIFIED: '客戶車輛主表',
-  ANONYMOUS: '線上用戶主檔'
-};
+const getMasterFileName = (mode) => {
+  switch (mode) {
+    case constants.INTEGRATED_MODE.IDENTIFIED:
+      return '客戶車輛主表';
+    case constants.INTEGRATED_MODE.ANONYMOUS:
+      return '線上用戶主檔';
+  }
+}
 
-module.exports.getCsvFileName = (transFeatSetID, mod, callback) => {
+module.exports.getCsvFileName = (transFeatSetID, mode, callback) => {
   // winston.info(`transFeatSetID: ${transFeatSetID}`);
   if ('master' === transFeatSetID) {
-    callback(null, `${MASTER_FILE_NAME_MAPPER[mod]}.csv`);
+    callback(null, `${getMasterFileName(mode)}.csv`);
   } else {
     Q.nfcall(integrationService.getFeatureSet, constants.EXPORT_RELATIVE_SET_ID, transFeatSetID).then(setInfo => {
       // winston.info(`${transFeatSetID} getFeatureSet: ${setInfo}`);
