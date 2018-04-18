@@ -463,5 +463,32 @@ module.exports = (app) => {
     });
   });
 
+  router.get('/:mode/query/:queryId/chart/feature/:featureId', middlewares, (req, res) => {
+    let mode = req.params.mode;
+    let queryId = req.params.queryId;
+    let featureId = req.params.featureId;
+    res.json({
+      "feature_id": "CRCAMF_SEDLDT",  // 欄位ID
+      "chart_type": "continuous",   // category類別型, continuous連續數值型, date日期型
+      "data": [  // x軸的每個刻度
+        {
+          "category": "____", // 刻度名稱
+          "total": 342345,  // 刻度內的資料總數
+          "percentage": 34.3  // 刻度內的資料所佔全部結果百分比
+        },
+        {
+          "category": "____", // 刻度名稱
+          "total": 234243,  // 刻度內的資料總數
+          "percentage": 21.5  // 刻度內的資料所佔全部結果百分比
+        }
+      ],
+      "average": 3, // 數值型：全部資料的平均值。其他：undefined
+      "median": 3,  // 數值型：全部資料的中位數。其他：undefined
+      "std_dev": 3, // 數值型：全部資料的標準差。其他：undefined
+      "upper_bound": "___", // 有效資料下界
+      "lower_bound": "___", // 有效資料上界
+    });
+  });
+
   return router;
 };

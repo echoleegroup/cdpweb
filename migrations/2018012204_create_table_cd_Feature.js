@@ -32,7 +32,7 @@ module.exports = {
         type: DataTypes.STRING(20)
       },
       minPeriod: {
-        type: DataTypes.STRING(3)
+        type: DataTypes.STRING(10)
       },
       dataSource: {
         type: DataTypes.STRING(10)

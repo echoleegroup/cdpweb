@@ -13,6 +13,7 @@ const codeGroupService = require('../services/code-group-service');
 const constants = require('../utils/constants');
 const queryLogService = require('../services/query-log-service');
 const integrationTaskService = require('../services/integration-analysis-task-service');
+const integrationStatisticService = require('../services/integration-analysis-statistic-service');
 
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {
@@ -28,7 +29,7 @@ module.exports.getFeatureAsMap = (featureId, callback) => {
   });
 };
 
-module.exports.getFeaturesAsMap = (featureIds, callback) => {
+const getFeaturesAsMap = (featureIds, callback) => {
   Q.nfcall(integrationService.getDownloadFeaturesByIds, featureIds).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
@@ -60,7 +61,7 @@ const getMasterFileName = (mode) => {
   }
 }
 
-module.exports.getCsvFileName = (transFeatSetID, mode, callback) => {
+const getCsvFileName = (transFeatSetID, mode, callback) => {
   // winston.info(`transFeatSetID: ${transFeatSetID}`);
   if ('master' === transFeatSetID) {
     callback(null, `${getMasterFileName(mode)}.csv`);
@@ -74,7 +75,7 @@ module.exports.getCsvFileName = (transFeatSetID, mode, callback) => {
   }
 };
 
-module.exports.emptyFeatureStreamToCsvProcessor = (stream, target, callback) => {
+const emptyFeatureStreamToCsvProcessor = (stream, target, callback) => {
   let writer = csvWriter({sendHeaders: false});
   writer
     .pipe(fs.createWriteStream(target))
@@ -118,9 +119,9 @@ module.exports.emptyFeatureStreamToCsvProcessor = (stream, target, callback) => 
     });
 };
 
-module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => {
+const streamToCsvProcessor = (stream, target, featureMap, callback) => {
   if (_.isEmpty(featureMap)) {
-    return this.emptyFeatureStreamToCsvProcessor(stream, target, callback);
+    return emptyFeatureStreamToCsvProcessor(stream, target, callback);
   }
 
   // let outStream = fs.createWriteStream(target);
@@ -170,7 +171,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
     .on('close', () => {
       winston.info(`entry close: ${target}`);
       writer.end();
-      // callback(null, target);
+      // response to callback when writer.on('end'). callback(null, target);
     })
     .on('error', err => {
       winston.error('entry on error: ', err);
@@ -178,7 +179,7 @@ module.exports.streamToCsvProcessor = (stream, target, featureMap, callback) => 
     });
 };
 
-module.exports.streamToJson = (stream, callback) => {
+const streamToJson = (stream, callback) => {
   const streamBuffers = require('stream-buffers');
   let myWritableStreamBuffer = new streamBuffers.WritableStreamBuffer();
   stream
@@ -197,9 +198,150 @@ module.exports.streamToJson = (stream, callback) => {
     });
 };
 
-module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureIdMap, mod, callback) => {
+const queryResultEntryParserPromise = (baseName, mode, featureIds, zipFile, entry, workingPath) => {
+  return Q.all([
+    Q.nfcall(getCsvFileName, baseName, mode),
+    Q.nfcall(getFeaturesAsMap, featureIds)
+  ]).spread((csvFileName, featureMap) => {
+    console.log('csvFileName: ', csvFileName);
+    console.log('featureMap: ', featureMap);
+    let deferred = Q.defer();
+    if (_.isEmpty(featureMap)) {
+      winston.error(`feature map of ${baseName} not found.`);
+      // return Q.reject(`feature map of ${baseName} not found.`);
+      // throw new Error(`feature map of ${baseName} not found.`);
+    }
+
+    zipFile.openReadStream(entry, (err, readStream) => {
+      if (err) {
+        console.log(err);
+        deferred.reject(err);
+      } else {
+        readStream.on("end", () => {
+          winston.info('entry end');
+          zipFile.readEntry();
+        });
+
+        Q.nfcall(streamToCsvProcessor, readStream, path.resolve(workingPath, csvFileName), featureMap).then(target => {
+          deferred.resolve(target);
+        }).fail(err => {
+          deferred.reject(err);
+        });
+      }
+    });
+
+    return deferred.promise;
+  });
+};
+
+const queryResultMetaParserPromise = (zipFile, entry) => {
+  let deferred = Q.defer();
+  // metaPromise.then(record => {
+  //   return deferred.promise;
+  // });
+
+  zipFile.openReadStream(entry, (err, readStream) => {
+    if (err) {
+      console.log(err);
+      deferred.reject(err);
+    } else {
+      readStream.on("end", () => {
+        winston.info('meta entry end');
+        zipFile.readEntry();
+      });
+
+      Q.nfcall(streamToJson, readStream).then(data => {
+        winston.info('data: ', data);
+        let meta = JSON.parse(data);
+        winston.info('streamToJson meta: ', meta);
+        deferred.resolve(meta);
+      }).fail(err => {
+        winston.error('parsing meta failed ', err);
+        deferred.reject(err);
+      });
+    }
+  });
+
+  return deferred.promise;
+};
+
+const statisticDataProcessor = (queryId, stream, callback) => {
+  stream
+    .pipe(es.split())
+    .pipe(es.mapSync((line) => {
+      //in this line stream, all necessary data has been ready.
+      // transform data here
+      winston.info(`${++lineNum} get line : ${line}`);
+
+      let rowJson = undefined;
+      try {
+        rowJson = JSON.parse(line);
+      } catch (e) {
+        winston.warn(`parse string to json failed: ${line}`);
+        rowJson = {};
+      }
+
+      let {feature_id, data_category, data, average, median, std_dev, upper_bound, lower_bound} = rowJson;
+      winston.info(`feature_id: ${feature_id}`);
+      winston.info(`data_category: ${data_category}`);
+      winston.info(`average: ${average}`);
+      winston.info(`median: ${median}`);
+      winston.info(`std_dev: ${std_dev}`);
+      winston.info(`upper_bound: ${upper_bound}`);
+      winston.info(`lower_bound: ${lower_bound}`);
+      winston.info('data: %j', data);
+
+      // write to database, non-blocking
+      Q.nfcall(integrationStatisticService.insertStatisticOfFeature,
+        queryId, feature_id, data_category, average, median, std_dev, upper_bound, lower_bound);
+
+      let chartData = JSON.parse(data);
+      chartData.forEach((chart, index) => {
+        Q.nfcall(integrationStatisticService.insertStatisticChartOfFeature,
+          queryId, feature_id, chart.scale, chart.pole, chart.proportion, index + 1);
+      });
+
+      return feature_id;
+    }))
+    //.pipe(outStream)
+    .on('close', () => {
+      winston.info(`entry close: ${target}`);
+      callback(null, target);
+    })
+    .on('error', err => {
+      winston.error('entry on error: ', err);
+      callback(err, null);
+    });
+};
+
+const queryStatisticParserPromise = (queryId, zipFile, entry) => {
+  let deferred = Q.defer();
+
+  zipFile.openReadStream(entry, (err, readStream) => {
+    if (err) {
+      console.log(err);
+      deferred.reject(err);
+    } else {
+      readStream.on("end", () => {
+        winston.info('statistic entry end');
+        zipFile.readEntry();
+      });
+
+      Q.nfcall(statisticDataProcessor, queryId, readStream).then(target => {
+        deferred.resolve(target);
+      }).fail(err => {
+        deferred.reject(err);
+      });
+    }
+  });
+
+  return deferred.promise;
+};
+
+module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, featureIdMap, mode, callback) => {
   let promises = [];
   let metaPromise = undefined;
+  let statisticPromise = undefined;
   // let metaPromise = Q();
   Q.nfcall(yauzl.open, zipPath, {lazyEntries: true}).then(zipFile => {
     zipFile.readEntry();
@@ -210,75 +352,17 @@ module.exports.extractAndParseQueryResultFile = (zipPath, workingPath, featureId
 
       if (fileName.indexOf('__MACOSX') === 0) {
         zipFile.readEntry();
+      } else if ('statistic.json' === path.extname(fileName).toLowerCase()) {
+        statisticPromise = queryStatisticParserPromise(queryId, zipFile, entry);
       } else if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
         winston.info(`NEW ENTRY ${fileName}`);
 
         let featureIds = ('master' === baseName)? featureIdMap.master.features:
           (featureIdMap.relatives[baseName])? featureIdMap.relatives[baseName].features: [];
 
-        promises.push(
-          Q.all([
-            Q.nfcall(this.getCsvFileName, baseName, mod),
-            Q.nfcall(this.getFeaturesAsMap, featureIds)
-          ]).spread((csvFileName, featureMap) => {
-            console.log('csvFileName: ', csvFileName);
-            console.log('featureMap: ', featureMap);
-            let deferred = Q.defer();
-            if (_.isEmpty(featureMap)) {
-              winston.error(`feature map of ${baseName} not found.`);
-              // return Q.reject(`feature map of ${baseName} not found.`);
-              // throw new Error(`feature map of ${baseName} not found.`);
-            }
-
-            zipFile.openReadStream(entry, (err, readStream) => {
-              if (err) {
-                console.log(err);
-                deferred.reject(err);
-              } else {
-                readStream.on("end", () => {
-                  winston.info('entry end');
-                  zipFile.readEntry();
-                });
-
-                Q.nfcall(this.streamToCsvProcessor, readStream, path.resolve(workingPath, csvFileName), featureMap).then(target => {
-                  deferred.resolve(target);
-                }).fail(err => {
-                  deferred.reject(err);
-                });
-              }
-            });
-
-            return deferred.promise;
-          })
-        );
+        promises.push(queryResultEntryParserPromise(baseName, mode, featureIds, zipFile, entry, workingPath));
       } else if ('meta' === fileName) {
-        let deferred = Q.defer();
-        // metaPromise.then(record => {
-        //   return deferred.promise;
-        // });
-
-        zipFile.openReadStream(entry, (err, readStream) => {
-          if (err) {
-            console.log(err);
-            deferred.reject(err);
-          } else {
-            readStream.on("end", () => {
-              winston.info('meta entry end');
-              metaPromise = deferred.promise;
-              zipFile.readEntry();
-            });
-
-            Q.nfcall(this.streamToJson, readStream).then(data => {
-              winston.info('data: ', data);
-              let meta = JSON.parse(data);
-              winston.info('streamToJson meta: ', meta);
-              deferred.resolve(meta);
-            }).fail(err => {
-              winston.error('parsing meta failed ', err);
-              deferred.reject(err);
-            });
-          }
-        });
+        metaPromise = queryResultMetaParserPromise(zipFile, entry);
       } else if (/\/$/.test(fileName)) {
         // Directory file names end with '/'.
         // Note that entires for directories themselves are optional.
@@ -363,3 +447,6 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
     }
   }
 };
+
+module.exports.getCsvFileName = getCsvFileName;
+module.exports.getFeaturesAsMap = getFeaturesAsMap;

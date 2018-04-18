@@ -4,7 +4,7 @@ import {withRouter} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import Rx from "rxjs/Rx";
 import ItemTreeNavigator from './ItemTreeNavigator';
-import {getNavigateFeatures, getQueryTask} from '../actions/integrated-analysis-action';
+import {getNavigateFeatures, getQueryTask, getChartData} from '../actions/integrated-analysis-action';
 
 export default class IntegratedAnalysisChartLarge extends React.PureComponent {
   constructor(props) {
@@ -22,23 +22,24 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
 
   componentWillMount() {
     this.selectFeature = (feature, ...parents) => {
+      console.log('select feature : ', feature);
       this.setState({
         selectedFeature: feature,
         selectedFeaturePath: parents,
         isLoaded: false
       });
+
+      this.fetchChartData(this.mode, this.queryId, feature.id);
     };
 
     this.fetchPreparedData();
   };
 
   fetchPreparedData() {
-    const _getNavigateFeatures = Rx.Observable.bindCallback(getNavigateFeatures)(this.queryId, this.mode);
+    const _getNavigateFeatures = Rx.Observable.bindCallback(getNavigateFeatures)(this.mode, this.queryId);
     const _getQueryTask = Rx.Observable.bindCallback(getQueryTask)(this.queryId);
 
     Rx.Observable.forkJoin(_getNavigateFeatures, _getQueryTask).subscribe(res => {
-      console.log('res: ', res);
-      // let features = res[0].features;
       this.setState({
         features: res[0].features,
         records: res[1].records
@@ -49,6 +50,12 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
     //     features: data.features
     //   });
     // });
+  };
+
+  fetchChartData(mode, queryId, featureId) {
+    getChartData(mode, queryId, featureId, data => {
+      console.log('get chart data: ', data);
+    });
   };
 
   ComponentDataSetInformation(props) {

@@ -19,6 +19,7 @@ const EXPORT_QUERY = '/api/integration/export/query';
 const EXPORT_QUERY_TASK = '/api/integration/export/query/%s';
 
 const ANALYSIS_NAVIGATE_FEATURES = '/api/integration/%s/query/%s/navigate/features';
+const ANALYSIS_FEATURE_CHART_DATA = '/api/integration/%s/query/%s/chart/feature/%s';
 
 const TASK_STATUS = {
   INIT: "初始化",
@@ -165,8 +166,18 @@ exports.getQueryTask = (queryId, success, fail) => {
   });
 };
 
-exports.getNavigateFeatures = (queryId, mode, success, fail) => {
+exports.getNavigateFeatures = (mode, queryId, success, fail) => {
   let url = format(ANALYSIS_NAVIGATE_FEATURES, mode, queryId);
+  ajaxGetObservable(url, undefined, undefined).subscribe(data => {
+    success && success(data);
+  }, err => {
+    console.log('===getQueryTask failed: ', err);
+    fail && fail(err);
+  });
+};
+
+exports.getChartData = (mode, queryId, featureId, success, fail) => {
+  let url = format(ANALYSIS_FEATURE_CHART_DATA, mode, queryId, featureId);
   ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {

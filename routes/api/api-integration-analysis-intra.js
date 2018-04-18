@@ -49,7 +49,7 @@ module.exports = (app) => {
           winston.error('fail to update query task status: ', err);
         });
 
-        return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap, mod)
+        return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, queryId, sparkZipPath, workingPath, featureIdMap, mod)
           .then(info => {
             records = info.records;
             winston.info(`parsing to csv: ${info.entries}`);
@@ -133,7 +133,7 @@ module.exports = (app) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
         winston.error('fail to update query task status: ', err);
       });
-      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, sparkZipPath, workingPath, featureIdMap, mod)
+      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, queryId, sparkZipPath, workingPath, featureIdMap, mod)
         .then(info => {
           records = info.records;
           winston.info(`parsing to csv: ${info.entries}`);
