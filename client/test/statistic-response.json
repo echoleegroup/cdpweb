@@ -1,16 +1,21 @@
 {
   "feature_id": "CRCAMF_SEDLDT",  // 欄位ID
-  "chart_type": "cont_line",  // categ_bar類別型, cont_line數值型, date_line日期型
-  "average": 3, // 數值型：全部資料的平均值
-  "median": 3,  // 數值型：全部資料的中位數
-  "std_dev": 3, // 數值型：全部資料的標準差
-  "upper_bound": "___", // 有效資料下界
-  "lower_bound": "___", // 有效資料上界
+  "data_category": "continuous",   // category類別型, continuous連續數值型, date日期型
   "data": [  // x軸的每個刻度
     {
-      "category": "____", // 刻度名稱
-      "total": 342345,  // 刻度內的資料總數
+      "scale": "____", // 刻度名稱
+      "pole": 342345,  // 刻度內的資料總數
       "percentage": 34.3  // 刻度內的資料所佔全部結果百分比
+    },
+    {
+      "scale": "____", // 刻度名稱
+      "pole": 234243,  // 刻度內的資料總數
+      "percentage": 21.5  // 刻度內的資料所佔全部結果百分比
     }
-  ]
+  ],
+  "average": 3, // 數值型：全部資料的平均值。其他：undefined
+  "median": 3,  // 數值型：全部資料的中位數。其他：undefined
+  "std_dev": 3, // 數值型：全部資料的標準差。其他：undefined
+  "upper_bound": "___", // 有效資料下界
+  "lower_bound": "___", // 有效資料上界
 }
