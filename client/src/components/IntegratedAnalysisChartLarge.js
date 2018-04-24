@@ -17,7 +17,7 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
       selectedFeaturePath: [],
       features: [],
       records: 0,
-      isLoaded: false,
+      isLoaded: true,
       chart: {}
     };
   };
@@ -38,19 +38,6 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
       });
 
       this.fetchChartData(this.mode, this.queryId, feature.id);
-    };
-
-    this.ComponentChart = (props) => {
-      switch (props.chart.category) {
-        case 'continuous':
-          return <ContinuousChart {...props}/>;
-        case 'category':
-          return <CategoryChart {...props}/>;
-        case 'date':
-          return <TimelineChart {...props}/>;
-        default:
-          return null;
-      }
     };
 
     this.fetchPreparedData();
@@ -79,89 +66,136 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
     });
   };
 
-  ComponentDataSetInformation(props) {
+  ComponentLeftColumnGrid(props) {
     return (
-      <table className="table">
-        <tbody>
-        <tr>
-          <th>觀察顧客數：</th>
-          <td>{props.records || 0}</td>
-        </tr>
-        </tbody>
-      </table>
+      <div className="col-md-3 col-sm-4 col-xs-12">
+        {props.children}
+      </div>
+    );
+  };
+
+  ComponentRightColumnGrid(props) {
+    return (
+      <div className="col-md-9 col-sm-8 col-xs-12">
+        {props.children}
+      </div>
     );
   };
 
   render() {
-    let headline = '';
-    let display = 'none';
-    if (!isEmpty(this.state.selectedFeature)) {
-      headline = this.state.selectedFeaturePath.reduce((title, node) => {
-        return `${title}${node.label} > `;
-      }, '') + this.state.selectedFeature.label;
-
-      display = '';
-    }
-
-    let ComponentDataSetInformation = this.ComponentDataSetInformation;
-    let ComponentChart = this.ComponentChart;
-    // let ComponentChart = this.getChartComponent(this.state.chart.category);
-    // let ComponentChartInst = ComponentChart?
-    //   <ComponentChart isLoaded={this.state.isLoaded}
-    //                   selectedFeature={this.state.selectedFeature.toJS()}
-    //                   selectedFeaturePath={this.state.selectedFeaturePath}
-    //                   chart={this.state.chart}/>: null;
+    let ComponentLeftColumnGrid = this.ComponentLeftColumnGrid;
+    let ComponentRightColumnGrid = this.ComponentRightColumnGrid;
     return (
       <div className="row">
         {/*<!-- 左欄 Start -->*/}
-        <div className="col-md-3 col-sm-4 col-xs-12">
+        <ComponentLeftColumnGrid>
           {/*<!-- table set Start -->*/}
           <ItemTreeNavigator nodes={this.state.features}
                              selectNode={this.selectFeature}
                              selected={this.state.selectedFeature}/>
-        </div>
+        </ComponentLeftColumnGrid>
         {/*<!-- 右欄 Start -->*/}
-        <div className="col-md-9 col-sm-8 col-xs-12">
-          <div className="table_block table-responsive" style={{display: display}}>
-            <h2>{headline}</h2>
-            <h3>內容與分佈
-              {/*<i flow="right" tooltip="2016年有參與汰舊換新補助的車主，車主需為自然人，且舊車需為TOYOTA"/>*/}
-            </h3>
-            <Loader loaded={this.state.isLoaded}>
-              <ComponentChart feature={this.state.feature} chart={this.state.chart} selectedFeature={this.state.selectedFeature}/>
-            </Loader>
-            <table className="table">
-              <tbody>
-              <tr>
-                <td>單位：</td>
-                <td>{this.state.unit}</td>
-              </tr>
-              <tr>
-                <td>說明：</td>
-                <td>{this.state.description}</td>
-              </tr>
-              <tr>
-                <td>資料來源：</td>
-                <td>{this.state.dataSource}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+        <ComponentRightColumnGrid>
+          <Loader loaded={this.state.isLoaded}>
+            <FeatureAnalysis selectedFeature={this.state.selectedFeature}
+                             selectedFeaturePath={this.state.selectedFeaturePath}
+                             feature={this.state.feature}
+                             chart={this.state.chart}
+                             unit={this.state.unit}
+                             description={this.state.description}
+                             dataSource={this.state.dataSource}/>
+          </Loader>
           {/*<!-- table set Start -->*/}
-          <div className="table_block table-responsive">
-            <h2>客群資訊</h2>
-            <div className="table-responsive">
-              <ComponentDataSetInformation records={this.state.records}/>
-            </div>
-            <div className="btn-block center-block">
-              <button type="button" className="btn btn-lg btn-default">條件總覽</button>
-            </div>
-          </div>
-        </div>
+          <TaskDataInformation records={this.state.records}/>
+        </ComponentRightColumnGrid>
       </div>
     );
   };
 };
+
+class TaskDataInformation extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.recordText = '觀察顧客數';
+  };
+
+  render() {
+    return (
+      <div className="table_block table-responsive">
+        <h2>客群資訊</h2>
+        <div className="table-responsive">
+          <table className="table">
+            <tbody>
+            <tr>
+              <th>{this.recordText}：</th>
+              <td>{this.props.records || 0}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="btn-block center-block">
+          <button type="button" className="btn btn-lg btn-default">條件總覽</button>
+        </div>
+      </div>
+    );
+  }
+}
+
+class FeatureAnalysis extends React.PureComponent {
+  ComponentChart(props) {
+    switch (props.chart.category) {
+      case 'continuous':
+        return <ContinuousChart {...props}/>;
+      case 'category':
+        return <CategoryChart {...props}/>;
+      case 'date':
+        return <TimelineChart {...props}/>;
+      default:
+        return null;
+    }
+  };
+
+  render() {
+    let ComponentChart = this.ComponentChart;
+    let headline = '';
+    let display = 'none';
+    if (!isEmpty(this.props.selectedFeature)) {
+      headline = this.props.selectedFeaturePath.reduce((title, node) => {
+        return `${title}${node.label} > `;
+      }, '') + this.props.selectedFeature.label;
+
+      display = '';
+    }
+
+    return (
+      <div className="table_block table-responsive" style={{display: display}}>
+        <h2>{headline}</h2>
+        <h3>內容與分佈
+          {/*<i flow="right" tooltip="2016年有參與汰舊換新補助的車主，車主需為自然人，且舊車需為TOYOTA"/>*/}
+        </h3>
+        <ComponentChart feature={this.props.feature}
+                        chart={this.props.chart}
+                        selectedFeature={this.props.selectedFeature}/>
+        <table className="table">
+          <tbody>
+          <tr>
+            <td>單位：</td>
+            <td>{this.props.unit}</td>
+          </tr>
+          <tr>
+            <td>說明：</td>
+            <td>{this.props.description}</td>
+          </tr>
+          <tr>
+            <td>資料來源：</td>
+            <td>{this.props.dataSource}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+}
 
 class ContinuousChart extends React.Component {
   constructor(props) {
