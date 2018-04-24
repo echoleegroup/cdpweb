@@ -281,19 +281,19 @@ const statisticDataProcessor = (queryId, stream, callback) => {
         rowJson = {};
       }
 
-      let {feature_id, data_category, data, average, median, std_dev, upper_bound, lower_bound} = rowJson;
+      let {feature_id, category, data, average, median, standard_deviation, scale_upper_bound, scale_lower_bound} = rowJson;
       winston.info(`feature_id: ${feature_id}`);
-      winston.info(`data_category: ${data_category}`);
+      winston.info(`category: ${category}`);
       winston.info(`average: ${average}`);
       winston.info(`median: ${median}`);
-      winston.info(`std_dev: ${std_dev}`);
-      winston.info(`upper_bound: ${upper_bound}`);
-      winston.info(`lower_bound: ${lower_bound}`);
+      winston.info(`standard_deviation: ${standard_deviation}`);
+      winston.info(`upper_bound: ${scale_upper_bound}`);
+      winston.info(`lower_bound: ${scale_lower_bound}`);
       winston.info('data: %j', data);
 
       // write to database, non-blocking
       Q.nfcall(integrationStatisticService.insertStatisticOfFeature,
-        queryId, feature_id, data_category, average, median, std_dev, upper_bound, lower_bound);
+        queryId, feature_id, category, average, median, standard_deviation, scale_upper_bound, scale_lower_bound);
 
       let chartData = JSON.parse(data);
       chartData.forEach((chart, index) => {
@@ -350,7 +350,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
       let baseName = path.basename(fileName, '.json');
       winston.info('on entry event: ', fileName);
 
-      if (fileName.indexOf('__MACOSX') === 0) {
+      if (fileName.indexOf('__MACOSX') === 0) { //ignore meta file for mac archive
         zipFile.readEntry();
       } else if ('statistic.json' === path.extname(fileName).toLowerCase()) {
         statisticPromise = queryStatisticParserPromise(queryId, zipFile, entry);

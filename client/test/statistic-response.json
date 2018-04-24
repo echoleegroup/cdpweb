@@ -1,6 +1,6 @@
 {
   "feature_id": "CRCAMF_SEDLDT",  // 欄位ID
-  "data_category": "continuous",   // category類別型, continuous連續數值型, date日期型
+  "category": "continuous",   // category類別型, continuous連續數值型, date日期型
   "data": [  // x軸的每個刻度
     {
       "scale": "____", // 刻度名稱

@@ -10,6 +10,7 @@
     "build": "NODE_ENV=production webpack debug -p --config ./webpack.config.js"
   },
   "dependencies": {
+    "@amcharts/amcharts3-react": "^3.1.0",
     "archiver": "^2.1.1",
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.2",

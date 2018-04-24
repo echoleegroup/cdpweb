@@ -5,11 +5,11 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
 module.exports.insertStatisticOfFeature = (
-  queryId, featureId, category, average, median, standardDeviation, rangeUpperBound, rangeLowerBound, callback) => {
+  queryId, featureId, category, average, median, standardDeviation, scaleUpperBound, scaleLowerBound, callback) => {
   const sql = 'INSERT INTO cu_IntegratedQueryStatistic (' +
-    'queryID, featID, category, average, median, standardDeviation, rangeUpperBound, rangeLowerBound, crtTime) ' +
+    'queryID, featID, category, average, median, standardDeviation, scaleUpperBound, scaleLowerBound, crtTime) ' +
     'VALUES (' +
-    '@queryId, @featureId, @category, @average, @median, @standardDeviation, @rangeUpperBound, rangeLowerBound, @now)';
+    '@queryId, @featureId, @category, @average, @median, @standardDeviation, @scaleUpperBound, @scaleLowerBound, @now)';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
@@ -18,8 +18,8 @@ module.exports.insertStatisticOfFeature = (
     .setInput('average', _connector.TYPES.Float, average)
     .setInput('median', _connector.TYPES.Float, median)
     .setInput('standardDeviation', _connector.TYPES.Float, standardDeviation)
-    .setInput('rangeUpperBound', _connector.TYPES.NVarChar, rangeUpperBound)
-    .setInput('rangeLowerBound', _connector.TYPES.NVarChar, rangeLowerBound)
+    .setInput('scaleUpperBound', _connector.TYPES.NVarChar, scaleUpperBound)
+    .setInput('scaleLowerBound', _connector.TYPES.NVarChar, scaleLowerBound)
     .setInput('now', _connector.TYPES.DateTime, new Date());
 
   Q.nfcall(request.executeQuery, sql).then(result => {

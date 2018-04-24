@@ -27,10 +27,10 @@ module.exports = {
       standardDeviation: {
         type: DataTypes.FLOAT
       },
-      rangeUpperBound: {
+      scaleUpperBound: {
         type: DataTypes.STRING(50),
       },
-      rangeLowerBound: {
+      scaleLowerBound: {
         type: DataTypes.STRING(50),
       },
       crtTime: {

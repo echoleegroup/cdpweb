@@ -467,26 +467,64 @@ module.exports = (app) => {
     let mode = req.params.mode;
     let queryId = req.params.queryId;
     let featureId = req.params.featureId;
-    res.json({
-      "feature_id": "CRCAMF_SEDLDT",  // 欄位ID
-      "chart_type": "continuous",   // category類別型, continuous連續數值型, date日期型
-      "data": [  // x軸的每個刻度
-        {
-          "category": "____", // 刻度名稱
-          "total": 342345,  // 刻度內的資料總數
-          "percentage": 34.3  // 刻度內的資料所佔全部結果百分比
+
+    Q.nfcall(integrationService.getFeatureById, featureId).then(feature => {
+      winston.info('feature: ', feature);
+      let data = {
+        feature: {
+          featureId: feature.featID,
+          dataSource: feature.dataSourceLabel,
+          unit: feature.featNameExt,
+          description: feature.featDesc
         },
-        {
-          "category": "____", // 刻度名稱
-          "total": 234243,  // 刻度內的資料總數
-          "percentage": 21.5  // 刻度內的資料所佔全部結果百分比
+        chart: {
+          "featureId": featureId,  // 欄位ID
+          "category": "continuous",   // category類別型, continuous連續數值型, date日期型
+          "data": [
+            {
+              "scale": "category 1",
+              "pole": 8,
+              "proportion": 5
+            },
+            {
+              "scale": "category 2",
+              "pole": 6,
+              "proportion": 7
+            },
+            {
+              "scale": "category 3",
+              "pole": 2,
+              "proportion": 3
+            },
+            {
+              "scale": "category 4",
+              "pole": 1,
+              "proportion": 3
+            },
+            {
+              "scale": "category 5",
+              "pole": 2,
+              "proportion": 1
+            },
+            {
+              "scale": "category 6",
+              "pole": 3,
+              "proportion": 2
+            },
+            {
+              "scale": "category 7",
+              "pole": 6,
+              "proportion": 8
+            }
+          ],
+          "average": 3, // 數值型：全部資料的平均值。其他：undefined
+          "median": 3,  // 數值型：全部資料的中位數。其他：undefined
+          "standardDeviation": 3, // 數值型：全部資料的標準差。其他：undefined
+          "scaleUpperBound": "___", // 有效資料下界
+          "scaleLowerBound": "___", // 有效資料上界
         }
-      ],
-      "average": 3, // 數值型：全部資料的平均值。其他：undefined
-      "median": 3,  // 數值型：全部資料的中位數。其他：undefined
-      "std_dev": 3, // 數值型：全部資料的標準差。其他：undefined
-      "upper_bound": "___", // 有效資料下界
-      "lower_bound": "___", // 有效資料上界
+      };
+      res.json(data);
     });
   });
 

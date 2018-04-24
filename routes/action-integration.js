@@ -57,7 +57,7 @@ module.exports = (app) => {
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
 
-    res.render('container', {
+    res.render('container-chart', {
       user: req.user,
       menuTitle: '顧客樣貌分析報表',
       modelList: modelList,
