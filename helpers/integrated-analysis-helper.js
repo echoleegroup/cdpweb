@@ -298,7 +298,7 @@ const statisticDataProcessor = (queryId, stream, callback) => {
       let chartData = JSON.parse(data);
       chartData.forEach((chart, index) => {
         Q.nfcall(integrationStatisticService.insertStatisticChartOfFeature,
-          queryId, feature_id, chart.scale, chart.pole, chart.proportion, index + 1);
+          queryId, feature_id, chart.scale, chart.peak, chart.proportion, index + 1);
       });
 
       return feature_id;

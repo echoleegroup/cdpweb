@@ -1,52 +1,6 @@
 import React from 'react';
-import {withRouter} from 'react-router-dom';
 
-export default class ItemTreeNavigator extends React.PureComponent {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     selected: {}
-  //   };
-  // };
-
-  searchAgain() {
-    window.location.href = '/integration/query';
-  };
-
-  ComponentFunctionBar(props) {
-    return (
-      <div>
-        <h2>{this.HeadlineText()}</h2>
-        <button type="button" className="btn btn-default fa fa-search" onClick={this.searchAgain}>重新查詢</button>
-        <button type="button" className="btn btn-default fa fa-arrow-right"/>
-      </div>
-    );
-  };
-
-  HeadlineText() {
-    return '特徵觀察';
-  };
-
-  render() {
-
-    return (
-      <div className="table_block feature">
-        {/*<ComponentFunctionBar headline={this.HeadlineText()} searchAgain={this.searchAgain.bind(this)}/>*/}
-        {this.ComponentFunctionBar()}
-        {this.props.nodes.map(node => {
-          return (
-            <BranchOfNavTree key={node.id}
-                             node={node}
-                             selectNode={this.props.selectNode}
-                             selected={this.props.selected}/>
-          );
-        })}
-      </div>
-    );
-  };
-};
-
-class BranchOfNavTree extends React.PureComponent {
+export default class BranchOfNavTree extends React.PureComponent {
   componentWillMount() {
     this.branchClickHandler = (e) => {
       let _this = e.currentTarget;

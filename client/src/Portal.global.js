@@ -1,3 +1,5 @@
+import url from 'url';
+
 (function ($) {
   let internalAjax = $.ajax;
 

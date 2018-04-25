@@ -3,7 +3,7 @@ import Loader from 'react-loader';
 import {isEmpty} from 'lodash';
 import Rx from "rxjs/Rx";
 import AmCharts from '@amcharts/amcharts3-react';
-import ItemTreeNavigator from './ItemTreeNavigator';
+import BranchOfNavTree from './BranchOfNavTree';
 import {getNavigateFeatures, getQueryTask, getChartData} from '../actions/integrated-analysis-action';
 
 export default class IntegratedAnalysisChartLarge extends React.PureComponent {
@@ -81,17 +81,55 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
     );
   };
 
+  ComponentFunctionBar(props) {
+    return (
+      <div>
+        <h2>特徵觀察</h2>
+        <button type="button" className="btn btn-default fa fa-search" onClick={props.doSearch}>重新查詢</button>
+        <button type="button" className="btn btn-default fa fa-arrow-right"/>
+      </div>
+    );
+  };
+
+  ComponentNavigaterTree(props) {
+    let node = props.node;
+    return (
+      <BranchOfNavTree node={node}
+                       selectNode={props.selectNode}
+                       selected={props.selected}/>
+    );
+  };
+
+  doSearch() {
+    window.location.href = '/integration/query';
+  };
+
   render() {
     let ComponentLeftColumnGrid = this.ComponentLeftColumnGrid;
     let ComponentRightColumnGrid = this.ComponentRightColumnGrid;
+    let ComponentFunctionBar = this.ComponentFunctionBar;
+    let ComponentNavigaterTree = this.ComponentNavigaterTree;
+
     return (
       <div className="row">
         {/*<!-- 左欄 Start -->*/}
         <ComponentLeftColumnGrid>
           {/*<!-- table set Start -->*/}
-          <ItemTreeNavigator nodes={this.state.features}
-                             selectNode={this.selectFeature}
-                             selected={this.state.selectedFeature}/>
+          <div className="table_block feature">
+            {/*<ComponentFunctionBar headline={this.HeadlineText()} searchAgain={this.searchAgain.bind(this)}/>*/}
+            <ComponentFunctionBar doSearch={this.doSearch}/>
+            {this.state.features.map(node => {
+              return (
+                <ComponentNavigaterTree key={node.id}
+                                        node={node}
+                                        selectNode={this.selectFeature}
+                                        selected={this.state.selectedFeature}/>
+              );
+            })}
+          </div>
+          {/*<ItemTreeNavigator nodes={this.state.features}*/}
+                             {/*selectNode={this.selectFeature}*/}
+                             {/*selected={this.state.selectedFeature}/>*/}
         </ComponentLeftColumnGrid>
         {/*<!-- 右欄 Start -->*/}
         <ComponentRightColumnGrid>
@@ -236,7 +274,7 @@ class ContinuousChart extends React.Component {
         // "bulletColor": "#FFFFFF",
         "hideBulletsCount": 50,
         // "title": "red line",
-        "valueField": "pole",
+        "valueField": "peak",
         "useLineColorForBulletBorder": true,
         "balloon":{
           "drop":true
@@ -290,7 +328,7 @@ class CategoryChart extends ContinuousChart {
           "id": "AmGraph-1",
           "title": "graph 1",
           "type": "column",
-          "valueField": "pole"
+          "valueField": "peak"
         }
       ],
       "guides": [],

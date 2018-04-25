@@ -20,7 +20,7 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
-      pole: {
+      peak: {
         type: DataTypes.STRING(50)
       },
       proportion: {

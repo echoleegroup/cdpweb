@@ -483,37 +483,37 @@ module.exports = (app) => {
           "data": [
             {
               "scale": "category 1",
-              "pole": 8,
+              "peak": 8,
               "proportion": 5
             },
             {
               "scale": "category 2",
-              "pole": 6,
+              "peak": 6,
               "proportion": 7
             },
             {
               "scale": "category 3",
-              "pole": 2,
+              "peak": 2,
               "proportion": 3
             },
             {
               "scale": "category 4",
-              "pole": 1,
+              "peak": 1,
               "proportion": 3
             },
             {
               "scale": "category 5",
-              "pole": 2,
+              "peak": 2,
               "proportion": 1
             },
             {
               "scale": "category 6",
-              "pole": 3,
+              "peak": 3,
               "proportion": 2
             },
             {
               "scale": "category 7",
-              "pole": 6,
+              "peak": 6,
               "proportion": 8
             }
           ],

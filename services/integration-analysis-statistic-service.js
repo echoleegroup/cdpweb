@@ -32,16 +32,16 @@ module.exports.insertStatisticOfFeature = (
   });
 };
 
-module.exports.insertStatisticChartOfFeature = (queryId, featureId, scale, pole, proportion, seq, callback) => {
+module.exports.insertStatisticChartOfFeature = (queryId, featureId, scale, peak, proportion, seq, callback) => {
   const sql = 'INSERT INTO cu_IntegratedQueryStatisticChart (' +
-    'queryID, featID, scale, pole, proportion, seq, crtTime) ' +
-    'VALUES (@queryId, @featureId, @scale, @pole, @proportion, @seq, @now)';
+    'queryID, featID, scale, peak, proportion, seq, crtTime) ' +
+    'VALUES (@queryId, @featureId, @scale, @peak, @proportion, @seq, @now)';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('featureId', _connector.TYPES.NVarChar, featureId)
     .setInput('scale', _connector.TYPES.NVarChar, scale)
-    .setInput('pole', _connector.TYPES.NVarChar, pole)
+    .setInput('peak', _connector.TYPES.NVarChar, peak)
     .setInput('proportion', _connector.TYPES.Float, proportion)
     .setInput('seq', _connector.TYPES.Int, seq)
     .setInput('now', _connector.TYPES.DateTime, new Date());
