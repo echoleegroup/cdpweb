@@ -11,7 +11,8 @@ const webpack = require("webpack");
 const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 let webpackEntries = {
-  'react.bundle': ['./client/src/Portal.js']
+  'react.bundle': ['./client/src/Portal.global.js', './client/src/Portal.js'],
+  'react.chart.bundle': ['./client/src/Portal.global.js', './client/src/Portal.chart.js']
 };
 let webpackIncludes = [path.join(__dirname, 'client/src')];
 /*

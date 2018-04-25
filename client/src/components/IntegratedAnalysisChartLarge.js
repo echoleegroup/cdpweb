@@ -1,6 +1,5 @@
 import React from 'react';
 import Loader from 'react-loader';
-import {Map} from 'immutable';
 import {isEmpty} from 'lodash';
 import Rx from "rxjs/Rx";
 import AmCharts from '@amcharts/amcharts3-react';

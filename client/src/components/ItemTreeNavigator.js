@@ -2,12 +2,12 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 
 export default class ItemTreeNavigator extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: {}
-    };
-  };
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     selected: {}
+  //   };
+  // };
 
   searchAgain() {
     window.location.href = '/integration/query';
@@ -27,13 +27,7 @@ export default class ItemTreeNavigator extends React.PureComponent {
     return '特徵觀察';
   };
 
-  componentDidMount() {};
-
   render() {
-    // let ComponentFunctionBar = this.ComponentFunctionBar.bind(this);
-    // let [branchNodes, tailNodes] = partition(this.props.nodes, {
-    //   type: NODE_TYPE.Branch
-    // });
 
     return (
       <div className="table_block feature">
