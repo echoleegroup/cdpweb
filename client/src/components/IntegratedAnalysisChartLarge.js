@@ -6,7 +6,7 @@ import AmCharts from '@amcharts/amcharts3-react';
 import BranchOfNavTree from './BranchOfNavTree';
 import {getNavigateFeatures, getQueryTask, getChartData} from '../actions/integrated-analysis-action';
 
-export default class IntegratedAnalysisChartLarge extends React.PureComponent {
+export class IntegratedAnalysisChartLarge extends React.PureComponent {
   constructor(props) {
     super(props);
     this.queryId = this.props.match.params.queryId;
@@ -86,12 +86,12 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
       <div>
         <h2>特徵觀察</h2>
         <button type="button" className="btn btn-default fa fa-search" onClick={props.doSearch}>重新查詢</button>
-        <button type="button" className="btn btn-default fa fa-arrow-right"/>
+        <button type="button" className="btn btn-default fa fa-arrow-right" onClick={props.changeView}/>
       </div>
     );
   };
 
-  ComponentNavigaterTree(props) {
+  ComponentNavigatorTree(props) {
     let node = props.node;
     return (
       <BranchOfNavTree node={node}
@@ -100,15 +100,32 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
     );
   };
 
+  getChartContainer(category) {
+    switch (category) {
+      case 'continuous':
+        return ContinuousLargeChart;
+      case 'category':
+        return CategoryLargeChart;
+      case 'date':
+        return TimelineLargeChart;
+      default:
+        return null;
+    }
+  };
+
   doSearch() {
     window.location.href = '/integration/query';
+  };
+
+  changeView() {
+    window.location.href = `/integration/${this.mode}/query/${this.queryId}/analysis/small`;
   };
 
   render() {
     let ComponentLeftColumnGrid = this.ComponentLeftColumnGrid;
     let ComponentRightColumnGrid = this.ComponentRightColumnGrid;
     let ComponentFunctionBar = this.ComponentFunctionBar;
-    let ComponentNavigaterTree = this.ComponentNavigaterTree;
+    let ComponentNavigatorTree = this.ComponentNavigatorTree;
 
     return (
       <div className="row">
@@ -117,10 +134,10 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
           {/*<!-- table set Start -->*/}
           <div className="table_block feature">
             {/*<ComponentFunctionBar headline={this.HeadlineText()} searchAgain={this.searchAgain.bind(this)}/>*/}
-            <ComponentFunctionBar doSearch={this.doSearch}/>
+            <ComponentFunctionBar doSearch={this.doSearch.bind(this)} changeView={this.changeView.bind(this)}/>
             {this.state.features.map(node => {
               return (
-                <ComponentNavigaterTree key={node.id}
+                <ComponentNavigatorTree key={node.id}
                                         node={node}
                                         selectNode={this.selectFeature}
                                         selected={this.state.selectedFeature}/>
@@ -140,7 +157,8 @@ export default class IntegratedAnalysisChartLarge extends React.PureComponent {
                              chart={this.state.chart}
                              unit={this.state.unit}
                              description={this.state.description}
-                             dataSource={this.state.dataSource}/>
+                             dataSource={this.state.dataSource}
+                             chartContainer={this.getChartContainer(this.state.chart.category)}/>
           </Loader>
           {/*<!-- table set Start -->*/}
           <TaskDataInformation records={this.state.records}/>
@@ -179,21 +197,26 @@ class TaskDataInformation extends React.PureComponent {
 }
 
 class FeatureAnalysis extends React.PureComponent {
-  ComponentChart(props) {
-    switch (props.chart.category) {
-      case 'continuous':
-        return <ContinuousChart {...props}/>;
-      case 'category':
-        return <CategoryChart {...props}/>;
-      case 'date':
-        return <TimelineChart {...props}/>;
-      default:
-        return null;
-    }
-  };
+  // ComponentChart(props) {
+  //   switch (props.chart.category) {
+  //     case 'continuous':
+  //       return <ContinuousChart {...props}/>;
+  //     case 'category':
+  //       return <CategoryChart {...props}/>;
+  //     case 'date':
+  //       return <TimelineChart {...props}/>;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   render() {
-    let ComponentChart = this.ComponentChart;
+    console.log('this.props.chartContainer: ', this.props.chartContainer);
+    let ChartContainer = this.props.chartContainer;
+    let ComponentChart = ChartContainer?
+      <ChartContainer feature={this.props.feature}
+                      chart={this.props.chart}
+                      selectedFeature={this.props.selectedFeature}/>: null;
     let headline = '';
     let display = 'none';
     if (!isEmpty(this.props.selectedFeature)) {
@@ -210,9 +233,7 @@ class FeatureAnalysis extends React.PureComponent {
         <h3>內容與分佈
           {/*<i flow="right" tooltip="2016年有參與汰舊換新補助的車主，車主需為自然人，且舊車需為TOYOTA"/>*/}
         </h3>
-        <ComponentChart feature={this.props.feature}
-                        chart={this.props.chart}
-                        selectedFeature={this.props.selectedFeature}/>
+        {ComponentChart}
         <table className="table">
           <tbody>
           <tr>
@@ -234,26 +255,11 @@ class FeatureAnalysis extends React.PureComponent {
   };
 }
 
-class ContinuousChart extends React.Component {
+export class ContinuousLargeChart extends React.Component {
   constructor(props) {
     super(props);
-    // this.chartType = 'serial';
-  };
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.feature.featureId !== this.props.feature.featureId;
-  };
-
-  componentDidMount() {
-    console.log('component continuous chart did mount');
-  };
-
-  componentDidUpdate() {
-    console.log('component continuous chart did update');
-  };
-
-  render() {
-    let chartConfig = {
+    this.chartHeight = '400px';
+    this.chartConfig = {
       "type": "serial",
       "theme": "light",
       "marginRight": 80,
@@ -299,16 +305,32 @@ class ContinuousChart extends React.Component {
         "enabled": true
       }
     };
+  };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.feature.featureId !== this.props.feature.featureId;
+  };
+
+  componentDidMount() {
+    console.log('component continuous chart did mount');
+  };
+
+  componentDidUpdate() {
+    console.log('component continuous chart did update');
+  };
+
+  render() {
+    this.chartConfig.dataProvider = this.props.chart.data;
     return (
-      <AmCharts.React style={{ width: "100%", height: "400px" }} options={chartConfig} />
+      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
     );
   };
 };
 
-class CategoryChart extends ContinuousChart {
-  render() {
-    let chartConfig = {
+export class CategoryLargeChart extends ContinuousLargeChart {
+  constructor(props) {
+    super(props);
+    this.chartConfig = {
       "type": "serial",
       "categoryField": "scale",
       "startDuration": 1,
@@ -347,13 +369,17 @@ class CategoryChart extends ContinuousChart {
           "text": this.props.selectedFeature.label
         }
       ],
-      "dataProvider": this.props.chart.data
+      // "dataProvider": this.props.chart.data
     };
+  };
 
+  render() {
+    this.chartConfig.dataProvider = this.props.chart.data;
+    // this.chartConfig.titles.text = this.props.selectedFeature.label;
     return (
-      <AmCharts.React style={{ width: "100%", height: "400px" }} options={chartConfig} />
+      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
     );
   };
 };
 
-class TimelineChart extends ContinuousChart {};
+export class TimelineLargeChart extends ContinuousLargeChart {};

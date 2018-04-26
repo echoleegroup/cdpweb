@@ -52,7 +52,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/identified/query/:queryId/analysis/large', function (req, res, next) {
+  router.get('/identified/query/:queryId/analysis/:size', function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
