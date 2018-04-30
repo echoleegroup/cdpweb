@@ -3,7 +3,7 @@ import Loader from 'react-loader';
 import {isEmpty} from 'lodash';
 import Rx from "rxjs/Rx";
 import AmCharts from '@amcharts/amcharts3-react';
-import BranchOfNavTree from './BranchOfNavTree';
+// import BranchOfNavTree from './BranchOfNavTree';
 import {getNavigateFeatures, getQueryTask, getChartData} from '../actions/integrated-analysis-action';
 
 export class IntegratedAnalysisChartLarge extends React.PureComponent {
@@ -29,7 +29,6 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
 
   componentWillMount() {
     this.selectFeature = (feature, ...parents) => {
-      console.log('select feature : ', feature);
       this.setState({
         selectedFeature: feature,
         selectedFeaturePath: parents,
@@ -94,7 +93,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
   ComponentNavigatorTree(props) {
     let node = props.node;
     return (
-      <BranchOfNavTree node={node}
+      <BranchOfNavigatorTree node={node}
                        selectNode={props.selectNode}
                        selected={props.selected}/>
     );
@@ -325,7 +324,7 @@ export class ContinuousLargeChart extends React.Component {
       <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
     );
   };
-};
+}
 
 export class CategoryLargeChart extends ContinuousLargeChart {
   constructor(props) {
@@ -380,6 +379,52 @@ export class CategoryLargeChart extends ContinuousLargeChart {
       <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
     );
   };
-};
+}
 
-export class TimelineLargeChart extends ContinuousLargeChart {};
+export class TimelineLargeChart extends ContinuousLargeChart {}
+
+export class BranchOfNavigatorTree extends React.PureComponent {
+  componentWillMount() {
+    this.branchClickHandler = (e) => {
+      let _this = e.currentTarget;
+      $(_this).children('i').toggleClass('fa-minus');
+      $(_this).next('.subtable').slideToggle();
+    };
+
+    this.tailClickHandler = (parentNode, currNode) => {
+      this.props.selectNode(currNode, parentNode);
+    };
+  };
+
+  render() {
+    let node = this.props.node;
+    return (
+      <div>
+        <h3 onClick={this.branchClickHandler}>
+          {node.label}
+          <span className="number">{node.children.length}</span>
+          <i className="fa fa-plus" aria-hidden="true"/>
+        </h3>
+        <div className="table-responsive subtable" style={{display: 'none'}}>
+          <table className="table table-hover table-striped table-condensed">
+            <tbody>
+            {node.children.map(item => {
+              return (
+                <tr key={item.id}>
+                  <th>
+                    <a href="javascript:;"
+                       className={(this.props.selected.id === item.id)? 'active': null}
+                       onClick={e => {
+                         this.tailClickHandler(node, item);
+                       }}>{item.label}</a>
+                  </th>
+                </tr>
+              );
+            })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+}
