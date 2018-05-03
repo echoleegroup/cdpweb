@@ -12,13 +12,6 @@
   "JAVA_API_PROTOCOL": "http:",
   "JAVA_API_HOST": "127.0.0.1",
   "JAVA_API_PORT": 8080,
-  "MAIL_INFO": {
-    "service": "smtp.office365.com",
-    "port" : 587,
-    "user": "apicheck@hotaimotor.onmicrosoft.com",
-    "pass": "!QAZ1129@",
-    "from": "mail@microsoft.com"
-  },
   "API_360_HOST":"10.201.2.130",
   "API_360_PORT":"4060"
 }

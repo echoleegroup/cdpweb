@@ -433,13 +433,13 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
     },
     statistic: {
       features: _.map(analyzableFeatures, feature => {
-        let chartType = feature.chartType.slice(0, feature.chartType.indexOf('_')); // categ_bar類別型, cont_line數值型, date_line日期型
+        let chartCategory = feature.chartType.slice(0, feature.chartType.indexOf('_')); // categ_bar類別型, cont_line數值型, date_line日期型
 
         return {
           feature_id: feature.featID,  // 欄位ID
-          chart_type: chartType,
+          category: chartCategory,
           ref: feature.codeGroup,
-          min_period: getMinPeriod(chartType, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+          min_period: getMinPeriod(chartCategory, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
           // aggregate: ["total", "percentage"],
           // statistic: ["average", "median", "std_dev", "upper_bound", "lower_bound"]
         }

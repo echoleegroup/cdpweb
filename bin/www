@@ -19,8 +19,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 const server = isProduction? http.createServer({
-  pfx: fs.readFileSync(process.env.PFX_PATH),
-  passphrase: process.env.PFX_PASS
+  pfx: fs.readFileSync(process.env.SSL_CREDENTIAL),
+  passphrase: process.env.SSL_CREDENTIAL_PASS
 }, app): http.createServer(app);
 
 /**

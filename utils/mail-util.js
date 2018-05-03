@@ -1,22 +1,21 @@
 const nodemailer = require('nodemailer');
 const winston = require('winston');
-const mailInfo = require("../app-config").get("MAIL_INFO");
 
 module.exports.mail = (to, options = {}, callback = () => { }) => {
   console.log(to) ;
   console.log(options) ;
   let transporter = nodemailer.createTransport({
-    host: mailInfo.service,
-    port:mailInfo.port,
-    secure:true,
+    host: process.env.SMTP_HOST,
+    port: process.env.PORT,
+    secure: false,
     auth: {
-      user: mailInfo.user,
-      pass: mailInfo.pass
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
     }
   });
 
   let mailOptions = {
-    from:  mailInfo.from,
+    from:  process.env.SMTP_USER,
     to: to,
     subject: options.subject,
     html: options.content
