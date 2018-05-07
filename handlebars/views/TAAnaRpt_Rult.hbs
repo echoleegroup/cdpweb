@@ -82,7 +82,7 @@
       x += '<table class="table"><tr><td rowspan="5"><h3>' + myObj.modelName + '</h3></td>';
       x += '<td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂人數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td></tr>';
       x += '<tr><td><span class="num">' + myObj.sentCount + '</span></td><td><span class="num">' + order + '</span></td><td><span class="num">' + tostore + '</span></td><td><span class="num">' + register + '</span></td><td><span class="num">' + click + '</span></td></tr>';
-      x += '<tr><td></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
+      x += '<tr><td></td><td><span class="labelItem">受訂率(%)</span></td><td><span class="labelItem">來店率(%)</span></td><td><span class="labelItem">登錄率(%)</span></td><td><span class="labelItem">點擊率(%)</span></td></tr>';
       x += '<tr><td></td><td><span class="num">' + orderpercent + '</span></td><td><span class="num">' + tostorepercent + '</span></td><td><span class="num">' + registerpercent + '</span></td><td><span class="num">' + clickpercent + '</span></td></tr>';
       x += '<tr><td colspan="5"><div class="info"><div class="table-responsive"><table class="table"><tbody>';
       x += '<tr><th>類別</th><td>' + myObj.mdGoal + '</td></tr><tr><th>訂單計算區間</th><td>' + myObj.exeDateFrom + ' - ' + myObj.exeDateTo + '</td></tr><tr><th>(現有) 潛在客群</th><td>' + myObj.taName + '</td></tr>';
@@ -129,12 +129,12 @@
           else
             batchclickpercent = myObj.betchInfolist[i].clickpercent;
           batchHtml += '<h3 class="month">' + myObj.betchInfolist[i].batName + '</h3><table class="table table-bordered">';
-          batchHtml += '<tr><td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂人數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td><td rowspan="4" width="180"><img src="/images/btn_chart.png" alt=""><a href="javascript:getDeatil(' + k + ',\'' + myObj.betchInfolist[i].batID + '\',\'' + mdID + '\')" id="openModal1" class="btn btn-chart">各名單來源受訂/回應圖</a></td></tr>';
+          batchHtml += '<tr><td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂人數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td><td rowspan="4" width="180"><a href="javascript:getDeatil(' + k + ',\'' + myObj.betchInfolist[i].batID + '\',\'' + mdID + '\')" id="openModal1" class="btn btn-chart">各名單來源受訂/回應圖</a></td></tr>';
           batchHtml += '<tr><td><span class="num">' + myObj.betchInfolist[i].sentCount + '</span></td><td><span class="num">' + batchorder + '</span></td><td><span class="num">' + batchtostore + '</span></td><td><span class="num">' + batchregister + '</span></td><td><span class="num">' + batchclick + '</span></td></tr>';
-          batchHtml += '<tr><td></td><td>受訂率(%)</td><td>來店率(%)</td><td>登錄率(%)</td><td>點擊率(%)</td></tr>';
+          batchHtml += '<tr><td></td><td><span class="labelItem">受訂率(%)</span></td><td><span class="labelItem">來店率(%)</span></td><td><span class="labelItem">登錄率(%)</span></td><td><span class="labelItem">點擊率(%)</span></td></tr>';
           batchHtml += '<tr><td></td><td><span class="num">' + batchorderpercent + '</span></td><td><span class="num">' + batchtostorepercent + '</span></td><td><span class="num">' + batchregisterpercent + '</span></td><td><span class="num">' + batchclickpercent + '</span></td></tr>';
           batchHtml += '</table>';
-          batchHtml += '<div id="chart' + k + '" class="chart"><div class="table_block" id="tableChart' + k + '"><h3>各名單來源受訂/回應圖</h3><div class="chart_block"><div id="chartdiv' + k + '" style="width:100%; height: 400px;"></div></div></div></div>';
+          batchHtml += '<div id="chart' + k + '" class="chart"><div class="table_block" id="tableChart' + k + '"><h3>各名單來源受訂/回應圖</h3><div class="chart_block"><div id="chartdiv' + k + '" style="width:150%; height: 400px;"></div></div></div></div>';
         }
         k++;
       }
@@ -197,7 +197,7 @@
         graph1.valueField = "modelcent";
         graph1.balloonText = "系統建議組:[[value]]";
         graph1.lineAlpha = 0;
-        graph1.fillColors = "#888888";
+        graph1.fillColors = "#f2b530";
         graph1.fillAlphas = 1;
         chart.addGraph(graph1);
 
@@ -208,7 +208,7 @@
         graph2.valueField = "custompercent";
         graph2.balloonText = "自定組:[[value]]";
         graph2.lineAlpha = 0;
-        graph2.fillColors = "#00AA00";
+        graph2.fillColors = "#f56b58";
         graph2.fillAlphas = 1;
         chart.addGraph(graph2);
         var graph3 = new AmCharts.AmGraph();
@@ -217,18 +217,19 @@
         graph3.valueField = "customTApercent";
         graph3.balloonText = "自定組之模型名單:[[value]]";
         graph3.lineAlpha = 0;
-        graph3.fillColors = "#66009D";
+        graph3.fillColors = "#17c2e7";
         graph3.fillAlphas = 1;
         chart.addGraph(graph3);
         // LEGEND
         var legend = new AmCharts.AmLegend();
+        legend.position = "right";
         chart.addLegend(legend);
         chart.creditsPosition = "top-right";
         chart.write("chartdiv" + index);
         //圖畫完
         batchObj = Jdata.jsonOutput.data;
         $("#table" + index).remove(".table");
-        batchHtml = '<table class="table table-bordered" id ="table' + index + '"><tbody><tr><th>名單來源</th><th>投放數</th><th>受訂數</th><th>來店數</th><th>登錄數</th><th>點擊數</th><th>受訂率</th><th>來店率</th><th>登錄率</th><th>點擊率</th></tr>';
+        batchHtml = '<table class="table table-bordered" id ="table' + index + '"><tbody><tr><th><span class="labelItem">名單來源</span></th><th><span class="labelItem">投放數</span></th><th><span class="labelItem">受訂數</span></th><th><span class="labelItem">來店數</span></th><th><span class="labelItem">登錄數</span></th><th><span class="labelItem">點擊數</span></th><th><span class="labelItem">受訂率</span></th><th><span class="labelItem">來店率</span></th><th><span class="labelItem">登錄率</span></th><th><span class="labelItem">點擊率</span></th></tr>';
         for (i in batchObj) {
           if (batchObj[i].order == null)
             batchorder = "-";
