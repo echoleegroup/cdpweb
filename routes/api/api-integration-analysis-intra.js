@@ -11,6 +11,7 @@ const integratedHelper = require('../../helpers/integrated-analysis-helper');
 const queryLogService = require('../../services/query-log-service');
 const userService = require('../../services/user-service');
 const integrationTaskService = require('../../services/integration-analysis-task-service');
+const integrationAnalysisService = require('../../services/integration-analysis-statistic-service');
 const constants = require('../../utils/constants');
 
 module.exports = (app) => {
@@ -38,33 +39,40 @@ module.exports = (app) => {
         res.json(null, 401, `task ${queryId} not found`);
         throw `task ${queryId} not found`;
       } else {
-        res.json();
-
-        userId = queryLogData.updUser;
-        // winston.info('queryLogData: ', queryLogData);
-        featureIdMap = JSON.parse(queryLogData.reserve1).export;
-        mod = queryLogData.reserve2;
-        // winston.info('query log process Data: %j', featureIdMap);
-        Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
-          winston.error('fail to update query task status: ', err);
+        return Q.all([
+          Q.nfcall(integrationAnalysisService.deleteStatisticChartOfFeature, queryId),
+          Q.nfcall(integrationAnalysisService.deleteStatisticOfTask, queryId)
+        ]).then(delResult => {
+          return queryLogData;
         });
-
-        return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, queryId, sparkZipPath, workingPath, featureIdMap, mod)
-          .then(info => {
-            records = info.records;
-            winston.info(`parsing to csv: ${info.entries}`);
-            return Q.nfcall(fileHelper.archiveFiles, info.entries, finalZipPath);
-          }).then(destZipPath => {
-            winston.info(`archive finished: ${destZipPath}`);
-            return Q.nfcall(fileHelper.archiveStat, destZipPath);
-          }).fail(err => {
-            winston.error('parsing to csv and archive failed: ', err);
-            Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
-              winston.error('set query task status as parsing-failed failed: ', err);
-            });
-            throw err;
-          });
       }
+    }).then(queryLogData => {
+      res.json();
+
+      userId = queryLogData.updUser;
+      // winston.info('queryLogData: ', queryLogData);
+      featureIdMap = JSON.parse(queryLogData.reserve1).export;
+      mod = queryLogData.reserve2;
+      // winston.info('query log process Data: %j', featureIdMap);
+      Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
+        winston.error('fail to update query task status: ', err);
+      });
+
+      return Q.nfcall(integratedHelper.extractAndParseQueryResultFile, queryId, sparkZipPath, workingPath, featureIdMap, mod)
+        .then(info => {
+          records = info.records;
+          winston.info(`parsing to csv: ${info.entries}`);
+          return Q.nfcall(fileHelper.archiveFiles, info.entries, finalZipPath);
+        }).then(destZipPath => {
+          winston.info(`archive finished: ${destZipPath}`);
+          return Q.nfcall(fileHelper.archiveStat, destZipPath);
+        }).fail(err => {
+          winston.error('parsing to csv and archive failed: ', err);
+          Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
+            winston.error('set query task status as parsing-failed failed: ', err);
+          });
+          throw err;
+        });
     }).then(stat => {
       winston.info('archive stat: %j', stat);
       return Q.all([

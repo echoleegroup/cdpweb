@@ -271,14 +271,15 @@ const statisticDataProcessor = (queryId, stream, callback) => {
     .pipe(es.mapSync((line) => {
       //in this line stream, all necessary data has been ready.
       // transform data here
-      winston.info(`${++lineNum} get line : ${line}`);
+      // winston.info(`${++lineNum} get line : ${line}`);
 
       let rowJson = undefined;
       try {
         rowJson = JSON.parse(line);
       } catch (e) {
         winston.warn(`parse string to json failed: ${line}`);
-        rowJson = {};
+        return null;
+        // rowJson = {};
       }
 
       let {feature_id, category, data, average, median, standard_deviation, scale_upper_bound, scale_lower_bound} = rowJson;
@@ -305,8 +306,8 @@ const statisticDataProcessor = (queryId, stream, callback) => {
     }))
     //.pipe(outStream)
     .on('close', () => {
-      winston.info(`entry close: ${target}`);
-      callback(null, target);
+      winston.info(`entry close: ${queryId}`);
+      callback(null, queryId);
     })
     .on('error', err => {
       winston.error('entry on error: ', err);
@@ -352,7 +353,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
 
       if (fileName.indexOf('__MACOSX') === 0) { //ignore meta file for mac archive
         zipFile.readEntry();
-      } else if ('statistic.json' === path.extname(fileName).toLowerCase()) {
+      } else if ('statistic.json' === fileName.toLowerCase()) {
         statisticPromise = queryStatisticParserPromise(queryId, zipFile, entry);
       } else if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
         winston.info(`NEW ENTRY ${fileName}`);
@@ -377,7 +378,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
       // winston.info('zip file closed! promise length: ', promises);
       // zipStream.destroy();
       // callback(null, csvFilePaths);
-      Q.all([metaPromise, ...promises]).spread((meta, ...entries) => {
+      Q.all([metaPromise, statisticPromise, ...promises]).spread((meta, statistic, ...entries) => {
         winston.info('meta: ', meta);
         let records = meta? meta.rowCounts.master: 0;
         //archive all csv in path

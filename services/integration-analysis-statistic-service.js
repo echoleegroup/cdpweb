@@ -4,6 +4,22 @@ const shortid = require('shortid');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
+module.exports.deleteStatisticOfTask = (queryId) => {
+  const sql = 'DELETE FROM cu_IntegratedQueryStatistic WHERE queryID = @queryId';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, {
+      queryID: queryId
+    });
+  }).fail(err => {
+    winston.error(`===delete statistic of task failed! (queryID=${queryId}: `, err);
+    callback(err);
+  });
+};
+
 module.exports.insertStatisticOfFeature = (
   queryId, featureId, category, average, median, standardDeviation, scaleUpperBound, scaleLowerBound, callback) => {
   const sql = 'INSERT INTO cu_IntegratedQueryStatistic (' +
@@ -28,6 +44,22 @@ module.exports.insertStatisticOfFeature = (
     });
   }).fail(err => {
     winston.error(`===insert statistic of feature failed! (queryID=${queryId}, featureId=${featureId}: `, err);
+    callback(err);
+  });
+};
+
+module.exports.deleteStatisticChartOfFeature = (queryId) => {
+  const sql = 'DELETE FROM cu_IntegratedQueryStatisticChart WHERE queryID = @queryId';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, {
+      queryID: queryId
+    });
+  }).fail(err => {
+    winston.error(`===delete statistic of task failed! (queryID=${queryId}: `, err);
     callback(err);
   });
 };
