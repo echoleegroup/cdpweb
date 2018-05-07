@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   CategoryLargeChart, ContinuousLargeChart, IntegratedAnalysisChartLarge,
-  TimelineLargeChart
+  TimelineLargeChart, FeatureNavigator
 } from "./IntegratedAnalysisChartLarge";
 
 export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChartLarge {
@@ -23,6 +23,15 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
       <div className="col-md-4 col-sm-5 col-xs-12">
         {props.children}
       </div>
+    );
+  };
+
+  ComponentNavigatorTree(props) {
+    let node = props.node;
+    return (
+      <FeatureStatisticNavigator node={node}
+                                 selectNode={props.selectNode}
+                                 selected={props.selected}/>
     );
   };
 
@@ -62,4 +71,21 @@ class TimelineSmallChart extends TimelineLargeChart {
   constructor(props) {
     super(props);
   }
+}
+
+class FeatureStatisticNavigator extends FeatureNavigator {
+  ComponentFeatureRow(props) {
+    return (
+      <tr>
+        <th>
+          <a href="javascript:;"
+             className={props.cssClass}
+             onClick={props.tailClickHandler}>{props.item.label}</a>
+        </th>
+        <td>最多為</td>
+        <td>2009</td>
+        <td>12.12%</td>
+      </tr>
+    );
+  };
 }

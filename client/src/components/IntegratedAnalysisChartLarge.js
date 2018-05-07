@@ -47,7 +47,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
 
     Rx.Observable.forkJoin(_getNavigateFeatures, _getQueryTask).subscribe(res => {
       this.setState({
-        features: res[0].features,
+        features: res[0],
         records: res[1].records
       });
     });
@@ -93,7 +93,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
   ComponentNavigatorTree(props) {
     let node = props.node;
     return (
-      <BranchOfNavigatorTree node={node}
+      <FeatureNavigator node={node}
                        selectNode={props.selectNode}
                        selected={props.selected}/>
     );
@@ -383,7 +383,7 @@ export class CategoryLargeChart extends ContinuousLargeChart {
 
 export class TimelineLargeChart extends ContinuousLargeChart {}
 
-export class BranchOfNavigatorTree extends React.PureComponent {
+export class FeatureNavigator extends React.PureComponent {
   componentWillMount() {
     this.branchClickHandler = (e) => {
       let _this = e.currentTarget;
@@ -396,8 +396,21 @@ export class BranchOfNavigatorTree extends React.PureComponent {
     };
   };
 
+  ComponentFeatureRow(props) {
+    return (
+      <tr>
+        <th>
+          <a href="javascript:;"
+             className={props.cssClass}
+             onClick={props.tailClickHandler}>{props.item.label}</a>
+        </th>
+      </tr>
+    );
+  };
+
   render() {
     let node = this.props.node;
+    let ComponentFeatureRow = this.ComponentFeatureRow;
     return (
       <div>
         <h3 onClick={this.branchClickHandler}>
@@ -410,15 +423,21 @@ export class BranchOfNavigatorTree extends React.PureComponent {
             <tbody>
             {node.children.map(item => {
               return (
-                <tr key={item.id}>
-                  <th>
-                    <a href="javascript:;"
-                       className={(this.props.selected.id === item.id)? 'active': null}
-                       onClick={e => {
-                         this.tailClickHandler(node, item);
-                       }}>{item.label}</a>
-                  </th>
-                </tr>
+                <ComponentFeatureRow key={item.id}
+                                     item={item}
+                                     cssClass={(this.props.selected.id === item.id)? 'active': null}
+                                     tailClickHandler={e => {
+                                       this.tailClickHandler(node, item);
+                                     }}/>
+                // <tr key={item.id}>
+                //   <th>
+                //     <a href="javascript:;"
+                //        className={(this.props.selected.id === item.id)? 'active': null}
+                //        onClick={e => {
+                //          this.tailClickHandler(node, item);
+                //        }}>{item.label}</a>
+                //   </th>
+                // </tr>
               );
             })}
             </tbody>

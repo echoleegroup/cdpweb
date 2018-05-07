@@ -52,6 +52,9 @@ const MODEL_FEATURE_CATEGORY_ID = 'tagene';
 const MODEL_LIST_CATEGORY = 'tapop';
 
 const TailModelWrapper = (feature) => {
+  let necessaryProperties = ['featID', 'featName', 'dataType', 'uiInputType', 'codeGroup'];
+  // let necessaryFeatures = _.pick(feature, necessaryProperties);
+  let additionalFeatures = _.omit(feature, necessaryProperties);
   // to complete field model
   return _.assign({}, TAIL_MODEL_TEMPLATE, {
     id: feature.featID,
@@ -59,7 +62,7 @@ const TailModelWrapper = (feature) => {
     data_type: feature.dataType,
     input_type: feature.uiInputType,
     ref: _.isEmpty(feature.codeGroup)? null: feature.codeGroup
-  });
+  }, additionalFeatures);
 };
 
 const RefFieldHandler = (criteria) => {

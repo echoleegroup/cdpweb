@@ -1,8 +1,25 @@
 const _ = require('lodash');
 const Q = require('q');
-const shortid = require('shortid');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
+
+module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
+  const sql = 'select feature.featID, feature.featName, feature.dataType, ' +
+    'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median, ' +
+    'sf.standardDeviation, sf.scaleUpperBound, sf.scaleLowerBound ' +
+    'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
+    'WHERE queryID = @queryId AND sf.featID = feature.featID';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
+  }).fail(err => {
+    winston.error(`===get statistic of task failed! (queryID=${queryId}): `, err);
+    callback(err);
+  });
+};
 
 module.exports.deleteStatisticOfTask = (queryId) => {
   const sql = 'DELETE FROM cu_IntegratedQueryStatistic WHERE queryID = @queryId';
@@ -10,7 +27,7 @@ module.exports.deleteStatisticOfTask = (queryId) => {
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId);
 
-  Q.nfcall(request.executeQuery, sql).then(result => {
+  Q.nfcall(request.executeUpdate, sql).then(result => {
     callback(null, {
       queryID: queryId
     });
@@ -38,7 +55,7 @@ module.exports.insertStatisticOfFeature = (
     .setInput('scaleLowerBound', _connector.TYPES.NVarChar, scaleLowerBound)
     .setInput('now', _connector.TYPES.DateTime, new Date());
 
-  Q.nfcall(request.executeQuery, sql).then(result => {
+  Q.nfcall(request.executeUpdate, sql).then(result => {
     callback(null, {
       queryID: queryId
     });
@@ -54,7 +71,7 @@ module.exports.deleteStatisticChartOfFeature = (queryId) => {
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId);
 
-  Q.nfcall(request.executeQuery, sql).then(result => {
+  Q.nfcall(request.executeUpdate, sql).then(result => {
     callback(null, {
       queryID: queryId
     });
@@ -78,7 +95,7 @@ module.exports.insertStatisticChartOfFeature = (queryId, featureId, scale, peak,
     .setInput('seq', _connector.TYPES.Int, seq)
     .setInput('now', _connector.TYPES.DateTime, new Date());
 
-  Q.nfcall(request.executeQuery, sql).then(result => {
+  Q.nfcall(request.executeUpdate, sql).then(result => {
     callback(null, {
       queryID: queryId
     });

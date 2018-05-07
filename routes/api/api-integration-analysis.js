@@ -9,6 +9,7 @@ const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
 const integrationTaskService = require('../../services/integration-analysis-task-service');
+const integrationStatisticService = require('../../services/integration-analysis-statistic-service');
 const codeGroupService = require('../../services/code-group-service');
 const queryLogService = require('../../services/query-log-service');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
@@ -443,14 +444,14 @@ module.exports = (app) => {
       let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
       winston.info('featureIds: %j', featureIds);
       return Q.all([
-        Q.nfcall(integrationService.getFeaturesById, featureIds),
+        Q.nfcall(integrationStatisticService.getStatisticFeaturesOfTask, queryId),
         Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
       ]);
     }).spread((features, foldingTree) => {
       // winston.info('criteriaFeaturePromise getCriteriaFeaturesOfSet: ', features);
       // winston.info('criteriaFeaturePromise getCriteriaFeatureTree: ', foldingTree);
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
-      res.json({features: fields});
+      res.json(fields);
       // get code group from features
       // let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
       // return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
