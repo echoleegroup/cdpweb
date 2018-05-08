@@ -1,4 +1,4 @@
-{{> include-chart}} {{> title title='客戶顯著特徵'}}
+{{> include-chart}} {{> title title='客戶顯著特徵' mdName=modelInfo.mdName}}
 <div class="container">
   <!-- row div 於需要分兩欄才需要 -->
   <div class="row">
@@ -50,6 +50,12 @@
           <div class="table-responsive">
             <table class="table">
               <tbody>
+                <tr>
+                  <th>計算批次</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelInfo.batName}}
+                  </td>
+                </tr>
                 <tr>
                   <th rowspan="2">已購客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
@@ -201,7 +207,7 @@
 </script>
 
 <script>
-  function formatFloat(num, pos) { 
+  function formatFloat(num, pos) {
     var size = Math.pow(10, pos);
     return Math.round(num * size) / size;
   }
@@ -267,12 +273,12 @@
           graph.title = "已購客群";
           graph.valueField = "splY";
           graph.balloonText = " 已購客群 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#f2b530";
           graph.lineThickness = 2;
           graph.balloonFunction = function (graphDataItem, graph) {
             var value = graphDataItem.values.value;
-            return "已購客群:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100  , 0);
+            return "已購客群:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100, 0);
           }
           chart.addGraph(graph);
 
@@ -280,12 +286,12 @@
           graph.title = "潛在客群";
           graph.valueField = "popY";
           graph.balloonText = " 潛在客群 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#d4d4d4";
           graph.lineThickness = 2;
           graph.balloonFunction = function (graphDataItem, graph) {
             var value = graphDataItem.values.value;
-            return "潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100  , 0);
+            return "潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100, 0);
           }
           chart.addGraph(graph);
 
@@ -293,7 +299,7 @@
           var chartCursor = new AmCharts.ChartCursor();
           chartCursor.cursorPosition = "mouse";
           chartCursor.zoomable = false;
-          chartCursor.cursorAlpha = 0;
+          chartCursor.cursorAlpha = 0.3;
           chart.addChartCursor(chartCursor);
 
           // LEGEND
@@ -341,7 +347,7 @@
           graph1.fillAlphas = 1;
           graph1.balloonFunction = function (graphDataItem, graph) {
             var value = graphDataItem.values.value;
-            return "已購客群:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100  , 0);
+            return "已購客群:" + value + "%<br>數量:" + formatFloat(totalSpl * value / 100, 0);
           }
           chart.addGraph(graph1);
 
@@ -356,7 +362,7 @@
           graph2.fillAlphas = 1;
           graph2.balloonFunction = function (graphDataItem, graph) {
             var value = graphDataItem.values.value;
-            return "潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100  , 0);
+            return "潛在客群:" + value + "%<br>數量:" + formatFloat(totalPop * value / 100, 0);
           }
           chart.addGraph(graph2);
 

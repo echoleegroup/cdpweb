@@ -51,6 +51,12 @@
             <table class="table">
               <tbody>
                 <tr>
+                  <th>計算批次</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelInfo.batName}}
+                  </td>
+                </tr>
+                <tr>
                   <th rowspan="2">模型受眾</th>
                   <td>{{modelInfo.taName}}
                   </td>
@@ -269,7 +275,7 @@
           graph.title = "模型受眾";
           graph.valueField = "splY";
           graph.balloonText = " 模型受眾 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#f56b58";
           graph.lineThickness = 2;
            graph.balloonFunction = function (graphDataItem, graph) {
@@ -282,7 +288,7 @@
           graph.title = "現有潛在客群";
           graph.valueField = "popY";
           graph.balloonText = " 現有潛在客群 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#d4d4d4";
           graph.lineThickness = 2;
            graph.balloonFunction = function (graphDataItem, graph) {

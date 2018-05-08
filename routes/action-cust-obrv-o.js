@@ -38,7 +38,7 @@ module.exports = (app) => {
       });
     });
     Promise.all([p1, p2]).then(function (results) {
-      db.query("SELECT mm.*,convert(varchar, mb.lastTime, 111)lastTime FROM md_Model mm,md_Batch mb where mm.mdID = mb.mdID and mm.batID = mb.batID and mm.mdID = '" + mdID + "' and mm.batID ='" + batID + "'", function (err, recordset) {
+      db.query("SELECT mm.*,convert(varchar, mb.lastTime, 111)lastTime,mb.batName FROM md_Model mm,md_Batch mb where mm.mdID = mb.mdID and mm.batID = mb.batID and mm.mdID = '" + mdID + "' and mm.batID ='" + batID + "'", function (err, recordset) {
         var modelList = req.session.modelList;
         var navMenuList = req.session.navMenuList;
         var mgrMenuList = req.session.mgrMenuList;

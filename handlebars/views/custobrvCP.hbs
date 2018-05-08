@@ -60,6 +60,12 @@
             <table class="table">
               <tbody>
                 <tr>
+                  <th>計算批次</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelInfo.batName}}
+                  </td>
+                </tr>
+                <tr>
                   <th rowspan="2">已購客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
                   <td>{{modelInfo.splName}}
@@ -273,7 +279,7 @@
           graph.title = "已購客群";
           graph.valueField = "splY";
           graph.balloonText = " 已購客群 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#f2b530";
           graph.lineThickness = 2;
           graph.balloonFunction = function (graphDataItem, graph) {
@@ -286,7 +292,7 @@
           graph.title = "潛在客群";
           graph.valueField = "popY";
           graph.balloonText = " 潛在客群 in [[category]]: [[value]]";
-          graph.bullet = "Not set";
+          graph.bullet = "round";
           graph.lineColor = "#d4d4d4";
           graph.lineThickness = 2;
           graph.balloonFunction = function (graphDataItem, graph) {
@@ -299,7 +305,7 @@
           var chartCursor = new AmCharts.ChartCursor();
           chartCursor.cursorPosition = "mouse";
           chartCursor.zoomable = false;
-          chartCursor.cursorAlpha = 0;
+          chartCursor.cursorAlpha = 0.3;
           chart.addChartCursor(chartCursor);
 
           // LEGEND

@@ -23,7 +23,7 @@ module.exports = (app) => {
     var mdListCategCount = [];
     var items;
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT mdName,batID,splName,splDesc,popName,popDesc,taName,taDesc,convert(varchar, updTime, 111)updTime FROM md_Model where mdID ='" + mdID + "' and batID = '" + batID + "' ", function (err, recordset) {
+      db.query("SELECT mm.mdName,mm.batID,mm.splName,mm.splDesc,mm.popName,mm.popDesc,mm.taName,mm.taDesc,convert(varchar, mm.updTime, 111)updTime,mb.batName FROM md_Model mm,md_Batch mb where mm.mdID = mb.mdID and mm.batID = mb.batID and  mm.mdID ='" + mdID + "' and mm.batID = '" + batID + "' ", function (err, recordset) {
         if (err) {
           reject(err);
         }
