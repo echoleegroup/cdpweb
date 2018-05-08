@@ -145,6 +145,8 @@
               模型名單下載</a>
             <a class="btn btn-default btn-lg" href="/model/cust/pred/cp/{{modelInfo.mdID}}/{{batID}}">
               消費先期指標</a>
+            <a class="btn btn-default btn-lg" href="/target/custom/filter/{{modelInfo.mdID}}/{{batID}}">
+              自定名單下載</a>
           </div>
         </div>
       </div>
@@ -152,14 +154,6 @@
         <h2>成效計算資料</h2>
         <div class="info">
           <div class="table-responsive">
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td>最後成效計算時間：</td>
-                  <td>{{model.mdRptCalTime}}</td>
-                </tr>
-              </tbody>
-            </table>
             <div class="btn-block">
               <a class="btn btn-default btn-lg fa fa-bar-chart" href="/TAAnaRpt_Rult/TAAnaRpt_Rult/{{modelInfo.mdID}}/{{batID}}">成效報表</a>
             </div>
@@ -256,7 +250,7 @@
       dataType: 'json',
       success: function (result) {
         var i;
-        document.getElementById("batchname").value = batName + " - 投放名單記錄";
+        document.getElementById("batchname").innerHTML = batName + " - 投放名單記錄";
         for (i in result) {
           senthtml = '';
           senthtml += '<tr>';
@@ -266,7 +260,7 @@
           senthtml += '<td>' + result[i].sentListChannel + '</td>';
           senthtml += '<td>' + result[i].sentcount + '</td>';
           senthtml += '<td>' + result[i].updTime + '</td>';
-          senthtml += '<td><a class="btn btn-default" href="/talist_putupload/talist_putuploadEdit?sentListID=' + result[i].sentListID + '">修改</td>';
+          senthtml += '<td><a class="btn btn-default" href="/target/ta/send/edit?sentListID=' + result[i].sentListID + '">修改</td>';
           $('#senttable tbody').append(senthtml);
         }
         $('#modal1').show();
@@ -286,7 +280,7 @@
       dataType: 'json',
       success: function (result) {
         var i;
-        document.getElementById("resbatchname").value = batName + " - 回應名單記錄";
+        document.getElementById("resbatchname").innerHTML = batName + " - 回應名單記錄";
 
         for (i in result) {
           resphtml = '';
@@ -296,7 +290,7 @@
           resphtml += '<td>' + result[i].respListChannel + '</td>';
           resphtml += '<td>' + result[i].respcount + '</td>';
           resphtml += '<td>' + result[i].updTime + '</td>';
-          resphtml += '<td><a class="btn btn-default" href="/talist_rspupload/talist_rspuploadEdit?respListID=' + result[i].respListID + '">修改</td>';
+          resphtml += '<td><a class="btn btn-default" href="/target/ta/rsp/edit?respListID=' + result[i].respListID + '">修改</td>';
           $('#resptable tbody').append(resphtml);
         }
         $('#modal2').show();
