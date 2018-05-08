@@ -444,7 +444,7 @@ module.exports = (app) => {
       let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
       winston.info('featureIds: %j', featureIds);
       return Q.all([
-        Q.nfcall(integrationStatisticService.getStatisticFeaturesOfTask, queryId),
+        Q.nfcall(integratedHelper.getStatisticFeaturesOfQueryTask, queryId),
         Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
       ]);
     }).spread((features, foldingTree) => {

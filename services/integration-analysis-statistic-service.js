@@ -38,11 +38,14 @@ module.exports.deleteStatisticOfTask = (queryId) => {
 };
 
 module.exports.insertStatisticOfFeature = (
-  queryId, featureId, category, average, median, standardDeviation, scaleUpperBound, scaleLowerBound, callback) => {
+  queryId, featureId, category, average, median, standardDeviation,
+  scaleUpperBound, scaleLowerBound, maxScale, maxPeak, maxProportion, callback) => {
   const sql = 'INSERT INTO cu_IntegratedQueryStatistic (' +
-    'queryID, featID, category, average, median, standardDeviation, scaleUpperBound, scaleLowerBound, crtTime) ' +
+    'queryID, featID, category, average, median, standardDeviation, ' +
+    'scaleUpperBound, scaleLowerBound, maxScale, maxPeak, maxProportion, crtTime) ' +
     'VALUES (' +
-    '@queryId, @featureId, @category, @average, @median, @standardDeviation, @scaleUpperBound, @scaleLowerBound, @now)';
+    '@queryId, @featureId, @category, @average, @median, @standardDeviation, ' +
+    '@scaleUpperBound, @scaleLowerBound, @maxScale, @maxPeak, @maxProportion @now)';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
@@ -53,6 +56,9 @@ module.exports.insertStatisticOfFeature = (
     .setInput('standardDeviation', _connector.TYPES.Float, standardDeviation)
     .setInput('scaleUpperBound', _connector.TYPES.NVarChar, scaleUpperBound)
     .setInput('scaleLowerBound', _connector.TYPES.NVarChar, scaleLowerBound)
+    .setInput('maxScale', _connector.TYPES.NVarChar, maxScale)
+    .setInput('maxPeak', _connector.TYPES.NVarChar, maxPeak)
+    .setInput('maxProportion', _connector.TYPES.Float, maxProportion)
     .setInput('now', _connector.TYPES.DateTime, new Date());
 
   Q.nfcall(request.executeUpdate, sql).then(result => {

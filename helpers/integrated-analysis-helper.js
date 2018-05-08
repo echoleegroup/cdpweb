@@ -290,13 +290,17 @@ const statisticDataProcessor = (queryId, stream, callback) => {
       winston.info(`standard_deviation: ${standard_deviation}`);
       winston.info(`upper_bound: ${scale_upper_bound}`);
       winston.info(`lower_bound: ${scale_lower_bound}`);
-      winston.info('data: %j', data);
+
+      let chartData = JSON.parse(data);
+      winston.info('data: %j', chartData);
+
+      let topGroup = _.maxBy(chartData, 'peak');
 
       // write to database, non-blocking
       Q.nfcall(integrationStatisticService.insertStatisticOfFeature,
-        queryId, feature_id, category, average, median, standard_deviation, scale_upper_bound, scale_lower_bound);
+        queryId, feature_id, category, average, median, standard_deviation,
+        scale_upper_bound, scale_lower_bound, topGroup.scale, topGroup.peak, topGroup.proportion);
 
-      let chartData = JSON.parse(data);
       chartData.forEach((chart, index) => {
         Q.nfcall(integrationStatisticService.insertStatisticChartOfFeature,
           queryId, feature_id, chart.scale, chart.peak, chart.proportion, index + 1);
@@ -451,3 +455,26 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
 
 module.exports.getCsvFileName = getCsvFileName;
 module.exports.getFeaturesAsMap = getFeaturesAsMap;
+
+module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
+  Q.nfcall(integrationStatisticService.getStatisticFeaturesOfTask, queryId).then(features => {
+    let promises = features.map(feature => {
+      if (!_.isEmpty(feature.codeGroup)) {
+        return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
+          feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+          return feature;
+        });
+      } else {
+        feature.codeGroup = {};
+        return feature;
+      }
+    });
+
+    return Q.all(promises);
+  }).then(features => {
+    callback(null, _.keyBy(features, 'featID'));
+  }).fail(err => {
+    winston.error('===getFeaturesAsMap: ', err);
+    callback(err);
+  });
+}
