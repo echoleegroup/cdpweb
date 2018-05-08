@@ -441,8 +441,8 @@ module.exports = (app) => {
     let queryId = req.params.queryId;
     let mode = req.params.mode;
     Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
-      let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
-      winston.info('featureIds: %j', featureIds);
+      // let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
+      // winston.info('featureIds: %j', featureIds);
       return Q.all([
         Q.nfcall(integratedHelper.getStatisticFeaturesOfQueryTask, queryId),
         Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)

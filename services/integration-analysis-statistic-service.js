@@ -6,7 +6,8 @@ const _connector = require('../utils/sql-query-util');
 module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
   const sql = 'select feature.featID, feature.featName, feature.dataType, ' +
     'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median, ' +
-    'sf.standardDeviation, sf.scaleUpperBound, sf.scaleLowerBound ' +
+    'sf.standardDeviation, sf.scaleUpperBound, sf.scaleLowerBound,' +
+    'sf.maxScale, sf.maxPeak, sf.maxProportion ' +
     'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
     'WHERE queryID = @queryId AND sf.featID = feature.featID';
 
@@ -21,7 +22,7 @@ module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
   });
 };
 
-module.exports.deleteStatisticOfTask = (queryId) => {
+module.exports.deleteStatisticOfTask = (queryId, callback) => {
   const sql = 'DELETE FROM cu_IntegratedQueryStatistic WHERE queryID = @queryId';
 
   let request = _connector.queryRequest()
@@ -45,7 +46,7 @@ module.exports.insertStatisticOfFeature = (
     'scaleUpperBound, scaleLowerBound, maxScale, maxPeak, maxProportion, crtTime) ' +
     'VALUES (' +
     '@queryId, @featureId, @category, @average, @median, @standardDeviation, ' +
-    '@scaleUpperBound, @scaleLowerBound, @maxScale, @maxPeak, @maxProportion @now)';
+    '@scaleUpperBound, @scaleLowerBound, @maxScale, @maxPeak, @maxProportion, @now)';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
@@ -71,7 +72,7 @@ module.exports.insertStatisticOfFeature = (
   });
 };
 
-module.exports.deleteStatisticChartOfFeature = (queryId) => {
+module.exports.deleteStatisticChartOfFeature = (queryId, callback) => {
   const sql = 'DELETE FROM cu_IntegratedQueryStatisticChart WHERE queryID = @queryId';
 
   let request = _connector.queryRequest()
@@ -82,7 +83,7 @@ module.exports.deleteStatisticChartOfFeature = (queryId) => {
       queryID: queryId
     });
   }).fail(err => {
-    winston.error(`===delete statistic of task failed! (queryID=${queryId}: `, err);
+    winston.error(`===delete statistic of task chart failed! (queryID=${queryId}: `, err);
     callback(err);
   });
 };
