@@ -9,12 +9,12 @@
         <h2>活動頁面設定</h2>
         <form id="reg" action="/actad/act/edit_act" method="post" onsubmit="return checkForm()" class="form-horizontal">
           <input type="hidden" value="{{evtpgID}}" id="evtpgID" name="evtpgID" />
-          <input type="hidden" value="{{maininfo.[0].sno}}" id="sno" name="sno" />
+          <input type="hidden" value="{{maininfo.sno}}" id="sno" name="sno" />
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">品牌</label>
             <div class="col-sm-7">
               <select class="form-control custom" name="client" id="client" Readonly>
-                <option value="{{maininfo.[0].client}}">{{maininfo.[0].client}}</option>
+                <option value="{{maininfo.client}}">{{maininfo.client}}</option>
               </select>
             </div>
           </div>
@@ -33,13 +33,13 @@
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">活動頁面名稱</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control " id="msm_tpc" name="msm_tpc" value="{{maininfo.[0].tpc}}" disabled>
+              <input type="text" class="form-control " id="msm_tpc" name="msm_tpc" value="{{maininfo.tpc}}" disabled>
             </div>
           </div>
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">登陸目標頁</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control " id="url" name="url" value="{{maininfo.[0].url}}" disabled>
+              <input type="text" class="form-control " id="url" name="url" value="{{maininfo.url}}" disabled>
             </div>
           </div>
           <div class="form-group">
@@ -49,8 +49,8 @@
               <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
               <div class="radio">
                 <div class="form-inline">
-                  <input type="text" class="form-control" id="sdt" name="sdt" placeholder="" value="{{maininfo.[0].sdt}}" disabled> ~
-                  <input type="text" class="form-control" id="edt" name="edt" placeholder="" value="{{maininfo.[0].edt}}" disabled>
+                  <input type="text" class="form-control" id="sdt" name="sdt" placeholder="" value="{{maininfo.sdt}}" disabled> ~
+                  <input type="text" class="form-control" id="edt" name="edt" placeholder="" value="{{maininfo.edt}}" disabled>
                 </div>
               </div>
             </div>
@@ -62,8 +62,8 @@
               <!-- 日期js請參考 :http://eonasdan.github.io/bootstrap-datetimepicker/ -->
               <div class="radio">
                 <div class="form-inline">
-                  <input type="text" class="form-control" id="trkSdt" name="trkSdt" placeholder="" value="{{maininfo.[0].trkSdt}}" disabled> ~
-                  <input type="text" class="form-control" id="trkEdt" name="trkEdt" placeholder="" value="{{maininfo.[0].trkEdt}}" disabled>
+                  <input type="text" class="form-control" id="trkSdt" name="trkSdt" placeholder="" value="{{maininfo.trkSdt}}" disabled> ~
+                  <input type="text" class="form-control" id="trkEdt" name="trkEdt" placeholder="" value="{{maininfo.trkEdt}}" disabled>
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">註記</label>
             <div class="col-sm-8">
-              <textarea class="form-control" rows="5" id="evtpgDesc" name="evtpgDesc" disabled>{{maininfo.[0].evtpgDesc}}</textarea>
+              <textarea class="form-control" rows="5" id="evtpgDesc" name="evtpgDesc" disabled>{{maininfo.evtpgDesc}}</textarea>
             </div>
           </div>
           <div class="btn-block center-block">
@@ -132,19 +132,19 @@
             <tbody>
               <tr>
                 <td>廣告排程數</td>
-                <td>{{maininfo.[0].adCount}}</td>
+                <td>{{maininfo.adCount}}</td>
               </tr>
               <tr>
                 <td>帶特徵廣告數</td>
-                <td>{{maininfo.[0].adtagcount}}</td>
+                <td>{{maininfo.adtagcount}}</td>
               </tr>
               <tr>
                 <td>最後更新日期</td>
-                <td>{{maininfo.[0].adudtime}}</td>
+                <td>{{maininfo.adudtime}}</td>
               </tr>
               <tr>
                 <td>最後更新人員</td>
-                <td>{{maininfo.[0].aduduser}}</td>
+                <td>{{maininfo.aduduser}}</td>
               </tr>
             </tbody>
 
@@ -154,7 +154,7 @@
             <a href="/actad/ad/upload?evtpgID={{evtpgID}}">
               <button type="button" class="btn btn-lg btn-default">廣告排程上傳</button>
             </a>
-            <a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.[0].tpc}}">
+            <a href="/actad/ad/list?evtpgID={{evtpgID}}&msm_tpc={{maininfo.tpc}}">
               <button type="button" class="btn btn-lg btn-default">廣告清單</button>
             </a>
           </div>
@@ -170,15 +170,15 @@
               <tbody>
                 <tr>
                   <td>活動新增時間：</td>
-                  <td>{{maininfo.[0].crtTime}}</td>
+                  <td>{{maininfo.crtTime}}</td>
                 </tr>
                 <tr>
                   <td>最後設定時間：</td>
-                  <td>{{maininfo.[0].updTime}}</td>
+                  <td>{{maininfo.updTime}}</td>
                 </tr>
                 <tr>
                   <td>最後設定人員：</td>
-                  <td>{{maininfo.[0].updUser}}</td>
+                  <td>{{maininfo.updUser}}</td>
                 </tr>
               </tbody>
             </table>
@@ -191,7 +191,7 @@
 <script>
   var f = document.getElementById("funcCatge");
   for (var i = 0; i < f.options.length; i++) {
-    if (f.options[i].value == "{{mainInfo.[0].funcCatge}}")
+    if (f.options[i].value == "{{maininfo.funcCatge}}")
       f.options[i].selected = true;
   }
   function deltag(evtpgID, tagID) {

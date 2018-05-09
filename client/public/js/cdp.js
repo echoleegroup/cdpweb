@@ -193,12 +193,7 @@ $(function() {
 $(function() {
     $("a:contains('複製連結')").css("white-space", "nowrap");
     $("a:contains('開啟連結')").css("white-space", "nowrap");
-    $('.tag a').click(function(event) {
-        return false;
-    });
-    $('.customize a').click(function(event) {
-        $(this).parent('li').hide();
-    });
+
 });
 $(function() {
     $('.search_block').hide();

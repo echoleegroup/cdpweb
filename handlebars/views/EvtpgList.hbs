@@ -1,4 +1,4 @@
-{{> title title='活動頁面查詢結果'}}
+{{> title title='活動頁面清單'}}
 <!--
 <div class="title">
   <div class="container">
@@ -10,9 +10,8 @@
   <!-- table set Start -->
   <div class="table_block table-responsive">
     <h2>活動頁面查詢結果</h2>
-    <a href="/actad/act/search" title="重新查詢">
-      <button type="submit" class="btn btn-default pull-right fa fa-search">重新查詢</button>
-    </a>
+      <button type="submit" onclick ="location.href='/actad/act/search'" class="btn btn-default pull-right fa fa-search">重新查詢</button>
+
     <table class="table table-hover">
       <thead>
         <tr>
@@ -79,7 +78,7 @@
       x += '</tr>'
     }
     x += "</tbody></table>";
-    x += '<div class="btn-block center-block"><a href ="/actad/ad/upload?evtpgID=' + o[i].maininfo[0].evtpgID + '"><button type="button" class="btn btn-lg btn-default">廣告排程上傳</button></a>';
+    x += '<div class="btn-block center-block"><a href ="/actad/ad/list?evtpgID=' + o[i].maininfo[0].evtpgID + '"><button type="button" class="btn btn-lg btn-default">廣告清單</button></a>';
     x += '<a href ="/actad/act/edit?evtpgID=' + o[i].maininfo[0].evtpgID + '"><button type="button" class="btn btn-lg btn-default">活動修改</button><div>';
     x += "</td></tr>";
 

@@ -129,12 +129,12 @@ module.exports = (app) => {
     var funcCatgeList;
 
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID,sno,client,sc.codeLabel,url,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,convert(varchar, trkSdt, 111)trkSdt,convert(varchar, trkEdt, 111)trkEdt,evtpgDesc,isDel,convert(varchar, crtTime, 120)crtTime,convert(varchar, dem.updTime, 120)updTime,dem.updUser,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount,(select top 1 convert(varchar, deam.updTime, 120)  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )adudtime,(select top 1 deam.updUser  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )aduduser FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup ='funcCatge' and sc.codeValue = dem.funcCatge where evtpgID ='" + evtpgID + "'", function (err, recordset) {
+      db.query("SELECT evtpgID,sno,client,sc.codeLabel,url,funcCatge,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt,tpc,convert(varchar, trkSdt, 111)trkSdt,convert(varchar, trkEdt, 111)trkEdt,evtpgDesc,isDel,convert(varchar, crtTime, 120)crtTime,convert(varchar, dem.updTime, 120)updTime,dem.updUser,(select count(*)  from dm_EvtadMst where evtpgID = dem.evtpgID) adCount,(SELECT count (distinct deam.evtadID) FROM dm_EvtadMst deam ,dm_EvtadTag det where deam.evtadID = det.evtadID and (det.isDel is null  or det.isDel <>'Y') and dem.evtpgID = deam.evtpgID)adtagcount,(select top 1 convert(varchar, deam.updTime, 120)  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )adudtime,(select top 1 deam.updUser  from dm_EvtadMst deam where deam.evtpgID = dem.evtpgID order by deam.updTime desc )aduduser FROM dm_EvtpgMst_View dem left join sy_CodeTable sc on sc.codeGroup ='funcCatge' and sc.codeValue = dem.funcCatge where evtpgID ='" + evtpgID + "'", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
         }
-        maininfo = recordset.recordset;
+        maininfo = recordset.recordset[0];
         resolve(1);
       });
     });
@@ -341,10 +341,10 @@ module.exports = (app) => {
     var where = " where 1 = 1 and dem.client = '" + client + "' ";
     if (funcCatge != '')
       where += " and dem.funcCatge = '" + funcCatge + "' ";
-    if (sdt != '')
-      where += " and dem.sdt >= '" + sdt + " 00:00:00' ";
-    if (edt != '')
-      where += " and dem.edt <= '" + edt + " 23:59:59' ";
+    if (sdt != '' && edt != '')
+      where += " and ( (dem.sdt >= '" + sdt + " 00:00:00' and dem.edt <= '" + edt + " 23:59:59' ) or ( dem.sdt <= '" + sdt + " 23:59:59' and dem.edt >= '" + sdt + " 00:00:00') or ( dem.sdt <= '" + edt + " 23:59:59' and dem.edt >= '" + edt + " 00:00:00') or ( dem.sdt <= '" + sdt + " 23:59:59' and dem.edt >= '" + edt + " 00:00:00'))";
+    else if (sdt != '')
+      where += " and ( (dem.sdt >= '" + sdt + " 00:00:00' ) or ( dem.sdt <= '" + sdt + " 23:59:59' and dem.edt >= '" + sdt + " 00:00:00') )";
     if (tpc != '')
       where += " and dem.tpc like '%" + tpc + "%' ";
 
@@ -385,7 +385,7 @@ module.exports = (app) => {
         for (var i = 0; i < recordset.rowsAffected; i++) {
           ad.push({
             no: recordset.recordset[i].no,
-            evtadID: recordset.recordset[i].evtadID, 
+            evtadID: recordset.recordset[i].evtadID,
             evtpgID: recordset.recordset[i].evtpgID,
             adSource: recordset.recordset[i].adSource,
             adChannel: recordset.recordset[i].adChannel,
@@ -552,11 +552,11 @@ module.exports = (app) => {
 
       for (var i = 0; i < data.length; i++) {
         adlist = [];
-        let count = 1 ;
+        let count = 1;
         for (var j = 0; j < ad.length; j++) {
           if (data[i].maininfo[0].evtpgID == ad[j].evtpgID) {
-            ad[j].no = count ;
-            count++ ;
+            ad[j].no = count;
+            count++;
             adlist.push({
               ad: ad[j]
             });
