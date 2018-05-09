@@ -4,6 +4,14 @@ import {
   TimelineLargeChart, FeatureNavigator
 } from "./IntegratedAnalysisChartLarge";
 
+const ROW_CELL_DATA_HANDLER = {
+  category: () => {},
+  date: () => {},
+  continuous: (feature) => {
+    return []
+  }
+};
+
 export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChartLarge {
   constructor(props) {
     super(props);
@@ -26,12 +34,58 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     );
   };
 
-  ComponentNavigatorTree(props) {
-    let node = props.node;
+  ComponentFeatureRow(props) {
+    let parentNode = props.parentNode;
+    let tail = props.tail;
+    console.log('tail.category: ', tail);
+
+    const column1Handler = {
+      continuous: (feature) => {
+        return (
+          <td>{feature.median} <img src="images/icon_median.png" alt="中" className="icon_float"/> </td>
+        );
+      },
+      category: (feature) => {
+        return (<td>最大為</td>);
+      },
+      date: (feature) => {
+        return (<td>最大為</td>);
+      }
+    };
+    const column2Handler = {
+      continuous: (feature) => {
+        return (
+          <td>{feature.average} <img src="images/icon_average.png" alt="平" className="icon_float"/> </td>
+        );
+      },
+      category: (feature) => {
+        return (<td>{feature.ref? feature.ref[feature.maxScale]: feature.maxScale}</td>);
+      },
+      date: (feature) => {
+        return (<td>{feature.ref? feature.ref[feature.maxScale]: feature.maxScale}</td>);
+      }
+    };
+    const column3Handler = {
+      continuous: (feature) => {
+        return (
+          <td>{feature.standardDeviation} <img src="images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
+        );
+      },
+      category: (feature) => {
+        return (<td>{feature.maxProportion}%</td>);
+      },
+      date: (feature) => {
+        return (<td>{feature.maxProportion}%</td>);
+      }
+    };
+
     return (
-      <FeatureStatisticNavigator node={node}
-                                 selectNode={props.selectNode}
-                                 selected={props.selected}/>
+      <tr>
+        {props.children}
+        {column1Handler[tail.category](tail)}
+        {column2Handler[tail.category](tail)}
+        {column3Handler[tail.category](tail)}
+      </tr>
     );
   };
 
@@ -72,20 +126,20 @@ class TimelineSmallChart extends TimelineLargeChart {
     super(props);
   }
 }
-
-class FeatureStatisticNavigator extends FeatureNavigator {
-  ComponentFeatureRow(props) {
-    return (
-      <tr>
-        <th>
-          <a href="javascript:;"
-             className={props.cssClass}
-             onClick={props.tailClickHandler}>{props.item.label}</a>
-        </th>
-        <td>最多為</td>
-        <td>2009</td>
-        <td>12.12%</td>
-      </tr>
-    );
-  };
-}
+//
+// class FeatureStatisticNavigator extends FeatureNavigator {
+//   ComponentFeatureRow(props) {
+//     return (
+//       <tr>
+//         <th>
+//           <a href="javascript:;"
+//              className={props.cssClass}
+//              onClick={props.tailClickHandler}>{props.item.label}</a>
+//         </th>
+//         <td>最多為</td>
+//         <td>2009</td>
+//         <td>12.12%</td>
+//       </tr>
+//     );
+//   };
+// }

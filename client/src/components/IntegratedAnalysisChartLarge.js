@@ -90,12 +90,11 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
     );
   };
 
-  ComponentNavigatorTree(props) {
-    let node = props.node;
+  ComponentFeatureRow(props) {
     return (
-      <FeatureNavigator node={node}
-                       selectNode={props.selectNode}
-                       selected={props.selected}/>
+      <tr>
+        {props.children}
+      </tr>
     );
   };
 
@@ -124,7 +123,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
     let ComponentLeftColumnGrid = this.ComponentLeftColumnGrid;
     let ComponentRightColumnGrid = this.ComponentRightColumnGrid;
     let ComponentFunctionBar = this.ComponentFunctionBar;
-    let ComponentNavigatorTree = this.ComponentNavigatorTree;
+    let ComponentFeatureRow = this.ComponentFeatureRow;
 
     return (
       <div className="row">
@@ -136,16 +135,35 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
             <ComponentFunctionBar doSearch={this.doSearch.bind(this)} changeView={this.changeView.bind(this)}/>
             {this.state.features.map(node => {
               return (
-                <ComponentNavigatorTree key={node.id}
-                                        node={node}
-                                        selectNode={this.selectFeature}
-                                        selected={this.state.selectedFeature}/>
+                <FeatureNavigator key={node.id} node={node}>
+                  {node.children.map(tail => {
+                    let cssClazz = (this.state.selectedFeature.id === tail.id)? 'active': null;
+                    return (
+                      <ComponentFeatureRow key={tail.id}
+                                           // parentNode={node}
+                                           tail={tail}
+                                           // cssClazz={cssClazz}
+                                           // selectedFeature={this.state.selectedFeature}
+                                           // selectFeatureHandler={this.selectFeature}
+                        >
+                        <th>
+                          <a href="javascript:;"
+                             className={cssClazz}
+                             onClick={(e) => {
+                               this.selectFeature(tail, node);
+                             }}>{tail.label}</a>
+                        </th>
+
+                      </ComponentFeatureRow>
+                    );
+                  })}
+                </FeatureNavigator>
               );
             })}
           </div>
           {/*<ItemTreeNavigator nodes={this.state.features}*/}
-                             {/*selectNode={this.selectFeature}*/}
-                             {/*selected={this.state.selectedFeature}/>*/}
+          {/*selectNode={this.selectFeature}*/}
+          {/*selected={this.state.selectedFeature}/>*/}
         </ComponentLeftColumnGrid>
         {/*<!-- 右欄 Start -->*/}
         <ComponentRightColumnGrid>
@@ -391,26 +409,26 @@ export class FeatureNavigator extends React.PureComponent {
       $(_this).next('.subtable').slideToggle();
     };
 
-    this.tailClickHandler = (parentNode, currNode) => {
-      this.props.selectNode(currNode, parentNode);
-    };
+    // this.tailClickHandler = (parentNode, currNode) => {
+    //   this.props.selectNode(currNode, parentNode);
+    // };
   };
 
-  ComponentFeatureRow(props) {
-    return (
-      <tr>
-        <th>
-          <a href="javascript:;"
-             className={props.cssClass}
-             onClick={props.tailClickHandler}>{props.item.label}</a>
-        </th>
-      </tr>
-    );
-  };
+  // ComponentFeatureRow(props) {
+  //   return (
+  //     <tr>
+  //       <th>
+  //         <a href="javascript:;"
+  //            className={props.cssClass}
+  //            onClick={props.tailClickHandler}>{props.item.label}</a>
+  //       </th>
+  //     </tr>
+  //   );
+  // };
 
   render() {
     let node = this.props.node;
-    let ComponentFeatureRow = this.ComponentFeatureRow;
+    // let ComponentFeatureRow = this.ComponentFeatureRow;
     return (
       <div>
         <h3 onClick={this.branchClickHandler}>
@@ -421,25 +439,7 @@ export class FeatureNavigator extends React.PureComponent {
         <div className="table-responsive subtable" style={{display: 'none'}}>
           <table className="table table-hover table-striped table-condensed">
             <tbody>
-            {node.children.map(item => {
-              return (
-                <ComponentFeatureRow key={item.id}
-                                     item={item}
-                                     cssClass={(this.props.selected.id === item.id)? 'active': null}
-                                     tailClickHandler={e => {
-                                       this.tailClickHandler(node, item);
-                                     }}/>
-                // <tr key={item.id}>
-                //   <th>
-                //     <a href="javascript:;"
-                //        className={(this.props.selected.id === item.id)? 'active': null}
-                //        onClick={e => {
-                //          this.tailClickHandler(node, item);
-                //        }}>{item.label}</a>
-                //   </th>
-                // </tr>
-              );
-            })}
+            {this.props.children}
             </tbody>
           </table>
         </div>
