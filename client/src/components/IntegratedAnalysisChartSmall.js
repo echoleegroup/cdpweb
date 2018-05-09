@@ -42,7 +42,7 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     const column1Handler = {
       continuous: (feature) => {
         return (
-          <td>{feature.median} <img src="images/icon_median.png" alt="中" className="icon_float"/> </td>
+          <td>{feature.median} <img src="/images/icon_median.png" alt="中" className="icon_float"/> </td>
         );
       },
       category: (feature) => {
@@ -55,7 +55,7 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     const column2Handler = {
       continuous: (feature) => {
         return (
-          <td>{feature.average} <img src="images/icon_average.png" alt="平" className="icon_float"/> </td>
+          <td>{feature.average} <img src="/images/icon_average.png" alt="平" className="icon_float"/> </td>
         );
       },
       category: (feature) => {
@@ -68,7 +68,7 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     const column3Handler = {
       continuous: (feature) => {
         return (
-          <td>{feature.standardDeviation} <img src="images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
+          <td>{feature.standardDeviation} <img src="/images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
         );
       },
       category: (feature) => {
