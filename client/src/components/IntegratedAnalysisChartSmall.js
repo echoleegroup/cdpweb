@@ -59,10 +59,10 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
         );
       },
       category: (feature) => {
-        return (<td>{feature.ref? feature.ref[feature.maxScale]: feature.maxScale}</td>);
+        return (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>);
       },
       date: (feature) => {
-        return (<td>{feature.ref? feature.ref[feature.maxScale]: feature.maxScale}</td>);
+        return (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>);
       }
     };
     const column3Handler = {
