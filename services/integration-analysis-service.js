@@ -4,36 +4,36 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 const appConfig = require("../app-config");
 
-module.exports.getFeatureById = (featureId, callback) => {
-  const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.chartType, ' +
-    'feature.codeGroup, feature.featNameExt, feature.featDesc, ct.codeLabel AS dataSourceLabel ' +
-    'FROM cd_Feature feature ' +
-    'LEFT JOIN ft_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
-    `WHERE feature.featID = @featureId AND (isDel != @isDel OR isDel is NULL)`;
-
-  let request = _connector
-    .queryRequest()
-    .setInput('featureId', _connector.TYPES.NVarChar, featureId)
-    .setInput('codeGroup', _connector.TYPES.NVarChar, 'ftdatasouce')
-    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
-
-  Q.nfcall(request.executeQuery, sql)
-    .then(result => callback(null, result[0]))
-    .fail(err => {callback(err)});
-};
-
-module.exports.getFeaturesById = (idList, callback) => {
-  const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.chartType, feature.codeGroup ' +
-    'FROM cd_Feature feature ' +
-    `WHERE feature.featID in ('${idList.join(`','`)}') AND (isDel != @isDel OR isDel is NULL)`;
-
-  let request = _connector
-    .queryRequest()
-    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
-  Q.nfcall(request.executeQuery, sql)
-    .then(result => callback(null, result))
-    .fail(err => {callback(err)});
-};
+// module.exports.getFeatureById = (featureId, callback) => {
+//   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.chartType, ' +
+//     'feature.codeGroup, feature.featNameExt, feature.featDesc, ct.codeLabel AS dataSourceLabel ' +
+//     'FROM cd_Feature feature ' +
+//     'LEFT JOIN ft_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
+//     `WHERE feature.featID = @featureId AND (isDel != @isDel OR isDel is NULL)`;
+//
+//   let request = _connector
+//     .queryRequest()
+//     .setInput('featureId', _connector.TYPES.NVarChar, featureId)
+//     .setInput('codeGroup', _connector.TYPES.NVarChar, 'ftdatasouce')
+//     .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+//
+//   Q.nfcall(request.executeQuery, sql)
+//     .then(result => callback(null, result[0]))
+//     .fail(err => {callback(err)});
+// };
+//
+// module.exports.getFeaturesById = (idList, callback) => {
+//   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.chartType, feature.codeGroup ' +
+//     'FROM cd_Feature feature ' +
+//     `WHERE feature.featID in ('${idList.join(`','`)}') AND (isDel != @isDel OR isDel is NULL)`;
+//
+//   let request = _connector
+//     .queryRequest()
+//     .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
+//   Q.nfcall(request.executeQuery, sql)
+//     .then(result => callback(null, result))
+//     .fail(err => {callback(err)});
+// };
 
 module.exports.getCriteriaFeaturesOfSet = (setId, callback) => {
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, ' +

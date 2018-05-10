@@ -37,7 +37,6 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
   ComponentFeatureRow(props) {
     let parentNode = props.parentNode;
     let tail = props.tail;
-    console.log('tail.category: ', tail);
 
     const column1Handler = {
       continuous: (feature) => {

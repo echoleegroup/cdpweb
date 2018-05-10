@@ -5,14 +5,17 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
   const sql = 'select feature.featID, feature.featName, feature.dataType, ' +
-    'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median, ' +
+    'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median,' +
+    'feature.featNameExt AS unit, feature.featDesc AS description, ct.codeLabel AS dataSourceLabel, ' +
     'sf.standardDeviation, sf.scaleUpperBound, sf.scaleLowerBound,' +
     'sf.maxScale, sf.maxPeak, sf.maxProportion ' +
     'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
+    'LEFT JOIN ft_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
     'WHERE queryID = @queryId AND sf.featID = feature.featID';
 
   let request = _connector.queryRequest()
-    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('codeGroup', _connector.TYPES.NVarChar, 'ftdatasouce');
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
@@ -106,6 +109,24 @@ module.exports.insertStatisticChartOfFeature = (queryId, featureId, scale, peak,
     callback(null, {
       queryID: queryId
     });
+  }).fail(err => {
+    winston.error(`===insert statistic chart data of feature failed! (queryID=${queryId}, featureId=${featureId}: `,
+      err);
+    callback(err);
+  });
+};
+
+module.exports.getStatisticChartOfFeature = (queryId, featureId, callback) => {
+  const sql = 'SELECT * FROM cu_IntegratedQueryStatisticChart ' +
+    'WHERE queryID = @queryId AND featID = @featId ' +
+    'ORDER BY seq';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('featId', _connector.TYPES.NVarChar, featureId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
   }).fail(err => {
     winston.error(`===insert statistic chart data of feature failed! (queryID=${queryId}, featureId=${featureId}: `,
       err);
