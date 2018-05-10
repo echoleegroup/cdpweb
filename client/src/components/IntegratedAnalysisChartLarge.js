@@ -80,15 +80,19 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
     );
   };
 
-  ComponentFunctionBar(props) {
-    return (
-      <div>
-        <h2>特徵觀察</h2>
-        <button type="button" className="btn btn-default fa fa-search" onClick={props.doSearch}>重新查詢</button>
-        <button type="button" className="btn btn-default fa fa-arrow-right" onClick={props.changeView}/>
-      </div>
-    );
-  };
+  // ComponentFunctionBar(props) {
+  //   return (
+  //     <div>
+  //       <h2>特徵觀察</h2>
+  //       <button type="button" className="btn btn-default fa fa-search" onClick={props.doSearch}>重新查詢</button>
+  //       <button type="button" className="btn btn-default fa fa-arrow-right" onClick={props.changeView}/>
+  //     </div>
+  //   );
+  // };
+
+  ComponentViewSwitcher(props) {
+    return (<button type="button" className="btn btn-default fa fa-arrow-right" onClick={props.changeView}/>);
+  }
 
   ComponentFeatureRow(props) {
     return (
@@ -135,7 +139,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
   render() {
     let ComponentLeftColumnGrid = this.ComponentLeftColumnGrid;
     let ComponentRightColumnGrid = this.ComponentRightColumnGrid;
-    let ComponentFunctionBar = this.ComponentFunctionBar;
+    let ComponentViewSwitcher = this.ComponentViewSwitcher;
     let ComponentFeatureRow = this.ComponentFeatureRow;
     let ComponentChartBody = this.ComponentChartBody;
 
@@ -145,8 +149,12 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
         <ComponentLeftColumnGrid>
           {/*<!-- table set Start -->*/}
           <div className="table_block feature">
-            {/*<ComponentFunctionBar headline={this.HeadlineText()} searchAgain={this.searchAgain.bind(this)}/>*/}
-            <ComponentFunctionBar doSearch={this.doSearch.bind(this)} changeView={this.changeView.bind(this)}/>
+            {/*<ComponentFunctionBar doSearch={this.doSearch.bind(this)} changeView={this.changeView.bind(this)}/>*/}
+            <div>
+              <h2>特徵觀察</h2>
+              <button type="button" className="btn btn-default fa fa-search" onClick={this.doSearch}>重新查詢</button>
+              <ComponentViewSwitcher changeView={this.changeView.bind(this)}/>
+            </div>
             {this.state.features.map(node => {
               return (
                 <FeatureNavigator key={node.id} node={node}>

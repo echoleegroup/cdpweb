@@ -109,6 +109,10 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
   changeView() {
     window.location.href = `/integration/${this.mode}/query/${this.queryId}/analysis/large`;
   };
+
+  ComponentViewSwitcher(props) {
+    return (<button type="button" className="btn btn-default fa fa-arrow-left" onClick={props.changeView}/>);
+  }
 };
 
 class ContinuousSmallChart extends ContinuousLargeChart {
