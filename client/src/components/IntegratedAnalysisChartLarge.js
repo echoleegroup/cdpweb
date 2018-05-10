@@ -14,7 +14,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
     this.state = {
       selectedFeature: {},
       selectedFeaturePath: [],
-      // features: [],
+      features: [],
       records: 0,
       isLoaded: true,
       chartData: []
@@ -112,7 +112,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
   // };
 
   ComponentChartBody(props) {
-    switch (props.selectedFeature.category) {
+    switch (props.feature.category) {
       case 'continuous':
         return <ContinuousLargeChart {...props}/>;
       case 'category':
@@ -330,7 +330,7 @@ export class ContinuousLargeChart extends React.Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.selectedFeature.id !== this.props.selectedFeature.id;
+    return nextProps.feature.id !== this.props.feature.id;
   };
 
   componentDidMount() {
@@ -388,7 +388,7 @@ export class CategoryLargeChart extends ContinuousLargeChart {
         {
           "id": "Title-1",
           "size": 15, //font size of title
-          "text": this.props.selectedFeature.label
+          "text": this.props.feature.label
         }
       ],
       // "dataProvider": this.props.chart.data

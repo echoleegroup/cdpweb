@@ -1,16 +1,8 @@
 import React from 'react';
 import {
   CategoryLargeChart, ContinuousLargeChart, IntegratedAnalysisChartLarge,
-  TimelineLargeChart, FeatureNavigator
+  TimelineLargeChart
 } from "./IntegratedAnalysisChartLarge";
-
-const ROW_CELL_DATA_HANDLER = {
-  category: () => {},
-  date: () => {},
-  continuous: (feature) => {
-    return []
-  }
-};
 
 export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChartLarge {
   constructor(props) {
@@ -88,18 +80,31 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     );
   };
 
-  getChartContainer(category) {
-    switch (category) {
+  // getChartContainer(category) {
+  //   switch (category) {
+  //     case 'continuous':
+  //       return ContinuousSmallChart;
+  //     case 'category':
+  //       return CategorySmallChart;
+  //     case 'date':
+  //       return TimelineSmallChart;
+  //     default:
+  //       return null;
+  //   }
+  // };
+
+  ComponentChartBody(props) {
+    switch (props.feature.category) {
       case 'continuous':
-        return ContinuousSmallChart;
+        return <ContinuousSmallChart {...props}/>;
       case 'category':
-        return CategorySmallChart;
+        return <CategorySmallChart {...props}/>;
       case 'date':
-        return TimelineSmallChart;
+        return <TimelineSmallChart {...props}/>;
       default:
-        return null;
+        return <div/>;
     }
-  };
+  }
 
   changeView() {
     window.location.href = `/integration/${this.mode}/query/${this.queryId}/analysis/large`;
