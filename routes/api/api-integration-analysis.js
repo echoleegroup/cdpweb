@@ -40,6 +40,11 @@ const ANONYMOUS_TAG_SET_ID = 'TAGTARGETSET_OU';
 const ANONYMOUS_TRAIL_SET_ID = 'LOGTARGETSET_OU';
 const ANONYMOUS_EXPORT_DOWNLOAD_FEATURE_SET_ID = 'OUCOMMDNLD';
 
+const TREE_ID_OF_INTEGRATED_MODE = {
+  [INTEGRATED_MODE.IDENTIFIED]: INTEGRATION_ANALYSIS_TREE_ID,
+  [INTEGRATED_MODE.ANONYMOUS]: ANONYMOUS_ANALYSIS_TREE_ID
+};
+
 const criteriaFeaturePromise = (setId, treeId) => {
   return Q.all([
     Q.nfcall(integrationService.getCriteriaFeaturesOfSet, setId),
@@ -445,7 +450,7 @@ module.exports = (app) => {
       // winston.info('featureIds: %j', featureIds);
       return Q.all([
         Q.nfcall(integratedHelper.getStatisticFeaturesOfQueryTask, queryId),
-        Q.nfcall(integrationService.getCriteriaFeatureTree, ANONYMOUS_ANALYSIS_TREE_ID)
+        Q.nfcall(integrationService.getCriteriaFeatureTree, TREE_ID_OF_INTEGRATED_MODE[mode])
       ]);
     }).spread((features, foldingTree) => {
       // winston.info('criteriaFeaturePromise getCriteriaFeaturesOfSet: ', features);
