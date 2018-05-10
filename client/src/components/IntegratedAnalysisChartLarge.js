@@ -58,7 +58,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
       console.log('get chart data: ', data);
       this.setState({
         // feature: data.feature,
-        chart: data,
+        chartData: data,
         isLoaded: true
       });
     });
