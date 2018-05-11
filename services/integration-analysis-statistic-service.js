@@ -3,6 +3,23 @@ const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
+module.exports.getStatisticFeatureOfTask = (queryId, featureId, callback) => {
+  const sql = 'select feature.featID, feature.featName, feature.codeGroup, sf.category ' +
+    'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
+    'WHERE queryID = @queryId AND sf.featID = feature.featID AND sf.featID = @featureId';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId)
+    .setInput('featureId', _connector.TYPES.NVarChar, featureId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result[0]);
+  }).fail(err => {
+    winston.error(`===get statistic feature of task failed! (queryID=${queryId}, featureId=${featureId}): `, err);
+    callback(err);
+  });
+};
+
 module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
   const sql = 'select feature.featID, feature.featName, feature.dataType, ' +
     'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median,' +

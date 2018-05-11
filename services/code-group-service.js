@@ -9,7 +9,7 @@ module.exports.getFeatureCodeGroup = (codeGroup, callback) => {
 
 module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
   const codeGroupSql = `'${codeGroupList.join(`', '`)}'`;
-  const sql = 'SELECT codeGroup, codeValue, codeLabel ' +
+  const sql = 'SELECT codeGroup, codeValue, codeLabel, codeSort ' +
     'FROM CodeGroup_View ' +
     `WHERE codeGroup in (${codeGroupSql}) ` +
     'ORDER BY codeSort';

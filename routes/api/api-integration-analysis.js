@@ -474,64 +474,13 @@ module.exports = (app) => {
     let queryId = req.params.queryId;
     let featureId = req.params.featureId;
 
-    Q.nfcall(integrationStatisticService.getStatisticChartOfFeature, queryId, featureId).then(chartData => {
-      winston.info('chartData: ', chartData);
-      res.json(chartData);
-      // let data = {
-      //   feature: {
-      //     featureId: feature.featID,
-      //     dataSource: feature.dataSourceLabel,
-      //     unit: feature.featNameExt,
-      //     description: feature.featDesc
-      //   },
-      //   chart: {
-      //     "featureId": featureId,  // 欄位ID
-      //     "category": "continuous",   // category類別型, continuous連續數值型, date日期型
-      //     "data": [
-      //       {
-      //         "scale": "category 1",
-      //         "peak": 8,
-      //         "proportion": 5
-      //       },
-      //       {
-      //         "scale": "category 2",
-      //         "peak": 6,
-      //         "proportion": 7
-      //       },
-      //       {
-      //         "scale": "category 3",
-      //         "peak": 2,
-      //         "proportion": 3
-      //       },
-      //       {
-      //         "scale": "category 4",
-      //         "peak": 1,
-      //         "proportion": 3
-      //       },
-      //       {
-      //         "scale": "category 5",
-      //         "peak": 2,
-      //         "proportion": 1
-      //       },
-      //       {
-      //         "scale": "category 6",
-      //         "peak": 3,
-      //         "proportion": 2
-      //       },
-      //       {
-      //         "scale": "category 7",
-      //         "peak": 6,
-      //         "proportion": 8
-      //       }
-      //     ],
-      //     "average": 3, // 數值型：全部資料的平均值。其他：undefined
-      //     "median": 3,  // 數值型：全部資料的中位數。其他：undefined
-      //     "standardDeviation": 3, // 數值型：全部資料的標準差。其他：undefined
-      //     "scaleUpperBound": "___", // 有效資料下界
-      //     "scaleLowerBound": "___", // 有效資料上界
-      //   }
-      // };
-      // res.json(data);
+    Q.all([
+      Q.nfcall(integratedHelper.getStatisticFeatureOfQueryTask, queryId, featureId),
+      Q.nfcall(integrationStatisticService.getStatisticChartOfFeature, queryId, featureId)
+    ]).spread((feature, chartData) => {
+      let data = integratedHelper.chartDataProcessor(feature, chartData);
+      winston.info('chartData: ', data);
+      res.json(data);
     });
   });
 

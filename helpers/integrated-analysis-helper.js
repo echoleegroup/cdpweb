@@ -14,11 +14,17 @@ const queryLogService = require('../services/query-log-service');
 const integrationTaskService = require('../services/integration-analysis-task-service');
 const integrationStatisticService = require('../services/integration-analysis-statistic-service');
 
+const CHART_CATEGORY = {
+  CONTINUOUS: 'continuous',
+  CATEGORY: 'category',
+  TIMELINE: 'date'
+};
+
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {
     if (!_.isEmpty(feature.codeGroup)) {
       Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-        feature.codeGroup = _.keyBy(codeGroup, 'codeGroup');
+        feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
         callback(null, feature);
       });
     } else {
@@ -415,10 +421,10 @@ module.exports.initializeQueryTaskLog = (menuCode, criteria, features, filters, 
 
 const getMinPeriod = (chartType, minPeriod) => {
   switch (chartType) {
-    case 'category':
-    case 'continuous':
+    case CHART_CATEGORY.CATEGORY:
+    case CHART_CATEGORY.CONTINUOUS:
       return minPeriod*1;
-    case 'date':
+    case CHART_CATEGORY.TIMELINE:
       return minPeriod;
     default:
       return minPeriod;
@@ -476,4 +482,61 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
     winston.error('===getFeaturesAsMap: ', err);
     callback(err);
   });
-}
+};
+
+module.exports.getStatisticFeatureOfQueryTask = (queryId, featureId, callback) => {
+  Q.nfcall(integrationStatisticService.getStatisticFeatureOfTask, queryId, featureId).then(feature => {
+    if (!_.isEmpty(feature.codeGroup)) {
+      return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
+        feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+        return feature;
+      });
+    } else {
+      feature.codeGroup = {};
+      return feature;
+    }
+  }).then(feature => {
+    callback(null, feature);
+  }).fail(err => {
+    winston.error('===getFeaturesAsMap: ', err);
+    callback(err);
+  });
+};
+
+const continuousChartDataProcessor = (feature, chartData) => {
+  return _.sortBy(chartData.map(data => {
+    return {
+      scale: Number(data.scale),
+      peak: Number(data.peak),
+      proportion: data.proportion,
+      seq: data.seq
+    }
+  }), ['scale', 'seq']);
+};
+
+const categoryChartDataProcessor = (feature, chartData) => {
+  return _.sortBy(chartData.map(data => {
+    return {
+      scale: feature.ref && feature.ref[data.scale]? feature.ref[data.scale].codeLabel: data.scale,
+      peak: Number(data.peak),
+      proportion: data.proportion,
+      seq: data.seq,
+      sort: feature.ref && feature.ref[data.scale]? feature.ref[data.scale].codeSort: ''
+    }
+  }), ['sort', 'seq']);
+};
+
+const timelineChartDataProcessor = (feature, chartData) => {
+  return continuousChartDataProcessor(feature, chartData);
+};
+
+module.exports.chartDataProcessor = (feature, chartData) => {
+  switch (feature.category) {
+    case CHART_CATEGORY.CONTINUOUS:
+      return continuousChartDataProcessor(feature, chartData);
+    case CHART_CATEGORY.CATEGORY:
+      return categoryChartDataProcessor(feature, chartData);
+    case CHART_CATEGORY.TIMELINE:
+      return timelineChartDataProcessor(feature, chartData);
+  }
+};
