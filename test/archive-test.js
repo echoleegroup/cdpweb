@@ -1,6 +1,3 @@
-const fs = require('fs');
-const archiver = require('archiver');
-const path = require('path');
 const Q = require('q');
 const winston = require('winston');
 const fileHelper = require('../helpers/file-helper');
