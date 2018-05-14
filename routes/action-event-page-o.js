@@ -34,7 +34,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         function addtag(evtpgID, newtag, callback) {
-          db.query("INSERT INTO dm_EvtpgTag(evtpgID,tagLabel,tagSource,updTime,updUser) VALUES('" + evtpgID + "','" + newtag + "','m',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
+          db.query("INSERT INTO dm_EvtpgTag(evtpgID,tagLabel,tagSource,crtTime,updTime,updUser) VALUES('" + evtpgID + "','" + newtag + "','m',GETDATE(),GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
@@ -63,7 +63,7 @@ module.exports = (app) => {
   router.post('/act/tag/del', function (req, res) {
     var evtpgID = req.body.evtpgID;
     var tagID = req.body.tagID;
-    db.query("UPDATE dm_EvtpgTag set isDel = 'Y' where evtpgID ='" + evtpgID + "' and tagID = " + tagID, function (err, recordset) {
+    db.query("UPDATE dm_EvtpgTag set isDel = 'Y',updTime = GETDATE(),updUser = '" + req.user.userId + "' where evtpgID ='" + evtpgID + "' and tagID = " + tagID, function (err, recordset) {
       if (err) console.log(err);
       res.end('ok');
     });
