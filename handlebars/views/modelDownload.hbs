@@ -16,23 +16,23 @@
               <div class="radio">
                 <label>
                   <input type="radio" id="enternum" name="optradio">設定名單數量：</label>
-                  <input type="text" class="form-control form-inline" id="num" name="num" value="" placeholder="">
+                <input type="text" class="form-control form-inline" id="num" name="num" value="" placeholder="">
               </div>
               <div class="radio">
                 <label>
                   <input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：
-                    <span>建議閥值:{{batListThold}}以上</span>
-                    <div class="rangeslider">
-                      <span class="high">高</span>
-                      <span class="low">低</span>
-                      <span class="sliderName">閥值分數</span>
-                      <input id="ex12c" type="text" num="scope" />
-                      <div class="info">
-                        <p>名單數：
-                          <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
-                        </p>
-                      </div>
+                  <span>建議閥值:{{batListThold}}以上</span>
+                  <div class="rangeslider">
+                    <span class="high">高</span>
+                    <span class="low">低</span>
+                    <span class="sliderName">閥值分數</span>
+                    <input id="ex12c" type="text" num="scope" />
+                    <div class="info">
+                      <p>名單數：
+                        <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
+                      </p>
                     </div>
+                  </div>
                 </label>
               </div>
             </div>
@@ -81,8 +81,14 @@
             <table class="table">
               <tbody>
                 <tr>
+                  <th>計算批次</th>
+                  <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
+                  <td>{{modelInfo.batName}}
+                  </td>
+                </tr>
+                <tr>
                   <th rowspan="2">模型受眾</th>
-                  <td>{{modelinfo.taName}}
+                  <td>{{modelInfo.taName}}
                   </td>
                 </tr>
                 <tr>
@@ -91,7 +97,9 @@
                 <tr>
                   <th rowspan="2">已購客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-                  <td>{{modelinfo.splName}}</td>
+                  <td>{{modelInfo.splName}}
+                    <i flow="down" tooltip="{{modelInfo.splDesc}}"></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -101,7 +109,9 @@
                 <tr>
                   <th rowspan="2">潛在客群</th>
                   <!-- tooltip的 tag為 i ,flow可以設定：top left right down 四個方向 -->
-                  <td>{{modelinfo.popName}}</td>
+                  <td>{{modelInfo.popName}}
+                    <i flow="down" tooltip="{{modelInfo.popDesc}}"></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>

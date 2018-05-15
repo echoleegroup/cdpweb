@@ -427,7 +427,7 @@ module.exports = (app) => {
     var adlist = [];
     var ad = [];
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.evtadID,a.evtpgID,a.url,a.adChannel,a.adSource,a.adPos,a.adSize,a.updUser,convert(varchar, a.adSdt, 111)adSdt,convert(varchar, a.adEdt, 111)adEdt,convert(varchar, a.updTime, 120)updTime, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID) sumtag FROM dm_EvtadMst a where a.evtpgID ='" + evtpgID + "' order by a.adSdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.evtadID,a.evtpgID,a.url,a.adChannel,a.adSource,a.adPos,a.adSize,a.updUser,convert(varchar, a.adSdt, 111)adSdt,convert(varchar, a.adEdt, 111)adEdt,convert(varchar, a.updTime, 120)updTime, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID and ( b.isDel <>'Y' or b.isDel is null) ) sumtag FROM dm_EvtadMst a where a.evtpgID ='" + evtpgID + "' order by a.adSdt asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);

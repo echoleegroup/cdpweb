@@ -310,7 +310,7 @@ module.exports = (app) => {
       });
     });
     Promise.all([p1]).then(function (results) {
-      db.query("SELECT Top 1 evtpgID FROM dm_EvtpgMst order by evtpgID desc ", function (err, recordset) {
+      db.query("SELECT Top 1 evtpgID FROM dm_EvtpgMst order by crtTime desc ", function (err, recordset) {
         if (err)
           console.log(err);
         evtpgID = recordset.recordset[0].evtpgID;
@@ -377,7 +377,7 @@ module.exports = (app) => {
       });
     });
     var p2 = new Promise(function (resolve, reject) {
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.*, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID) sumtag FROM dm_EvtadMst a order by a.adSdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.*, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID and( b.isDel <> 'Y' or b.isDel is null)) sumtag FROM dm_EvtadMst a order by a.adSdt asc ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
