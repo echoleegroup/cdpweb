@@ -21,11 +21,11 @@ module.exports.getStatisticFeatureOfTask = (queryId, featureId, callback) => {
 };
 
 module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
-  const sql = 'select feature.featID, feature.featName, feature.dataType, ' +
+  const sql = 'select feature.featID, feature.featName, feature.dataType, feature.minPeriod, ' +
     'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median,' +
-    'feature.featNameExt AS unit, feature.featDesc AS description, ct.codeLabel AS dataSourceLabel, ' +
-    'sf.standardDeviation, sf.scaleUpperBound, sf.scaleLowerBound,' +
-    'sf.maxScale, sf.maxPeak, sf.maxProportion ' +
+    'feature.featNameExt AS unit, feature.featDesc AS description, ' +
+    'ct.codeLabel AS dataSourceLabel, sf.standardDeviation, sf.scaleUpperBound, ' +
+    'sf.scaleLowerBound, sf.maxScale, sf.maxPeak, sf.maxProportion ' +
     'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
     'LEFT JOIN ft_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
     'WHERE queryID = @queryId AND sf.featID = feature.featID';

@@ -418,7 +418,16 @@ export class TimelineLargeChart extends ContinuousLargeChart {
   constructor(props) {
     super(props);
     this.chartConfig.categoryAxis.parseDates = true;
-  }
+    this.chartConfig.categoryAxis.dateFormats = [
+      {period:'fff',format:'JJ:NN:SS'},
+      {period:'ss',format:'JJ:NN:SS'},
+      {period:'mm',format:'JJ:NN'},
+      {period:'hh',format:'JJ:NN'},
+      {period:'DD',format:'MM/DD'},
+      {period:'WW',format:'MM/DD'},
+      {period:'MM',format:'MM'},
+      {period:'YYYY',format:'YYYY'}]
+  };
 }
 
 export class FeatureNavigator extends React.PureComponent {

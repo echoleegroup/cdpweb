@@ -3,6 +3,7 @@ import {
   CategoryLargeChart, ContinuousLargeChart, IntegratedAnalysisChartLarge,
   TimelineLargeChart
 } from "./IntegratedAnalysisChartLarge";
+import moment from 'moment'
 
 export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChartLarge {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
   };
 
   ComponentFeatureRow(props) {
-    let parentNode = props.parentNode;
+    // let parentNode = props.parentNode;
     let tail = props.tail;
 
     const column1Handler = {
@@ -53,7 +54,14 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
         return (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>);
       },
       date: (feature) => {
-        return (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>);
+        const formatter = {
+          year: 'YYYY',
+          month: 'YYYY/MM',
+          day: 'YYYY/MM-DD',
+          hour: 'YYYY/MM/DD HH',
+          minute: 'YYYY/MM/DD HH:mm'
+        };
+        return (<td>{moment(feature.maxScale).startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>);
       }
     };
     const column3Handler = {
