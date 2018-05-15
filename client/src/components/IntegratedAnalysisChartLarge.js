@@ -307,6 +307,7 @@ export class ContinuousLargeChart extends React.Component {
         "balloonText": "[[value]]",
         "bullet": "round",
         "bulletBorderAlpha": 1,
+        "bulletSize": 5,
         // "bulletColor": "#FFFFFF",
         "hideBulletsCount": 50,
         // "title": "red line",
@@ -314,7 +315,8 @@ export class ContinuousLargeChart extends React.Component {
         "useLineColorForBulletBorder": true,
         "balloon":{
           "drop":true
-        }
+        },
+        "lineColor": "#F2B530"
       }],
       "chartScrollbar": {
         "autoGridCount": true,
