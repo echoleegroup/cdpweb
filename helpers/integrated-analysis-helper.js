@@ -517,17 +517,24 @@ const continuousChartDataProcessor = (feature, chartData) => {
 const categoryChartDataProcessor = (feature, chartData) => {
   return _.sortBy(chartData.map(data => {
     return {
-      scale: feature.ref && feature.ref[data.scale]? feature.ref[data.scale].codeLabel: data.scale,
+      scale: feature.codeGroup && feature.codeGroup[data.scale]? feature.codeGroup[data.scale].codeLabel: data.scale,
       peak: Number(data.peak),
       proportion: data.proportion,
       seq: data.seq,
-      sort: feature.ref && feature.ref[data.scale]? feature.ref[data.scale].codeSort: ''
+      sort: feature.codeGroup && feature.codeGroup[data.scale]? feature.codeGroup[data.scale].codeSort: ''
     }
   }), ['sort', 'seq']);
 };
 
 const timelineChartDataProcessor = (feature, chartData) => {
-  return continuousChartDataProcessor(feature, chartData);
+  return _.sortBy(chartData.map(data => {
+    return {
+      scale: Number(data.scale) * 1000,
+      peak: Number(data.peak),
+      proportion: data.proportion,
+      seq: data.seq
+    }
+  }), ['scale', 'seq']);
 };
 
 module.exports.chartDataProcessor = (feature, chartData) => {

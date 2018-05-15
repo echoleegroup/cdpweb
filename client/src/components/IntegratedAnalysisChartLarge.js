@@ -412,7 +412,12 @@ export class CategoryLargeChart extends ContinuousLargeChart {
   };
 }
 
-export class TimelineLargeChart extends ContinuousLargeChart {}
+export class TimelineLargeChart extends ContinuousLargeChart {
+  constructor(props) {
+    super(props);
+    this.chartConfig.categoryAxis.parseDates = true;
+  }
+}
 
 export class FeatureNavigator extends React.PureComponent {
   componentWillMount() {
