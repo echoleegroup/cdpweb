@@ -20,6 +20,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
       }),
       criteria: Map()
     };
+    this.recordLabel = '觀察車牌數';
   };
 
   componentWillMount() {
@@ -40,9 +41,36 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
     });
   }
 
+  ComponentResultInfo(props) {
+    return (
+      <div className="table_block">
+        <h2>觀察客群</h2>
+        <div className="info">
+          <div className="table-responsive">
+            <table className="table">
+              <tbody>
+              <tr>
+                <td>{props.recordLabel}：</td>
+                <td>{props.task.records}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="btn-block">
+            <a className="btn btn-default btn-lg"
+               href={`/integration/${props.task.mode.toLowerCase()}/query/${props.task.queryId}/analysis/large`}>
+              客戶樣貌總覽
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     let task = this.state.task.toJS();
     let criteria = this.state.criteria.toJS();
+    let ComponentResultInfo = this.ComponentResultInfo;
     return (
       <div className="container">
         {/*<!-- row div 於需要分兩欄才需要 -->*/}
@@ -53,7 +81,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
             <CriteriaView criteria={criteria}/>
           </div>
           <div className="col-md-4 col-sm-5 col-xs-12">
-            <ResultInfo task={task}/>
+            <ComponentResultInfo task={task} recordLabel={this.recordLabel}/>
             <ResultContent task={task}/>
           </div>
         </div>
@@ -117,36 +145,6 @@ class CriteriaView extends React.PureComponent {
       </div>
     );
   };
-}
-
-class ResultInfo extends React.PureComponent {
-  render() {
-    return (
-      <div className="table_block">
-        <h2>觀察客群</h2>
-        <div className="info">
-          <div className="table-responsive">
-            <table className="table">
-              <tbody>
-              <tr>
-                <td>觀察車牌數：</td>
-                <td>{this.props.task.records}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="btn-block">
-            {this.props.task.mode?
-              <a className="btn btn-default btn-lg"
-                 href={`/integration/${this.props.task.mode.toLowerCase()}/query/${this.props.task.queryId}/analysis/large`}>
-                客戶樣貌總覽
-              </a>: null}
-
-          </div>
-        </div>
-      </div>
-    );
-  }
 }
 
 class ResultContent extends React.PureComponent {

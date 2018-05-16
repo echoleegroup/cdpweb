@@ -310,7 +310,7 @@ module.exports = (app) => {
     }).spread((queryId, queryScript) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
 
-      res.json({queryId});
+      res.json({queryId, mode});
     }).fail(err => {
       winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');
@@ -433,7 +433,7 @@ module.exports = (app) => {
     }).spread((queryId, queryScript) => {
       Q.nfcall(integrationTaskService.setQueryTaskStatusProcessing, queryId, JSON.stringify(queryScript));
 
-      res.json({queryId});
+      res.json({queryId, mode});
     }).fail(err => {
       winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');

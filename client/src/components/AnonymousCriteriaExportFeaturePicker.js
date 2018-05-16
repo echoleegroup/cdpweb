@@ -82,6 +82,7 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
       exportAnonymousQuery(formDate, res => {
         this.setState({
           queryId: res.queryId,
+          mode: res.mode,
           showModal: true,
           message_error: undefined
         });
@@ -129,7 +130,7 @@ export default class AnonymousCriteriaExportFeaturePicker extends React.PureComp
           <Modal.Header closeButton/>
           <Modal.Body>
             <p>查詢正在進行中，請稍候片刻。</p>
-            <p>您可隨時檢視<Button bsStyle="link" href={"/integration/query/"+this.state.queryId} target="_blank">查詢結果</Button>，或等候E-mail通知</p>
+            <p>您可隨時檢視<Button bsStyle="link" href={"/integration/"+this.state.mode+"/query/"+this.state.queryId} target="_blank">查詢結果</Button>，或等候E-mail通知</p>
           </Modal.Body>
         </Modal>
       </div>
