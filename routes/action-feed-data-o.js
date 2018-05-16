@@ -53,7 +53,8 @@ module.exports = (app) => {
     downloadService.getFilePath(listid, datasource, function (err, result) {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
       res.setHeader("Content-Disposition", "attachment; filename=" + result.origName)
-      res.sendFile(storage + result.uniqName);
+      winston.info(storage + result.uniqName);
+      res.sendFile(storage +"/"+ result.uniqName);
     });
   });
 
@@ -95,6 +96,7 @@ module.exports = (app) => {
       NCBSsql += " and cbm.ncbsName like '%" + ListName + "%' ";
     }
     var unionSql = FeedDataSql + " union " + NCBSsql + " order by ListSdt desc ";
+    console.log(unionSql);
     var data = [];
     var taginfo = [];
     var feeddatalist = [];
@@ -391,7 +393,7 @@ module.exports = (app) => {
     let mtag;
     let maininfo;
     let p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT colm.outerListName,colm.Client,colm.funcCatge,sc.codeLabel,colm.outerListDesc,convert(varchar,colm.outerListSdt,111)outerListSdt,convert(varchar,colm.outerListEdt,111)outerListEdt,colm.isDel,convert(varchar,colm.updTime,111)updTime,colm.updUser,(select count(*) from cu_OuterListDet cold where cold.outerListID = colm.outerListID)total FROM cu_OuterListMst colm left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = colm.funcCatge where outerListID = " + outerListID, function (err, recordset) {
+      db.query("SELECT colm.outerListName,colm.Client,colm.funcCatge,sc.codeLabel,colm.outerListDesc,convert(varchar,colm.outerListSdt,111)outerListSdt,convert(varchar,colm.outerListEdt,111)outerListEdt,colm.isDel,convert(varchar,colm.updTime,120)updTime,colm.updUser,(select count(*) from cu_OuterListDet cold where cold.outerListID = colm.outerListID)total FROM cu_OuterListMst colm left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = colm.funcCatge where outerListID = " + outerListID, function (err, recordset) {
         if (err) {
           reject(err);
         }

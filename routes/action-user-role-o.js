@@ -79,7 +79,7 @@ module.exports = (app) => {
     var where = " where 1=1 ";
     if (ugrpName != '')
       where += " and ugrpName like '%" + ugrpName + "%' ";
-    db.query("SELECT  ROW_NUMBER() OVER (ORDER BY uc.ugrpClassId ASC) as no ,ugrpId,ugrpClass,ugrpName,uc.ugrpClassName,isStop FROM sy_ugrp ug left join sy_ugrpClass uc on uc.ugrpClassId = ug.ugrpClass" + where + " order by uc.ugrpClassId asc", function (err, recordset) {
+    db.query("SELECT  ROW_NUMBER() OVER (ORDER BY uc.ugrpClassId ASC) as no ,ugrpId,ugrpClass,ugrpName,uc.ugrpClassName,isStop,remark FROM sy_ugrp ug left join sy_ugrpClass uc on uc.ugrpClassId = ug.ugrpClass" + where + " order by uc.ugrpClassId asc", function (err, recordset) {
       if (err) console.log(err);
       //send records as a respons
       var modelList = req.session.modelList;
@@ -90,7 +90,7 @@ module.exports = (app) => {
         'items': recordset.recordset,
         'modelList': modelList,
         'navMenuList': navMenuList,
-        'mgrMenuList': mgrMenuList
+        'mgrMenuList': mgrMenuList 
       });
     });
   });
