@@ -28,7 +28,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
       this.setState({
         task: Map({
           queryId: queryTask.queryID,
-          mode: queryTask.mode,
+          mode: queryTask.mode.toLowerCase(),
           status: queryTask.status,
           statusLabel: queryTask.statusLabel,
           queryTime: moment(queryTask.crtTime).valueOf(),
@@ -58,7 +58,7 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
           </div>
           <div className="btn-block">
             <a className="btn btn-default btn-lg"
-               href={`/integration/${props.task.mode.toLowerCase()}/query/${props.task.queryId}/analysis/large`}>
+               href={`/integration/${props.task.mode}/query/${props.task.queryId}/analysis/large`}>
               客戶樣貌總覽
             </a>
           </div>

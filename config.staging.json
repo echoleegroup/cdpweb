@@ -1,4 +1,5 @@
 {
+  "PLATFORM": "和泰大數據平台(STAGING)",
   "SQL_SERVER_INFO": {
     "host": "10.201.2.4",
     "port": 1433,

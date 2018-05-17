@@ -1,10 +1,12 @@
-'use strict'
+'use strict';
 
 const express = require('express');
+const moment = require('moment');
 const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
 const shortid = require('shortid');
+const appConfig = require("../../app-config");
 const factory = require("../../middlewares/response-factory");
 const fileHelper = require('../../helpers/file-helper');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
@@ -27,12 +29,13 @@ module.exports = (app) => {
     const mkdirp = require('mkdirp');
     const tempFolderName = shortid.generate();
     const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, tempFolderName);
-    const subject = '顧客360查詢完成';
+    const subject = `${appConfig.get('PLATFORM')} - 顧客360查詢完成通知;`;
     mkdirp(workingPath);
     let featureIdMap = {};
     let userId = undefined;
     let mod = undefined;
     let records = 0;
+    let queryLog = undefined;
 
     Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
       if (!queryLogData) {
@@ -49,10 +52,11 @@ module.exports = (app) => {
     }).then(queryLogData => {
       res.json();
 
-      userId = queryLogData.updUser;
-      // winston.info('queryLogData: ', queryLogData);
-      featureIdMap = JSON.parse(queryLogData.reserve1).export;
-      mod = queryLogData.reserve2;
+      queryLog = queryLogData;
+      userId = queryLog.updUser;
+      // winston.info('queryLog: ', queryLog);
+      featureIdMap = JSON.parse(queryLog.reserve1).export;
+      mod = queryLog.reserve2;
       // winston.info('query log process Data: %j', featureIdMap);
       Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).fail(err => {
         winston.error('fail to update query task status: ', err);
@@ -83,7 +87,8 @@ module.exports = (app) => {
       ]);
     }).spread((userInfo, ...others) => {
       let to = userInfo.email;
-      let content = `<a href="http://${process.env.HOST}:${process.env.PORT}/integration/query/${queryId}">查看結果</a>`;
+      let content = `${queryLog.updUserName}, 您好<br/>
+您於 ${moment.utc(queryLog.crtTime).format('YYYY/MM/DD HH:mm:ss')} 送出的顧客360查詢已完成，請<a href="http://${process.env.HOST}:${process.env.PORT}/integration/${queryLog.reserve2}/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
       winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
@@ -108,12 +113,13 @@ module.exports = (app) => {
     const mkdirp = require('mkdirp');
     const tempFolderName = shortid.generate();
     const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, tempFolderName);
-    const subject = '顧客360查詢完成';
+    const subject = `${appConfig.get('PLATFORM')} - 顧客360查詢完成通知;`;
     mkdirp(workingPath);
     let featureIdMap = {};
     let userId = undefined;
     let mod = undefined;
     let records = 0;
+    let queryLog = undefined;
 
     // winston.info(`===download remote file: ${remoteDownloadUrl}`);
 
@@ -122,10 +128,11 @@ module.exports = (app) => {
         res.json(null, 401, `task ${queryId} not found`);
         throw `task ${queryId} not found`;
       } else {
-        userId = queryLogData.updUser;
-        // winston.info('queryLogData: ', queryLogData);
-        featureIdMap = JSON.parse(queryLogData.reserve1).export;
-        mod = queryLogData.reserve2;
+        queryLog = queryLogData;
+        userId = queryLog.updUser;
+        // winston.info('queryLog: ', queryLog);
+        featureIdMap = JSON.parse(queryLog.reserve1).export;
+        mod = queryLog.reserve2;
         // winston.info('query log process Data: %j', featureIdMap);
         return Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath).fail(err => {
           Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteFileNotFound, queryId);
@@ -166,7 +173,8 @@ module.exports = (app) => {
       ]);
     }).spread((userInfo, ...others) => {
       let to = userInfo.email;
-      let content = `<a href="http://${process.env.HOST}:${process.env.PORT}/integration/query/${queryId}">查看結果</a>`;
+      let content = `${queryLog.updUserName}, 您好<br/>
+您於 ${moment.utc(queryLog.crtTime).format('YYYY/MM/DD HH:mm:ss')} 送出的顧客360查詢已完成，請<a href="http://${process.env.HOST}:${process.env.PORT}/integration/${queryLog.reserve2}/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
       winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);

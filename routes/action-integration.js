@@ -24,7 +24,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/query/:queryId', function (req, res, next) {
+  router.get('/:mode/query/:queryId', function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -52,7 +52,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/identified/query/:queryId/analysis/:size', function (req, res, next) {
+  router.get('/:mode/query/:queryId/analysis/:size', function (req, res, next) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
