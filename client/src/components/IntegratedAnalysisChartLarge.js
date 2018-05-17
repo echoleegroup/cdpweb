@@ -152,7 +152,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
             {/*<ComponentFunctionBar doSearch={this.doSearch.bind(this)} changeView={this.changeView.bind(this)}/>*/}
             <div>
               <h2>特徵觀察</h2>
-              <button type="button" className="btn btn-default fa fa-search" onClick={this.doSearch}>重新查詢</button>
+              {/*<button type="button" className="btn btn-default fa fa-search" onClick={this.doSearch}>重新查詢</button>*/}
               <ComponentViewSwitcher changeView={this.changeView.bind(this)}/>
             </div>
             {this.state.features.map(node => {

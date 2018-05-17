@@ -90,7 +90,7 @@ module.exports = (app) => {
       let to = userInfo.email;
       let content = `${userInfo.userName}, 您好<br/>` +
         `您於 ${moment.utc(queryLog.crtTime).format('YYYY/MM/DD HH:mm:ss')} 送出的顧客360查詢已完成，` +
-        `請<a href="http://${process.env.HOST}:${process.env.PORT}/integration/${mode}/query/${queryId}">查看結果</a>`;
+        `請<a href="https://${process.env.HOST}:${process.env.PORT}/integration/${mode}/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
       winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
@@ -178,7 +178,7 @@ module.exports = (app) => {
       let to = userInfo.email;
       let content = `${userInfo.userName}, 您好<br/>` +
         `您於 ${moment.utc(queryLog.crtTime).format('YYYY/MM/DD HH:mm:ss')} 送出的顧客360查詢已完成，` +
-        `請<a href="http://${process.env.HOST}:${process.env.PORT}/integration/${mode}/query/${queryId}">查看結果</a>`;
+        `請<a href="https://${process.env.HOST}:${process.env.PORT}/integration/${mode}/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
       winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
