@@ -91,9 +91,8 @@ module.exports.updateQueryLogProcessingData = (queryId, script, callback) => {
 };
 
 module.exports.getQueryLogProcessingData = (queryId, callback) => {
-  const sql = 'SELECT reserve1, reserve2, updUser, u.updUserName ' +
+  const sql = 'SELECT reserve1, reserve2, updUser, crtTime ' +
     'FROM cu_QueryLog q ' +
-    'LEFT JOIN sy_infouser u ON q.updUser = u.userId ' +
     'WHERE queryID = @queryId';
 
   let request = _connector.queryRequest()
