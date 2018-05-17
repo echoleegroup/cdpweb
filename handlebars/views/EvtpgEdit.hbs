@@ -105,7 +105,7 @@
                 <ul id="mtaglist">
                   {{#each mtag as |tag|}}
                   <li class="tag_item">{{tag.tagLabel}}
-                    <a href="javascript:deltag({{evtpgID}},{{tag.tagID}})">
+                    <a href="javascript:deltag('{{evtpgID}}',{{tag.tagID}})">
                       <i class="fa fa-times"></i>
                     </a>
                   </li>
@@ -189,6 +189,11 @@
   </div>
 </div>
 <script>
+  $(function () {
+    $('.customize a').click(function (event) {
+      $(this).parent('li').hide();
+    });
+  });
   var f = document.getElementById("funcCatge");
   for (var i = 0; i < f.options.length; i++) {
     if (f.options[i].value == "{{maininfo.funcCatge}}")
@@ -212,28 +217,33 @@
   function addtag(evtpgID) {
     var evtpgID = document.getElementById("evtpgID").value;
     var newtag = document.getElementById("newtag").value;
-    $.ajax({
-      url: "/actad/act/tag/add",
-      data: {
-        "evtpgID": evtpgID,
-        "newtag": newtag
-      },
-      type: "POST",
-      dataType: 'text',
-      success: function (msg) {
-        if (msg == "已新增過")
-          alert(msg);
-        else {
-          $('#mtaglist').append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + evtpgID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
-          $(function () {
-            $('.customize a').click(function (event) {
-              $(this).parent('li').hide();
+    if (newtag.trim() != "") {
+      $.ajax({
+        url: "/actad/act/tag/add",
+        data: {
+          "evtpgID": evtpgID,
+          "newtag": newtag
+        },
+        type: "POST",
+        dataType: 'text',
+        success: function (msg) {
+          if (msg == "已新增過")
+            alert(msg);
+          else {
+            $('#mtaglist').append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(\'' + evtpgID + '\',' + msg + ')"><i class="fa fa-times"></i></a></li>');
+            $(function () {
+              $('.customize a').click(function (event) {
+                $(this).parent('li').hide();
+              });
             });
-          });
+          }
+          document.getElementById("newtag").value = "";
         }
-        document.getElementById("newtag").value = "" ;
-      }
-    });
+      });
+    }
+    else {
+      alert("標籤不能為空白");
+    }
   }
 </script>
 <script>

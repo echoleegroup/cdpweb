@@ -12,26 +12,26 @@
   <!-- table set Start -->
   <div class="table_block table-responsive">
     <h2>廣告排程清單</h2>
-      <button type="submit" onclick="location.href='/actad/ad/upload?evtpgID={{evtpgID}}'" class="btn btn-default pull-right fa fa-plus">新增廣告</button>
+    <button type="submit" onclick="location.href='/actad/ad/upload?evtpgID={{evtpgID}}'" class="btn btn-default pull-right fa fa-plus">新增廣告</button>
     <table class="table table-hover">
       <thead>
         <tr>
           <th>#</th>
           <th>
             <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->
-           網站
+            網站
           </th>
           <th>
-            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 --> 頻道
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->頻道
           </th>
           <th>
-            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 --> 投放期間
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->投放期間
           </th>
           <th>
-            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 --> 版位
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->版位
           </th>
           <th>
-            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 --> 尺寸
+            <!-- 此i 為sorting icon，只設定一組按鈕，連續點選請自訂排序規則 -->尺寸
           </th>
           <th>更新日期</th>
           <th>回饋標籤</th>
@@ -130,7 +130,7 @@
 </div>
 <script>
   var x = "";
-  var o = {{{adlist}}};
+  var o = {{{ adlist }}};
   for (i in o) {
     x += "<tr>";
     x += "<td>" + o[i].ad[0].no + "</td>";
@@ -148,7 +148,7 @@
       x += '<td></td>';
     x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td></tr>';
     x += '<tr class="sub_info"><td colspan="9"><h3>廣告資訊</h3><div class="form_block"><form class="form-horizontal"><div class="form-group"><label for="inputName" class="col-sm-2 control-label">連結內容</label><div class="col-sm-6"><textarea class="form-control" rows="5" id="url' + o[i].ad[0].evtadID + '">';
-    x += o[i].ad[0].url + '</textarea></div></div><div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist">';
+    x += o[i].ad[0].url + '</textarea></div></div><div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist'+o[i].ad[0].evtadID+'">';
     for (j in o[i].ad[1].taginfo) {
       x += '<li class="tag_item">' + o[i].ad[1].taginfo[j].tag + '<a href="javascript:deltag(' + o[i].ad[0].evtadID + ',' + o[i].ad[1].taginfo[j].tagID + ')" class="label label-cdp"><i class="fa fa-times"></i></a></li>';
     }
@@ -184,27 +184,32 @@
   function addtag(evtadID) {
     var index = "newtag" + evtadID.toString();
     var newtag = document.getElementById(index).value;
-    $.ajax({
-      url: "/actad/ad/tag/add",
-      data: {
-        "evtadID": evtadID,
-        "newtag": newtag
-      },
-      type: "POST",
-      dataType: 'text',
-      success: function (msg) {
-        if (msg == "已新增過")
-          alert(msg);
-        else {
-          $('#mtaglist').append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + evtadID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
-          $(function () {
-            $('.customize a').click(function (event) {
-              $(this).parent('li').hide();
+    if (newtag.trim() != "") {
+      $.ajax({
+        url: "/actad/ad/tag/add",
+        data: {
+          "evtadID": evtadID,
+          "newtag": newtag
+        },
+        type: "POST",
+        dataType: 'text',
+        success: function (msg) {
+          if (msg == "已新增過")
+            alert(msg);
+          else {
+            $('#mtaglist'+evtadID).append('<li class="tag_item">' + newtag + '<a href="javascript:deltag(' + evtadID + ',' + msg + ')"><i class="fa fa-times"></i></a></li>');
+            $(function () {
+              $('.customize a').click(function (event) {
+                $(this).parent('li').hide();
+              });
             });
-          });
+          }
         }
-      }
-    });
+      });
+    }
+    else {
+      alert("標籤不能為空白");
+    }
   }
   function edit(evtadID) {
     document.getElementById("evtadID").value = evtadID;
@@ -274,6 +279,6 @@
   }
   function cancel() {
     $('.modal').hide();
-     $('body').removeClass('noscroll');
+    $('body').removeClass('noscroll');
   }
 </script>
