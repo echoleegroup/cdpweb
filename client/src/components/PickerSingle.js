@@ -3,6 +3,10 @@ import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 
 export default class PickerSingle extends React.PureComponent {
 
+  componentWillUnmount() {
+    console.log('PickerSingle componentWillUnmount');
+  };
+
   TailContainer(props) {
     let node = props.node;
     let checked = !!props.selected && node.id === props.selected.id;
@@ -14,7 +18,7 @@ export default class PickerSingle extends React.PureComponent {
             name="optradio"
             onClick={props.clickHandler}
             checked={checked}/>{node.label}
-            <span className="type">{node.category_label}</span>
+          <span className="type">{node.category_label}</span>
         </label>
       </li>
     );
@@ -23,25 +27,40 @@ export default class PickerSingle extends React.PureComponent {
   render() {
     return (
       <div className="addCondition">
-        <Tree {...this.props} TailContainer={this.TailContainer}/>
+        <ul>
+          <Tree {...this.props} TailContainer={this.TailContainer}/>
+        </ul>
       </div>
     );
   };
 };
 
 class Tree extends React.PureComponent {
+  componentWillUnmount() {
+    console.log('Tree componentWillUnmount');
+  };
 
   render() {
     const NodeDispatcher = (node, props) => {
+      // let node = props.node;
       switch (node.type) {
         case NODE_TYPE.Branch:
-          return <Branch key={node.id}
-                         node={node}
-                         collapse={props.collapse}
-                         selected={props.selected}
-                         branchClickHandler={props.branchClickHandler}
-                         tailClickHandler={props.tailClickHandler}
-                         TailContainer={props.TailContainer}/>
+          return (
+            <Branch key={node.id}
+                    node={node}
+                    collapse={props.collapse}
+              // selected={props.selected}
+              // tailClickHandler={props.tailClickHandler}
+              // TailContainer={props.TailContainer}
+                    branchClickHandler={props.branchClickHandler}>
+
+              <Tree branchClickHandler={props.branchClickHandler}
+                    tailClickHandler={props.tailClickHandler}
+                    nodes={node.children}
+                    selected={props.selected}
+                    TailContainer={props.TailContainer}/>
+            </Branch>
+          );
         case NODE_TYPE.Tail:
           return <Tail key={node.id}
                        node={node}
@@ -52,13 +71,17 @@ class Tree extends React.PureComponent {
     };
 
     let props = this.props;
-    return (
-      <ul>
-        {props.nodes.map(node => {
-          return NodeDispatcher(node, props);
-        })}
-      </ul>
-    );
+    return props.nodes.map(node => {
+      // return <NodeDispatcher key={node.id} node={node} {...props}/>
+      return NodeDispatcher(node, this.props);
+    });
+    // return (
+    //   <ul>
+    //     {props.nodes.map(node => {
+    //       return NodeDispatcher(node, props);
+    //     })}
+    //   </ul>
+    // );
   };
 }
 
@@ -71,6 +94,8 @@ class Branch extends React.PureComponent {
   };
 
   componentWillMount() {
+
+    console.log('Branch componentWillMount');
 
     this.clickHandler = () => {
       const branchClickHandler = this.props.branchClickHandler;
@@ -109,18 +134,10 @@ class Branch extends React.PureComponent {
     return (
       <li key={node.id}>
         <a href="javascript:;" onClick={this.clickHandler()}>{node.label}
-          <i className={collapseConfig.class_name} aria-hidden={collapseConfig.isCollapse} ref={e => {
-            this.foldingIconDom = e;
-          }}/>
+          <i className={collapseConfig.class_name} aria-hidden={collapseConfig.isCollapse}/>
         </a>
-        <ul style={collapseConfig.style} ref={e => {
-          this.foldingDom = e;
-        }}>
-          <Tree branchClickHandler={this.props.branchClickHandler}
-                tailClickHandler={this.props.tailClickHandler}
-                nodes={node.children}
-                selected={this.props.selected}
-                TailContainer={this.props.TailContainer}/>
+        <ul style={collapseConfig.style}>
+          {this.props.children}
         </ul>
       </li>
     );
