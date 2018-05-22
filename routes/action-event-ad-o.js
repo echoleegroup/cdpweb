@@ -70,19 +70,24 @@ module.exports = (app) => {
       var name = file.originalname;
       var nameArray = name.split('');
       var nameMime = [];
-      var l = nameArray.pop();
-      nameMime.unshift(l);
-      while (nameArray.length != 0 && l != '.') {
-        l = nameArray.pop();
+      try {
+        var l = nameArray.pop();
         nameMime.unshift(l);
-      } // Mime是檔案的後綴 Mime=nameMime.join('');
-      // console.log(Mime); res.send("done"); //重命名檔案
-      // 加上檔案後綴
-      // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
+        while (nameArray.length != 0 && l != '.') {
+          l = nameArray.pop();
+          nameMime.unshift(l);
+        } // Mime是檔案的後綴 Mime=nameMime.join('');
+        // console.log(Mime); res.send("done"); //重命名檔案
+        // 加上檔案後綴
+        // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
 
-      filepath = file.path;
-      var list = xlsx.parse(filepath);
-      total = list[0].data.length - 1;
+        filepath = file.path;
+        var list = xlsx.parse(filepath);
+        total = list[0].data.length - 1;
+      } catch (error) {
+        winston.error(error);
+        return res.redirect("/");
+      }
       try {
         for (var i = 0; i < list[0].data[0].length; i++) {
           if (list[0].data[0][i].toLowerCase() === "from") {

@@ -26,6 +26,7 @@ module.exports = (app) => {
     var ncbsDesc = req.body.ncbsDesc || '';
     var filepath = '';
     var uLicsNOindex;
+    let oLicsNo;
     var keyIndex = 0;
     var origName = "";
     var uniqName = "";
@@ -113,13 +114,7 @@ module.exports = (app) => {
           if (list[0].data[i][keyIndex] == "") {
             errornum++;
             var linenum = i + 1;
-            errormsg += 'Line ' + linenum.toString() + ','
-            for (var j = 0; j < list[0].data[i].length; j++) {
-              if (j == list[0].data[i].length - 1)
-                errormsg += list[0].data[i][j] + "\r\n";
-              else
-                errormsg += list[0].data[i][j] + ",";
-            }
+            errormsg += 'Line ' + linenum.toString() + '\r\n';
             if (i == list[0].data.length - 1) {
               var currentdate = new Date();
               var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
@@ -145,18 +140,19 @@ module.exports = (app) => {
           }
           else {
             const checkdata = (keyIndex, callback) => {
-              db.query("SELECT CustID_u FROM cu_LiscnoIndex where LISCNO  = '" + list[0].data[i][keyIndex] + "'", function (err, recordset) {
+              db.query("SELECT CustID_u,LISCNO FROM cu_LicsnoIndex where REPLACE(LISCNO,'-','')  = '" + list[0].data[i][keyIndex].toString().replace("-", "") + "'", function (err, recordset) {
                 if (err)
                   console.log(err);
                 if (recordset.rowsAffected == 0)
                   callback(null, "0");
-                else
+                else{
+                  uLicsNO = recordset.recordset[0].LISCNO;
                   callback(null, recordset.recordset[0].CustID_u);
+                }
               });
             }
             checkdata(keyIndex, function (err, data1) {
               anscontent = '';
-              uLicsNO = list[0].data[i][keyIndex];
               canvasID = list[0].data[i][canvasIDindex];
               for (var j = 0; j < list[0].data[i].length; j++) {
                 if (j == list[0].data[i].length - 1)
@@ -169,13 +165,8 @@ module.exports = (app) => {
               if (data1 == "0") {
                 errornum++;
                 var linenum = i + 1;
-                errormsg += 'Line ' + linenum.toString() + ','
-                for (var j = 0; j < list[0].data[i].length; j++) {
-                  if (j == list[0].data[i].length - 1)
-                    errormsg += list[0].data[i][j] + "\r\n";
-                  else
-                    errormsg += list[0].data[i][j] + ",";
-                }
+                errormsg += 'Line ' + linenum.toString() + '\r\n';
+              
                 if (i == list[0].data.length - 1) {
                   var currentdate = new Date();
                   var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
@@ -201,12 +192,7 @@ module.exports = (app) => {
               }
               else {
                 if (client == 'TOYOTA' && list[0].data[i][q4_b_index] != '5') {
-                  for (var j = 0; j < list[0].data[i].length; j++) {
-                    if (j == list[0].data[i].length - 1)
-                      errormsg += list[0].data[i][j] + "\r\n";
-                    else
-                      errormsg += list[0].data[i][j] + ",";
-                  }
+                  errormsg += 'Line ' + linenum.toString() + '\r\n';
                 }
                 else {
                   db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {

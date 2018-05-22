@@ -17,7 +17,7 @@ module.exports = (app) => {
     var tagID;
     newtag = newtag.trim();
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtpgID FROM dm_EvtpgTag where evtpgID='" + evtpgID + "' and tagLabel ='" + newtag + "' ", function (err, recordset) {
+      db.query("SELECT evtpgID FROM dm_EvtpgTag where evtpgID='" + evtpgID + "' and tagLabel ='" + newtag + "' and ( isDel <> 'Y' or isDel is null ) ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);

@@ -133,7 +133,7 @@ module.exports = (app) => {
           else {
             function checkdata(mdID, callback) {
               if (key == 'LISCNO') {
-                db.query("SELECT CustID_u FROM cu_LiscnoIndex where LISCNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
+                db.query("SELECT CustID_u FROM cu_LicsnoIndex where LISCNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
                   if (recordset.rowsAffected == 0)
                     callback(null, "0");
                   else
@@ -141,7 +141,7 @@ module.exports = (app) => {
                 });
               }
               else if (key == 'VIN') {
-                db.query("SELECT CustID_u FROM cu_LiscnoIndex where VIN  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
+                db.query("SELECT CustID_u FROM cu_LicsnoIndex where VIN  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
                   if (recordset.rowsAffected == 0)
                     callback(null, "0");
                   else

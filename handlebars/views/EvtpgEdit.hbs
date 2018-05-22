@@ -189,6 +189,8 @@
   </div>
 </div>
 <script>
+  if ("{{maininfo.isDel}}" == "Y")
+    document.getElementById("isDel").checked = true ;
   $(function () {
     $('.customize a').click(function (event) {
       $(this).parent('li').hide();
