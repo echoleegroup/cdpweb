@@ -50,8 +50,16 @@ module.exports = (app) => {
       checked = 'Y';
     db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.user.userId + "','" + checked + "')", function (err, recordset) {
       if (err) console.log(err);
-      //send records as a response
-      res.redirect('/system/user/edit?userId=' + userId);
+      let sendInfo = {
+        "subject": "和泰大數據平台-帳號啟用通知",
+        "content": `親愛的使用者<br/>：您的帳號已經建立啟用，請至 <a href="http://${process.env.HOST}:${process.env.PORT}">和泰大數據平台</a> 登入系統並進行密碼變更，謝謝。<br/>帳號：${userId}<br/>預設密碼：test`
+      }
+      mail_util.mail(email, sendInfo, function (err, result) {
+        if (err) {
+          winston.error('===adduser failed:', err);
+        }
+        res.redirect('/system/user/edit?userId=' + userId);
+      });
     });
 
   });
@@ -335,8 +343,8 @@ module.exports = (app) => {
     }).then((resultset) => {
       let url = "?userId=" + userId + "&token=" + token;
       let sendInfo = {
-        "subject": "更改密碼",
-        "content": `<a href="http://${process.env.HOST}:${process.env.PORT}/system/user/pwd/change${url}">更改密碼</a>`
+        "subject": "和泰大數據平台-更改密碼",
+        "content": `親愛的使用者：<br/>您的密碼已經重新設定，請至<a href="http://${process.env.HOST}:${process.env.PORT}/system/user/pwd/change${url}">和泰大數據平台</a>登入系統並進行密碼變更，謝謝。`
       }
 
       mail_util.mail(email, sendInfo, function (err, result) {
@@ -347,7 +355,7 @@ module.exports = (app) => {
         else {
           res.render('message', {
             layout: 'layout-login',
-            message : "密碼已更改成功，請重新登入"
+            message : "更改密碼信已寄出，請至信箱收取更改密碼信函"
           });
         }
  

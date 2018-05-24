@@ -7,7 +7,7 @@
         <!-- form set Start -->
         <form action="/system/user/pwd/change_act" method="post" class="form-horizontal" onsubmit="return checkForm();">
           <input type="hidden" name="token" value="{{token}}">
-          <input type="hidden" name="uesrId" value="{{uesrId}}">
+          <input type="hidden" name="userId" value="{{userId}}">
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">新密碼</label>
             <div class="col-sm-6">
@@ -18,7 +18,7 @@
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">密碼確認</label>
             <div class="col-sm-6">
-              <input type="text" class="form-control " id="checkpassword" name="checkpassword" value="" placeholder="請輸入密碼">
+              <input type="password" class="form-control " id="checkpassword" name="checkpassword" value="" placeholder="請輸入密碼">
             </div>
           </div>
 
