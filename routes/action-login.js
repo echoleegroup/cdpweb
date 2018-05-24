@@ -66,7 +66,7 @@ module.exports = (app) => {
         req.flash('error', info.message);
         return res.redirect(`/login?redirectURL=${req.body.redirectURL}`);
       }
-      req.logIn(user, function(err) {
+      req.logIn(user, function (err) {
         if (err) { return next(err); }
         // Redirect if it succeeds
         return next();
@@ -95,6 +95,9 @@ module.exports = (app) => {
               mainMenu: menu.premenuName,
               _model: (menu.preSticky === '_model'),
               _mgr: (menu.preSticky === '_mgr'),
+              _homeFlag: (menu.homeFlag === 'home'),
+              _icon: menu.icon,
+              _homeCotnet: menu.homeCotnet,
               childMenu: []
             };
             pointer.push(parent);
@@ -103,7 +106,10 @@ module.exports = (app) => {
             menuName: menu.menuName,
             url: menu.url,
             sticky: menu.sticky,
-            menuCode: menu.menuCode
+            menuCode: menu.menuCode,
+            _homeFlag: (menu.homeFlag === 'home'),
+            _icon: menu.icon,
+            _homeCotnet: menu.homeCotnet
           });
         }
       }

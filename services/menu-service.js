@@ -6,7 +6,7 @@ const _connector = require('../utils/sql-query-util');
 
 module.exports.getMenuTree = (callback=() => {}) => {
   let sql = 'SELECT sm.menuCode, sm.parentId, sm.menuName,' +
-    'sm.modifyDate, sm.modifyUser, sm.url, sm.sticky,' +
+    'sm.modifyDate, sm.modifyUser, sm.url, sm.sticky,sm.homeFlag,sm.icon,sm.homeCotnet,' +
     'pym.menuName premenuName, pym.menuCode preMenuCode, pym.sticky preSticky ' +
     'FROM sy_menu sm ' +
     'LEFT JOIN sy_menu pym ON sm.parentId = pym.menuId ' +
