@@ -62,7 +62,6 @@ module.exports = (app) => {
     // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
     uniqName = file.filename;
     filepath = file.path;
-    console.log(filepath);
     var list = xlsx.parse(filepath);
     var p1 = new Promise(function (resolve, reject) {
       total = list[0].data.length - 1;
@@ -110,96 +109,92 @@ module.exports = (app) => {
       var i = 1
       checkandinsert(i);
       function checkandinsert(i) {
-        if (i < list[0].data.length) {
-          if (list[0].data[i][keyIndex] == "") {
-            errornum++;
-            var linenum = i + 1;
-            errormsg += 'Line ' + linenum.toString() + '\r\n';
-            if (i == list[0].data.length - 1) {
-              var currentdate = new Date();
-              var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-              res.render('NCBSDataEdit', {
-                'user': req.user,
-                'modelList': modelList,
-                'navMenuList': navMenuList,
-                'mgrMenuList': mgrMenuList,
-                'maininfo': maininfo,
-                'ncbsID': ncbsID,
-                'dispaly': 'block',
-                'successnum': successnum,
-                'errormsg': errormsg,
-                'errornum': errornum,
-                'total': total,
-                'datetime': datetime
-              });
+        try {
+          if (i < list[0].data.length) {
+            if (list[0].data[i][keyIndex] == "") {
+              errornum++;
+              var linenum = i + 1;
+              errormsg += 'Line ' + linenum.toString() + '\r\n';
+              if (i == list[0].data.length - 1) {
+                var currentdate = new Date();
+                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                  + currentdate.getHours() + ":"
+                  + currentdate.getMinutes() + ":"
+                  + currentdate.getSeconds();
+                res.render('NCBSDataEdit', {
+                  'user': req.user,
+                  'modelList': modelList,
+                  'navMenuList': navMenuList,
+                  'mgrMenuList': mgrMenuList,
+                  'maininfo': maininfo,
+                  'ncbsID': ncbsID,
+                  'dispaly': 'block',
+                  'successnum': successnum,
+                  'errormsg': errormsg,
+                  'errornum': errornum,
+                  'total': total,
+                  'datetime': datetime
+                });
+              }
+              checkandinsert(i + 1);
             }
-            checkandinsert(i + 1);
-          }
-          else {
-            const checkdata = (keyIndex, callback) => {
-              db.query("SELECT CustID_u,LISCNO FROM cu_LicsnoIndex where REPLACE(LISCNO,'-','')  = '" + list[0].data[i][keyIndex].toString().replace("-", "") + "'", function (err, recordset) {
+            else {
+              const checkdata = (keyIndex, callback) => {
+                db.query("SELECT CustID_u,LICSNO FROM cu_LicsnoIndex where REPLACE(LICSNO,'-','')  = '" + list[0].data[i][keyIndex].toString().replace("-", "") + "'", function (err, recordset) {
+                  if (err)
+                    console.log(err);
+                  if (recordset.rowsAffected == 0)
+                    callback(null, "0");
+                  else {
+                    uLicsNO = recordset.recordset[0].LICSNO;
+                    callback(null, recordset.recordset[0].CustID_u);
+                  }
+                });
+              }
+              checkdata(keyIndex, function (err, data1) {
+                anscontent = '';
+                canvasID = list[0].data[i][canvasIDindex];
+                for (var j = 0; j < list[0].data[i].length; j++) {
+                  if (j == list[0].data[i].length - 1)
+                    anscontent += list[0].data[i][j];
+                  else
+                    anscontent += list[0].data[i][j] + ",";
+                }
                 if (err)
-                  console.log(err);
-                if (recordset.rowsAffected == 0)
-                  callback(null, "0");
-                else{
-                  uLicsNO = recordset.recordset[0].LISCNO;
-                  callback(null, recordset.recordset[0].CustID_u);
-                }
-              });
-            }
-            checkdata(keyIndex, function (err, data1) {
-              anscontent = '';
-              canvasID = list[0].data[i][canvasIDindex];
-              for (var j = 0; j < list[0].data[i].length; j++) {
-                if (j == list[0].data[i].length - 1)
-                  anscontent += list[0].data[i][j];
-                else
-                  anscontent += list[0].data[i][j] + ",";
-              }
-              if (err)
-                console.log("ERROR : ", err);
-              if (data1 == "0") {
-                errornum++;
-                var linenum = i + 1;
-                errormsg += 'Line ' + linenum.toString() + '\r\n';
-              
-                if (i == list[0].data.length - 1) {
-                  var currentdate = new Date();
-                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                    + currentdate.getHours() + ":"
-                    + currentdate.getMinutes() + ":"
-                    + currentdate.getSeconds();
-                  res.render('NCBSDataEdit', {
-                    'user': req.user,
-                    'modelList': modelList,
-                    'navMenuList': navMenuList,
-                    'mgrMenuList': mgrMenuList,
-                    'maininfo': maininfo,
-                    'ncbsID': ncbsID,
-                    'dispaly': 'block',
-                    'successnum': successnum,
-                    'errormsg': errormsg,
-                    'errornum': errornum,
-                    'total': total,
-                    'datetime': datetime
-                  });
-                }
-                checkandinsert(i + 1);
-              }
-              else {
-                if (client == 'TOYOTA' && list[0].data[i][q4_b_index] != '5') {
+                  console.log("ERROR : ", err);
+                if (data1 == "0") {
+                  errornum++;
+                  var linenum = i + 1;
                   errormsg += 'Line ' + linenum.toString() + '\r\n';
+
+                  if (i == list[0].data.length - 1) {
+                    var currentdate = new Date();
+                    var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                      + currentdate.getHours() + ":"
+                      + currentdate.getMinutes() + ":"
+                      + currentdate.getSeconds();
+                    res.render('NCBSDataEdit', {
+                      'user': req.user,
+                      'modelList': modelList,
+                      'navMenuList': navMenuList,
+                      'mgrMenuList': mgrMenuList,
+                      'maininfo': maininfo,
+                      'ncbsID': ncbsID,
+                      'dispaly': 'block',
+                      'successnum': successnum,
+                      'errormsg': errormsg,
+                      'errornum': errornum,
+                      'total': total,
+                      'datetime': datetime
+                    });
+                  }
+                  else {
+                    checkandinsert(i + 1);
+                  }
                 }
                 else {
-                  db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {
-                    if (err) {
-                      console.log(err);
-                    }
-                    successnum++;
+                  if (client == 'TOYOTA' && list[0].data[i][q4_b_index] != '5') {
+                    errormsg += 'Line ' + linenum.toString() + '\r\n';
                     if (i == list[0].data.length - 1) {
                       var currentdate = new Date();
                       var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
@@ -221,15 +216,51 @@ module.exports = (app) => {
                         'datetime': datetime
                       });
                     }
-                    checkandinsert(i + 1);
-                  });
+                    else
+                      checkandinsert(i + 1);
+                  }
+                  else {
+                    db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {
+                      if (err) {
+                        console.log(err);
+                      }
+                      successnum++;
+                      if (i == list[0].data.length - 1) {
+                        var currentdate = new Date();
+                        var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
+                          + currentdate.getHours() + ":"
+                          + currentdate.getMinutes() + ":"
+                          + currentdate.getSeconds();
+                        res.render('NCBSDataEdit', {
+                          'user': req.user,
+                          'modelList': modelList,
+                          'navMenuList': navMenuList,
+                          'mgrMenuList': mgrMenuList,
+                          'maininfo': maininfo,
+                          'ncbsID': ncbsID,
+                          'dispaly': 'block',
+                          'successnum': successnum,
+                          'errormsg': errormsg,
+                          'errornum': errornum,
+                          'total': total,
+                          'datetime': datetime
+                        });
+                      }
+                      else
+                        checkandinsert(i + 1);
+                    });
+                  }
                 }
-              }
-            });
+              });
 
+            }
           }
+        } catch (error) {
+          winston.error(error);
+          return res.redirect("/");
         }
       }
+
     }).catch(function (e) {
       console.log(e);
     });
@@ -290,7 +321,7 @@ module.exports = (app) => {
         'modelList': modelList,
         'navMenuList': navMenuList,
         'mgrMenuList': mgrMenuList,
-        'ncbsDesc':resultSet
+        'ncbsDesc': resultSet
       });
     });
   });
