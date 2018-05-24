@@ -86,7 +86,7 @@ module.exports.getCustomCriteriaFeatureTree = (treeId, callback) => {
   });
 };
 
-module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, downloadFeatureIds=[], callback) => {
+module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, downloadFeatureIds=[], customizer=[], callback) => {
   const MODEL_COLUMN_PREFIX_BIGTABLEKEY = 'bigtbKey';
   const MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY = 'mdListKey';
 
@@ -94,14 +94,19 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
   let bigTable = model.bigtbName;
 
   // compose start!
-  let sqlFrom = `${bigTable} big_table, md_ListDet detail`;
+  // let sqlFrom = `${bigTable} big_table, md_ListDet detail`;
+  let sqlFrom = `md_ListDet detail INNER JOIN ${bigTable} big_table ON `;
+  //join relation between md_ListDet and  big table
+  let i = 0;
+  let innerJoin = [];
+  //there are max 6 columns for key in big table. BUT, here check unlimited columns until first empty value occurred.
+  while (!_.isEmpty(model[MODEL_COLUMN_PREFIX_BIGTABLEKEY + (++i)])) {
+    innerJoin.push(` big_table.${model[MODEL_COLUMN_PREFIX_BIGTABLEKEY+i]} = detail.${MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY+i} `);
+  }
+  sqlFrom = sqlFrom + innerJoin.join(' AND ');
 
-  let sqlSelect = ['detail.mdListScore AS _mdListScore'];
-  sqlSelect = sqlSelect.concat(downloadFeatureIds);
-  // let sqlSelect = 'detail.mdListScore';
-  // sqlSelect = downloadFeatureIds.reduce((sqlSelect, featureId) => {
-  //   return `${sqlSelect}, big_table.${featureId}`;
-  // }, sqlSelect);
+  let sqlSelect = downloadFeatureIds.join(' , ');
+  // sqlSelect = sqlSelect.concat(downloadFeatureIds);
 
   //set where criteria
   let TYPES = _connector.TYPES;
@@ -110,12 +115,7 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
     .setInput('mdId', TYPES.NVarChar, mdId)
     .setInput('batId', TYPES.NVarChar, batId)
     .setInput('mdListCateg', TYPES.NVarChar, criteriaHelper.MODEL_LIST_CATEGORY);
-  //join relation between md_ListDet and  big table
-  let i = 0;
-  //there are max 6 columns for key in big table. BUT, here check unlimited columns until first empty value occurred.
-  while (!_.isEmpty(model[MODEL_COLUMN_PREFIX_BIGTABLEKEY + (++i)])) {
-    sqlWhere = `${sqlWhere} AND big_table.${model[MODEL_COLUMN_PREFIX_BIGTABLEKEY+i]} = detail.${MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY+i}`;
-  }
+
   //set customized criteria
   //transfer input criteria to sql expression
   let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements);
@@ -127,9 +127,20 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
     }, request);
   }
 
+  //customizer handler
+  customizer.map(handler => {
+    let {select, from, where, parameters} = handler();
+    !_.isEmpty(select) && (sqlSelect = ` ${sqlSelect}, ${select} `);
+    !_.isEmpty(from) && (sqlFrom = ` ${sqlFrom}, ${from} `);
+    !_.isEmpty(where) && (sqlWhere = ` AND ${sqlWhere} AND ${where} `);
+    request = _.reduce(parameters, (request, {name, type, value}) => {
+      return request.setInput(name, type, value);
+    }, request);
+  });
+
   //compose all the partial sql to full sql
   let sql = `SELECT ${sqlSelect} FROM ${sqlFrom} WHERE ${sqlWhere}`;
-  // winston.info('queryTargetByCustomCriteria::sql: %s', sql);
+  winston.info('queryTargetByCustomCriteria::sql: %s', sql);
 
   //execute query
   Q.nfcall(request.executeQuery, sql).then((result) => {

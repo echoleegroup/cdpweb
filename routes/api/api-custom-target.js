@@ -14,6 +14,7 @@ const exportService = require('../../services/export-service');
 const modelService = require('../../services/model-service');
 const queryService = require('../../services/query-log-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
+const customTargetHelper = require('../../helpers/custom-target-helper');
 const fileHelper = require('../../helpers/file-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
@@ -68,7 +69,12 @@ module.exports = (app) => {
         res.json(req.params, 404, 'batch data is not found!');
         throw null;
       } else {
-        return [Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, []), model];
+        return [
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, [], [
+            customTargetHelper.get_mdListScoreCustomizer()
+          ]),
+          model
+        ];
       }
     }).spread((results, model) => {
 
@@ -83,7 +89,8 @@ module.exports = (app) => {
 
     }).fail(err => {
       if (err) {
-        winston.error(`===/${mdId}/${batId}/criteria/preview: `, err);
+        winston.error('===/%s/%s/criteria/preview: ', mdId, batId, err);
+        console.log(err);
         res.json(req.params, 500, 'internal service error');
       }
     });

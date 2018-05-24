@@ -106,7 +106,7 @@ export default class CustomTargetFilter extends React.PureComponent {
           isLoaded: true,
           criteria: {
             isIncludeModelTarget: prevState.criteria.isIncludeModelTarget,
-            expression: data
+            statements: data
           }
         }));
       });
@@ -118,7 +118,7 @@ export default class CustomTargetFilter extends React.PureComponent {
     let isIncludeModelTarget = this.state.criteria.get('isIncludeModelTarget')
     return (
       <Loader loaded={this.state.isLoaded}>
-        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.get('expression')} ref={(e) => {
+        <CustomTargetFilterCriteria params={this.props.params} criteria={this.state.criteria.get('statements')} ref={(e) => {
           this.criteriaComp = e;
         }}/>
         {/*<!-- table set Start -->*/}
