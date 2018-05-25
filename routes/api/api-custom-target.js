@@ -71,7 +71,8 @@ module.exports = (app) => {
       } else {
         return [
           Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, [], [
-            customTargetHelper.get_mdListScoreCustomizer()
+            customTargetHelper.get_mdListScoreCustomizer(),
+            customTargetHelper.get_mdListSentCustomizer(mdId)
           ]),
           model
         ];
@@ -134,7 +135,10 @@ module.exports = (app) => {
           model,
           downloadFeatureIds,
           downloadFeatureLabels,
-          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, downloadFeatureIds),
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, downloadFeatureIds, [
+            customTargetHelper.get_mdListScoreCustomizer(),
+            customTargetHelper.get_mdListSentCustomizer(mdId)
+          ]),
           queryLogRes.queryID];
       }
 

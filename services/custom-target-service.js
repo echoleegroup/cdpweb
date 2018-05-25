@@ -94,24 +94,28 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
   let bigTable = model.bigtbName;
 
   // compose start!
+  let sqlSelect = downloadFeatureIds;
   // let sqlFrom = `${bigTable} big_table, md_ListDet detail`;
-  let sqlFrom = `md_ListDet detail INNER JOIN ${bigTable} big_table ON `;
+  let sqlFrom = ['md_ListDet detail'];
+  let sqlJoin = [];
+  let sqlWhere = [];
+  let TYPES = _connector.TYPES;
+  let request = _connector.queryRequest();
+
   //join relation between md_ListDet and  big table
-  let i = 0;
   let innerJoin = [];
+  let i = 0;
   //there are max 6 columns for key in big table. BUT, here check unlimited columns until first empty value occurred.
   while (!_.isEmpty(model[MODEL_COLUMN_PREFIX_BIGTABLEKEY + (++i)])) {
-    innerJoin.push(` big_table.${model[MODEL_COLUMN_PREFIX_BIGTABLEKEY+i]} = detail.${MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY+i} `);
+    innerJoin.push(`big_table.${model[MODEL_COLUMN_PREFIX_BIGTABLEKEY+i]} = detail.${MODEL_LIST_COLUMN_PREFIX_BIGTABLEKEY+i}`);
   }
-  sqlFrom = sqlFrom + innerJoin.join(' AND ');
+  sqlJoin.push(`INNER JOIN ${bigTable} big_table ON ${innerJoin.join(' AND ')}`);
 
-  let sqlSelect = downloadFeatureIds.join(' , ');
   // sqlSelect = sqlSelect.concat(downloadFeatureIds);
 
   //set where criteria
-  let TYPES = _connector.TYPES;
-  let sqlWhere = `detail.mdID = @mdId AND detail.batID = @batId AND detail.mdListCateg = @mdListCateg`;
-  let request = _connector.queryRequest()
+  sqlWhere = sqlWhere.concat(['detail.mdID = @mdId', 'detail.batID = @batId', 'detail.mdListCateg = @mdListCateg']);
+  request
     .setInput('mdId', TYPES.NVarChar, mdId)
     .setInput('batId', TYPES.NVarChar, batId)
     .setInput('mdListCateg', TYPES.NVarChar, criteriaHelper.MODEL_LIST_CATEGORY);
@@ -121,7 +125,8 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
   let {customCriteriaSqlWhere, paramsDynamic} = criteriaHelper.inputCriteriaToSqlWhere(statements);
   // winston.info('queryTargetByCustomCriteria::customCriteriaSqlWhere: %s', customCriteriaSqlWhere);
   if(customCriteriaSqlWhere) {
-    sqlWhere = `${sqlWhere} AND ${customCriteriaSqlWhere}`;
+    sqlWhere.push(customCriteriaSqlWhere);
+    // sqlWhere = `${sqlWhere} AND ${customCriteriaSqlWhere}`;
     request = _.reduce(paramsDynamic, (request, {name, type, value}) => {
       return request.setInput(name, RDB_DATATYPE(type), value);
     }, request);
@@ -129,17 +134,20 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
 
   //customizer handler
   customizer.map(handler => {
-    let {select, from, where, parameters} = handler();
-    !_.isEmpty(select) && (sqlSelect = ` ${sqlSelect}, ${select} `);
-    !_.isEmpty(from) && (sqlFrom = ` ${sqlFrom}, ${from} `);
-    !_.isEmpty(where) && (sqlWhere = ` AND ${sqlWhere} AND ${where} `);
+    let {select, join, where, parameters} = handler();
+    sqlSelect = sqlSelect.concat(select || []);
+    sqlJoin = sqlJoin.concat(join || []);
+    sqlWhere = sqlWhere.concat(where || []);
+    // !_.isEmpty(select) && (sqlSelect = ` ${sqlSelect}, ${select} `);
+    // !_.isEmpty(from) && (sqlFrom = ` ${sqlFrom}, ${from} `);
+    // !_.isEmpty(where) && (sqlWhere = ` AND ${sqlWhere} AND ${where} `);
     request = _.reduce(parameters, (request, {name, type, value}) => {
       return request.setInput(name, type, value);
     }, request);
   });
 
   //compose all the partial sql to full sql
-  let sql = `SELECT ${sqlSelect} FROM ${sqlFrom} WHERE ${sqlWhere}`;
+  let sql = `SELECT ${sqlSelect.join(' , ')} FROM ${sqlFrom.join(' , ')} ${sqlJoin.join(' ')} WHERE ${sqlWhere.join(' AND ')}`;
   winston.info('queryTargetByCustomCriteria::sql: %s', sql);
 
   //execute query
