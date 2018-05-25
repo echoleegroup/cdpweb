@@ -54,7 +54,7 @@ module.exports = (app) => {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
       res.setHeader("Content-Disposition", "attachment; filename=" + result.origName)
       winston.info(storage + result.uniqName);
-      res.sendFile(storage +"/"+ result.uniqName);
+      res.sendFile(storage + "/" + result.uniqName);
     });
   });
 
@@ -96,7 +96,6 @@ module.exports = (app) => {
       NCBSsql += " and cbm.ncbsName like '%" + ListName + "%' ";
     }
     var unionSql = FeedDataSql + " union " + NCBSsql + " order by ListSdt desc ";
-    console.log(unionSql);
     var data = [];
     var taginfo = [];
     var feeddatalist = [];
@@ -494,7 +493,7 @@ module.exports = (app) => {
     var tagID;
     newtag = newtag.trim();
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT outerListID FROM cu_OuterListTag where outerListID=" + ListID + " and tagLabel ='" + newtag + "' ", function (err, recordset) {
+      db.query("SELECT outerListID FROM cu_OuterListTag where outerListID=" + ListID + " and tagLabel ='" + newtag + "' " + " and ( isDel <> 'Y' or isDel is null ) ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);

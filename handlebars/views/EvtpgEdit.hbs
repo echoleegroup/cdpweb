@@ -189,8 +189,28 @@
   </div>
 </div>
 <script>
+  $("form").keypress(function(e) {
+  //Enter key
+  if (e.which == 13) {
+    return false;
+  }
+});
+  $(document).ready(function () {
+
+    $("#newtag").keypress(function (event) {
+
+      if (event.keyCode == 13) {
+
+        addtag('{{evtpgID}}') ;
+
+      }
+
+    });
+
+
+  });
   if ("{{maininfo.isDel}}" == "Y")
-    document.getElementById("isDel").checked = true ;
+    document.getElementById("isDel").checked = true;
   $(function () {
     $('.customize a').click(function (event) {
       $(this).parent('li').hide();

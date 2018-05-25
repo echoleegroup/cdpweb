@@ -68,12 +68,12 @@
 
     x += '<tr class="sub_info"><td colspan="9">';
     if (o[i].feeddata[0].funcCatge != 'NCBS') {
-      x += '<div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist' + o[i].feeddata[0].ListID + '">';
+      x += '<form class="form-horizontal"><div class="form-group"><label for="inputName" class="col-sm-2 control-label">標籤內容</label><div class="col-sm-10"><div class="tag customize"><ul id ="mtaglist' + o[i].feeddata[0].ListID + '">';
       for (j in o[i].feeddata[1].taginfo) {
         x += '<li class="tag_item">' + o[i].feeddata[1].taginfo[j].tag + '<a href="javascript:deltag(' + o[i].feeddata[0].ListID + ',' + o[i].feeddata[1].taginfo[j].tagID + ')" class="label label-cdp"><i class="fa fa-times"></i></a></li>';
       }
-      x += '</ul></div></div>';
-      x += '<div class="col-sm-8"><div class="form-inline"><input type="text" class="form-control" id="newtag' + o[i].feeddata[0].ListID + '" placeholder=""><button type="button" onclick ="addtag(' + o[i].feeddata[0].ListID + ')" class="btn btn-default fa fa-plus" aria-hidden="true"></button></div></div>';
+      x += '</ul></div></div></div>';
+      x += '<div class="form-group"><label for="inputName" class="col-sm-2 control-label"></label><div class="col-sm-8"><div class="form-inline"><input type="text" class="form-control" id="newtag' + o[i].feeddata[0].ListID + '" placeholder="" onkeypress="myFunction(event,' + o[i].feeddata[0].ListID + ')"><button type="button" onclick ="addtag(' + o[i].feeddata[0].ListID + ')" class="btn btn-default fa fa-plus" aria-hidden="true"></button></div></div>';
       x += '</div></form>';
     }
     x += '<h3>資料基本資訊</h3><table class="table table-hover table-striped"><tbody><tr><td>活動內容說明</td><td>' + o[i].feeddata[0].ListDesc + '</td></tr><tr><td>最後更新時間</td><td>' + o[i].feeddata[0].updTime + '</td></tr><tr><td>最後更新人員</td><td>' + o[i].feeddata[0].updUser + '</td></tr></tbody></table>';
@@ -89,6 +89,17 @@
   document.getElementById("info").innerHTML = x;
 </script>
 <script>
+   $('html').bind('keypress', function (e) {
+    if (e.keyCode == 13) {
+      return false;
+    }
+  });
+  function myFunction(event, ListID) {
+    var x = event.which || event.keyCode;
+    if (x == 13)
+      addtag(ListID);
+
+  }
   $(function () {
     $('.customize a').click(function (event) {
       $(this).parent('li').hide();
