@@ -164,9 +164,24 @@ module.exports = (app) => {
         msg += chunk;
       });
       resp.on('end', function () {
+        let sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime) ' +
+          'VALUES (@queryId, @filePath, @userId, @downloadDate) ; '
+        let request = _connector.queryRequest()
+          .setInput('queryId', _connector.TYPES.NVarChar, "modelDownload")
+          .setInput('filePath', _connector.TYPES.NVarChar, JSON.parse(msg).jsonOutput.data)
+          .setInput('userId', _connector.TYPES.NVarChar, req.user.userId)
+          .setInput('downloadDate', _connector.TYPES.DateTime, new Date());
+        Q.nfcall(request.executeQuery, sql).then(result => {
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+          res.setHeader("Content-Disposition", "attachment; filename=file.xls");
+          res.sendFile(JSON.parse(msg).jsonOutput.data);
+        }).fail(err => {
+          winston.error(err);
+        });
         res.setHeader('Content-Type', 'application/vnd.openxmlformats');
         res.setHeader("Content-Disposition", "attachment; filename=file.xls");
         res.sendFile(JSON.parse(msg).jsonOutput.data);
+
       });
     }).end();
   });
@@ -195,6 +210,6 @@ module.exports = (app) => {
       res.send(err);
     });
 
-    });
-    return router;
-  };
+  });
+  return router;
+};

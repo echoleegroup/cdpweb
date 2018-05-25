@@ -59,6 +59,9 @@
 </div>
 
 <script>
+  var Today=new Date();
+  Today.setDate(Today.getDate() - 90);
+  document.getElementById("sdt").value = Today.getFullYear()+ "/" + (Today.getMonth()+1) + "/" + Today.getDate() ;
   $('#sdt').datepicker({
     locale: "zh-tw"
   });
