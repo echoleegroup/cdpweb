@@ -451,7 +451,7 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
           feature_id: feature.featID,  // 欄位ID
           category: chartCategory,
           ref: feature.codeGroup,
-          min_period: getMinPeriod(chartCategory, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
+          min_period: getMinPeriod(chartCategory, feature.minPeriod),   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
           period_upper_bound: today.valueOf(),
           period_lower_bound: today.add(-1, 'months').valueOf()
         }
