@@ -291,8 +291,8 @@ module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodE
     console.log('getTrailPeriodLogEDMReadFeatures: ', body);
     if (error) {
       return callback(error);
-    } else if (body.status !== 200) {
-      callback(body.error);
+    } else if (response.statusCode !== 200) {
+      callback(body.errorMessage);
     } else {
       callback(null, body.jsonOutput.data);
     }
@@ -310,8 +310,8 @@ module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, period
     console.log('getTrailPeriodLogEDMReadFeatures: ', body);
     if (error) {
       return callback(error);
-    } else if (body.status !== 200) {
-      callback(body.error);
+    } else if (response.statusCode !== 200) {
+      callback(body.errorMessage);
     } else {
       callback(null, body.jsonOutput.data);
     }
