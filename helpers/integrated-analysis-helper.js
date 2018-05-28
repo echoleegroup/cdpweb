@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const es = require('event-stream');
 const csvWriter = require('csv-write-stream');
+const moment = require('moment');
 const integrationService = require('../services/integration-analysis-service');
 const cdpService = require('../services/customer-data-platform-service');
 const codeGroupService = require('../services/code-group-service');
@@ -432,6 +433,7 @@ const getMinPeriod = (chartType, minPeriod) => {
 };
 
 module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatures, relatives) => {
+  let today = moment().startOf('day');
   return {
     criteria: criteria,
     export: {
@@ -450,8 +452,8 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
           category: chartCategory,
           ref: feature.codeGroup,
           min_period: getMinPeriod(chartCategory, feature.minPeriod)   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
-          // aggregate: ["total", "percentage"],
-          // statistic: ["average", "median", "std_dev", "upper_bound", "lower_bound"]
+          period_upper_bound: today.valueOf(),
+          period_lower_bound: today.add(-1, 'months').valueOf()
         }
       })
     }
