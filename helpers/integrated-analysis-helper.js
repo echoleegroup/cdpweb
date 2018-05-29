@@ -288,7 +288,7 @@ const statisticDataProcessor = (queryId, stream, callback) => {
         // rowJson = {};
       }
 
-      let {feature_id, category, data, average, median, standard_deviation, scale_upper_bound, scale_lower_bound} = rowJson;
+      let {feature_id, category, data, average = 0, median = 0, standard_deviation = 0, scale_upper_bound = null, scale_lower_bound = null} = rowJson;
       winston.info(`feature_id: ${feature_id}`);
       winston.info(`category: ${category}`);
       winston.info(`average: ${average}`);
@@ -300,12 +300,12 @@ const statisticDataProcessor = (queryId, stream, callback) => {
       let chartData = JSON.parse(data);
       winston.info('data: %j', chartData);
 
-      let topGroup = _.maxBy(chartData, 'peak');
+      let {scale = null, peak = null, proportion = 0} = _.maxBy(chartData, 'peak');
 
       // write to database, non-blocking
       Q.nfcall(integrationStatisticService.insertStatisticOfFeature,
         queryId, feature_id, category, average, median, standard_deviation,
-        scale_upper_bound, scale_lower_bound, topGroup.scale, topGroup.peak, topGroup.proportion);
+        scale_upper_bound, scale_lower_bound, scale, peak, proportion);
 
       chartData.forEach((chart, index) => {
         Q.nfcall(integrationStatisticService.insertStatisticChartOfFeature,
