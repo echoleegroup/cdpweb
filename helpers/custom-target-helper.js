@@ -4,7 +4,7 @@ const _connector = require('../utils/sql-query-util');
 module.exports.get_mdListScoreCustomizer = () => {
   return () => {
     return {
-      select: ['detail.mdListScore AS _mdListScore'],
+      select: ['detail.mdListScore AS mdListScore', 'detail.mdListScore AS _mdListScore'],
       join: [],
       where: [],
       parameters: []

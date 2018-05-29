@@ -300,7 +300,7 @@ const statisticDataProcessor = (queryId, stream, callback) => {
       let chartData = JSON.parse(data);
       winston.info('data: %j', chartData);
 
-      let {scale = null, peak = null, proportion = 0} = _.maxBy(chartData, 'peak');
+      let {scale = null, peak = null, proportion = 0} = _.maxBy(chartData, 'peak') || {};
 
       // write to database, non-blocking
       Q.nfcall(integrationStatisticService.insertStatisticOfFeature,

@@ -93,7 +93,7 @@ module.exports = (app) => {
         `請<a href="https://${process.env.HOST}:${process.env.PORT}/integration/${mode}/query/${queryId}">查看結果</a>`;
       Q.nfcall(mailUtil.mail, to, {subject, content});
     }).fail(err => {
-      winston.error('/export/query/ready/:ip/:port/:queryId error: ', err);
+      winston.error('/export/query/parsing/%s error: ', queryId, err);
     }).finally(() => {
       const rmdir = require('rimraf');
       rmdir(workingPath, err => {
