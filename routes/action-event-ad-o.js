@@ -359,7 +359,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         const addtag = (evtadID, newtag, callback) => {
-          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,crtTime,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
+          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,crtTime,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
