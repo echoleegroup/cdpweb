@@ -16,7 +16,7 @@ module.exports.get_mdListSentCustomizer = (mdId) => {
   return () => {
     let mdIdParam = `mdId_${_.random(99, 99999)}`;
     return {
-      select: ['CONVERT(VARCHAR(10), sm.sentListTime, 111) AS mdListSent'],
+      select: ['CONVERT(VARCHAR(10), sentList.sentListTime, 111) AS mdListSent'],
       join: [
         'LEFT JOIN cu_LicsnoIndex lic ON mdListKey1 = lic.LICSNO ' +
         'LEFT JOIN (' +
