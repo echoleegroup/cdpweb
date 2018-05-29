@@ -72,18 +72,22 @@ module.exports = (app) => {
         return [
           Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, [], [
             customTargetHelper.get_mdListScoreCustomizer(),
-            customTargetHelper.get_mdListSentCustomizer(mdId)
+            // customTargetHelper.get_mdListSentCustomizer(mdId)
           ]),
           model
         ];
       }
     }).spread((results, model) => {
 
-      let [resultsInTarget, resultsExcludeTarget] = _.partition(results, (obj) => {
-        return (obj['_mdListScore'] >= model.batListThold);
-      });
+      let resultsExcludeTarget = _.filter(results, row => {
+        return (row['_mdListScore'] < model.batListThold);
+      })
 
-      let sizeOfCriteriaResult = (isIncludeModelTarget)? (resultsInTarget.length + resultsExcludeTarget.length): resultsExcludeTarget.length;
+      // let [resultsInTarget, resultsExcludeTarget] = _.partition(results, (obj) => {
+      //   return (obj['_mdListScore'] >= model.batListThold);
+      // });
+
+      let sizeOfCriteriaResult = (isIncludeModelTarget)? results.length: resultsExcludeTarget.length;
       let sizeOfResultsInTarget = sizeOfCriteriaResult - resultsExcludeTarget.length;
 
       res.json({sizeOfCriteriaResult, sizeOfResultsInTarget});
@@ -124,37 +128,43 @@ module.exports = (app) => {
         res.json(req.params, 404, 'batch data is not found!');
         throw null;
       } else {
-        let downloadFeatureIds = [];
-        let downloadFeatureLabels = [];
-        _.forEach(downloadFeatures, feature => {
-          downloadFeatureIds.push(feature.featID);
-          downloadFeatureLabels.push(feature.featName);
-        });
+        let exportFeatureIds = _.map(downloadFeatures, 'featID');
+        let exportColumns = _.map(_.filter(downloadFeatures, {customized: 'N'}), 'featID');
+        let exportFeatureLabels = _.map(downloadFeatures, 'featName');
+        // _.forEach(downloadFeatures, feature => {
+        //   exportFeatureIds.push(feature.featID);
+        //   downloadFeatureLabels.push(feature.featName);
+        // });
 
         return [
           model,
-          downloadFeatureIds,
-          downloadFeatureLabels,
-          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, downloadFeatureIds, [
+          exportFeatureIds,
+          exportFeatureLabels,
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, exportColumns, [
             customTargetHelper.get_mdListScoreCustomizer(),
             customTargetHelper.get_mdListSentCustomizer(mdId)
           ]),
           queryLogRes.queryID];
       }
 
-    }).spread((model, downloadFeatureIds, downloadFeatureLabels, resultSet, queryLogId) => {
+    }).spread((model, exportFeatureIds, exportFeatureLabels, resultSet, queryLogId) => {
 
-      let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, row => {
-        return (row['_mdListScore'] >= model.batListThold);
-      });
-      resultSet = (isIncludeModelTarget)? resultSet: resultsExcludeTarget;
+      // let [resultsInTarget, resultsExcludeTarget] = _.partition(resultSet, row => {
+      //   return (row['_mdListScore'] >= model.batListThold);
+      // });
+      // resultSet = (isIncludeModelTarget)? resultSet: resultsExcludeTarget;
+      if (isIncludeModelTarget) {
+        resultSet = _.filter(resultSet, row => {
+          return (row['_mdListScore'] < model.batListThold);
+        });
+      }
 
       //arrange result set into specific format, to export as xlsx by node-xlsx
       let exportDateSet = [];
-      exportDateSet.push(downloadFeatureLabels);
+      exportDateSet.push(exportFeatureLabels);
       exportDateSet = exportDateSet.concat(resultSet.map(row => { //transform resultSet[{row},{row}] into[[row],[row]]
-        //transform row object into array in the order of downloadFeatureIds
-        return downloadFeatureIds.map(featId => row[featId]);
+        //transform row object into array in the order of exportFeatureIds
+        return exportFeatureIds.map(featId => row[featId]);
       }));
 
       //generate excel file

@@ -6,7 +6,7 @@ const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 
 module.exports.getDownloadFeaturesOfSet = (setId, callback) => {
-  const sql = 'SELECT feat.featID, feat.featName, feat.featNameAbbr ' +
+  const sql = 'SELECT feat.featID, feat.featName, feat.featNameAbbr, dwn.customized ' +
     'FROM cu_DnldFeat dwn, ft_feature feat ' +
     'WHERE setID = @setId AND dwn.featID = feat.featID AND isDel != @isDel ' +
     'ORDER BY seqNO';
