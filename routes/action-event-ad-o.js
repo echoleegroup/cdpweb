@@ -342,7 +342,7 @@ module.exports = (app) => {
     var tagID;
     newtag = newtag.trim();
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT evtadID FROM dm_EvtadTag where evtadID=" + evtadID + " and tagLabel ='" + newtag + "' ", function (err, recordset) {
+      db.query("SELECT evtadID FROM dm_EvtadTag where evtadID=" + evtadID + " and tagLabel ='" + newtag + "' and ( isDel <> 'Y' or isDel is null ) ", function (err, recordset) {
         if (err) {
           console.log(err);
           reject(2);
@@ -359,7 +359,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         const addtag = (evtadID, newtag, callback) => {
-          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
+          db.query("INSERT INTO dm_EvtadTag(evtadID,tagLabel,crtTime,updTime,updUser) VALUES(" + evtadID + ",'" + newtag + "',GETDATE(),'" + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
