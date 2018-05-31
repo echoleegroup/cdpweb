@@ -434,6 +434,7 @@ const getMinPeriod = (chartType, minPeriod) => {
 
 module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatures, relatives) => {
   let today = moment().startOf('day');
+  let startDay = today.add(-1, 'months');
   return {
     criteria: criteria,
     export: {
@@ -453,7 +454,7 @@ module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilt
           ref: feature.codeGroup,
           min_period: getMinPeriod(chartCategory, feature.minPeriod),   //date_line日期型: 'day', 'month', 'year'，其他類型：數字
           period_upper_bound: today.valueOf(),
-          period_lower_bound: today.add(-1, 'months').valueOf()
+          period_lower_bound: startDay.valueOf()
         }
       })
     }

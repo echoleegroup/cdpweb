@@ -39,6 +39,7 @@ module.exports = (app) => {
   app.use('/api/target', require('./api/api-custom-target')(app));
   app.use('/api/integration', require('./api/api-integration-analysis')(app));
   app.use('/api/intra/integration', require('./api/api-integration-analysis-intra')(app));
+  app.use('/api/intra/task/log', require('./api/api-task-log-intra')(app));
 
   //hook for test
   app.use('/api/intra/test', require('../test/api-intra-test')(app));
