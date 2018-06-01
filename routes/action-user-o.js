@@ -171,8 +171,11 @@ module.exports = (app) => {
     var bookmark = req.body.bookmark || '';
     var isstop = req.body.isstop || '';
     var password = req.body.pwd || '';
+    var checked = 'N';
+    if (isstop === 'on')
+      checked = 'Y';
     var where = " where userId ='" + userId + "'";
-    db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.user.userId + "',modifyTime=GETDATE() " + where, function (err, recordset) {
+    db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.user.userId + "',modifyTime=GETDATE(), isstop = '" + checked + "' " + where, function (err, recordset) {
       if (err) console.log(err);
       //send records as a response
       res.redirect('/system/user/edit?userId=' + userId);
@@ -355,10 +358,10 @@ module.exports = (app) => {
         else {
           res.render('message', {
             layout: 'layout-login',
-            message : "更改密碼信已寄出，請至信箱收取更改密碼信函"
+            message: "更改密碼信已寄出，請至信箱收取更改密碼信函"
           });
         }
- 
+
       });
     }).fail((err) => {
       winston.error('===forgetpwd failed:', err);
@@ -385,7 +388,7 @@ module.exports = (app) => {
         res.render('change-pwd', {
           layout: 'layout-login',
           userId: userId,
-          token : token
+          token: token
         })
       }
     }).fail((err) => {
@@ -409,15 +412,15 @@ module.exports = (app) => {
       return result;
     }).then((result) => {
       sql = "UPDATE sy_ForgotPwd " +
-      " SET is_send = 'Y', update_datetime = GETDATE()" +
-      " WHERE token = @token  ";
+        " SET is_send = 'Y', update_datetime = GETDATE()" +
+        " WHERE token = @token  ";
       let request = _connector.queryRequest()
-      .setInput('token', _connector.TYPES.NVarChar, token)
+        .setInput('token', _connector.TYPES.NVarChar, token)
       return Q.nfcall(request.executeUpdate, sql)
     }).then((resultset) => {
       res.render('message', {
         layout: 'layout-login',
-        message : "密碼已更改成功，請重新登入"
+        message: "密碼已更改成功，請重新登入"
       })
 
     }).fail((err) => {

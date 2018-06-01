@@ -26,9 +26,18 @@ module.exports = () => {
 
     Q.nfcall(loginService.loginPlatform, username, password).then((user) => {
       if (user) {
-        Q.nfcall(loginService.updateLoginTime, user.userId).then((result) => {
-          return done(null, _.pick(user, ['userId', 'userName', 'email']));
-        });
+        if (user.isstop != 'Y' || user.isstop == null) {
+          Q.nfcall(loginService.updateLoginTime, user.userId).then((result) => {
+            return done(null, _.pick(user, ['userId', 'userName', 'email']));
+
+          });
+        }
+        else {
+          winston.error('帳號:' + username + '已被停用');
+          return done(null, false, {
+            message: '您的帳號已被停用，請洽管理員'
+          });
+        }
       } else {
         winston.error('帳號或密碼不正確');
         return done(null, false, {
