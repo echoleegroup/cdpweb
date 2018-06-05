@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
@@ -48,8 +49,49 @@ module.exports.updateTaskLog = (logId, stage, stageTime, stageMsg, taskResult, m
     .setInput('updTime', _connector.TYPES.DateTime, new Date());
 
   Q.nfcall(request.executeQuery, sql).then(result => {
-    console.log('result', result);
     callback(null, result[0]);
+  }).fail(err => {
+    winston.error('===update task log failed! : ', err);
+    callback(err);
+  });
+};
+
+module.exports.getTaskLog = ({taskId, startTime, endTime, stage, result}, callback) => {
+
+  const criteria = ['1 = 1'];
+  const request = _connector.queryRequest();
+
+  if (taskId) {
+    criteria.push('taskID = @taskId');
+    request.setInput('taskId', _connector.TYPES.BigInt, taskId);
+  }
+
+  if (startTime) {
+    winston.info('startTime: ', startTime);
+    criteria.push('stageTime > @startTime');
+    request.setInput('startTime', _connector.TYPES.DateTime, new Date(startTime));
+  }
+
+  if (endTime) {
+    winston.info('endTime: ', endTime);
+    criteria.push('stageTime <= @endTime');
+    request.setInput('endTime', _connector.TYPES.DateTime, new Date(endTime));
+  }
+
+  if (stage) {
+    criteria.push('stage = @stage');
+    request.setInput('stage', _connector.TYPES.SmallInt, stage);
+  }
+
+  if (result) {
+    criteria.push('taskResult = @result');
+    request.setInput('result', _connector.TYPES.SmallInt, result);
+  }
+
+  const sql = `SELECT * FROM sy_TaskLog WHERE ${criteria.join(' AND ')}`;
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
   }).fail(err => {
     winston.error('===update task log failed! : ', err);
     callback(err);

@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <th>名稱</th>
+    <th>啟動時間</th>
+    <th>結束時間</th>
+    <th>執行結果</th>
+    <th>訊息</th>
+  </tr>
+  {{#each tasks}}
+    <tr>
+      <td>{{task}}</td>
+      <td>{{triggerTime}}</td>
+      <td>{{stageTime}}</td>
+      <td>{{taskResult}}</td>
+      <td>{{message}}</td>
+    </tr>
+  {{/each}}
+</table>
