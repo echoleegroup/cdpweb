@@ -83,13 +83,19 @@
       x += '<button type="button" class="btn btn-lg btn-default">修改</button>';
       x += '</a></div>';
     }
+    else {
+      x += '<div class="btn-block center-block">';
+      x += '<a href="/feeddata/NCBS/edit?ncbsID=' + o[i].feeddata[0].ListID + '">';
+      x += '<button type="button" class="btn btn-lg btn-default">修改</button>';
+      x += '</a></div>';
+    }
     x += '</td></tr>';
 
   }
   document.getElementById("info").innerHTML = x;
 </script>
 <script>
-   $('html').bind('keypress', function (e) {
+  $('html').bind('keypress', function (e) {
     if (e.keyCode == 13) {
       return false;
     }
@@ -144,8 +150,9 @@
               });
             });
           }
-          document.getElementById(index).value = "" ;
+          document.getElementById(index).value = "";
         }
+
       });
     }
     else

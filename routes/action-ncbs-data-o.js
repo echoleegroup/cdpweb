@@ -107,6 +107,7 @@ module.exports = (app) => {
 
     Promise.all([p1]).then(function (results) {
       var i = 1
+      res.redirect("/feeddata/NCBS/upload");           
       checkandinsert(i);
       function checkandinsert(i) {
         try {
@@ -121,20 +122,11 @@ module.exports = (app) => {
                   + currentdate.getHours() + ":"
                   + currentdate.getMinutes() + ":"
                   + currentdate.getSeconds();
-                res.render('NCBSDataEdit', {
-                  'user': req.user,
-                  'modelList': modelList,
-                  'navMenuList': navMenuList,
-                  'mgrMenuList': mgrMenuList,
-                  'maininfo': maininfo,
-                  'ncbsID': ncbsID,
-                  'dispaly': 'block',
-                  'successnum': successnum,
-                  'errormsg': errormsg,
-                  'errornum': errornum,
-                  'total': total,
-                  'datetime': datetime
+                let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
+                db.query(sql, function (err, recordset) {
+                  
                 });
+                
               }
               checkandinsert(i + 1);
             }
@@ -173,20 +165,11 @@ module.exports = (app) => {
                       + currentdate.getHours() + ":"
                       + currentdate.getMinutes() + ":"
                       + currentdate.getSeconds();
-                    res.render('NCBSDataEdit', {
-                      'user': req.user,
-                      'modelList': modelList,
-                      'navMenuList': navMenuList,
-                      'mgrMenuList': mgrMenuList,
-                      'maininfo': maininfo,
-                      'ncbsID': ncbsID,
-                      'dispaly': 'block',
-                      'successnum': successnum,
-                      'errormsg': errormsg,
-                      'errornum': errornum,
-                      'total': total,
-                      'datetime': datetime
+                    let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
+                    db.query(sql, function (err, recordset) {
+                     
                     });
+                   
                   }
                   else {
                     checkandinsert(i + 1);
@@ -201,20 +184,11 @@ module.exports = (app) => {
                         + currentdate.getHours() + ":"
                         + currentdate.getMinutes() + ":"
                         + currentdate.getSeconds();
-                      res.render('NCBSDataEdit', {
-                        'user': req.user,
-                        'modelList': modelList,
-                        'navMenuList': navMenuList,
-                        'mgrMenuList': mgrMenuList,
-                        'maininfo': maininfo,
-                        'ncbsID': ncbsID,
-                        'dispaly': 'block',
-                        'successnum': successnum,
-                        'errormsg': errormsg,
-                        'errornum': errornum,
-                        'total': total,
-                        'datetime': datetime
+                      let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
+                      db.query(sql, function (err, recordset) {
+                       
                       });
+                      
                     }
                     else
                       checkandinsert(i + 1);
@@ -231,20 +205,11 @@ module.exports = (app) => {
                           + currentdate.getHours() + ":"
                           + currentdate.getMinutes() + ":"
                           + currentdate.getSeconds();
-                        res.render('NCBSDataEdit', {
-                          'user': req.user,
-                          'modelList': modelList,
-                          'navMenuList': navMenuList,
-                          'mgrMenuList': mgrMenuList,
-                          'maininfo': maininfo,
-                          'ncbsID': ncbsID,
-                          'dispaly': 'block',
-                          'successnum': successnum,
-                          'errormsg': errormsg,
-                          'errornum': errornum,
-                          'total': total,
-                          'datetime': datetime
+                        let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
+                        db.query(sql, function (err, recordset) {
+                         
                         });
+                        
                       }
                       else
                         checkandinsert(i + 1);
@@ -257,7 +222,6 @@ module.exports = (app) => {
           }
         } catch (error) {
           winston.error(error);
-          return res.redirect("/");
         }
       }
 
@@ -281,7 +245,7 @@ module.exports = (app) => {
     var mtag;
     var maininfo;
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT cnm.ncbsName,cnm.Client,cnm.ncbsYear,cnm.ncbsDesc,cnm.ncbsQus,convert(varchar,cnm.ncbsSdt,111)ncbsSdt,convert(varchar,cnm.ncbsEdt,111)ncbsEdt,convert(varchar,cnm.updTime,120)updTime,cnm.updUser,(select count(*) FROM cu_NCBSDet cnb where cnb.ncbsID = cnm.ncbsID)NSBCcount FROM cu_NCBSMst cnm where cnm.ncbsID = " + ncbsID, function (err, recordset) {
+      db.query("SELECT cnm.ncbsName,cnm.Client,cnm.ncbsYear,cnm.ncbsDesc,cnm.ncbsQus,convert(varchar,cnm.ncbsSdt,111)ncbsSdt,convert(varchar,cnm.ncbsEdt,111)ncbsEdt,convert(varchar,cnm.updTime,120)updTime,cnm.updUser,(select count(*) FROM cu_NCBSDet cnb where cnb.ncbsID = cnm.ncbsID)NSBCcount,cnm.successNum,cnm.errorNum,cnm.errorMsg,cnm.total FROM cu_NCBSMst cnm where cnm.ncbsID = " + ncbsID, function (err, recordset) {
         if (err) {
           reject(err);
         }
