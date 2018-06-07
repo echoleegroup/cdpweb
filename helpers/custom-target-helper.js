@@ -38,22 +38,26 @@ module.exports.get_mdListSentCustomizer = (mdId) => {
 
 module.exports.get_mdListSlodCustomizer = () => {
   return () => {
-    let endDate = moment().startOf('day').toDate();
-    let startDate = moment().startOf('day').add(-1, 'year').toDate();
     return {
-      select: ['ufn_getLatestSlod(lic.LICSNO, @startDate, @endDate) AS mdListSlod'],
-      join: [],
+      select: ['od.mdListSlod AS mdListSlod'],
+      join: [
+        'LEFT JOIN ( ' +
+          'SELECT lic.LICSNO, MAX(so.mdListSlod) AS mdListSlod ' +
+          'FROM cu_LicsnoIndex lic ' +
+          'INNER JOIN ( ' +
+            `SELECT CNTRNO + '(' + CONVERT(NVARCHAR(10), ORDDT, 111) + ')' AS mdListSlod, CUSTID, MOBILE ` +
+            'FROM cu_Slod ' +
+            `WHERE CNTSTS = '1' AND MOVSTS NOT IN ('6','7') AND ORDDT > @ORDDT ` +
+          ') so ON lic.CustID_u = so.CUSTID OR lic.CustID_l = so.CUSTID OR lic.Mobile_u = so.MOBILE OR lic.Mobile_l = so.MOBILE ' +
+          'GROUP BY lic.LICSNO ' +
+        ') od ON od.LICSNO = lic.LICSNO'
+      ],
       where: [],
       parameters: [
         {
-          name: 'startDate',
+          name: 'ORDDT',
           type: _connector.TYPES.Date,
-          value: startDate
-        },
-        {
-          name: 'endDate',
-          type: _connector.TYPES.Date,
-          value: endDate
+          value: moment().startOf('day').add(-1, 'year').toDate()
         }
       ]
     }
