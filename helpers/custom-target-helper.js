@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 const _connector = require('../utils/sql-query-util');
 
 module.exports.get_mdListScoreCustomizer = () => {
@@ -16,7 +17,7 @@ module.exports.get_mdListSentCustomizer = (mdId) => {
   return () => {
     let mdIdParam = `mdId_${_.random(99, 99999)}`;
     return {
-      select: ['CONVERT(VARCHAR(10), sentList.sentListTime, 111) AS mdListSent'],
+      select: ['CONVERT(NVARCHAR(10), sentList.sentListTime, 111) AS mdListSent'],
       join: [
         'LEFT JOIN cu_LicsnoIndex lic ON mdListKey1 = lic.LICSNO ' +
         'LEFT JOIN (' +
@@ -32,5 +33,29 @@ module.exports.get_mdListSentCustomizer = (mdId) => {
         }
       ]
     };
+  };
+};
+
+module.exports.get_mdListSlodCustomizer = () => {
+  return () => {
+    let endDate = moment().startOf('day').toDate();
+    let startDate = moment().startOf('day').add(-1, 'year').toDate();
+    return {
+      select: ['ufn_getLatestSlod(lic.LICSNO, @startDate, @endDate) AS mdListSlod'],
+      join: [],
+      where: [],
+      parameters: [
+        {
+          name: 'startDate',
+          type: _connector.TYPES.Date,
+          value: startDate
+        },
+        {
+          name: 'endDate',
+          type: _connector.TYPES.Date,
+          value: endDate
+        }
+      ]
+    }
   };
 };
