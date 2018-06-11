@@ -46,7 +46,7 @@ module.exports = (app) => {
       return res.json(null, 302, 'triggerTime should be a timestamp in number');
     } else if (!_.isNumber(taskResult)) {
       return res.json(null, 303, 'task result is necessary');
-    } else if ([1,2,3].indexOf(taskResult) < 0) {
+    } else if ([0,1,2].indexOf(taskResult) < 0) {
       return res.json(null, 304, 'invalid task result');
     }
 
