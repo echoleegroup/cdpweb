@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const winston = require('winston');
 const handlebars = require('handlebars');
 
-module.exports.mail = (to, options = {}, callback = () => { }) => {
+const send = (to, options = {}, callback = () => { }) => {
   console.log(to) ;
   console.log(options) ;
   let transporter = nodemailer.createTransport({
@@ -20,12 +20,13 @@ module.exports.mail = (to, options = {}, callback = () => { }) => {
     from:  process.env.SMTP_USER,
     to: to,
     subject: options.subject,
-    html: options.content
+    html: options.html,
+    text: options.text
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      winston.error("mail send error: ", error)
+      winston.error("htmlMail send error: ", error)
       callback(error,null);
     } else {
       winston.info("Email sent: " + info.response);
@@ -34,20 +35,38 @@ module.exports.mail = (to, options = {}, callback = () => { }) => {
   });
 };
 
+module.exports.htmlMail = (to, options = {}, callback = () => { }) => {
+  let wrappedOption = {
+    subject: options.subject,
+    html: options.content,
+    text: undefined
+  };
+  send(to, wrappedOption, callback);
+};
+
+module.exports.textMail = (to, options = {}, callback = () => { }) => {
+  let wrappedOption = {
+    subject: options.subject,
+    html: undefined,
+    text: options.content
+  };
+  send(to, wrappedOption, callback);
+};
+
 module.exports.sendByTemplate = (code, to, subject, data, callback = () => {}) => {
   const fs = require('fs');
   const path = require('path');
   const templatePath = path.resolve(__dirname, `../templates/${code}.hbs`);
   Q.nfcall(fs.readFile, templatePath, 'utf-8').then(template => {
     let html = handlebars.compile(template)(data);
-    return Q.nfcall(this.mail, to, {
+    return Q.nfcall(this.htmlMail, to, {
       subject: subject,
       content: html
     }).then(() => {
       callback(null, html);
     });
   }).fail(err => {
-    winston.error('send mail by template failed: ', err);
+    winston.error('send htmlMail by template failed: ', err);
     callback(err);
   });
 };

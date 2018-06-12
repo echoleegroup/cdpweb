@@ -4,6 +4,7 @@ const path = require('path');
 const Q = require('q');
 const winston = require('winston');
 const factory = require("../middlewares/response-factory");
+const auth = require('../middlewares/login-check');
 const constants = require('../utils/constants');
 
 module.exports = (app) => {
@@ -103,6 +104,22 @@ module.exports = (app) => {
       //   throw new Error(`set query task status as parsing-failed failed: ${err}`);
       // });
       throw err;
+    });
+  });
+
+  router.post('/htmlMail', factory.ajax_response_factory(), (req, res) => {
+    const to = req.body.to;
+    const subject = req.body.subject || '';
+    const text = req.body.text;
+    const mail = require('../utils/mail-util');
+
+    Q.nfcall(mail.textMail, to, {
+      subject: subject,
+      content: text
+    }).then(() => {
+      res.json();
+    }).fail(err => {
+      res.json(null, 500, 'internal service error!');
     });
   });
 

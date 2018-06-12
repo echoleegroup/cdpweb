@@ -54,7 +54,7 @@ module.exports = (app) => {
         "subject": "和泰大數據平台-帳號啟用通知",
         "content": `親愛的使用者<br/>：您的帳號已經建立啟用，請至 <a href="http://${process.env.HOST}:${process.env.PORT}">和泰大數據平台</a> 登入系統並進行密碼變更，謝謝。<br/>帳號：${userId}<br/>預設密碼：test`
       }
-      mail_util.mail(email, sendInfo, function (err, result) {
+      mail_util.htmlMail(email, sendInfo, function (err, result) {
         if (err) {
           winston.error('===adduser failed:', err);
         }
@@ -350,7 +350,7 @@ module.exports = (app) => {
         "content": `親愛的使用者：<br/>您的密碼已經重新設定，請至<a href="http://${process.env.HOST}:${process.env.PORT}/system/user/pwd/change${url}">和泰大數據平台</a>登入系統並進行密碼變更，謝謝。`
       }
 
-      mail_util.mail(email, sendInfo, function (err, result) {
+      mail_util.htmlMail(email, sendInfo, function (err, result) {
         if (err) {
           winston.error('===forgetpwd failed:', err);
           res.redirect("/");
