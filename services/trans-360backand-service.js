@@ -79,9 +79,10 @@ module.exports.transService = (queryId, JObject, callback) => {
   }
   else {
     url = "http://" + API_360_HOST + ":" + API_360_PORT + "/query_all/" + queryId;
+    let owner = "{" + JSON.stringify(transJson) + "}";
     let formdata = {
-      req_owner: JSON.stringify(transJson),
-      req_log: JObject
+      req_owner: owner,
+      req_log: JSON.stringify(JObject)
     };
     let formInfo = querystring.stringify(formdata);
     request({
@@ -99,7 +100,7 @@ module.exports.transService = (queryId, JObject, callback) => {
         callback(null, transJson);
     });
   }
-  
+
 
 
   function getWhere(Jdata) {
@@ -192,7 +193,7 @@ module.exports.transService = (queryId, JObject, callback) => {
       if ("IS NULL" !== fieldOperator && "IS NOT NULL" !== fieldOperator) {
         let input_type = JField.input_type;
         let value = JField.value;
-        if (input_type === "date"){
+        if (input_type === "date") {
           returnValue += "'" + moment(new Date(value)).format("YYYYMMDD") + "'";
         }
         else
