@@ -142,7 +142,8 @@ module.exports = (app) => {
           exportFeatureLabels,
           Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, exportColumns, [
             customTargetHelper.get_mdListScoreCustomizer(),
-            customTargetHelper.get_mdListSentCustomizer(mdId)
+            customTargetHelper.get_mdListSentCustomizer(mdId),
+            customTargetHelper.get_mdListSlodCustomizer()
           ]),
           queryLogRes.queryID];
       }
