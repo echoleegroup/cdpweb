@@ -11,6 +11,7 @@ const config = {
   database: process.env.DATABASE_NAME,
   server: db_info.host,   //這邊要注意一下!!
   options: db_info.options,
+  requestTimeout: 900000,
   pool: {
     max: 10,
     min: 2,
@@ -42,6 +43,17 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
       winston.error('execParameterizedSql error: ', err);
     callback(err);
   });
+};
+
+const streamParameterizedSql = (sql, params = {}) => {
+  let request = pool.request();
+  request.stream = true;
+  _.reduce(params || {}, (_request, value, key) => {
+    return _request.input(key, value.type, value.value);
+  }, request)
+    .query(sql);
+
+  return request;
 };
 
 const _that = {
@@ -77,6 +89,9 @@ const _that = {
           winston.error('sql util executeUpdate error: ', err);
           callback(err);
         });
+      },
+      streamExecute: (sql) => {
+        return streamParameterizedSql(sql, inputs);
       }
     };
     return _this;

@@ -38,7 +38,7 @@ const preBuild = (tempTableName, callback) => {
     '     FROM lics ' +
     '     WHERE Mobile_l IS NOT NULL ' +
     '   ) ' +
-    `   INSERT INTO ${tempTableName} (LICSNO, CNTRNO, ORDDT, crtTime)` +
+    `   INSERT INTO ${tempTableName} (LICSNO, CNTRNO, ORDDT, crtTime) ` +
     '   SELECT LICSNO, CNTRNO, ORDDT, GETDATE() AS crtTime ' +
     '   FROM ( ' +
     '     SELECT LICSNO, CNTRNO, ORDDT, ROW_NUMBER() OVER (PARTITION BY LICSNO ORDER BY ORDDT DESC) AS SEQ ' +
@@ -57,8 +57,26 @@ const preBuild = (tempTableName, callback) => {
     '   WHERE SEQ = 1 ' +
     'END';
 
+  // const request = _connector.queryRequest().streamExecute(sql);
+  // request.on('recordset', columns => {
+  //   winston.info('preBuild License_Slod RecordSet: ', columns);
+  // });
+  //
+  // request.on('row', row => {
+  //   winston.info('preBuild License_Slod Row: ', row);
+  // });
+  //
+  // request.on('error', err => {
+  //   callback(err);
+  // });
+  //
+  // request.on('done', result => {
+  //   winston.info('preBuild License_Slod Done: ', result);
+  //   callback(null, result);
+  // })
+
   const request = _connector.queryRequest();
-  Q.nfcall(request.executeQuery, sql).then((res) => {
+  Q.nfcall(request.executeUpdate, sql).then((res) => {
     callback(null, res);
   }).fail(err => {
     callback(err);
@@ -74,43 +92,46 @@ module.exports = (app) => {
   // schedule.scheduleJob(`0 * * * * *`, () => {
   schedule.scheduleJob(`${dailyTaskReportCron.minute} ${dailyTaskReportCron.hour} * * *`, () => {
     const tableName = 'cu_LicsLatestSlod';
-    const tempTableName = `${tableName}_${_.random(1, 999)}`;
-    const queryInterface = Q.denodeify(sequelizeInst.getQueryInterface);
-    queryInterface('createTable', {
-      LICSNO: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-        allowNull: false
-      },
-      CNTRNO: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      ORDDT: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      crtTime: {
-        type: Sequelize.DATE,
-        allowNull: false
-      }
-    }, {
-      timestamps: false,
+    const tempTableName = `${tableName}_temp`;
+    const queryInterface = sequelizeInst.getQueryInterface();
+    Q(queryInterface.dropTable(tempTableName)).then(() => {
+      return Q(queryInterface.createTable(tempTableName, {
+        LICSNO: {
+          type: Sequelize.STRING,
+          primaryKey: true,
+          allowNull: false
+        },
+        CNTRNO: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+        ORDDT: {
+          type: Sequelize.DATE,
+          allowNull: false
+        },
+        crtTime: {
+          type: Sequelize.DATE,
+          allowNull: false
+        }
+      }, {
+        timestamps: false,
+      }));
     }).then(() => {
       winston.info(`table ${tempTableName} is created`);
       return Q.nfcall(preBuild, tempTableName);
     }).then(() => {
       winston.info(`data of table ${tempTableName} is build`);
       // drop
-      return queryInterface('dropTable', tableName);
+      return Q(queryInterface.dropTable(tableName));
     }).then(() => {
       winston.info(`table ${tableName} is dropped`);
       // rename
-      return queryInterface('renameTable', tempTableName, tableName);
+      return Q(queryInterface.renameTable(tempTableName, tableName));
     }).then(() => {
       winston.info(`table ${tempTableName} is renamed to ${tableName}`);
     }).fail(error => {
       winston.error(error);
-    })
+      console.log(error);
+    });
   });
 };

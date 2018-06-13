@@ -40,7 +40,13 @@ module.exports.get_mdListSlodCustomizer = () => {
   return () => {
     let orddtStart = `orddtStart_${_.random(99, 99999)}`;
     return {
-      select: [`CONCAT(lic_slod.CNTRNO, '(', CONVERT(NVARCHAR(10), lic_slod.ORDDT, 111), ')') AS mdListSlod`],
+      select: [
+        'CASE ' +
+          'WHEN lic_slod.LICSNO IS NOT NULL ' +
+          `THEN CONCAT(lic_slod.CNTRNO, '(', CONVERT(NVARCHAR(10), lic_slod.ORDDT, 111), ')') ` +
+          'ELSE NULL ' +
+        'END AS mdListSlod'
+      ],
       join: [
         `LEFT JOIN cu_LicsLatestSlod lic_slod ON lic_slod.LICSNO = lic.LICSNO AND lic_slod.ORDDT >= @${orddtStart}`
       ],
