@@ -10,10 +10,6 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
-      CNTRNO_ORDDT: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
       CNTRNO: {
         type: DataTypes.STRING,
         allowNull: false
