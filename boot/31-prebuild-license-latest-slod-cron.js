@@ -2,7 +2,7 @@ const Q = require('q');
 const _ = require('lodash');
 const schedule = require('node-schedule');
 const Sequelize = require('sequelize');
-// const moment = require('moment');
+const moment = require('moment');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 const sequelizeInst = require('../utils/sequelize-instance');
@@ -19,7 +19,7 @@ const preBuild = (tempTableName, callback) => {
     '   slod AS ( ' +
     '     SELECT DISTINCT CNTRNO, ORDDT, CUSTID, MOBILE ' +
     '     FROM cu_Slod ' +
-    `     WHERE CNTSTS = '1' AND MOVSTS NOT IN ('6','7') AND (CUSTID IS NOT NULL OR MOBILE IS NOT NULL) ` +
+    `     WHERE CNTSTS = '1' AND MOVSTS NOT IN ('6','7') AND (CUSTID IS NOT NULL OR MOBILE IS NOT NULL) AND ORDDT >= @ORDDT ` +
     '   ), ' +
     '   lics_CustID AS ( ' +
     '     SELECT LICSNO, CustID_u AS CustID ' +
@@ -76,7 +76,9 @@ const preBuild = (tempTableName, callback) => {
   //   callback(null, result);
   // })
 
-  const request = _connector.queryRequest();
+  const request = _connector.queryRequest()
+    .setInput('ORDDT', _connector.TYPES.DateTime, moment().startOf('day').add(-1, 'year').toDate());
+
   Q.nfcall(request.executeUpdate, sql).then((res) => {
     callback(null, res);
   }).fail(err => {
