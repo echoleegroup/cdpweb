@@ -6,6 +6,7 @@ const Sequelize = require('sequelize');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
 const sequelizeInst = require('../utils/sequelize-instance');
+const taskLogService = require('../services/task-log-service');
 
 const preBuild = (tempTableName, callback) => {
   const sql =
@@ -94,44 +95,77 @@ module.exports = (app) => {
     const tableName = 'cu_LicsLatestSlod';
     const tempTableName = `${tableName}_temp`;
     const queryInterface = sequelizeInst.getQueryInterface();
-    Q(queryInterface.dropTable(tempTableName)).then(() => {
-      return Q(queryInterface.createTable(tempTableName, {
-        LICSNO: {
-          type: Sequelize.STRING,
-          primaryKey: true,
-          allowNull: false
-        },
-        CNTRNO: {
-          type: Sequelize.STRING,
-          allowNull: false
-        },
-        ORDDT: {
-          type: Sequelize.DATE,
-          allowNull: false
-        },
-        crtTime: {
-          type: Sequelize.DATE,
-          allowNull: false
-        }
-      }, {
-        timestamps: false,
-      }));
-    }).then(() => {
-      winston.info(`table ${tempTableName} is created`);
-      return Q.nfcall(preBuild, tempTableName);
-    }).then(() => {
-      winston.info(`data of table ${tempTableName} is build`);
-      // drop
-      return Q(queryInterface.dropTable(tableName));
-    }).then(() => {
-      winston.info(`table ${tableName} is dropped`);
-      // rename
-      return Q(queryInterface.renameTable(tempTableName, tableName));
-    }).then(() => {
-      winston.info(`table ${tempTableName} is renamed to ${tableName}`);
-    }).fail(error => {
-      winston.error(error);
-      console.log(error);
+    const taskName = '預算車牌一年內最新訂單(31-prebuild-license-latest-slod-cron.js)';
+    const now = Date.now();
+
+    Q.nfcall(taskLogService.initTaskLog, taskName, now, 0, null, now, message).then(resData => {
+      const logID = resData.logID;
+
+      return Q(queryInterface.dropTable(tempTableName))
+        .fail(err => {
+          throw new Error(`drop table ${tempTableName} failed: ${err.message}`);
+        }).then(() => {
+          winston.info(`table ${tempTableName} is dropped`);
+          return Q(queryInterface.createTable(tempTableName, {
+            LICSNO: {
+              type: Sequelize.STRING,
+              primaryKey: true,
+              allowNull: false
+            },
+            CNTRNO: {
+              type: Sequelize.STRING,
+              allowNull: false
+            },
+            ORDDT: {
+              type: Sequelize.DATE,
+              allowNull: false
+            },
+            crtTime: {
+              type: Sequelize.DATE,
+              allowNull: false
+            }
+          }, {
+            timestamps: false,
+          })).fail(err => {
+            throw new Error(`create table ${tempTableName} failed: ${err.message}`);
+          });
+        }).then(() => {
+          winston.info(`table ${tempTableName} is created`);
+          return Q.nfcall(preBuild, tempTableName).fail(err => {
+            throw new Error(`pre-build table ${tempTableName} failed: ${err.message}`);
+          });
+        }).then(() => {
+          winston.info(`data of table ${tempTableName} is build`);
+          // drop
+          return Q(queryInterface.dropTable(tableName)).fail(err => {
+            throw new Error(`drop table ${tableName} failed: ${err.message}`);
+          });
+        }).then(() => {
+          winston.info(`table ${tableName} is dropped`);
+          // rename
+          return Q(queryInterface.renameTable(tempTableName, tableName)).fail(err => {
+            throw new Error(`rename table ${tempTableName} to ${tableName} failed: ${err.message}`);
+          });
+        }).then(() => {
+          const msg = `table ${tempTableName} is renamed to ${tableName}`;
+          winston.info(msg);
+          const now = Date.now();
+          return Q.nfcall(taskLogService.updateTaskLog, logID, 0, now, null, 0, msg, null)
+            .fail(err => {
+              winston.error('update task log failed: ', err);
+            });
+        }).fail(error => {
+          winston.error('pre-build license-latest-slod failed: ', error);
+          //write to log
+          const now = Date.now();
+          Q.nfcall(taskLogService.updateTaskLog, logID, 0, now, null, 1, error, null)
+            .fail(err => {
+              winston.error('update task log failed: ', err);
+            });
+        });
+
+    }).fail(err => {
+      winston.error('initialize task log failed: ', err);
     });
   });
 };
