@@ -2,9 +2,12 @@
 
 const _ = require('lodash');
 const Q = require('q');
-const shortid = require('shortid');
+const moment = require('moment');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
+
+const expire = 2;
+const expireUnit = 'month';
 
 const PROCESS_STATUS = Object.freeze({
   INIT: "INIT",
@@ -18,7 +21,7 @@ const PROCESS_STATUS = Object.freeze({
 
 const updateTaskStatus = (queryId, status, callback) => {
   const sql = 'UPDATE cu_IntegratedQueryTask ' +
-    'SET status = @status, updTime = @updTime ' +
+    'SET status = @status, updTime = @updTime, expTime = @expTime ' +
     'WHERE queryID = @queryId ';
 
   let request = _connector.queryRequest()
@@ -41,8 +44,8 @@ const updateTaskStatus = (queryId, status, callback) => {
 module.exports.PROCESS_STATUS = PROCESS_STATUS;
 
 module.exports.initQueryTask = (queryId, userId, callback) => {
-  const sql = 'INSERT INTO cu_IntegratedQueryTask (queryID, status, crtTime, updTime, updUser) ' +
-    'VALUES (@queryId, @status, @crtTime, @updTime, @updUser)';
+  const sql = 'INSERT INTO cu_IntegratedQueryTask (queryID, status, crtTime, updTime, updUser, expTime) ' +
+    'VALUES (@queryId, @status, @crtTime, @updTime, @updUser, @expTime)';
 
   let now = new Date();
   let request = _connector.queryRequest()
@@ -50,7 +53,8 @@ module.exports.initQueryTask = (queryId, userId, callback) => {
     .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.INIT)
     .setInput('crtTime', _connector.TYPES.DateTime, now)
     .setInput('updTime', _connector.TYPES.DateTime, now)
-    .setInput('updUser', _connector.TYPES.NVarChar, userId);
+    .setInput('updUser', _connector.TYPES.NVarChar, userId)
+    .setInput('expTime', _connector.TYPES.Date, moment().startOf('day').add(expire, expireUnit).toDate());
 
   // Q.nfcall(request.executeQuery, sql).then(result => {
   //   winston.info(`===insertQueryLog result: ${result}`);
@@ -107,12 +111,13 @@ module.exports.setQueryTaskStatusParsingFailed = (queryId, callback) => {
 module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, records, callback) => {
   const sql = 'UPDATE cu_IntegratedQueryTask ' +
     'SET archiveSizeInBytes = @archiveSizeInBytes, archiveEntries = @archiveEntries,' +
-    'status = @status, records = @records, updTime = @updTime ' +
+    'status = @status, records = @records, updTime = @updTime, expTime = @expTime ' +
     'WHERE queryID = @queryId ';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('updTime', _connector.TYPES.DateTime, new Date())
+    .setInput('expTime', _connector.TYPES.Date, moment().startOf('day').add(expire, expireUnit).toDate())
     .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.COMPLETE)
     .setInput('records', _connector.TYPES.BigInt, records)
     .setInput('archiveSizeInBytes', _connector.TYPES.BigInt, sizeInBytes)
@@ -132,7 +137,7 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
 
 module.exports.getQueryTask = (queryId, callback) => {
   const sql = 'SELECT task.queryID, task.status, task.records, log.crtTime, log.updUser, log.reserve2 as mode, ' +
-    'task.archiveSizeInBytes, task.archiveEntries, log.criteria ' +
+    'task.archiveSizeInBytes, task.archiveEntries, log.criteria, task.expTime ' +
     'FROM cu_IntegratedQueryTask as task LEFT JOIN cu_QueryLog as log ' +
     'on task.queryID = log.queryID WHERE task.queryID = @queryId';
 

@@ -16,7 +16,8 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
         queryTime: null,
         fileSize: null,
         entries: [],
-        records: undefined
+        records: undefined,
+        expTime: null
       }),
       criteria: Map()
     };
@@ -34,7 +35,8 @@ export default class IntegratedQueryTaskOverview extends React.PureComponent {
           queryTime: moment(queryTask.crtTime).valueOf(),
           fileSize: queryTask.archiveSizeInBytes,
           entries: queryTask.archiveEntries,
-          records: queryTask.records
+          records: queryTask.records,
+          expTime: moment(queryTask.expTime).valueOf()
         }),
         criteria: Map(queryTask.criteria)
       });
@@ -124,6 +126,12 @@ class QueryTask extends React.PureComponent {
             <label htmlFor="inputName" className="col-sm-3 control-label">包含檔案數</label>
             <div className="col-sm-8">
               <input type="text" className="form-control" value={this.props.task.entries.length} placeholder="" readOnly={true}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="inputName" className="col-sm-3 control-label">檔案有效期限</label>
+            <div className="col-sm-8">
+              <input type="text" className="form-control" value={moment.utc(this.props.task.expTime).format('YYYY/MM/DD')} placeholder="" readOnly={true}/>
             </div>
           </div>
         </form>
