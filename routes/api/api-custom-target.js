@@ -18,7 +18,6 @@ const customTargetHelper = require('../../helpers/custom-target-helper');
 const fileHelper = require('../../helpers/file-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
-const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const middlewares = [factory.ajax_response_factory(), auth.ajaxCheck()];
 
 module.exports = (app) => {
@@ -171,7 +170,7 @@ module.exports = (app) => {
       //generate excel file
       let filename = Date.now();
       let xlsxFilename = `${filename}.xlsx`;
-      let xlsxFileAbsolutePath = path.join(storage, xlsxFilename);
+      let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
       return [
         filename,
         xlsxFilename,
