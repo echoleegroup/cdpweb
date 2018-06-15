@@ -19,10 +19,9 @@ module.exports = (app) => {
     const today = moment().startOf('day').valueOf();
 
     fs.readdirSync(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE).forEach(file => {
-      console.log(file);
       let filePath = path.resolve(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, file);
       let stat = fs.statSync(filePath);
-      if (!stat.isDirectory() && file.indexOf('.') < 0 && stat.birthtimeMs < today) {
+      if (!stat.isDirectory() && file.indexOf('.') < 0 && stat.atimeMs < today) {
         fs.unlinkSync(filePath);
       }
     });
