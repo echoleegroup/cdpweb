@@ -17,9 +17,10 @@ module.exports = (app) => {
   // schedule.scheduleJob(`0 * * * * *`, () => {
   schedule.scheduleJob(`${dailyTaskReportCron.minute} ${dailyTaskReportCron.hour} * * *`, () => {
     const today = moment().startOf('day').toDate();
+    const yesterday = moment().startOf('day').add(-1, 'day').toDate();
 
     const sqlQueryLog =
-      'SELECT queryID FROM cu_IntegratedQueryLog WHERE expTime < @today';
+      'SELECT queryID FROM cu_IntegratedQueryTask WHERE expTime < @today AND expTime >= @yesterday';
 
     const sqlDelStatistic =
       'DELETE FROM cu_IntegratedQueryStatistic ' +
@@ -34,14 +35,14 @@ module.exports = (app) => {
 
     const request = _connector.queryRequest()
       .setInput('today', _connector.TYPES.DateTime, today)
-      .setInput('status', _connector.TYPES.NVarChar, 'EXPIRED');
+      .setInput('yesterday', _connector.TYPES.DateTime, yesterday);
 
-    Q.spread([
+    Q.all([
       Q.nfcall(request.executeQuery, sqlQueryLog),
       Q.nfcall(request.executeUpdate, sqlDelStatistic),
       Q.nfcall(request.executeUpdate, sqlDelStatisticChart),
       // Q.nfcall(request.executeUpdate, sqlUpdateIntegratedQueryTaskStatus)
-    ]).then((queryLogs, ...restUpdates) => {
+    ]).spread((queryLogs, ...restUpdates) => {
       _.forEach(queryLogs, queryLog => {
         let sparkFeedbackFile = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryLog.queryID}.zip`);
         let sparkAnalysisFile = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryLog.queryID}.zip`);
@@ -57,6 +58,8 @@ module.exports = (app) => {
         });
       });
 
+    }).fail(err => {
+      winston.error('clean expired integrated-query history failed! ', err);
     });
   });
 };
