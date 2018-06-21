@@ -1,6 +1,9 @@
 const _ = require('lodash');
+const moment = require('moment');
+const request = require('request');
 const shortid = require('shortid');
 const winston = require('winston');
+const appConfig = require("../app-config");
 
 const BRANCH_MODEL_TEMPLATE = {
   type: 'branch',
@@ -252,6 +255,208 @@ module.exports = {
       customCriteriaSqlWhere: sqlWhere,
       paramsDynamic: childCriteria.params
     };
+  },
+
+  frontSiteToBackendQeuryScriptTransformer: (queryId, queryScript, callback) => {
+    const API_360_HOST = appConfig.get("API_360_HOST");
+    const API_360_PORT = appConfig.get("API_360_PORT");
+
+    const textExprBuilder = (operator, value) => {
+      switch (operator) {
+        // case 'not':
+        //   return 'NOT IN';
+        case 'eq':
+          return ` = '${value}'`;
+        case 'ne':
+          return ` != '${value}'`;
+        case 'lt':
+          return ` < '${value}'`;
+        case 'le':
+          return ` <= '${value}'`;
+        case 'gt':
+          return ` > '${value}'`;
+        case 'ge':
+          return ` >= '${value}'`;
+        case 'in':
+          return ' IS NULL';
+        case 'nn':
+          return ' IS NOT NULL';
+        default:
+          return '';
+      }
+    };
+
+    const dateExprBuilder = (operator, value) => {
+      let value = moment(value).format('YYYYMMDD');
+      return textExprBuilder(operator, value);
+    };
+
+    const datetimeExprBuilder = (operator, value) => {
+      let value = moment(value).format('YYYYMMDDHHmmss');
+      return textExprBuilder(operator, value);
+    };
+
+    const refOptionExprBuilder = (operator, value) => {
+      switch (operator) {
+        // case 'not':
+        //   return 'NOT IN';
+        case 'eq':
+          return ` IN ('${value.join(`','`)}')`;
+        case 'ne':
+          return ` NOT IN ('${value.join(`','`)}')`;
+        case 'in':
+          return ' IS NULL';
+        case 'nn':
+          return ' IS NOT NULL';
+        default:
+          return '';
+      }
+    };
+
+    const conditionExpr = (inputType, operator, value) => {
+      switch (inputType) {
+        case 'number':
+        case 'text':
+          return textExprBuilder(operator, value);
+        case 'date':
+          return dateExprBuilder(operator, value);
+        case 'datetime':
+          return datetimeExprBuilder(operator, value);
+        case 'refOption':
+          return refOptionExprBuilder(operator, value);
+        default:
+          return ''
+      }
+    };
+
+    const conditionWrapper = (criteria, operator = 'and') => {
+      return _.map(criteria, condi => {
+        if (!condi.field_id) {
+          return {
+            relation: operator,
+            children: _.map(condi.criteria, childCondi => {
+              return conditionWrapper(childCondi, condi.operator);
+            })
+          };
+        } else {
+          return {
+            relation: operator,
+            column: condi.field_id,
+            expr: conditionExpr(condi.input_type, condi.operator, condi.value)
+          }
+        }
+      });
+    };
+
+    const filterToPostWhereConditionWrapper = (filter) => {
+      let condition = [];
+      if(filter.period_start_value && filter.period_end_value) {
+        condition.push({
+          relation: 'and',
+          column: filter.feature,
+          expr: ` >= ${moment(filter.period_start_value).format('YYYYMMDD')}`
+        });
+
+        condition.push({
+          relation: 'and',
+          column: filter.feature,
+          expr: ` <= ${moment(filter.period_end_value).format('YYYYMMDD')}`
+        });
+      }
+      return condition;
+    };
+
+    let selectBlock = [];
+    let whereBlock = [];
+    let postWhereBlock = [];
+
+    //selectBlock of master table
+    selectBlock.push({
+      type: "master",
+      column: _.uniq(queryScript.export.master.features.concat(_.map(queryScript.statistic.features, 'feature_id')))
+    });
+
+    //selectBlock of relative tables
+    selectBlock = selectBlock.concat(
+      _.map(queryScript.export.relatives, (value, key) => {
+        return {
+          type: key,
+          column: value.features
+        };
+      })
+    );
+
+    //where of main table
+    let clientCriteria = queryScript.criteria.client[0] || [];
+    let vehicleCriteria = queryScript.criteria.vehicle[0] || [];
+    whereBlock.push({
+      type: 'master',
+      condition: conditionWrapper(clientCriteria.criteria || [], clientCriteria.operator).concat(
+        vehicleCriteria.criteria || [], vehicleCriteria.operator)
+    });
+    //where of transaction type.
+    //** The backend script do not currently support logically 'or' between each transaction type.
+    // Ignoring outer 'combo' criteria, and wrap child criteria separately.
+    let transaction = queryScript.criteria.transaction[0]? queryScript.criteria.transaction[0].criteria: [];
+    whereBlock.push(
+      _.map(transaction, condition => {
+        whereBlock.push({
+          type: condition.ref,
+          condition: conditionWrapper(condition.criteria)
+        });
+      })
+    );
+
+    //postWhere of master table
+    postWhereBlock.push({
+      type: 'master',
+      condition: filterToPostWhereConditionWrapper(queryScript.export.master.filter)
+    });
+
+    postWhereBlock = postWhereBlock.concat(
+      _.map(queryScript.export.relatives, (filter, type) => {
+        return {
+          type: type,
+          condition: filterToPostWhereConditionWrapper(filter)
+        }
+      })
+    );
+
+    let resultScript = {
+      select: selectBlock,
+      where: whereBlock,
+      postWhere: postWhereBlock,
+      statistic: queryScript.statistic
+    };
+
+    console.log('resultScript: ', resultScript);
+
+    let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0);
+    let requestBody = null;
+    let requestUrl = null;
+    if (hasTag) {
+      requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
+      requestBody = {
+        req_owner: resultScript,
+        req_log: queryScript
+      };
+    } else {
+      requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
+      requestBody = resultScript
+    }
+
+
+    request({
+      method: 'POST',
+      uri: requestUrl,
+      json: requestBody
+    }, (error, response, body) => {
+      // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+      if (error)
+        callback(error, null);
+      else
+        callback(null, resultScript);
+    });
   }
 };
 
