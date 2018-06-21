@@ -287,13 +287,13 @@ module.exports = {
     };
 
     const dateExprBuilder = (operator, value) => {
-      let value = moment(value).format('YYYYMMDD');
-      return textExprBuilder(operator, value);
+      let _value = moment(value).format('YYYYMMDD');
+      return textExprBuilder(operator, _value);
     };
 
     const datetimeExprBuilder = (operator, value) => {
-      let value = moment(value).format('YYYYMMDDHHmmss');
-      return textExprBuilder(operator, value);
+      let _value = moment(value).format('YYYYMMDDHHmmss');
+      return textExprBuilder(operator, _value);
     };
 
     const refOptionExprBuilder = (operator, value) => {
@@ -330,13 +330,13 @@ module.exports = {
     };
 
     const conditionWrapper = (criteria, operator = 'and') => {
+      // winston.info('conditionWrapper criteria: ', criteria);
+      // winston.info('conditionWrapper operator', operator);
       return _.map(criteria, condi => {
         if (!condi.field_id) {
           return {
             relation: operator,
-            children: _.map(condi.criteria, childCondi => {
-              return conditionWrapper(childCondi, condi.operator);
-            })
+            children: conditionWrapper(condi.criteria, condi.operator)
           };
         } else {
           return {
@@ -391,33 +391,33 @@ module.exports = {
     let vehicleCriteria = queryScript.criteria.vehicle[0] || [];
     whereBlock.push({
       type: 'master',
-      condition: conditionWrapper(clientCriteria.criteria || [], clientCriteria.operator).concat(
-        vehicleCriteria.criteria || [], vehicleCriteria.operator)
+      condition: conditionWrapper(queryScript.criteria.client).concat(
+        conditionWrapper(queryScript.criteria.vehicle))
     });
     //where of transaction type.
     //** The backend script do not currently support logically 'or' between each transaction type.
     // Ignoring outer 'combo' criteria, and wrap child criteria separately.
     let transaction = queryScript.criteria.transaction[0]? queryScript.criteria.transaction[0].criteria: [];
-    whereBlock.push(
-      _.map(transaction, condition => {
-        whereBlock.push({
-          type: condition.ref,
-          condition: conditionWrapper(condition.criteria)
-        });
-      })
-    );
-
-    //postWhere of master table
-    postWhereBlock.push({
-      type: 'master',
-      condition: filterToPostWhereConditionWrapper(queryScript.export.master.filter)
+    _.forEach(transaction, condition => {
+      whereBlock.push({
+        type: condition.ref,
+        condition: conditionWrapper(condition.criteria, condition.operator)
+      });
     });
 
+    //postWhere of master table
+    if (!_.isEmpty(queryScript.export.master.filter)) {
+      postWhereBlock.push({
+        type: 'master',
+        condition: filterToPostWhereConditionWrapper(queryScript.export.master.filter)
+      });
+    }
+
     postWhereBlock = postWhereBlock.concat(
-      _.map(queryScript.export.relatives, (filter, type) => {
+      _.map(queryScript.export.relatives, (relative, type) => {
         return {
           type: type,
-          condition: filterToPostWhereConditionWrapper(filter)
+          condition: filterToPostWhereConditionWrapper(relative.filter)
         }
       })
     );
@@ -429,7 +429,7 @@ module.exports = {
       statistic: queryScript.statistic
     };
 
-    console.log('resultScript: ', resultScript);
+    // winston.info('resultScript: ', resultScript);
 
     let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0);
     let requestBody = null;
