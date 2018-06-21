@@ -432,24 +432,22 @@ module.exports = {
     // winston.info('resultScript: ', resultScript);
 
     let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0);
-    let requestBody = null;
     let requestUrl = null;
+    let requestBody = {
+      req_owner: JSON.stringify(resultScript)
+    };
     if (hasTag) {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
-      requestBody = {
-        req_owner: resultScript,
-        req_log: queryScript
-      };
+      requestBody.req_log = JSON.stringify(queryScript);
     } else {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
-      requestBody = resultScript
     }
 
 
     request({
       method: 'POST',
       uri: requestUrl,
-      json: requestBody
+      form: requestBody
     }, (error, response, body) => {
       // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
       if (error)
