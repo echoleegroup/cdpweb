@@ -479,7 +479,7 @@ module.exports = (app) => {
       Q.nfcall(integrationStatisticService.getStatisticChartOfFeature, queryId, featureId)
     ]).spread((feature, chartData) => {
       let data = integratedHelper.chartDataProcessor(feature, chartData);
-      winston.info('chartData: ', data);
+      // winston.info('chartData: ', data);
       res.json(data);
     });
   });

@@ -21,7 +21,7 @@ const PROCESS_STATUS = Object.freeze({
 
 const updateTaskStatus = (queryId, status, callback) => {
   const sql = 'UPDATE cu_IntegratedQueryTask ' +
-    'SET status = @status, updTime = @updTime, expTime = @expTime ' +
+    'SET status = @status, updTime = @updTime ' +
     'WHERE queryID = @queryId ';
 
   let request = _connector.queryRequest()
