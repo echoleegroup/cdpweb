@@ -204,7 +204,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
             </FeatureAnalysis>
           </Loader>
           {/*<!-- table set Start -->*/}
-          <TaskDataInformation records={this.state.records}/>
+          <TaskDataInformation records={this.state.records} mode={this.mode}/>
         </ComponentRightColumnGrid>
       </div>
     );
@@ -215,6 +215,12 @@ class TaskDataInformation extends React.PureComponent {
   constructor(props) {
     super(props);
     this.recordText = '觀察顧客數';
+  };
+
+  componentWillMount() {
+    this.goToTaskOverview = () => {
+      window.location.href = `/integration/${this.mode}/query/${this.queryId}`;
+    }
   };
 
   render() {
@@ -232,7 +238,7 @@ class TaskDataInformation extends React.PureComponent {
           </table>
         </div>
         <div className="btn-block center-block">
-          <button type="button" className="btn btn-lg btn-default">條件總覽</button>
+          <button type="button" className="btn btn-lg btn-default" onClick={this.goToTaskOverview}>條件總覽</button>
         </div>
       </div>
     );
@@ -240,6 +246,18 @@ class TaskDataInformation extends React.PureComponent {
 }
 
 class FeatureAnalysis extends React.PureComponent {
+
+  ComponentFeatureInfo(props) {
+    if (isEmpty(props.value)) {
+      return <div/>;
+    }
+    return (
+      <tr>
+        <td>{props.title}：</td>
+        <td>{props.value}</td>
+      </tr>
+    );
+  }
 
   render() {
     // let ChartContainer = this.props.chartContainer;
@@ -256,6 +274,7 @@ class FeatureAnalysis extends React.PureComponent {
 
       display = '';
     }
+    let ComponentFeatureInfo = this.ComponentFeatureInfo;
 
     return (
       <div className="table_block table-responsive" style={{display: display}}>
@@ -266,18 +285,9 @@ class FeatureAnalysis extends React.PureComponent {
         {this.props.children}
         <table className="table">
           <tbody>
-          <tr>
-            <td>單位：</td>
-            <td>{this.props.selectedFeature.unit}</td>
-          </tr>
-          <tr>
-            <td>說明：</td>
-            <td>{this.props.selectedFeature.description}</td>
-          </tr>
-          <tr>
-            <td>資料來源：</td>
-            <td>{this.props.selectedFeature.dataSourceLabel}</td>
-          </tr>
+            <ComponentFeatureInfo title="單位" value={this.props.selectedFeature.unit}/>
+            <ComponentFeatureInfo title="說明" value={this.props.selectedFeature.description}/>
+            <ComponentFeatureInfo title="資料來源" value={this.props.selectedFeature.dataSourceLabel}/>
           </tbody>
         </table>
       </div>
@@ -378,6 +388,8 @@ export class CategoryLargeChart extends ContinuousLargeChart {
       "trendLines": [],
       "graphs": [
         {
+          "fillColors": "#F2B530",
+          "lineColor": "#F2B530",
           "fillAlphas": 1,
           "id": "AmGraph-1",
           "title": "graph 1",
@@ -386,21 +398,10 @@ export class CategoryLargeChart extends ContinuousLargeChart {
         }
       ],
       "guides": [],
-      "valueAxes": [
-        {
-          "id": "ValueAxis-1",
-          "title": "Axis title"
-        }
-      ],
+      "valueAxes": [],
       "allLabels": [],
       "balloon": {},
-      "titles": [
-        {
-          "id": "Title-1",
-          "size": 15, //font size of title
-          "text": this.props.feature.label
-        }
-      ],
+      "titles": [],
       // "dataProvider": this.props.chart.data
     };
   };

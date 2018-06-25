@@ -23,16 +23,16 @@ module.exports.getStatisticFeatureOfTask = (queryId, featureId, callback) => {
 module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
   const sql = 'select feature.featID, feature.featName, feature.dataType, feature.minPeriod, ' +
     'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median,' +
-    'feature.featNameExt AS unit, feature.featDesc AS description, ' +
+    'feature.featNameExt AS unit, feature.featDesc AS description, feature.dataSource ' +
     'ct.codeLabel AS dataSourceLabel, sf.standardDeviation, sf.scaleUpperBound, ' +
     'sf.scaleLowerBound, sf.maxScale, sf.maxPeak, sf.maxProportion ' +
     'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
-    'LEFT JOIN ft_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
+    'LEFT JOIN sy_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
     'WHERE queryID = @queryId AND sf.featID = feature.featID';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
-    .setInput('codeGroup', _connector.TYPES.NVarChar, 'ftdatasouce');
+    .setInput('codeGroup', _connector.TYPES.NVarChar, 'ftdatasource');
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
