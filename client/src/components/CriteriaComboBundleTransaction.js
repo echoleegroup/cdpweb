@@ -3,6 +3,12 @@ import CriteriaComboBundle from "./CriteriaComboBundle";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
 
 export default class CriteriaComboBundleTransaction extends CriteriaComboBundle {
+  constructor(props) {
+    super(props);
+    this.OPERATOR_OPTIONS = {
+      and: '全部'
+    };
+  };
 
   childBundleType() {
     return CRITERIA_COMPONENT_DICT.TRANSACTION;
