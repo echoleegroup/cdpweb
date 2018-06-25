@@ -286,14 +286,39 @@ module.exports = {
       }
     };
 
+    const numberExprBuilder = (operator, value) => {
+      switch (operator) {
+        // case 'not':
+        //   return 'NOT IN';
+        case 'eq':
+          return ` = ${value}`;
+        case 'ne':
+          return ` != ${value}`;
+        case 'lt':
+          return ` < ${value}`;
+        case 'le':
+          return ` <= ${value}`;
+        case 'gt':
+          return ` > ${value}`;
+        case 'ge':
+          return ` >= ${value}`;
+        case 'in':
+          return ' IS NULL';
+        case 'nn':
+          return ' IS NOT NULL';
+        default:
+          return '';
+      }
+    };
+
     const dateExprBuilder = (operator, value) => {
-      let _value = moment(value).format('YYYYMMDD');
-      return textExprBuilder(operator, _value);
+      let _value = `date('${moment(value).format('YYYY-MM-DD')}')`;
+      return numberExprBuilder(operator, _value);
     };
 
     const datetimeExprBuilder = (operator, value) => {
-      let _value = moment(value).format('YYYYMMDDHHmmss');
-      return textExprBuilder(operator, _value);
+      let _value = `date('${moment(value).format('YYYY-MM-DD HH:mm:ss')}')`;
+      return numberExprBuilder(operator, _value);
     };
 
     const refOptionExprBuilder = (operator, value) => {
@@ -316,6 +341,7 @@ module.exports = {
     const conditionExpr = (inputType, operator, value) => {
       switch (inputType) {
         case 'number':
+          return numberExprBuilder(operator, value);
         case 'text':
           return textExprBuilder(operator, value);
         case 'date':
@@ -354,13 +380,13 @@ module.exports = {
         condition.push({
           relation: 'and',
           column: filter.feature,
-          expr: ` >= ${moment(filter.period_start_value).format('YYYYMMDD')}`
+          expr: ` >= date('${moment(filter.period_start_value).format('YYYY-MM-DD')}')`
         });
 
         condition.push({
           relation: 'and',
           column: filter.feature,
-          expr: ` <= ${moment(filter.period_end_value).format('YYYYMMDD')}`
+          expr: ` <= date('${moment(filter.period_end_value).format('YYYY-MM-DD')}')`
         });
       }
       return condition;
@@ -387,8 +413,6 @@ module.exports = {
     );
 
     //where of main table
-    let clientCriteria = queryScript.criteria.client[0] || [];
-    let vehicleCriteria = queryScript.criteria.vehicle[0] || [];
     whereBlock.push({
       type: 'master',
       condition: conditionWrapper(queryScript.criteria.client).concat(
@@ -431,30 +455,68 @@ module.exports = {
 
     // winston.info('resultScript: ', resultScript);
 
-    let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0);
+    let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0) ||
+      (_.intersection(
+        ['TagQtn', 'TagOwnMedia', 'TagOuterMedia', 'TagEInterest', 'TagEIntent', 'TagActive'],
+        _.keys(queryScript.export.relatives)
+      ).length > 0);
+
     let requestUrl = null;
-    let requestBody = {
-      req_owner: JSON.stringify(resultScript)
-    };
+    let requestBody = null;
     if (hasTag) {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
-      requestBody.req_log = JSON.stringify(queryScript);
+      requestBody = require('querystring').stringify({
+        req_owner: `{${JSON.stringify(resultScript)}}`,
+        req_log: JSON.stringify(queryScript)
+      });
+
+      request({
+        url: requestUrl,
+        method: 'POST',
+        json: true,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: requestBody
+      }, (error, response, body) => {
+        if (error)
+          callback(error, null);
+        else
+          callback(null, resultScript);
+      });
     } else {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
+      requestBody = JSON.stringify(resultScript);
+
+      request({
+        url: requestUrl,
+        method: 'POST',
+        json: true,
+        body: requestBody
+      }, (error, response, body) => {
+        if (error)
+          callback(error, null);
+        else
+          callback(null, resultScript);
+      });
     }
 
+    // winston.info('queryScript: ', queryScript.statistic);
+    // winston.info('requestBody.req_log: ', requestBody.req_log.statistic);
 
-    request({
-      method: 'POST',
-      uri: requestUrl,
-      form: requestBody
-    }, (error, response, body) => {
-      // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
-      if (error)
-        callback(error, null);
-      else
-        callback(null, resultScript);
-    });
+
+    // request({
+    //   method: 'POST',
+    //   uri: requestUrl,
+    //   body: JSON.stringify(requestBody),
+    //   json: true
+    // }, (error, response, body) => {
+    //   // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    //   if (error)
+    //     callback(error, null);
+    //   else
+    //     callback(null, resultScript);
+    // });
   }
 };
 
