@@ -524,7 +524,7 @@ const categoryChartDataProcessor = (feature, chartData) => {
       peak: Number(data.peak),
       proportion: data.proportion,
       seq: data.seq,
-      sort: feature.codeGroup && feature.codeGroup[data.scale]? feature.codeGroup[data.scale].codeSort: ''
+      sort: feature.codeGroup && feature.codeGroup[data.scale]? feature.codeGroup[data.scale].codeSort: data.scale
     }
   }), ['sort', 'seq']);
 };
