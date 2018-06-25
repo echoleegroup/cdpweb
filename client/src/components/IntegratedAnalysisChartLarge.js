@@ -204,7 +204,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
             </FeatureAnalysis>
           </Loader>
           {/*<!-- table set Start -->*/}
-          <TaskDataInformation records={this.state.records} mode={this.mode}/>
+          <TaskDataInformation records={this.state.records} mode={this.mode} queryId={this.queryId}/>
         </ComponentRightColumnGrid>
       </div>
     );
@@ -219,7 +219,7 @@ class TaskDataInformation extends React.PureComponent {
 
   componentWillMount() {
     this.goToTaskOverview = () => {
-      window.location.href = `/integration/${this.mode}/query/${this.queryId}`;
+      window.location.href = `/integration/${this.props.mode}/query/${this.props.queryId}`;
     }
   };
 
