@@ -297,16 +297,17 @@ class OperatorSelector extends React.PureComponent {
 class InputBase extends React.PureComponent {
   getInputData() {
     let value = this.getValue(this.input);
-    return this.validate(value)? {
+    let message = this.validate(value);
+    return message? {
+      message_error: message
+    }: {
       value,
       value_label: this.getValueLabel(value)
-    }: {
-      message_error: '請輸入條件值'
     };
   }
 
   validate(value) {
-    return !isEmpty(value);
+    return isEmpty(value)? '請輸入條件值': null;
   };
 
   getValue(inputElement) {
@@ -328,7 +329,12 @@ class InputBase extends React.PureComponent {
   }
 }
 
-class NumberInput extends InputBase {}
+class NumberInput extends InputBase {
+  validate(value) {
+    const regex = /^\-{0,1}([0-9]+|[0-9]+\.[0-9]+)$/g;
+    return regex.test(value)? null: '請輸入正確數字';
+  };
+}
 
 class TextInput extends InputBase {}
 
