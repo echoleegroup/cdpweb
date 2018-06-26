@@ -249,7 +249,7 @@ class FeatureAnalysis extends React.PureComponent {
 
   ComponentFeatureInfo(props) {
     if (isEmpty(props.value)) {
-      return <div/>;
+      return null;
     }
     return (
       <tr>
