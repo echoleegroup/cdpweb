@@ -30,7 +30,7 @@ module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
     'LEFT JOIN (' +
     '   SELECT COUNT(*) AS size, featID ' +
     '   FROM cu_IntegratedQueryStatisticChart' +
-    '   WHERE queryID = @queryId GROUP BY featID ) chart ON sf.featID = chart.featID' +
+    '   WHERE queryID = @queryId GROUP BY featID ) chart ON feature.featID = chart.featID ' +
     'LEFT JOIN sy_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
     'WHERE sf.queryID = @queryId AND sf.featID = feature.featID';
 
