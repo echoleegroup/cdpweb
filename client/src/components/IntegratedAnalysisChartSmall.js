@@ -61,7 +61,7 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
           hour: 'YYYY/MM/DD HH',
           minute: 'YYYY/MM/DD HH:mm'
         };
-        return (<td>{moment(feature.maxScale).startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>);
+        return (<td>{moment(feature.maxScale, 'X').startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>);
       }
     };
     const column3Handler = {

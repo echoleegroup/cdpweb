@@ -25,10 +25,14 @@ module.exports.getStatisticFeaturesOfTask = (queryId, callback) => {
     'feature.chartType, feature.codeGroup, sf.category, sf.average, sf.median,' +
     'feature.featNameExt AS unit, feature.featDesc AS description, ' +
     'ct.codeLabel AS dataSourceLabel, sf.standardDeviation, sf.scaleUpperBound, ' +
-    'sf.scaleLowerBound, sf.maxScale, sf.maxPeak, sf.maxProportion ' +
+    'sf.scaleLowerBound, sf.maxScale, sf.maxPeak, sf.maxProportion, ISNULL(chart.size, 0) AS chartSize ' +
     'FROM cu_IntegratedQueryStatistic sf, cd_Feature feature ' +
+    'LEFT JOIN (' +
+    '   SELECT COUNT(*) AS size, featID ' +
+    '   FROM cu_IntegratedQueryStatisticChart' +
+    '   WHERE queryID = @queryId GROUP BY featID ) chart ON sf.featID = chart.featID' +
     'LEFT JOIN sy_CodeTable ct ON ct.codeGroup = @codeGroup AND ct.codeValue = feature.dataSource ' +
-    'WHERE queryID = @queryId AND sf.featID = feature.featID';
+    'WHERE sf.queryID = @queryId AND sf.featID = feature.featID';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
