@@ -326,14 +326,24 @@ module.exports = {
       }
     };
 
-    const conditionExpr = (dataType, operator, value) => {
+    const stringSparkSqlBuilder = (inputType, value) => {
+      switch (inputType) {
+        case 'date':
+          return moment(value).format('YYYYMMDD');
+        default:
+          return value;
+      }
+    };
+
+    const conditionExpr = (dataType, inputType, operator, _value) => {
       // winston.info('dataType: ', dataType);
 
       switch (dataType) {
         // case 'number':
         //   return numberExprBuilder(operator, value);
-        // case 'text':
-        //   return textExprBuilder(operator, value);
+        case 'string':
+          let _value = stringSparkSqlBuilder(inputType, value);
+          return expressionSparkSqlBuilder(operator, dataType, _value);
         // case 'date':
         //   return dateExprBuilder(operator, value);
         // case 'datetime':
@@ -358,7 +368,7 @@ module.exports = {
           return {
             relation: operator,
             column: condi.field_id,
-            expr: conditionExpr(condi.data_type, condi.operator, condi.value)
+            expr: conditionExpr(condi.data_type, condi.input_type, condi.operator, condi.value)
           }
         }
       });
