@@ -16,7 +16,7 @@ export default class IntegratedCriteriaClient extends IntegratedCriteriaBase {
         ref_label: null,
         type: "combo",
         criteria: [{
-          data_type: "text",
+          data_type: "string",
           field_id: "MAIN_TARGET",
           field_label: "對象別",
           id: shrotid.generate(),
