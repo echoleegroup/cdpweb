@@ -95,8 +95,6 @@ class Branch extends React.PureComponent {
 
   componentWillMount() {
 
-    console.log('Branch componentWillMount');
-
     this.clickHandler = () => {
       const branchClickHandler = this.props.branchClickHandler;
       return (e) => {
