@@ -261,97 +261,164 @@ module.exports = {
     const API_360_HOST = appConfig.get("API_360_HOST");
     const API_360_PORT = appConfig.get("API_360_PORT");
 
-    const textExprBuilder = (operator, value) => {
-      switch (operator) {
-        // case 'not':
-        //   return 'NOT IN';
-        case 'eq':
-          return ` = '${value}'`;
-        case 'ne':
-          return ` != '${value}'`;
-        case 'lt':
-          return ` < '${value}'`;
-        case 'le':
-          return ` <= '${value}'`;
-        case 'gt':
-          return ` > '${value}'`;
-        case 'ge':
-          return ` >= '${value}'`;
-        case 'in':
-          return ' IS NULL';
-        case 'nn':
-          return ' IS NOT NULL';
-        default:
-          return '';
-      }
-    };
+    // const textExprBuilder = (operator, value) => {
+    //   switch (operator) {
+    //     // case 'not':
+    //     //   return 'NOT IN';
+    //     case 'eq':
+    //       return ` = '${value}'`;
+    //     case 'ne':
+    //       return ` != '${value}'`;
+    //     case 'lt':
+    //       return ` < '${value}'`;
+    //     case 'le':
+    //       return ` <= '${value}'`;
+    //     case 'gt':
+    //       return ` > '${value}'`;
+    //     case 'ge':
+    //       return ` >= '${value}'`;
+    //     case 'in':
+    //       return ' IS NULL';
+    //     case 'nn':
+    //       return ' IS NOT NULL';
+    //     default:
+    //       return '';
+    //   }
+    // };
+    //
+    // const numberExprBuilder = (operator, value) => {
+    //   switch (operator) {
+    //     // case 'not':
+    //     //   return 'NOT IN';
+    //     case 'eq':
+    //       return ` = ${value}`;
+    //     case 'ne':
+    //       return ` != ${value}`;
+    //     case 'lt':
+    //       return ` < ${value}`;
+    //     case 'le':
+    //       return ` <= ${value}`;
+    //     case 'gt':
+    //       return ` > ${value}`;
+    //     case 'ge':
+    //       return ` >= ${value}`;
+    //     case 'in':
+    //       return ' IS NULL';
+    //     case 'nn':
+    //       return ' IS NOT NULL';
+    //     default:
+    //       return '';
+    //   }
+    // };
+    //
+    // const dateExprBuilder = (operator, value) => {
+    //   let _value = `date('${moment(value).format('YYYY-MM-DD')}')`;
+    //   return numberExprBuilder(operator, _value);
+    // };
+    //
+    // const datetimeExprBuilder = (operator, value) => {
+    //   let _value = `date('${moment(value).format('YYYY-MM-DD HH:mm:ss')}')`;
+    //   return numberExprBuilder(operator, _value);
+    // };
+    //
+    // const refOptionExprBuilder = (operator, value) => {
+    //   switch (operator) {
+    //     // case 'not':
+    //     //   return 'NOT IN';
+    //     case 'eq':
+    //       return ` IN ('${value.join(`','`)}')`;
+    //     case 'ne':
+    //       return ` NOT IN ('${value.join(`','`)}')`;
+    //     case 'in':
+    //       return ' IS NULL';
+    //     case 'nn':
+    //       return ' IS NOT NULL';
+    //     default:
+    //       return '';
+    //   }
+    // };
 
-    const numberExprBuilder = (operator, value) => {
-      switch (operator) {
-        // case 'not':
-        //   return 'NOT IN';
-        case 'eq':
-          return ` = ${value}`;
-        case 'ne':
-          return ` != ${value}`;
-        case 'lt':
-          return ` < ${value}`;
-        case 'le':
-          return ` <= ${value}`;
-        case 'gt':
-          return ` > ${value}`;
-        case 'ge':
-          return ` >= ${value}`;
-        case 'in':
-          return ' IS NULL';
-        case 'nn':
-          return ' IS NOT NULL';
-        default:
-          return '';
-      }
-    };
-
-    const dateExprBuilder = (operator, value) => {
-      let _value = `date('${moment(value).format('YYYY-MM-DD')}')`;
-      return numberExprBuilder(operator, _value);
-    };
-
-    const datetimeExprBuilder = (operator, value) => {
-      let _value = `date('${moment(value).format('YYYY-MM-DD HH:mm:ss')}')`;
-      return numberExprBuilder(operator, _value);
-    };
-
-    const refOptionExprBuilder = (operator, value) => {
-      switch (operator) {
-        // case 'not':
-        //   return 'NOT IN';
-        case 'eq':
-          return ` IN ('${value.join(`','`)}')`;
-        case 'ne':
-          return ` NOT IN ('${value.join(`','`)}')`;
-        case 'in':
-          return ' IS NULL';
-        case 'nn':
-          return ' IS NOT NULL';
-        default:
-          return '';
-      }
-    };
-
-    const conditionExpr = (inputType, operator, value) => {
-      switch (inputType) {
-        case 'number':
-          return numberExprBuilder(operator, value);
-        case 'text':
-          return textExprBuilder(operator, value);
+    const valueBuilder = (dataType, value) => {
+      switch (dataType) {
+        case 'string':
+          return `'${value}'`;
+        case 'boolean':
+        case 'integer':
+        case 'long':
+        case 'double':
+          // return value;
+        case 'decimal':
+          return value;
+          // return `decimal(${value})`;
+        case 'timestamp':
+          return `timestamp('${moment(value).format('YYYY-MM-DD HH:mm:ss')}')`;
         case 'date':
-          return dateExprBuilder(operator, value);
-        case 'datetime':
-          return datetimeExprBuilder(operator, value);
-        case 'refOption':
-          return refOptionExprBuilder(operator, value);
+          return `date('${moment(value).format('YYYY-MM-DD HH:mm:ss')}')`;
         default:
-          return ''
+          return `'${value}'`;
+      }
+    };
+
+    const expressionSparkSqlBuilder = (operator, dataType, value) => {
+      let _value = valueBuilder(dataType, value);
+
+      switch (operator) {
+        case 'eq':
+          return ` = ${_value}`;
+        case 'ne':
+          return ` != ${_value}`;
+        case 'lt':
+          return ` < ${_value}`;
+        case 'le':
+          return ` <= ${_value}`;
+        case 'gt':
+          return ` > ${_value}`;
+        case 'ge':
+          return ` >= ${_value}`;
+        case 'in':
+          return ' IS NULL';
+        case 'nn':
+          return ' IS NOT NULL';
+        default:
+          return '';
+      }
+    };
+
+    const optionSparkSqlBuilder = (operator, dataType, options = []) => {
+      let optionValues = _.map(options, option => {
+        return valueBuilder(dataType, option);
+      }).join(',');
+
+      switch (operator) {
+        case 'eq':
+          return ` IN (${optionValues})`;
+        case 'ne':
+          return ` NOT IN (${optionValues})`;
+        case 'in':
+          return ' IS NULL';
+        case 'nn':
+          return ' IS NOT NULL';
+        default:
+          return '';
+      }
+    };
+
+    const conditionExpr = (dataType, operator, value) => {
+      // winston.info('dataType: ', dataType);
+
+      switch (dataType) {
+        // case 'number':
+        //   return numberExprBuilder(operator, value);
+        // case 'text':
+        //   return textExprBuilder(operator, value);
+        // case 'date':
+        //   return dateExprBuilder(operator, value);
+        // case 'datetime':
+        //   return datetimeExprBuilder(operator, value);
+        case 'refOption':
+          return optionSparkSqlBuilder(operator, dataType, value);
+        default:
+          return expressionSparkSqlBuilder(operator, dataType, value);
       }
     };
 
@@ -368,7 +435,7 @@ module.exports = {
           return {
             relation: operator,
             column: condi.field_id,
-            expr: conditionExpr(condi.input_type, condi.operator, condi.value)
+            expr: conditionExpr(condi.data_type, condi.operator, condi.value)
           }
         }
       });
