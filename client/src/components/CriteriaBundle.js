@@ -143,10 +143,6 @@ export default class CriteriaBundle extends React.PureComponent {
     this.props.assignCriteria(this.insertCriteriaState);
   };
 
-  addCriteriaClickHandler() {
-    this.props.assignCriteria(this.insertCriteriaState);
-  };
-
   ComponentCustomized(props) {
     return (<div/>);
   };

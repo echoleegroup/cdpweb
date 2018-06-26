@@ -326,7 +326,7 @@ module.exports = {
       }
     };
 
-    const stringSparkSqlBuilder = (inputType, value) => {
+    const stringValueTransformer = (inputType, value) => {
       switch (inputType) {
         case 'date':
           return moment(value).format('YYYYMMDD');
@@ -335,14 +335,14 @@ module.exports = {
       }
     };
 
-    const conditionExpr = (dataType, inputType, operator, _value) => {
+    const conditionExpr = (dataType, inputType, operator, value) => {
       // winston.info('dataType: ', dataType);
 
       switch (dataType) {
         // case 'number':
         //   return numberExprBuilder(operator, value);
         case 'string':
-          let _value = stringSparkSqlBuilder(inputType, value);
+          let _value = stringValueTransformer(inputType, value);
           return expressionSparkSqlBuilder(operator, dataType, _value);
         // case 'date':
         //   return dateExprBuilder(operator, value);
