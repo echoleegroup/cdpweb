@@ -33,8 +33,9 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
 
     const column1Handler = {
       continuous: (feature) => {
+        let value = (feature.chartSize > 0 && feature.median)? feature.median: '無資料';
         return (
-          <td>{feature.median} <img src="/images/icon_median.png" alt="中" className="icon_float"/> </td>
+          <td>{value} <img src="/images/icon_median.png" alt="中" className="icon_float"/> </td>
         );
       },
       category: (feature) => {
@@ -46,12 +47,15 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     };
     const column2Handler = {
       continuous: (feature) => {
+        let value = (feature.chartSize > 0 && feature.average)? feature.average: '無資料';
         return (
-          <td>{feature.average} <img src="/images/icon_average.png" alt="平" className="icon_float"/> </td>
+          <td>{value} <img src="/images/icon_average.png" alt="平" className="icon_float"/> </td>
         );
       },
       category: (feature) => {
-        return (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>);
+        return (feature.chartSize > 0 && feature.maxScale)?
+          (<td>{feature.ref? feature.ref[feature.maxScale].codeLabel: feature.maxScale}</td>):
+          (<td>無資料</td>);
       },
       date: (feature) => {
         const formatter = {
@@ -61,20 +65,27 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
           hour: 'YYYY/MM/DD HH',
           minute: 'YYYY/MM/DD HH:mm'
         };
-        return (<td>{moment(feature.maxScale, 'X').startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>);
+        return (feature.chartSize > 0 && feature.maxScale)?
+          (<td>{moment(feature.maxScale, 'X').startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>):
+          (<td>無資料</td>);
       }
     };
     const column3Handler = {
       continuous: (feature) => {
+        let value = (feature.chartSize > 0 && feature.standardDeviation)? feature.standardDeviation: '無資料';
         return (
-          <td>{feature.standardDeviation} <img src="/images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
+          <td>{value} <img src="/images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
         );
       },
       category: (feature) => {
-        return (<td>{feature.maxProportion}%</td>);
+        return (feature.chartSize > 0 && feature.maxProportion)?
+          (<td>{feature.maxProportion}%</td>):
+          (<td>無資料</td>);
       },
       date: (feature) => {
-        return (<td>{feature.maxProportion}%</td>);
+        return (feature.chartSize > 0 && feature.maxProportion)?
+          (<td>{feature.maxProportion}%</td>):
+          (<td>無資料</td>);
       }
     };
 
