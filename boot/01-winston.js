@@ -10,29 +10,13 @@ const constants = require('../utils/constants');
 
 module.exports = () => {
   const transports = [];
-  winston.level = process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'info';
-
-
-  const consoleLogger = new winston.transports.Console({
-    timestamp: () => {
-      //return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
-      return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
-    },
-    formatter: (options) => {
-      return winston.config.colorize(options.level, options.timestamp() + ' ') +
-        winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
-        (options.message ? options.message : '') +
-        (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
-    }
-  });
-  transports.push(consoleLogger);
-
-  try {
-    fs.mkdirSync(path.join(__dirname, '../' + constants.LOG_FOLDER_PATH));
-  } catch (ignored_err) {
-  }
+  const level = process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'info';
 
   if ('production' === process.env.NODE_ENV) {
+    try {
+      fs.mkdirSync(path.join(__dirname, '../' + constants.LOG_FOLDER_PATH));
+    } catch (ignored_err) {}
+
     const dailyRotateLoggerInfo = new DailyRotateFile({
       name: 'dailyRotateLoggerInfo',
       dirname: constants.LOG_FOLDER_PATH,
@@ -50,6 +34,7 @@ module.exports = () => {
           (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
       }
     });
+
     const dailyRotateLoggerError = new DailyRotateFile({
       name: 'dailyRotateLoggerError',
       dirname: constants.LOG_FOLDER_PATH,
@@ -70,6 +55,22 @@ module.exports = () => {
 
     transports.push(dailyRotateLoggerInfo);
     transports.push(dailyRotateLoggerError);
+  } else {
+    const consoleLogger = new winston.transports.Console({
+      level,
+      json: false,
+      timestamp: () => {
+        //return (new Date().toISOString()).replace(/\..+/, '').replace(/T/, ' ');
+        return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+      },
+      formatter: (options) => {
+        return winston.config.colorize(options.level, options.timestamp() + ' ') +
+          winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+          (options.message ? options.message : '') +
+          (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
+      }
+    });
+    transports.push(consoleLogger);
   }
 
   winston.configure({
