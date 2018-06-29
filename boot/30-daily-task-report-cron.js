@@ -3,8 +3,8 @@ let moment = require('moment');
 
 module.exports = (app) => {
   let dailyTaskReportCron = {
-    minute: 33,
-    hour: 5
+    minute: 50,
+    hour: 8
   };
 
   // schedule.scheduleJob(`0 * * * * *`, () => {

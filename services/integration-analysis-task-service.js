@@ -14,6 +14,7 @@ const PROCESS_STATUS = Object.freeze({
   REMOTE_PROCESSING: "REMOTE_PROCESSING",
   REMOTE_SERVICE_UNAVAILABLE: "REMOTE_SERVICE_UNAVAILABLE",
   REMOTE_FILE_NOT_FOUND: "REMOTE_FILE_NOT_FOUND",
+  RESULT_PACK_NOT_FOUND: "RESULT_PACK_NOT_FOUND",
   PARSING: "PARSING",
   PARSING_FAILED: "PARSING_FAILED",
   COMPLETE: "COMPLETE"
@@ -100,6 +101,10 @@ module.exports.setQueryTaskStatusRemoteFileNotFound = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.REMOTE_FILE_NOT_FOUND, callback);
 };
 
+module.exports.setQueryTaskStatusResultPackNotFound = (queryId, callback) => {
+  updateTaskStatus(queryId, PROCESS_STATUS.RESULT_PACK_NOT_FOUND, callback);
+};
+
 module.exports.setQueryTaskStatusParsing = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.PARSING, callback);
 };
@@ -148,5 +153,19 @@ module.exports.getQueryTask = (queryId, callback) => {
     callback(null, result[0]);
   }).fail(err => {
     callback(err);
+  });
+};
+
+module.exports.getTasksByStatus = (status, callback) => {
+  const sql = 'SELECT queryID FROM cu_IntegratedQueryTask WHERE status = @status';
+
+  let request = _connector.queryRequest()
+    .setInput('status', _connector.TYPES.NVarChar, taskService.PROCESS_STATUS.REMOTE_PROCESSING)
+    .setInput('crtTime', _connector.TYPES.Date, moment().startOf('day').add(-3, 'day').toDate());
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
+  }).fail(error => {
+    callback(error);
   });
 };

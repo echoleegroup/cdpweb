@@ -11,7 +11,7 @@ const _connector = require('../utils/sql-query-util');
 module.exports = (app) => {
   let dailyTaskReportCron = {
     minute: 33,
-    hour: 5
+    hour: 10
   };
 
   // schedule.scheduleJob(`0 * * * * *`, () => {

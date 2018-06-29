@@ -133,7 +133,8 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
     winston.info(archive.pointer() + ' total bytes');
     winston.info('archiver has been finalized and the output file descriptor has closed.');
     // output.end();
-    callback(null, dest);
+    let fileStat = fs.statSync(dest);
+    callback(null, );
   });
 
   // good practice to catch this error explicitly
