@@ -160,8 +160,7 @@ module.exports.getTasksByStatus = (status, callback) => {
   const sql = 'SELECT queryID FROM cu_IntegratedQueryTask WHERE status = @status';
 
   let request = _connector.queryRequest()
-    .setInput('status', _connector.TYPES.NVarChar, taskService.PROCESS_STATUS.REMOTE_PROCESSING)
-    .setInput('crtTime', _connector.TYPES.Date, moment().startOf('day').add(-3, 'day').toDate());
+    .setInput('status', _connector.TYPES.NVarChar, status);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);

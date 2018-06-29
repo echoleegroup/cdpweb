@@ -24,4 +24,6 @@ module.exports = (app) => {
 
     winston.info('=== Webpack Hot Reloading ENABLED');
   }
+
+  return null;
 };

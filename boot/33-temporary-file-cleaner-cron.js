@@ -26,4 +26,6 @@ module.exports = (app) => {
       }
     });
   });
+
+  return null;
 };

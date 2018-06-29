@@ -76,4 +76,5 @@ module.exports = () => {
   winston.configure({
     transports: transports
   });
+  return null;
 };

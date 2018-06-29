@@ -62,4 +62,6 @@ module.exports = (app) => {
       winston.error('clean expired integrated-query history failed! ', err);
     });
   });
+
+  return null;
 };

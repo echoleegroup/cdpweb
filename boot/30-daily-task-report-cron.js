@@ -14,4 +14,6 @@ module.exports = (app) => {
     let startTime = moment(endTime).add(-1, 'day').valueOf();
     daileTaskJobReportApp.failureDailyTaskReport(startTime, endTime);
   });
+
+  return null;
 };

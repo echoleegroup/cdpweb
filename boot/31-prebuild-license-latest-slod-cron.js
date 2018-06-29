@@ -170,4 +170,6 @@ module.exports = (app) => {
       winston.error('initialize task log failed: ', err);
     });
   });
+
+  return null;
 };

@@ -2,34 +2,8 @@ const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
 const mssql = require('mssql');
-const db_info = require("../app-config").get("SQL_SERVER_INFO");
 
-//---mssql
-const config = {
-  user: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  server: db_info.host,   //這邊要注意一下!!
-  options: db_info.options,
-  requestTimeout: 900000,
-  pool: {
-    max: 10,
-    min: 2,
-    idleTimeoutMillis: 30000
-  }
-};
-
-const pool = new mssql.ConnectionPool(config);
-
-// pool.on('error', err => {
-//   winston.error('connection pool emmit error event: ', err);
-// });
-
-pool.connect((err) => {
-  err && winston.error('connect db failed: ', err);
-});
-
-winston.info('mssql connection pool established.');
+const pool = require('./connection-pool');
 
 const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => { }) => {
   let request = pool.request();
@@ -40,6 +14,7 @@ const execParameterizedSql = (sql, params = {}, callback = (err, resultSet) => {
     .then(result => {
       callback(null, result);
     }).catch((err) => {
+      console.log(err);
       winston.error('execParameterizedSql error: ', err);
     callback(err);
   });

@@ -39,7 +39,7 @@ module.exports = (app) => {
   umzug.on('migrating', logUmzugEvent('migrating'));
   umzug.on('migrated', logUmzugEvent('migrated'));
 
-  sequelizeInst.sync({ force: false }).catch(err => {
+  return sequelizeInst.sync({ force: false }).catch(err => {
     winston.error('=== [Model] Sync defined models failed:', err);
   }).finally(() => {
     umzug.up();

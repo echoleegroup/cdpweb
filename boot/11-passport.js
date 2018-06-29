@@ -52,5 +52,7 @@ module.exports = () => {
     });
   }));
 
+  return null;
+
   //winston.info('=== [Auth] Current Auth Strategy:', appConfig.get('AUTH_STRATEGIES')['CURRENT']);
 };

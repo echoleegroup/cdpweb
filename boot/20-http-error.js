@@ -18,6 +18,8 @@ module.exports = (app) => {
     next(error);
   });
 
+  return null;
+
   // APIs
   //app.use(constants.ENDPOINT_API + '/auth', require('./api/api-auth')(app));
 

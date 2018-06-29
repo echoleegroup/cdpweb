@@ -4,4 +4,5 @@ const winston = require('winston');
 
 module.exports = (app) => {
     require('../routes')(app);
+    return null;
 };

@@ -1,3 +1,4 @@
+const Q = require('q');
 const moment = require('moment');
 const winston = require('winston');
 const queue = require('../utils/queue');
@@ -11,9 +12,9 @@ module.exports = (app) => {
 
   let request = _connector.queryRequest()
     .setInput('status', _connector.TYPES.NVarChar, taskService.PROCESS_STATUS.REMOTE_PROCESSING)
-    .setInput('crtTime', _connector.TYPES.Date, moment().startOf('day').add(-3, 'day').toDate());
+    .setInput('crtTime', _connector.TYPES.DateTime, moment().startOf('day').add(-3, 'day').toDate());
 
-  Q.nfcall(request.executeQuery, sql).then(tasks => {
+  return Q.nfcall(request.executeQuery, sql).then(tasks => {
     tasks.forEach(task => {
       const processor = () => {
         const queryId = task.queryID;
@@ -45,6 +46,7 @@ module.exports = (app) => {
       queue.push(processor);
     });
   }).fail(err => {
+    console.log(err);
     winston.error('get remote processing integrated query task failed: ', err);
   });
 };

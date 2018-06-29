@@ -14,7 +14,7 @@ const constants = require('../utils/constants');
 const queryLogService = require('../services/query-log-service');
 const integrationTaskService = require('../services/integration-analysis-task-service');
 const integrationStatisticService = require('../services/integration-analysis-statistic-service');
-const fileHelper = require('file-helper');
+const fileHelper = require('./file-helper');
 
 const CHART_CATEGORY = {
   CONTINUOUS: 'continuous',
