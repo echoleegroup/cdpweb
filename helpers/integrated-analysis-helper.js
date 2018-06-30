@@ -587,6 +587,7 @@ module.exports.downloadQueryResultPack = (queryId, callback) => {
 
 module.exports.getIntegratedQueryPackParser = (queryId) => {
   return () => {
+    winston.info('integrated query task start to parse: ', queryId);
     const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
     const appConfig = require("../app-config");
     const subject = `${appConfig.get('PLATFORM')} - 顧客360查詢完成通知;`;
@@ -652,6 +653,7 @@ module.exports.getIntegratedQueryPackParser = (queryId) => {
               .fail(err => {
                 winston.error('send integrated query(queryId=%s) result mail to %s failed: ', queryId, to, err);
               });
+            return null;
           });
       });
   };
