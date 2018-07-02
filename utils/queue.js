@@ -16,7 +16,6 @@ const next = () => {
     let process = queue[id];
     winston.info(`task ${id} is fetched`);
     queue[id] = undefined;
-    winston.info(`task ${id} is fetched`);
     process().finally(() => {
       winston.info(`task ${id} finished`);
       concurrence.splice(concurrence.indexOf(id), 1);
@@ -25,8 +24,8 @@ const next = () => {
   }
 };
 
-module.exports.push = (processor = () => {}, callback = () => {}) => {
-  let id = shortid.generate();
+module.exports.push = (id, processor = () => {}, callback = () => {}) => {
+  id = id || shortid.generate();
   queue[id] = () => {
     return Q(processor()).then(data => {
       callback(null, data);

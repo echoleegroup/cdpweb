@@ -55,7 +55,7 @@ module.exports = () => {
 
     transports.push(dailyRotateLoggerInfo);
     transports.push(dailyRotateLoggerError);
-  } else {
+  }
     const consoleLogger = new winston.transports.Console({
       level,
       json: false,
@@ -71,7 +71,6 @@ module.exports = () => {
       }
     });
     transports.push(consoleLogger);
-  }
 
   winston.configure({
     transports: transports

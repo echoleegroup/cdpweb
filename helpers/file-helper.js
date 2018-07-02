@@ -117,7 +117,7 @@ module.exports.downloadRemoteFile = (url, dest, cb) => {
   });
 };
 
-module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
+module.exports.archiveFiles = (folder, srcPaths = [], dest, callback) => {
   try {
     fs.unlinkSync(dest);
   } catch (err) {
@@ -134,7 +134,7 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
     winston.info('archiver has been finalized and the output file descriptor has closed.');
     // output.end();
     let fileStat = fs.statSync(dest);
-    callback(null, );
+    callback(null, fileStat);
   });
 
   // good practice to catch this error explicitly
@@ -145,7 +145,7 @@ module.exports.archiveFiles = (srcPaths = [], dest, callback) => {
   archive.pipe(output);
 
   srcPaths.forEach(src => {
-    archive.append(fs.createReadStream(src), { name: path.basename(src) });
+    archive.append(fs.createReadStream(path.resolve(folder, src)), { name: path.basename(src) });
   });
 
   archive.finalize();

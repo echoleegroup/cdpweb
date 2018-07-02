@@ -231,7 +231,7 @@ const queryResultEntryParserPromise = (baseName, mode, featureIds, zipFile, entr
         });
 
         Q.nfcall(streamToCsvProcessor, readStream, path.resolve(workingPath, csvFileName), featureMap).then(target => {
-          deferred.resolve(baseName);
+          deferred.resolve(csvFileName);
         }).fail(err => {
           deferred.reject(err);
         });
@@ -355,7 +355,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
   let promises = [];
   let metaPromise = undefined;
   let statisticPromise = undefined;
-  let entries = [];
+  // let entries = [];
   // let metaPromise = Q();
   Q.nfcall(yauzl.open, zipPath, {lazyEntries: true}).then(zipFile => {
     zipFile.readEntry();
@@ -370,7 +370,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
         statisticPromise = queryStatisticParserPromise(queryId, zipFile, entry);
       } else if ('.json' === path.extname(fileName).toLowerCase()  && fileName.indexOf('__MACOSX') !== 0) {
         winston.info(`NEW ENTRY ${fileName}`);
-
+        // entries.push(fileName);
         // let featureIds = ('master' === baseName)? featureIdMap.master.features:
         //   (featureIdMap.relatives[baseName])? featureIdMap.relatives[baseName].features: [];
         let featureIds = featureIdMap[baseName];
@@ -392,13 +392,13 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
       // winston.info('zip file closed! promise length: ', promises);
       // zipStream.destroy();
       // callback(null, csvFilePaths);
-      Q.all([metaPromise, statisticPromise, ...promises]).spread((meta, statistic, ...entries) => {
+      Q.all([metaPromise, statisticPromise, ...promises]).spread((meta, statistic, ...entryPathes) => {
         winston.info('meta: ', meta);
         let records = meta? meta.rowCounts.master: 0;
         //archive all csv in path
         winston.info(`records : ${records}`);
-        winston.info(`all csvFilePaths : ${entries}`);
-        callback(null, {records, entries});
+        winston.info(`all csvFilePaths : ${entryPathes}`);
+        callback(null, {records, entries: entryPathes});
       }).fail(err => {
         //fail to parse zip entry
         winston.error('fail to parse zip entry', err);
@@ -572,12 +572,12 @@ module.exports.getIntegratedQueryData = (queryId, callback) => {
     });
 };
 
-module.exports.downloadQueryResultPack = (queryId, callback) => {
+module.exports.downloadQueryResultPack = (queryId, url, callback) => {
   const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-  const remoteDownloadUrl = `http://10.201.2.130:11002/download/${queryId}`;
-  const remoteDeleteUrl = `http://10.201.2.130:11002/delete/${queryId}`;
+  // const remoteDownloadUrl = `http://10.201.2.130:11002/download/${queryId}`;
+  // const remoteDeleteUrl = `http://10.201.2.130:11002/delete/${queryId}`;
 
-  Q.nfcall(fileHelper.downloadRemoteFile, remoteDownloadUrl, sparkZipPath)
+  Q.nfcall(fileHelper.downloadRemoteFile, url, sparkZipPath)
     .then(() => {
       callback(null, sparkZipPath);
     }).fail(err => {
@@ -585,76 +585,90 @@ module.exports.downloadQueryResultPack = (queryId, callback) => {
   });
 };
 
-module.exports.getIntegratedQueryPackParser = (queryId) => {
+module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
   return () => {
     winston.info('integrated query task start to parse: ', queryId);
-    const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
+    // const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
     const appConfig = require("../app-config");
     const subject = `${appConfig.get('PLATFORM')} - 顧客360查詢完成通知;`;
     const mailUtil = require('../utils/mail-util');
 
-    return Q.nfcall(this.getIntegratedQueryData, queryId)
-      .fail(err => {
-        winston.error('get task query data failed(task=%j): ', task, err);
-        throw err;
-      }).then(task => {
-        // no task
-        if (!task) {
-          winston.warn('integrated query task is not exist. queryId = ', queryId);
-          try {
-            fs.unlinkSync(sparkZipPath);
-          } catch (err) {
-            winston.warn(`unlink file ${sparkZipPath} failed: ${err}`);
-          }
-          return Q.resolve();
-        } else if (!fs.existsSync(sparkZipPath)) {
-          return Q.nfcall(integrationTaskService.setQueryTaskStatusResultPackNotFound, queryId)
-            .fail(err => {
-              winston.error('update query task status to result pack not found failed(task=%j): ', task, err);
-              return Q.resolve(err);
-            });
+    return Q.all([
+      Q.nfcall(this.getIntegratedQueryData, queryId),
+      Q.nfcall(integrationStatisticService.deleteStatisticChartOfFeature, queryId),
+      Q.nfcall(integrationStatisticService.deleteStatisticOfTask, queryId)
+    ]).fail(err => {
+      winston.error('get task query data failed(queryId=%j): ', queryId, err);
+      throw err;
+    }).spread(task => {
+      // no task
+      if (!task) {
+        winston.warn('integrated query task is not exist. queryId = ', queryId);
+        try {
+          fs.unlinkSync(packPath);
+        } catch (err) {
+          winston.warn(`unlink file ${packPath} failed: ${err}`);
         }
+        return Q.resolve();
+      } else if (!fs.existsSync(packPath)) {
+        return Q.nfcall(integrationTaskService.setQueryTaskStatusResultPackNotFound, queryId)
+          .fail(err => {
+            winston.error('update query task status to result pack not found failed(task=%j): ', task, err);
+            return Q.resolve(err);
+          });
+      }
 
-        //unpack and analysis
-        const userService = require('../services/user-service');
-        const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, require('shortid').generate());
+      //unpack and analysis
+      const userService = require('../services/user-service');
+      const workingPath = path.resolve(constants.WORKING_DIRECTORY_PATH_ABSOLUTE, require('shortid').generate());
+      require('mkdirp')(workingPath);
 
-        return Q.nfcall(this.extractAndParseQueryResultFile,
-          queryId, sparkZipPath, workingPath, task.featureIdMap, task.mode)
-          .then(info => {
+      return Q.nfcall(this.extractAndParseQueryResultFile,
+        queryId, packPath, workingPath, task.featureIdMap, task.mode)
+        .then(parsingInfo => {
 
-            const finalZipPath = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryId}.zip`);
-            // records = info.records;
+          const finalZipPath = path.join(constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE, `${queryId}.zip`);
+          // records = info.records;
 
-            return Q.nfcall(fileHelper.archiveFiles, info.entries, finalZipPath)
-              .then(archiveStat => {
-                winston.info('archive stat: %j', archiveStat);
-                return Q.all([
-                  Q.nfcall(userService.getUserInfo, task.creator),
-                  Q.nfcall(
-                    integrationTaskService.setQueryTaskStatusComplete, queryId, archiveStat.size,
-                    JSON.stringify(archiveStat.entries), info.records)
-                ]);
-              });
-          }).fail(err => {
+          return Q.nfcall(fileHelper.archiveFiles, workingPath, parsingInfo.entries, finalZipPath).fail(err => {
             winston.error('parsing to csv and archive failed: ', err);
             Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
               winston.error('set query task status as parsing-failed failed: ', err);
             });
-            throw err;
-          }).spread((userInfo, ...others) => {
-            let to = userInfo.email;
-            let data = {
-              userName: userInfo.userName,
-              queryTime: moment.utc(task.queryTime).format('YYYY/MM/DD HH:mm:ss'),
-              reviewUrl: `https://${process.env.HOST}:${process.env.PORT}/integration/${task.mode}/query/${queryId}`
-            };
-            Q.nfcall(mailUtil.sendByTemplate, '102', to, subject, data)
-              .fail(err => {
-                winston.error('send integrated query(queryId=%s) result mail to %s failed: ', queryId, to, err);
-              });
-            return null;
+          }).then(archiveStat => {
+            winston.info('archive stat: %j', archiveStat);
+            return Q.all([
+              Q.nfcall(userService.getUserInfo, task.creator),
+              Q.nfcall(
+                integrationTaskService.setQueryTaskStatusComplete, queryId, archiveStat.size,
+                JSON.stringify(parsingInfo.entries), parsingInfo.records)
+            ]).spread((userInfo, ...others) => {
+              winston.info('get user info: ', userInfo);
+              let to = userInfo.email;
+              let data = {
+                userName: userInfo.userName,
+                queryTime: moment.utc(task.queryTime).format('YYYY/MM/DD HH:mm:ss'),
+                reviewUrl: `https://${process.env.HOST}:${process.env.PORT}/integration/${task.mode}/query/${queryId}`
+              };
+              Q.nfcall(mailUtil.sendByTemplate, '102', to, subject, data)
+                .fail(err => {
+                  winston.error('send integrated query(queryId=%s) result mail to %s failed: ', queryId, to, err);
+                });
+              return null;
+            }).fail(err => {
+              console.log(err);
+              winston.error('get user info failed: ', err);
+            });
+          }).finally(() => {
+            winston.info('archiveFiles finally');
+            const rmdir = require('rimraf');
+            rmdir(workingPath, err => {
+              err && winston.warn(`remove ${workingPath} failed: `, err);
+            });
           });
+        }).fail(err => {
+          winston.error('parsing integrated query result failed(queryID=%s): ', queryId, err);
+        });
       });
   };
 };

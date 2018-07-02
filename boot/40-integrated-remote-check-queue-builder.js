@@ -16,21 +16,22 @@ module.exports = (app) => {
 
   return Q.nfcall(request.executeQuery, sql).then(tasks => {
     tasks.forEach(task => {
+      const queryId = task.queryID;
+
       const processor = () => {
-        const queryId = task.queryID;
         winston.info('integrated query task start to download: ', queryId);
-        // const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-        // const remoteDownloadUrl = `http://10.201.2.130:11002/download/${queryId}`;
+
+        const remoteDownloadUrl = `http://10.201.2.130:11002/download/${queryId}`;
         const remoteDeleteUrl = `http://10.201.2.130:11002/delete/${queryId}`;
 
-        return Q.nfcall(integratedAnalysisHelper.downloadQueryResultPack, queryId)
+        return Q.nfcall(integratedAnalysisHelper.downloadQueryResultPack, queryId, remoteDownloadUrl)
           .fail(err => {
             throw err;
           }).then(resultPackPath => {
             return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
               .then(() => {
                 require('request-promise-native').post(remoteDeleteUrl);
-                return queue.push(integratedAnalysisHelper.getIntegratedQueryPackParser(queryId));
+                return queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
               }).fail(err => {
                 winston.error('update query task status to parsing failed(task=%j): ', task, err);
                 throw err;
@@ -44,7 +45,7 @@ module.exports = (app) => {
 
       };  //end of processor
 
-      queue.push(processor);
+      queue.push(queryId, processor);
     });
   }).fail(err => {
     console.log(err);
