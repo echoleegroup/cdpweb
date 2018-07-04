@@ -78,7 +78,7 @@ module.exports.insertStatisticOfFeature = (
     .setInput('category', _connector.TYPES.NVarChar, category)
     .setInput('average', _connector.TYPES.Float, average)
     .setInput('median', _connector.TYPES.Float, median)
-    .setInput('standardDeviation', _connector.TYPES.Float, standardDeviation)
+    .setInput('standardDeviation', _connector.TYPES.NVarChar, standardDeviation)
     .setInput('scaleUpperBound', _connector.TYPES.NVarChar, scaleUpperBound)
     .setInput('scaleLowerBound', _connector.TYPES.NVarChar, scaleLowerBound)
     .setInput('maxScale', _connector.TYPES.NVarChar, maxScale)
