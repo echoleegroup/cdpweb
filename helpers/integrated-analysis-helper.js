@@ -290,7 +290,7 @@ const statisticDataProcessor = (queryId, stream, callback) => {
         // rowJson = {};
       }
 
-      let {feature_id, category, data, average = 0, median = 0, standard_deviation = 0, scale_upper_bound = null, scale_lower_bound = null} = rowJson;
+      let {feature_id, category, data, average = 0, median = 0, standard_deviation, scale_upper_bound = null, scale_lower_bound = null} = rowJson;
       winston.info(`feature_id: ${feature_id}`);
       winston.info(`category: ${category}`);
       winston.info(`average: ${average}`);
