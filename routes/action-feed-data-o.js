@@ -3,6 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const winston = require('winston');
 const xlsx = require("node-xlsx");
+const contentDisposition = require('content-disposition');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
 const downloadService = require('../services/download-service');
@@ -52,7 +53,7 @@ module.exports = (app) => {
     var datasource = req.query.datasource || '';
     downloadService.getFilePath(listid, datasource, function (err, result) {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-      res.setHeader("Content-Disposition", "attachment; filename=" + result.origName)
+      res.setHeader("Content-Disposition", contentDisposition(result.origName));
       winston.info(storage + result.uniqName);
       res.sendFile(storage + "/" + result.uniqName);
     });
