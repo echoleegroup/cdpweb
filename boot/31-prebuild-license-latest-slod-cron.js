@@ -100,7 +100,7 @@ module.exports = (app) => {
     const taskName = '預算車牌一年內最新訂單(31-prebuild-license-latest-slod-cron.js)';
     const now = Date.now();
 
-    Q.nfcall(taskLogService.initTaskLog, taskName, now, 0, null, now, message).then(resData => {
+    Q.nfcall(taskLogService.initTaskLog, taskName, now, 0, null, now, '').then(resData => {
       const logID = resData.logID;
 
       return Q(queryInterface.dropTable(tempTableName))
