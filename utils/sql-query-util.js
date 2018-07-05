@@ -70,45 +70,47 @@ const _that = {
     };
     return _this;
   },
-  preparedStatement: (sql) => {
-    let ps = new mssql.PreparedStatement(pool);
+  preparedStatement: (sql, transaction) => {
+    let ps = new mssql.PreparedStatement(transaction || pool);
+    let prepared = Q(ps.prepare(sql));
 
-    const getPrepared = (callback) => {
-      if (ps.prepared) {
-        callback(null, ps);
-      } else {
-        ps.prepare(sql).then(prepared => {
-          callback(null, prepared);
-        }).catch(err => {
-          winston.error('preparedStatement prepare error: ', err);
-          callback(err, null);
-        });
-      }
-    };
+    // const getPrepared = (callback) => {
+    //   if (ps.prepared) {
+    //     callback(null, ps);
+    //   } else {
+    //     ps.prepare(sql).then(prepared => {
+    //       callback(null, prepared);
+    //     }).catch(err => {
+    //       winston.error('preparedStatement prepare error: ', err);
+    //       callback(err, null);
+    //     });
+    //   }
+    // };
 
     const _this = {
       setType: (param, type) => {
         ps.input(param, type);
         return _this;
       },
-      execute: (params, callback = (err, resultSet) => { }) => {
-        Q.nfcall(getPrepared).then(prepared => {
-          return prepared.execute(params);
+      execute: (params, callback = () => {}) => {
+        prepared.then(prepared => {
+          return Q(prepared.execute(params));
         }).then(result => {
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
-        }).catch((err) => {
+        }).fail(err => {
           //ps.prepared && ps.unprepare();
           callback(err);
-        }).then(() => {
-          winston.info('===preparedStatement finally');
         });
       },
-      release: (callback = (err) => { }) => {
-        ps.prepared && ps.unprepare(callback);
+      release: () => {
+        return ps.unprepare();
       }
     };
     return _this;
-  }
+  },
+  getTransaction: () => {
+    return pool.transaction();
+  },
 };
 
 module.exports = _that;
