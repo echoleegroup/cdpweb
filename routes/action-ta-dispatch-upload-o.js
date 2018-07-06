@@ -115,7 +115,7 @@ module.exports = (app) => {
             ")" +
             ")";
           const partitions = 3;
-          const chunkSize = (sheetData.length / partitions) + 1;
+          const chunkSize = Math.trunc(sheetData.length / partitions) + 1;
           const chunks = _.chunk(sheetData, chunkSize);
           const chunkProcesses = chunks.map((chunk, chunkIndex) => {
             const firstLineNumberOfChunk = chunkSize * chunkIndex + indexToRowNumberOffset;
