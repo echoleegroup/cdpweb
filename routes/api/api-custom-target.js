@@ -171,32 +171,33 @@ module.exports = (app) => {
       let filename = Date.now();
       let xlsxFilename = `${filename}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
-      return [
-        filename,
-        xlsxFilename,
-        Q.nfcall(fileHelper.buildXlsxFile, {
-          xlsxDataSet: exportDateSet,
-          xlsxFileAbsolutePath: xlsxFileAbsolutePath
-        }).then(xlsxBuffer => {
-          //write download log to DB
-          return Q.nfcall(queryService.insertDownloadLog, {
-            queryId: queryLogId,
-            filePath: xlsxFileAbsolutePath,
-            userId: req.user.userId
-          }).then(result => {
-            return xlsxBuffer;
-          });
-        })];
 
-    }).spread((filename, xlsxFilename, xlsxBuffer) => {
-      //archive and response to client
-      fileHelper.httpResponseArchiveFile({
-        res,
-        path: [xlsxFilename],
-        buff: [xlsxBuffer],
-        fileName: filename,
-        password: req.user.userId.toLowerCase()
-      })
+      return Q.nfcall(fileHelper.buildXlsxFile, {
+        xlsxDataSet: exportDateSet,
+        xlsxFileAbsolutePath: xlsxFileAbsolutePath
+      }).then(xlsxBuffer => {
+        const zipBuff = fileHelper.buildZipBuffer({
+          path: [xlsxFilename],
+          buff: [xlsxBuffer],
+          password: req.user.userId.toLowerCase()
+        });
+        return Q.nfcall(queryService.insertDownloadLog, {
+          queryId: queryLogId,
+          filePath: xlsxFileAbsolutePath,
+          userId: req.user.userId,
+          fileSize: zipBuff.length
+        }).then(result => {
+          const zipContentType = 'application/octet-stream';
+
+          res.setHeader('Content-Type', zipContentType);
+          res.setHeader('Content-Disposition', `attachment; filename=${filename}.zip`);
+          res.setHeader('Content-Transfer-Encoding', 'binary');
+          res.setHeader('Content-Length', zipBuff.length);
+
+          res.end(new Buffer(zipBuff, 'binary'));
+        })
+      });
+
     }).fail(err => {
       if (err) {
         winston.error(`===/${mdId}/${batId}/criteria/export: `, err);

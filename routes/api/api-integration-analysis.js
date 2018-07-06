@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express');
+const fs = require('fs');
 const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
@@ -337,11 +338,13 @@ module.exports = (app) => {
     let queryId = req.params.queryId;
     let fileName = `${queryId}.zip`;
     let filePath = `${constants.ASSERTS_SPARK_INTEGRATED_ANALYSIS_ASSERTS_PATH_ABSOLUTE}/${fileName}`;
+    let stats = fs.statSync(filePath);
 
     Q.nfcall(queryLogService.insertDownloadLog, {
       queryId,
       filePath,
-      userId: req.user.userId
+      userId: req.user.userId,
+      fileSize: stats.size
     }).then(() => {
       let deferred = Q.defer();
       res.download(filePath, fileName, err => {

@@ -1,10 +1,12 @@
 "use strict";
+const fs = require('fs');
 const _ = require('lodash');
 const http = require('http');
 const url = require('url');
 const express = require('express');
 const winston = require('winston');
 const appConfig = require("../app-config");
+const queryLogService = require('../services/query-log-service');
 const middleware = require("../middlewares/login-check");
 const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
@@ -164,24 +166,18 @@ module.exports = (app) => {
         msg += chunk;
       });
       resp.on('end', function () {
-        let sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime) ' +
-          'VALUES (@queryId, @filePath, @userId, @downloadDate) ; '
-        let request = _connector.queryRequest()
-          .setInput('queryId', _connector.TYPES.NVarChar, "modelDownload")
-          .setInput('filePath', _connector.TYPES.NVarChar, JSON.parse(msg).jsonOutput.data)
-          .setInput('userId', _connector.TYPES.NVarChar, req.user.userId)
-          .setInput('downloadDate', _connector.TYPES.DateTime, new Date());
-        Q.nfcall(request.executeQuery, sql).then(result => {
+        const path = JSON.parse(msg).jsonOutput.data;
+        const stats = fs.statSync(path);
+        Q.nfcall(queryLogService.insertDownloadLog, {
+          queryId: 'modelDownload',
+          filePath: path,
+          userId: req.user.userId,
+          fileSize: stats.size
+        }).then(logId => {
           res.setHeader('Content-Type', 'application/vnd.openxmlformats');
           res.setHeader("Content-Disposition", "attachment; filename=file.xls");
-          res.sendFile(JSON.parse(msg).jsonOutput.data);
-        }).fail(err => {
-          winston.error(err);
+          res.sendFile(path);
         });
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-        res.setHeader("Content-Disposition", "attachment; filename=file.xls");
-        res.sendFile(JSON.parse(msg).jsonOutput.data);
-
       });
     }).end();
   });

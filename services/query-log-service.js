@@ -105,19 +105,22 @@ module.exports.getQueryLogProcessingData = (queryId, callback) => {
   });
 };
 
-module.exports.insertDownloadLog = ({queryId = null, filePath = null, userId = null, downloadDate = new Date()}, callback) => {
-  const sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime) ' +
-    'VALUES (@queryId, @filePath, @userId, @downloadDate) ; ' +
-    'SELECT SCOPE_IDENTITY() AS logID';
+module.exports.insertDownloadLog = (
+  {queryId = null, filePath = null, userId = null, downloadDate = new Date(), fileSize = 0}, callback) => {
+
+  const sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime, fileSize) ' +
+    'OUTPUT INSERTED.logID' +
+    'VALUES (@queryId, @filePath, @userId, @downloadDate, @fileSize)';
 
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('filePath', _connector.TYPES.NVarChar, filePath)
     .setInput('userId', _connector.TYPES.NVarChar, userId)
-    .setInput('downloadDate', _connector.TYPES.DateTime, downloadDate);
+    .setInput('downloadDate', _connector.TYPES.DateTime, downloadDate)
+    .setInput('fileSize', _connector.TYPES.BigInt, fileSize);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
-    callback(null, result);
+    callback(null, result[0]);
   }).fail(err => {
     winston.error(`===insert query log failed! (queryId=${queryId}, filename=${filename}, userId=${userId}, downloadDate=${downloadDate})`);
     winston.error(err);
