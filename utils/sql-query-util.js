@@ -70,32 +70,19 @@ const _that = {
     };
     return _this;
   },
-  preparedStatement: (sql, transaction) => {
-    let ps = new mssql.PreparedStatement(transaction || pool);
-    let prepared = Q(ps.prepare(sql));
-
-    // const getPrepared = (callback) => {
-    //   if (ps.prepared) {
-    //     callback(null, ps);
-    //   } else {
-    //     ps.prepare(sql).then(prepared => {
-    //       callback(null, prepared);
-    //     }).catch(err => {
-    //       winston.error('preparedStatement prepare error: ', err);
-    //       callback(err, null);
-    //     });
-    //   }
-    // };
+  preparedStatement: (transaction) => {
+    const ps = new mssql.PreparedStatement(transaction || pool);
 
     const _this = {
       setType: (param, type) => {
         ps.input(param, type);
         return _this;
       },
+      prepare: (sql) => {
+        return ps.prepare(sql);
+      },
       execute: (params, callback = () => {}) => {
-        prepared.then(prepared => {
-          return Q(prepared.execute(params));
-        }).then(result => {
+        ps.execute(params).then(result => {
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
         }).fail(err => {
           //ps.prepared && ps.unprepare();
@@ -107,10 +94,7 @@ const _that = {
       }
     };
     return _this;
-  },
-  getTransaction: () => {
-    return pool.transaction();
-  },
+  }
 };
 
 module.exports = _that;

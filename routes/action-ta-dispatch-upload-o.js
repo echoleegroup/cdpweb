@@ -77,10 +77,9 @@ module.exports = (app) => {
 
     const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE ${dbKeyColumn} IN ('${_.pull(keys, '').join(`','`)}') `;
     winston.info('validationSql: ', validationSql);
-    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsData => {
-      // winston.info('get validation and licsno: ', licsData);
-      const validation = _.map(licsData, 'validation');
-      winston.info('validation: ', validation);
+    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
+      // winston.info('get validation and licsno: ', licsDataSet);
+      const validation = _.keyBy(licsDataSet, 'validation');
 
       const initSql = 'INSERT INTO cu_SentListMst(mdID, batID, sentListName, sentListCateg, ' +
           'sentListChannel, sentListDesc, sentListTime, updTime, updUser) ' +
@@ -98,7 +97,9 @@ module.exports = (app) => {
         .setInput('sentListTime', _connector.TYPES.DateTime, moment(startDate, 'YYYY/MM/DD').toDate())
         .setInput('updTime', _connector.TYPES.DateTime, new Date())
         .setInput('updUser', _connector.TYPES.NVarChar, req.user.userId)
-        .executeQuery, initSql).then(resultSet => {
+        .executeQuery, initSql)
+        .then(resultSet => {
+
           const sentListID = resultSet[0].sentListID;
 
           winston.info('get init cu_SentListMst done, sentListID = ', sentListID);
@@ -114,7 +115,8 @@ module.exports = (app) => {
             `mld.mdListKey1 = @refLICSNO AND mld.mdListCateg = 'tapop'` +
             ")" +
             ")";
-          const prepared = _connector.preparedStatement(insertSql)
+          winston.info('init preparedStatement');
+          return _connector.preparedStatement()
             .setType('mdID', _connector.TYPES.NVarChar)
             .setType('batID', _connector.TYPES.NVarChar)
             .setType('sentListID', _connector.TYPES.Int)
@@ -122,45 +124,51 @@ module.exports = (app) => {
             .setType('LICSNO', _connector.TYPES.NVarChar)
             .setType('VIN', _connector.TYPES.NVarChar)
             .setType('CustID_u', _connector.TYPES.NVarChar)
-            .setType('refLICSNO', _connector.TYPES.NVarChar);
+            .setType('refLICSNO', _connector.TYPES.NVarChar)
+            .prepare(insertSql).then(prepared => {
+              winston.info('get preparedStatement');
 
-          return _.reduce(sheetData, (_promise, row, rowIndex) => {
-            const keyValue = row[xlsxKeyColumnIndex];
-            // winston.info('keyValue: ', keyValue);
-            if (_.isEmpty(keyValue)) {
-              messageBody.error_num += 1;
-              messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無資料`);
-              return _promise.then(() => Q(sentListID));
-            } else if (validation.indexOf(keyValue) < 0) {
-              messageBody.error_num += 1;
-              messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無效`);
-              return _promise.then(() => Q(sentListID));
-            } else {
-              return _promise.then(() => {
-                return Q.nfcall(prepared.execute, {
-                  mdID: mdID,
-                  batID: batID,
-                  sentListID: sentListID,
-                  CustID: row[custIdColumnIndex],
-                  LICSNO: row[licsNoColumnIndex],
-                  VIN: row[vinColumnIndex],
-                  CustID_u: licsData.CustID_u,
-                  refLICSNO: licsData.LICSNO
-                }).then(resultSet => {
-                  messageBody.success_num += 1;
-                  return Q(sentListID);
-                }).fail(err => {
-                  winston.error('import dispatch list failed: ', err);
-                  messageBody.error_num += 1;
-                  messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，匯入失敗`);
-                  return Q(sentListID);
+            return _.reduce(sheetData, (_promise, row, rowIndex) => {
+              const keyValue = row[xlsxKeyColumnIndex];
+              const licsData = validation[keyValue];
+              // winston.info('keyValue: ', keyValue);
+              if (_.isEmpty(keyValue)) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無資料`);
+                return _promise;
+              } else if (!licsData) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無效`);
+                return _promise;
+              } else {
+                return _promise.then(() => {
+                  winston.info('before execute preparedStatement');
+                  return prepared.execute({
+                    mdID: mdID,
+                    batID: batID,
+                    sentListID: sentListID,
+                    CustID: row[custIdColumnIndex],
+                    LICSNO: row[licsNoColumnIndex],
+                    VIN: row[vinColumnIndex],
+                    CustID_u: licsData.CustID_u,
+                    refLICSNO: licsData.LICSNO
+                  }).then(resultSet => {
+                    winston.info('after execute preparedStatement');
+                    messageBody.success_num += 1;
+                    return sentListID;
+                  }).catch(err => {
+                    winston.error('import dispatch list failed: ', err);
+                    messageBody.error_num += 1;
+                    messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，匯入失敗`);
+                    return sentListID;
+                  });
                 });
+              }
+            }, Q(sentListID)).finally(() => {
+              Q(prepared.release()).fail(err => {
+                winston.error('release prepared statement failed: ', err);
               });
-            }
-          }, Q(sentListID)).finally(() => {
-            Q(prepared.release()).fail(err => {
-              winston.error('release prepared statement failed: ', err);
-            })
+            });
           });
         });
 
@@ -168,7 +176,7 @@ module.exports = (app) => {
       winston.info('insert complete: sentListID = ', sentListID);
       res.redirect('/target/ta/send/edit?' +
         `successnum=${messageBody.success_num}` +
-        `&errormsg=${messageBody.error_msg}` +
+        `&errormsg=${messageBody.error_msg.join('\n')}` +
         `&errornum=${messageBody.error_num}` +
         `&total=${messageBody.total}&dispaly=block` +
         `&datetime=${moment().format('YYYY/MM/DD HH:mm:ss')}` +
