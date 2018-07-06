@@ -34,7 +34,7 @@ module.exports = (app) => {
       uID: {xlsx: 'CustID', db: 'CustID_u'},
       VIN: {xlsx: 'VIN', db: 'VIN'}
     };
-    const rowIndexToNumber = 2;
+    const indexToRowNumberOffset = 2;
     const mdID = req.body.mdID || '';
     const batID = req.body.batID || '';
     const sentListCateg = req.body.sentListCateg || '';
@@ -65,18 +65,17 @@ module.exports = (app) => {
       return row[xlsxKeyColumnIndex] || '';
     });
 
-    winston.info('xlsxKeyColumn: ', xlsxKeyColumn);
-    winston.info('sheetHeader: ', sheetHeader);
-    winston.info('xlsxKeyColumnIndex: ', xlsxKeyColumnIndex);
-    winston.info('licsNoColumnIndex: ', licsNoColumnIndex);
-    winston.info('custIdColumnIndex: ', custIdColumnIndex);
-    winston.info('vinColumnIndex: ', vinColumnIndex);
+    // winston.info('xlsxKeyColumn: ', xlsxKeyColumn);
+    // winston.info('sheetHeader: ', sheetHeader);
+    // winston.info('xlsxKeyColumnIndex: ', xlsxKeyColumnIndex);
+    // winston.info('licsNoColumnIndex: ', licsNoColumnIndex);
+    // winston.info('custIdColumnIndex: ', custIdColumnIndex);
+    // winston.info('vinColumnIndex: ', vinColumnIndex);
 
     const Q = require('q');
     const _connector = require('../utils/sql-query-util');
 
     const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE ${dbKeyColumn} IN ('${_.pull(keys, '').join(`','`)}') `;
-    winston.info('validationSql: ', validationSql);
     Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
       // winston.info('get validation and licsno: ', licsDataSet);
       const validation = _.keyBy(licsDataSet, 'validation');
@@ -86,7 +85,7 @@ module.exports = (app) => {
           'OUTPUT INSERTED.sentListID ' +
           'VALUES(@mdID, @batID, @sentListName, @sentListCateg, @sentListChannel, ' +
           '@sentListDesc, @sentListTime, @updTime, @updUser)';
-      winston.info('startDate: ', startDate);
+
       return Q.nfcall(_connector.queryRequest()
         .setInput('mdID', _connector.TYPES.NVarChar, mdID)
         .setInput('batID', _connector.TYPES.NVarChar, batID)
@@ -115,68 +114,74 @@ module.exports = (app) => {
             `mld.mdListKey1 = @refLICSNO AND mld.mdListCateg = 'tapop'` +
             ")" +
             ")";
-          winston.info('init preparedStatement');
-          return _connector.preparedStatement()
-            .setType('mdID', _connector.TYPES.NVarChar)
-            .setType('batID', _connector.TYPES.NVarChar)
-            .setType('sentListID', _connector.TYPES.Int)
-            .setType('CustID', _connector.TYPES.NVarChar)
-            .setType('LICSNO', _connector.TYPES.NVarChar)
-            .setType('VIN', _connector.TYPES.NVarChar)
-            .setType('CustID_u', _connector.TYPES.NVarChar)
-            .setType('refLICSNO', _connector.TYPES.NVarChar)
-            .prepare(insertSql).then(prepared => {
-              winston.info('get preparedStatement');
+          const partitions = 3;
+          const chunkSize = (sheetData.length / partitions) + 1;
+          const chunks = _.chunk(sheetData, chunkSize);
+          const chunkProcesses = chunks.map((chunk, chunkIndex) => {
+            const firstLineNumberOfChunk = chunkSize * chunkIndex + indexToRowNumberOffset;
 
-            return _.reduce(sheetData, (_promise, row, rowIndex) => {
+            return _.reduce(chunk, (_promise, row, rowIndex) => {
               const keyValue = row[xlsxKeyColumnIndex];
               const licsData = validation[keyValue];
+              const lineOfXlsx = rowIndex + firstLineNumberOfChunk;
               // winston.info('keyValue: ', keyValue);
               if (_.isEmpty(keyValue)) {
                 messageBody.error_num += 1;
-                messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無資料`);
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行(${row.join(',')})，${keyValue}無資料`
+                });
                 return _promise;
               } else if (!licsData) {
                 messageBody.error_num += 1;
-                messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，${keyValue}無效`);
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行(${row.join(',')})，${keyValue}無效`
+                });
                 return _promise;
               } else {
                 return _promise.then(() => {
-                  winston.info('before execute preparedStatement');
-                  return prepared.execute({
-                    mdID: mdID,
-                    batID: batID,
-                    sentListID: sentListID,
-                    CustID: row[custIdColumnIndex],
-                    LICSNO: row[licsNoColumnIndex],
-                    VIN: row[vinColumnIndex],
-                    CustID_u: licsData.CustID_u,
-                    refLICSNO: licsData.LICSNO
-                  }).then(resultSet => {
-                    winston.info('after execute preparedStatement');
+                  // winston.info('before execute insert')
+                  let request = _connector.queryRequest()
+                    .setInput('mdID', _connector.TYPES.NVarChar, mdID)
+                    .setInput('batID', _connector.TYPES.NVarChar, batID)
+                    .setInput('sentListID', _connector.TYPES.Int, sentListID)
+                    .setInput('CustID', _connector.TYPES.NVarChar, row[custIdColumnIndex])
+                    .setInput('LICSNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
+                    .setInput('VIN', _connector.TYPES.NVarChar, row[vinColumnIndex])
+                    .setInput('CustID_u', _connector.TYPES.NVarChar, licsData.CustID_u)
+                    .setInput('refLICSNO', _connector.TYPES.NVarChar, licsData.LICSNO);
+
+                  return Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
+                    // winston.info('after execute insert');
                     messageBody.success_num += 1;
-                    return sentListID;
+                    return null;
                   }).catch(err => {
                     winston.error('import dispatch list failed: ', err);
                     messageBody.error_num += 1;
-                    messageBody.error_msg.push(`第${rowIndex + rowIndexToNumber}行(${row.join(',')})，匯入失敗`);
-                    return sentListID;
+                    messageBody.error_msg.push({
+                      line: lineOfXlsx,
+                      message: `第${lineOfXlsx}行(${row.join(',')})，匯入失敗`
+                    });
+                    return null;
                   });
                 });
               }
-            }, Q(sentListID)).finally(() => {
-              Q(prepared.release()).fail(err => {
-                winston.error('release prepared statement failed: ', err);
-              });
-            });
+            }, Q());
           });
+
+          return Q.all(chunkProcesses).then(chunkResult => {
+            return sentListID;
+          });
+
         });
 
     }).then(sentListID => {
       winston.info('insert complete: sentListID = ', sentListID);
+      let messages = _.map(_.sortBy(messageBody.error_msg, ['line']), 'message');
       res.redirect('/target/ta/send/edit?' +
         `successnum=${messageBody.success_num}` +
-        `&errormsg=${messageBody.error_msg.join('\n')}` +
+        `&errormsg=${messages.join('\n')}` +
         `&errornum=${messageBody.error_num}` +
         `&total=${messageBody.total}&dispaly=block` +
         `&datetime=${moment().format('YYYY/MM/DD HH:mm:ss')}` +
@@ -185,14 +190,6 @@ module.exports = (app) => {
       console.log(err);
       winston.error('POST /ta/send/upload_act error: ', err);
       next(require('boom').internal());
-      // messageBody.error_msg.push('系統錯誤');
-      // res.redirect('/target/ta/send/edit?' +
-      //   `successnum=${messageBody.success_num}` +
-      //   `&errormsg=${messageBody.error_msg}` +
-      //   `&errornum=${messageBody.error_num}` +
-      //   `&total=${messageBody.total}&dispaly=block` +
-      //   `&datetime=${moment().format('YYYY/MM/DD HH:mm:ss')}` +
-      //   `&sentListID=${sentListID}`);
     });
   });
 
