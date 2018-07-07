@@ -45,19 +45,11 @@ module.exports.getModel = (mdId, callback=() => {}) => {
 };
 
 module.exports.getBatchCategoryFeatures = (featureIds, callback) => {
-  const request = _connector.queryRequest();
-
-  const parameterizedSql = featureIds.map((featId, index) => {
-    const parameterized = `featId_${index}`;
-    request.setInput(parameterized, _connector.TYPES.NVarChar, code);
-    return `@${parameterized}`;
-  }).join(', ');
-
   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.codeGroup, feature.uiInputType ' +
     'FROM ft_Feature feature ' +
-    `WHERE feature.featID IN (${parameterizedSql}) `;
+    `WHERE feature.featID in ('${featureIds.join(`','`)}') `;
 
-  Q.nfcall(request.executeQuery, sql).then((result) => {
+  Q.nfcall(_connector.execSql, sql).then((result) => {
     callback(null, result);
   }).fail((err) => {
     winston.error('===model-service::getBatchCategoryFeatures(featureIds=%j) failed: ', featureIds, err);

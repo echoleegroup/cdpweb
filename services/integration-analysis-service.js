@@ -122,21 +122,15 @@ module.exports.getDownloadFeaturesOfSet = (setId, callback) => {
 };
 
 module.exports.getDownloadFeaturesByIds = (featIds, callback) => {
-  const request = _connector
-    .queryRequest()
-    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
-
-  const parameterizedSql = featIds.map((featId, index) => {
-    const parameterized = `featId_${index}`;
-    request.setInput(parameterized, _connector.TYPES.NVarChar, code);
-    return `@${parameterized}`;
-  }).join(', ');
-
   const sql = 'SELECT feature.featID, feature.featName, feature.featNameAbbr, feature.codeGroup ' +
     'FROM cd_DnldFeat d_feat, cd_Feature feature ' +
-    `WHERE d_feat.featID IN (${parameterizedSql}) ` +
+    `WHERE d_feat.featID in ('${featIds.join(`','`)}') ` +
     'AND d_feat.featID = feature.featID AND (isDel != @isDel OR isDel is NULL) ' +
     'ORDER BY d_feat.seqNO ';
+
+  let request = _connector
+    .queryRequest()
+    .setInput('isDel', _connector.TYPES.NVarChar, 'Y');
 
   Q.nfcall(request.executeQuery, sql).then(results => {
     callback(null, results);

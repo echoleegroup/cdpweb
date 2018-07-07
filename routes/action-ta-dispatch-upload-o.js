@@ -74,19 +74,9 @@ module.exports = (app) => {
 
     const Q = require('q');
     const _connector = require('../utils/sql-query-util');
-    const request = _connector.queryRequest();
-    const keyValueParameterized = _.pull(keys, '').map((key, index) => {
-      const parameterized = `dbKeyValue_${index}`;
-      request.setInput(parameterized, _connector.TYPES.NVarChar, key);
-      return `@${parameterized}`;
-    }).join(', ');
 
-    const validationSql =
-      `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u ` +
-      `FROM cu_LicsnoIndex ` +
-      `WHERE ${dbKeyColumn} IN (${keyValueParameterized}) `;
-
-    Q.nfcall(request.executeQuery, validationSql).then(licsDataSet => {
+    const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE ${dbKeyColumn} IN ('${_.pull(keys, '').join(`','`)}') `;
+    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
       // winston.info('get validation and licsno: ', licsDataSet);
       const validation = _.keyBy(licsDataSet, 'validation');
 
@@ -152,18 +142,17 @@ module.exports = (app) => {
               } else {
                 return _promise.then(() => {
                   // winston.info('before execute insert')
-                  return Q.nfcall(
-                    _connector.queryRequest()
-                      .setInput('mdID', _connector.TYPES.NVarChar, mdID)
-                      .setInput('batID', _connector.TYPES.NVarChar, batID)
-                      .setInput('sentListID', _connector.TYPES.Int, sentListID)
-                      .setInput('CustID', _connector.TYPES.NVarChar, row[custIdColumnIndex])
-                      .setInput('LICSNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
-                      .setInput('VIN', _connector.TYPES.NVarChar, row[vinColumnIndex])
-                      .setInput('CustID_u', _connector.TYPES.NVarChar, licsData.CustID_u)
-                      .setInput('refLICSNO', _connector.TYPES.NVarChar, licsData.LICSNO)
-                      .executeUpdate, insertSql
-                  ).then(resultSet => {
+                  let request = _connector.queryRequest()
+                    .setInput('mdID', _connector.TYPES.NVarChar, mdID)
+                    .setInput('batID', _connector.TYPES.NVarChar, batID)
+                    .setInput('sentListID', _connector.TYPES.Int, sentListID)
+                    .setInput('CustID', _connector.TYPES.NVarChar, row[custIdColumnIndex])
+                    .setInput('LICSNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
+                    .setInput('VIN', _connector.TYPES.NVarChar, row[vinColumnIndex])
+                    .setInput('CustID_u', _connector.TYPES.NVarChar, licsData.CustID_u)
+                    .setInput('refLICSNO', _connector.TYPES.NVarChar, licsData.LICSNO);
+
+                  return Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
                     // winston.info('after execute insert');
                     messageBody.success_num += 1;
                     return null;
