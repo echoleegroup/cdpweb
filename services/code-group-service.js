@@ -8,13 +8,16 @@ module.exports.getFeatureCodeGroup = (codeGroup, callback) => {
 };
 
 module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
-  const codeGroupSql = `'${codeGroupList.join(`', '`)}'`;
+  const request = _connector.queryRequest();
+  const codeGroupSql = codeGroupList.map((code, index) => {
+    const parameterized = `codeGroup_${index}`;
+    request.setInput(parameterized, _connector.TYPES.NVarChar, code);
+    return `@${parameterized}`;
+  }).join(', ');
   const sql = 'SELECT codeGroup, codeValue, codeLabel, codeSort ' +
     'FROM CodeGroup_View ' +
     `WHERE codeGroup in (${codeGroupSql}) ` +
     'ORDER BY codeSort';
-
-  let request = _connector.queryRequest();
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
