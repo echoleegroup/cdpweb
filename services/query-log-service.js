@@ -109,7 +109,7 @@ module.exports.insertDownloadLog = (
   {queryId = null, filePath = null, userId = null, downloadDate = new Date(), fileSize = 0}, callback) => {
 
   const sql = 'INSERT INTO sy_DnldLog (queryID, filePath, userId, dnldDatetime, fileSize) ' +
-    'OUTPUT INSERTED.logID' +
+    'OUTPUT INSERTED.logID ' +
     'VALUES (@queryId, @filePath, @userId, @downloadDate, @fileSize)';
 
   let request = _connector.queryRequest()
