@@ -92,7 +92,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/cal/getInfo', function (req, res) {
+  router.post('/cal/getInfo', [middleware.check(), middleware.checkViewPermission(permission.GENE_RAUDIC)], function (req, res) {
     var mdID = req.body.mdID || '';
     var batID = req.body.batID || '';
     var path = "/jsoninfo/generaudic.do?mdID=" + encodeURI(mdID) + "&batID=" + encodeURI(batID);
@@ -119,7 +119,7 @@ module.exports = (app) => {
     }).end();
   });
 
-  router.post('/cal/getFeat', function (req, res) {
+  router.post('/cal/getFeat', [middleware.check(), middleware.checkViewPermission(permission.GENE_RAUDIC)], function (req, res) {
     var mdID = req.body.mdID || '';
     var batID = req.body.batID || '';
     var featID = req.body.featID || '';
