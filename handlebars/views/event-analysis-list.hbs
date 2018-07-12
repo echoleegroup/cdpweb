@@ -28,6 +28,7 @@
           </th>
           <th>頁面訪問數</th>
           <th>cookie ID追蹤數</th>
+          <th>Canvas追蹤數</th>
           <th>DXID追蹤數</th>
           <th>車主追蹤數</th>
         </tr>
@@ -58,14 +59,19 @@
       x += "<td>" + o[i].maininfo[0].cookieCount + "</td>";
     else
       x += "<td>-</td>";
-    if (o[i].maininfo[0].dxidCount != null)
-      x += "<td>" + o[i].maininfo[0].dxidCount + "</td>";
-    else
-      x += "<td>-</td>";
     if (o[i].maininfo[0].canvasCount != null)
       x += "<td>" + o[i].maininfo[0].canvasCount + "</td>";
     else
       x += "<td>-</td>";
+    if (o[i].maininfo[0].dxidCount != null)
+      x += "<td>" + o[i].maininfo[0].dxidCount + "</td>";
+    else
+      x += "<td>-</td>";
+    if (o[i].maininfo[0].licsnoCount != null)
+      x += "<td>" + o[i].maininfo[0].licsnoCount + "</td>";
+    else
+      x += "<td>-</td>";  
+    
     x += "<td><a href='javascript:urlopen(\"" + o[i].maininfo[0].url + "\");'>開啟連結</a></td>";
     x += '<td><i class="fa fa-caret-down" aria-hidden="true"></i></td>';
     x += '<tr class="sub_info"><td colspan="7">';

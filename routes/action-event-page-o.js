@@ -498,7 +498,7 @@ module.exports = (app) => {
       where += " and dem.tpc like '%" + tpc + "%' ";
 
     let p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, trkSdt, 111)sdt,convert(varchar, trkEdt, 111)edt,tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
+      db.query("SELECT ROW_NUMBER() OVER (ORDER BY dem.sdt ASC) as no, dem.evtpgID,sc.codeLabel,url,convert(varchar, trkSdt, 111)sdt,convert(varchar, trkEdt, 111)edt,tpc,dems.browseCount,dems.cookieCount,dems.dxidCount,dems.canvasCount,dems.licsnoCount FROM dm_EvtpgMst_View dem left join dm_EvtpgMst_statistic dems on dems.evtpgID = dem.evtpgID  left join sy_CodeTable sc on sc.codeGroup = 'funcCatge' and sc.codeValue = dem.funcCatge " + where + " order by dem.sdt asc ", function (err, recordset) {
         if (err) {
           reject(err);
         }
