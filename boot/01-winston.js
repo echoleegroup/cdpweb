@@ -46,6 +46,8 @@ module.exports = () => {
         return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       },
       formatter: (options) => {
+        // console.log('==== 01-winston: options');
+        // console.log(options);
         return winston.config.colorize(options.level, options.timestamp() + ' ') +
           winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
           (options.message ? options.message : '') +
@@ -55,7 +57,7 @@ module.exports = () => {
 
     transports.push(dailyRotateLoggerInfo);
     transports.push(dailyRotateLoggerError);
-  }
+  } else {
     const consoleLogger = new winston.transports.Console({
       level,
       json: false,
@@ -64,6 +66,8 @@ module.exports = () => {
         return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       },
       formatter: (options) => {
+        console.log('==== 01-winston: options');
+        console.log(options);
         return winston.config.colorize(options.level, options.timestamp() + ' ') +
           winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
           (options.message ? options.message : '') +
@@ -71,6 +75,7 @@ module.exports = () => {
       }
     });
     transports.push(consoleLogger);
+  }
 
   winston.configure({
     transports: transports

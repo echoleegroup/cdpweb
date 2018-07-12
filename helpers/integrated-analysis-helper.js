@@ -632,9 +632,7 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
 
           return Q.nfcall(fileHelper.archiveFiles, workingPath, parsingInfo.entries, finalZipPath).fail(err => {
             winston.error('parsing to csv and archive failed: ', err);
-            Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
-              winston.error('set query task status as parsing-failed failed: ', err);
-            });
+            throw err;
           }).then(archiveStat => {
             winston.info('archive stat: %j', archiveStat);
             return Q.all([
@@ -659,15 +657,18 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
               console.log(err);
               winston.error('get user info failed: ', err);
             });
-          }).finally(() => {
-            winston.info('archiveFiles finally');
-            const rmdir = require('rimraf');
-            rmdir(workingPath, err => {
-              err && winston.warn(`remove ${workingPath} failed: `, err);
-            });
           });
         }).fail(err => {
           winston.error('parsing integrated query result failed(queryID=%s): ', queryId, err);
+          Q.nfcall(integrationTaskService.setQueryTaskStatusParsingFailed, queryId).fail(err => {
+            winston.error('set query task status as parsing-failed failed: ', err);
+          });
+        }).finally(() => {
+          winston.info('archiveFiles finally');
+          const rmdir = require('rimraf');
+          rmdir(workingPath, err => {
+            err && winston.warn(`remove ${workingPath} failed: `, err);
+          });
         });
       });
   };
