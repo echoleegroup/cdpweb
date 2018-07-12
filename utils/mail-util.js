@@ -4,8 +4,8 @@ const winston = require('winston');
 const handlebars = require('handlebars');
 
 const send = (to, options = {}, callback = () => { }) => {
-  console.log(to) ;
-  console.log(options) ;
+  // winston.info(to) ;
+  // winston.info(options) ;
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,

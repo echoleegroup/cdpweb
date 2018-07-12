@@ -7,10 +7,13 @@ const middleware = require('../middlewares/login-check');
 const modelService = require('../services/model-service');
 
 module.exports = (app) => {
-  console.log('[TargetRoute::create] Creating target route.');
+  winston.info('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
-  router.get('/query', function (req, res, next) {
+  router.get('/query',
+    [middleware.check(), middleware.checkViewPermission(permission.INTEGRATED_QUERY)],
+    function (req, res, next) {
+
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -24,7 +27,10 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/:mode/query/:queryId', function (req, res, next) {
+  router.get('/:mode/query/:queryId',
+    [middleware.check(), middleware.checkViewPermission(permission.INTEGRATED_QUERY)],
+    function (req, res, next) {
+
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -38,7 +44,10 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/anonymous/query', function (req, res, next) {
+  router.get('/anonymous/query',
+    [middleware.check(), middleware.checkViewPermission(permission.INTEGRATED_QUERY)],
+    function (req, res, next) {
+
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -52,7 +61,10 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/:mode/query/:queryId/analysis/:size', function (req, res, next) {
+  router.get('/:mode/query/:queryId/analysis/:size',
+    [middleware.check(), middleware.checkViewPermission(permission.INTEGRATED_QUERY)],
+    function (req, res, next) {
+
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;

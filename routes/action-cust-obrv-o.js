@@ -9,7 +9,7 @@ const http = require('http');
 const url = require('url');
 
 module.exports = (app) => {
-  console.log('[custobrvRoute::create] Creating custobrv route.');
+  winston.info('[custobrvRoute::create] Creating custobrv route.');
   const router = express.Router();
 
   router.get('/cust/pred/cp/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.CUST_OBRV)], function (req, res) {
@@ -57,7 +57,7 @@ module.exports = (app) => {
       });
 
     }).catch(function (e) {
-      console.log(e);
+       winston.error(e);
     });
   });
   router.post('/cust/pred/getInfo', function (req, res) {

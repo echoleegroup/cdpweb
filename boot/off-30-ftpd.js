@@ -66,7 +66,7 @@ module.exports = () => {
 
     server.debugging = 4;
     server.listen(options.port);
-    console.log('Listening on port ' + options.port);
+    winston.info('Listening on port ' + options.port);
   }
 
 };

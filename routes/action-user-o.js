@@ -9,14 +9,14 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 const mail_util = require("../utils/mail-util");
 module.exports = (app) => {
-  console.log('[userRoute::create] Creating user route.');
+  winston.info('[userRoute::create] Creating user route.');
   const router = express.Router();
 
 
   router.post('/user/add/checkID', function (req, res) {
     var userId = req.body.userId || '';
     db.query("select count(*) total from sy_infouser where userId = '" + userId + "'", function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a response
       if (recordset.recordset[0].total == 0)
         res.end("ok");
@@ -49,7 +49,7 @@ module.exports = (app) => {
     if (isstop == 'on')
       checked = 'Y';
     db.query("insert into sy_infouser(userId,password,userName,email,modifyTime,createdDate,bookmark,modifyName,isstop) values('" + userId + "','test','" + username + "','" + email + "',GETDATE(),GETDATE(),'" + bookmark + "','" + req.user.userId + "','" + checked + "')", function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       let sendInfo = {
         "subject": "和泰大數據平台-帳號啟用通知",
         "content": `親愛的使用者<br/>：您的帳號已經建立啟用，請至 <a href="http://${process.env.HOST}:${process.env.PORT}">和泰大數據平台</a> 登入系統並進行密碼變更，謝謝。<br/>帳號：${userId}<br/>預設密碼：test`
@@ -130,7 +130,7 @@ module.exports = (app) => {
     var ugrpId = req.body.ugrpId || '';
     var userId = req.body.userId || '';
     db.query("delete from sy_userWithUgrp where userId ='" + userId + "' and ugrpId = " + ugrpId, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a response
       res.end('ok');
 
@@ -151,12 +151,12 @@ module.exports = (app) => {
     }
     addugrpId(ucid, userId, function (err, data) {
       if (err)
-        console.log("ERROR : ", err);
+        winston.info("ERROR : ", err);
       else if (data != 0)
         res.end('已新增過');
       else {
         db.query("insert into sy_userWithUgrp(userId,ugrpId,modifyDate,modifyName) VALUES('" + userId + "'," + ucid + ",GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
-          if (err) console.log(err);
+          if (err) winston.error(err);
           //send records as a response
           res.end('新增完成');
         });
@@ -176,7 +176,7 @@ module.exports = (app) => {
       checked = 'Y';
     var where = " where userId ='" + userId + "'";
     db.query("update sy_infouser set  username = '" + username + "',password = '" + password + "', email = '" + email + "', bookmark='" + bookmark + "',modifyName ='" + req.user.userId + "',modifyTime=GETDATE(), isstop = '" + checked + "' " + where, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a response
       res.redirect('/system/user/edit?userId=' + userId);
     });
@@ -193,7 +193,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query('SELECT u.ugrpId,u.ugrpClass,u.ugrpName,u.remark,u.regdate,convert(varchar, u.modifyDate, 120)modifyDate,u.signer,u.isStop,uc.ugrpClassName FROM sy_ugrp u left join sy_ugrpClass uc on uc.ugrpClassId = u.ugrpClass order by u.ugrpClass asc', function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         for (var i = 0; i < recordset.rowsAffected; i++) {
@@ -268,7 +268,7 @@ module.exports = (app) => {
     var p2 = new Promise(function (resolve, reject) {
       db.query('SELECT ROW_NUMBER() OVER (ORDER BY uw.ugrpId ASC) as no, uw.userId, uw.ugrpId, convert(varchar, uw.modifyDate, 120)modifyDate, uw.modifyName, uc.ugrpClassName, ug.ugrpName FROM sy_userWithUgrp uw left join sy_ugrp ug on ug.ugrpId = uw.ugrpId left join sy_ugrpClass uc on uc.ugrpClassId = ug.ugrpClass' + where, function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         userRole = recordset.recordset;
@@ -278,7 +278,7 @@ module.exports = (app) => {
     var p3 = new Promise(function (resolve, reject) {
       db.query('SELECT userId,password,userName,email,convert(varchar,lastVisit, 120)lastVisit,telephone,convert(varchar,modifyTime, 120)modifyTime,convert(varchar,createdDate, 120)createdDate,bookmark,modifyName,uID,convert(varchar,loginTime, 120)loginTime,isstop from sy_infouser' + where, function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         items = recordset.recordset;
@@ -306,7 +306,7 @@ module.exports = (app) => {
         'ugclass': JSON.stringify(aduglist)
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 

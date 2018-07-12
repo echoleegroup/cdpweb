@@ -511,7 +511,7 @@ module.exports = {
     //   body: JSON.stringify(requestBody),
     //   json: true
     // }, (error, response, body) => {
-    //   // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
     //   if (error)
     //     callback(error, null);
     //   else

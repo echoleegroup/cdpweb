@@ -9,7 +9,7 @@ const db = require("../utils/sql-server-connector").db;
 const menuService = require('../services/menu-service');
 
 module.exports = (app) => {
-  console.log('[userRoleRoute::create] Creating userRole route.');
+  winston.info('[userRoleRoute::create] Creating userRole route.');
   const router = express.Router();
 
   router.post('/user/role/add_act', [middleware.check(), middleware.checkEditPermission(permission.USER_ROLE)], function (req, res) {
@@ -24,7 +24,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("INSERT INTO sy_ugrp(ugrpClass,ugrpName,remark,regdate,modifyDate,signer,isStop) values('" + ugrpClass + "','" + ugrpName + "','" + remark + "',GETDATE(),GETDATE(),'" + req.user.userId + "','" + checked + "')", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
 
@@ -34,11 +34,11 @@ module.exports = (app) => {
     });
     Promise.all([p1]).then(function (results) {
       db.query('select top 1 ugrpId from sy_ugrp order by ugrpId desc ', function (err, recordset) {
-        if (err) console.log(err);
+        if (err) winston.error(err);
         res.redirect('/system/user/role/edit?ugrpId=' + recordset.recordset[0].ugrpId);
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
 
@@ -47,7 +47,7 @@ module.exports = (app) => {
 
   router.get('/user/role/add', function (req, res) {
     db.query("SELECT * FROM sy_ugrpClass", function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       var modelList = req.session.modelList;
       var navMenuList = req.session.navMenuList;
       var mgrMenuList = req.session.mgrMenuList;
@@ -80,7 +80,7 @@ module.exports = (app) => {
     if (ugrpName != '')
       where += " and ugrpName like '%" + ugrpName + "%' ";
     db.query("SELECT  ROW_NUMBER() OVER (ORDER BY uc.ugrpClassId ASC) as no ,ugrpId,ugrpClass,ugrpName,uc.ugrpClassName,isStop,remark FROM sy_ugrp ug left join sy_ugrpClass uc on uc.ugrpClassId = ug.ugrpClass" + where + " order by uc.ugrpClassId asc", function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a respons
       var modelList = req.session.modelList;
       var navMenuList = req.session.navMenuList;
@@ -99,7 +99,7 @@ module.exports = (app) => {
     var ugrpId = req.body.ugrpId || '';
     var menuId = req.body.menuId || '';
     db.query("delete from sy_ugrpcode where ugrpId =" + ugrpId + " and menuId = " + menuId, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a respons
       res.end('ok');
 
@@ -131,10 +131,9 @@ module.exports = (app) => {
     else
       Download = 'N';
     var p1 = new Promise(function (resolve, reject) {
-      console.log("SELECT menuId From sy_menu where menuCode = '" + menuCode + "'");
       db.query("SELECT menuId From sy_menu where menuCode = '" + menuCode + "'", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(err);
         }
         menuId = recordset.recordset[0].menuId;
@@ -154,12 +153,12 @@ module.exports = (app) => {
 
       addAuthority(ugrpId, menuId, all, Read, Edit, Download, function (err, data) {
         if (err)
-          console.log("ERROR : ", err);
+          winston.error("ERROR : ", err);
         else if (data != 0) {
           var where = " where ugrpId = " + ugrpId + " and menuId =" + menuId;
           db.query("update sy_ugrpcode set isAll = '" + all + "',isRead = '" + Read + "',isEdit = '" + Edit + "',isDownload = '" + Download + "',modifyDate = GETDATE(),modifyUser ='" + req.user.userId + "'" + where, function (err, recordset) {
             if (err)
-              console.log("ERROR : ", err);
+              winston.error("ERROR : ", err);
             res.end('更新成功');
           });
         }
@@ -167,13 +166,13 @@ module.exports = (app) => {
           var values = "VALUES(" + ugrpId + "," + menuId + ",GETDATE(),GETDATE(),'" + req.user.userId + "','" + all + "','" + Read + "','" + Edit + "','" + Download + "')"
           db.query("INSERT INTO sy_ugrpcode(ugrpId,menuId,modifyDate,regDate,modifyUser,isAll,isRead,isEdit,isDownload)" + values, function (err, recordset) {
             if (err)
-              console.log("ERROR : ", err);
+              winston.error("ERROR : ", err);
             res.end('新增成功');
           });
         }
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -188,7 +187,7 @@ module.exports = (app) => {
       checked = 'Y';
     var where = " where ugrpId ='" + ugrpId + "'";
     db.query("update sy_ugrp set ugrpClass = '" + ugrpClass + "', ugrpName = '" + ugrpName + "', remark = '" + remark + "', signer ='" + req.user.userId + "',modifyDate=GETDATE(),isStop = '" + checked + "'" + where, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       //send records as a respons
       res.redirect('/system/user/role/edit?ugrpId=' + ugrpId);
 
@@ -208,7 +207,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT ROW_NUMBER() OVER (ORDER BY ugrpId ASC) as no, ugrpId ,su.menuId,convert(varchar, su.modifyDate, 120)modifyDate,convert(varchar, regDate, 120)regDate,su.modifyUser,isRead,isEdit,isDownload,isAll,sm.menuName,sme.menuName pName FROM sy_ugrpcode su left join sy_menu sm on sm.menuId = su.menuId and sm.parentId is not null left join sy_menu sme on sme.menuId = sm.parentId and sme.parentId is null where su.ugrpId = " + ugrpId + " order by su.menuId asc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         authority = recordset.recordset;
@@ -242,7 +241,7 @@ module.exports = (app) => {
     var p3 = new Promise(function (resolve, reject) {
       db.query('select * from sy_ugrpClass', function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         ugrpClass = recordset.recordset;
@@ -252,7 +251,7 @@ module.exports = (app) => {
     var p4 = new Promise(function (resolve, reject) {
       db.query('select ug.ugrpId,ug.ugrpName,ug.remark,convert(varchar, ug.regdate, 120)regdate ,ug.ugrpClass,convert(varchar, ug.modifyDate, 120)modifyDate,ug.signer,ug.isStop,ugc.ugrpClassName from sy_ugrp ug LEFT JOIN sy_ugrpClass ugc on ugc.ugrpClassId = ug.ugrpClass' + where, function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         items = recordset.recordset;
@@ -281,7 +280,7 @@ module.exports = (app) => {
         'menu': JSON.stringify(allMenuList)
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
   return router;

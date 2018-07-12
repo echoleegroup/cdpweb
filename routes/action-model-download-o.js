@@ -14,7 +14,7 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 
 module.exports = (app) => {
-  console.log('[modelDownloadRoute::create] Creating modelDownload route.');
+  winston.info('[modelDownloadRoute::create] Creating modelDownload route.');
   const router = express.Router();
 
   router.get('/model/download/:mdID/:batID', [middleware.check(), middleware.checkDownloadPermission(permission.MODEL_DOWNLOAD)], function (req, res) {
@@ -86,7 +86,7 @@ module.exports = (app) => {
     Promise.all([p1, p2, p3]).then(function (results) {
       db.query("SELECT mdListScore FROM md_ListDet " + where, function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
 
         }
         var x = 0.0;
@@ -134,7 +134,7 @@ module.exports = (app) => {
         });
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 

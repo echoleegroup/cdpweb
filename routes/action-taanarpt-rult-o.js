@@ -12,7 +12,7 @@ const java_api_service = require('../services/java-api-service');
 const constants = require("../utils/constants");
 const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 module.exports = (app) => {
-  console.log('[taanarptRoute::create] Creating taanarpt route.');
+  winston.info('[taanarptRoute::create] Creating taanarpt route.');
   const router = express.Router();
 
   router.get('/taanarpt_rult/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.TAANARPT_RULT)], function (req, res) {

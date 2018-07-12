@@ -9,7 +9,7 @@ module.exports.check = (redirect) => {
     if (req.isAuthenticated()) {
       return next();
     } else {
-      console.log('request url: ', req.originalUrl);
+      winston.info('request url: ', req.originalUrl);
       return res.redirect(redirect || `${DEFAULT_LOGIN_PATH}?redirectURL=${req.originalUrl}`);
     }
   };

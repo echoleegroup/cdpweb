@@ -18,7 +18,7 @@ function toUP(value) {
     return value.toUpperCase();
 };
 module.exports = (app) => {
-  console.log('[talist_putuploadRoute::create] Creating talist_putupload route.');
+  winston.info('[talist_putuploadRoute::create] Creating talist_putupload route.');
   const router = express.Router();
 
   router.post('/ta/send/upload_act', [
@@ -187,7 +187,6 @@ module.exports = (app) => {
         `&datetime=${moment().format('YYYY/MM/DD HH:mm:ss')}` +
         `&sentListID=${sentListID}`);
     }).fail(err => {
-      console.log(err);
       winston.error('POST /ta/send/upload_act error: ', err);
       next(require('boom').internal());
     });
@@ -247,7 +246,7 @@ module.exports = (app) => {
         });
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
   router.get('/ta/send/edit', [middleware.check(), middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD)], function (req, res) {

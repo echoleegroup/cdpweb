@@ -7,7 +7,7 @@ const middleware = require('../middlewares/login-check');
 const modelService = require('../services/model-service');
 
 module.exports = (app) => {
-  console.log('[TargetRoute::create] Creating target route.');
+  winston.info('[TargetRoute::create] Creating target route.');
   const router = express.Router();
 
   router.get('/custom/filter/:mdId/:batId', middleware.check(), function (req, res, next) {

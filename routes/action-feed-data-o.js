@@ -15,7 +15,7 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 
 module.exports = (app) => {
-  console.log('[FeedDataRoute::create] Creating FeedData route.');
+  winston.error('[FeedDataRoute::create] Creating FeedData route.');
   const router = express.Router();
 
   router.get('/search', [middleware.check(), middleware.checkViewPermission(permission.FEED_DATA_LIST)], function (req, res) {
@@ -26,7 +26,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatgeForFeedData' order by codeValue desc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         funcCatge = recordset.recordset;
@@ -42,7 +42,7 @@ module.exports = (app) => {
         'funcCatge': funcCatge
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
 
@@ -161,7 +161,7 @@ module.exports = (app) => {
         });
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -194,7 +194,7 @@ module.exports = (app) => {
     let l = nameArray.pop();
     nameMime.unshift(l);
     // Mime是檔案的後綴 Mime=nameMime.join('');
-    // console.log(Mime); res.send("done"); //重命名檔案
+    // winston.error(Mime); res.send("done"); //重命名檔案
     // 加上檔案後綴
     // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
     uniqName = file.filename;
@@ -212,13 +212,13 @@ module.exports = (app) => {
       }
       insertMst(origName, uniqName, function (err, data) {
         if (err) {
-          console.log("ERROR : ", err);
+          winston.error("ERROR : ", err);
           reject(1)
         }
         else {
           db.query("SELECT TOP 1 outerListID FROM cu_OuterListMst order by outerListID desc  ", function (err, recordset) {
             if (err)
-              console.log(err);
+              winston.error(err);
             outerListID = recordset.recordset[0].outerListID;
             resolve(2);
           });
@@ -353,7 +353,7 @@ module.exports = (app) => {
             db.query("INSERT INTO cu_OuterListDet (outerListID,uName,uCustID,uLicsNO,uTel,uMail,uAdd,uAtName,uAtTel,uAtMail,uAtAdd)"
               + " VALUES(" + outerListID + ",'" + list[0].data[i][uNameindex] + "','" + CustIDValue + "','" + LicsNOValue + "','" + list[0].data[i][uTelindex] + "','" + list[0].data[i][uMailindex] + "','" + list[0].data[i][uAddindex] + "','" + list[0].data[i][uAtNameindex] + "','" + list[0].data[i][uAtTelindex] + "','" + list[0].data[i][uAtMailindex] + "','" + list[0].data[i][uAtAddindex] + "')", function (err, recordset) {
                 if (err) {
-                  console.log(err);
+                  winston.error(err);
                 }
                 successnum++;
                 if (i == list[0].data.length - 1) {
@@ -372,7 +372,7 @@ module.exports = (app) => {
         }
       }
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
   });
@@ -427,7 +427,7 @@ module.exports = (app) => {
         'datetime': datetime
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -483,7 +483,7 @@ module.exports = (app) => {
         'funcCatge': funcCatge
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -496,7 +496,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT outerListID FROM cu_OuterListTag where outerListID=" + ListID + " and tagLabel ='" + newtag + "' " + " and ( isDel <> 'Y' or isDel is null ) ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         if (recordset.rowsAffected != 0)
@@ -520,7 +520,7 @@ module.exports = (app) => {
         }
         addtag(ListID, newtag, function (err, data) {
           if (err)
-            console.log("ERROR : ", err);
+            winston.error("ERROR : ", err);
           else {
             db.query("SELECT TOP 1 tagID FROM cu_OuterListTag where outerListID =" + ListID + " order by tagID desc  ", function (err, recordset) {
               tagID = recordset.recordset[0].tagID;
@@ -530,7 +530,7 @@ module.exports = (app) => {
         });
       }
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
 
@@ -540,7 +540,7 @@ module.exports = (app) => {
     var ListID = req.body.ListID;
     var tagID = req.body.tagID;
     db.query("UPDATE cu_OuterListTag set isDel = 'Y' where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       res.end('刪除成功');
     });
   });

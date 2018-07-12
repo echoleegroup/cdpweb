@@ -17,7 +17,7 @@ module.exports.transService = (queryId, JObject, callback) => {
   column = JObject.export.master.features;
   analyzableColumn = _.map(JObject.statistic.features, 'feature_id');
   let mergeColumn = column.concat(analyzableColumn);
-  console.log(JSON.stringify(JObject));
+  // winston.info(JSON.stringify(JObject));
   selectInfo.push({
     "type": "master",
     "column": _.uniq(mergeColumn)

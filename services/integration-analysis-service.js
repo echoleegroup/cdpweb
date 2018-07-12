@@ -288,7 +288,7 @@ module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodE
     uri: '/jsoninfo/getEdmList.do',
     json: true
   }, (error, response, body) => {
-    // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
     if (error) {
       return callback(error);
     } else if (response.statusCode !== 200) {
@@ -307,7 +307,7 @@ module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, period
     uri: '/jsoninfo/getAppPushList.do',
     json: true
   }, (error, response, body) => {
-    // console.log('getTrailPeriodLogEDMReadFeatures: ', body);
+    // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
     if (error) {
       return callback(error);
     } else if (response.statusCode !== 200) {

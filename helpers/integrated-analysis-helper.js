@@ -129,6 +129,7 @@ const emptyFeatureStreamToCsvProcessor = (stream, target, callback) => {
 const streamToCsvProcessor = (stream, target, featureMap, callback) => {
   winston.info(`parsing to csv: ${target}`);
   if (_.isEmpty(featureMap)) {
+    winston.warn(`feature map not found.`);
     return emptyFeatureStreamToCsvProcessor(stream, target, callback);
   }
 
@@ -211,18 +212,18 @@ const queryResultEntryParserPromise = (baseName, mode, featureIds, zipFile, entr
     Q.nfcall(getCsvFileName, baseName, mode),
     Q.nfcall(getFeaturesAsMap, featureIds)
   ]).spread((csvFileName, featureMap) => {
-    console.log('csvFileName: ', csvFileName);
-    console.log('featureMap: ', featureMap);
+    winston.info('csvFileName: ', csvFileName);
+    winston.info('featureMap: ', featureMap);
     let deferred = Q.defer();
-    if (_.isEmpty(featureMap)) {
-      winston.error(`feature map of ${baseName} not found.`);
-      // return Q.reject(`feature map of ${baseName} not found.`);
-      // throw new Error(`feature map of ${baseName} not found.`);
-    }
+    // if (_.isEmpty(featureMap)) {
+    //   winston.warn(`feature map of ${baseName} not found.`);
+    //   // return Q.reject(`feature map of ${baseName} not found.`);
+    //   // throw new Error(`feature map of ${baseName} not found.`);
+    // }
 
     zipFile.openReadStream(entry, (err, readStream) => {
       if (err) {
-        console.log(err);
+        winston.error(err);
         deferred.reject(err);
       } else {
         readStream.on("end", () => {
@@ -250,7 +251,7 @@ const queryResultMetaParserPromise = (zipFile, entry) => {
 
   zipFile.openReadStream(entry, (err, readStream) => {
     if (err) {
-      console.log(err);
+      winston.error(err);
       deferred.reject(err);
     } else {
       readStream.on("end", () => {
@@ -332,7 +333,7 @@ const queryStatisticParserPromise = (queryId, zipFile, entry) => {
 
   zipFile.openReadStream(entry, (err, readStream) => {
     if (err) {
-      console.log(err);
+      winston.error(err);
       deferred.reject(err);
     } else {
       readStream.on("end", () => {
@@ -654,7 +655,6 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
                 });
               return null;
             }).fail(err => {
-              console.log(err);
               winston.error('get user info failed: ', err);
             });
           });

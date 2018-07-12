@@ -94,7 +94,6 @@ module.exports = (app) => {
     }).fail(err => {
       if (err) {
         winston.error('===/%s/%s/criteria/preview: ', mdId, batId, err);
-        console.log(err);
         res.json(req.params, 500, 'internal service error');
       }
     });

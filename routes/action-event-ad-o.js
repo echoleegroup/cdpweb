@@ -13,7 +13,7 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 const moment = require("moment");
 module.exports = (app) => {
-  console.log('[EvtadRoute::create] Creating Evtad route.');
+  winston.info('[EvtadRoute::create] Creating Evtad route.');
   const router = express.Router();
 
   router.post('/ad/upload_act', [middleware.check(), middleware.checkEditPermission(permission.EVENT_AD), upload.single('uploadingFile')], function (req, res) {
@@ -39,7 +39,7 @@ module.exports = (app) => {
       if (optradio == "cover") {
         db.query("DELETE FROM dm_EvtadMst where evtpgID ='" + evtpgID + "'", function (err, recordset) {
           if (err) {
-            console.log(err);
+            winston.error(err);
             reject(2);
           }
           resolve(1);
@@ -57,7 +57,7 @@ module.exports = (app) => {
     var p3 = new Promise(function (resolve, reject) {
       db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge' order by codeValue desc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         funcCatge = recordset.recordset;
@@ -77,7 +77,7 @@ module.exports = (app) => {
           l = nameArray.pop();
           nameMime.unshift(l);
         } // Mime是檔案的後綴 Mime=nameMime.join('');
-        // console.log(Mime); res.send("done"); //重命名檔案
+        // winston.error(Mime); res.send("done"); //重命名檔案
         // 加上檔案後綴
         // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
 
@@ -167,7 +167,7 @@ module.exports = (app) => {
               let adEdt = moment(new Date(1900, 0, list[0].data[i][Toindex])).format("YYYY/MM/DD");
               db.query("INSERT INTO dm_EvtadMst (evtpgID,url,adSource,adSdt,adEdt,adChannel,adPos,adSize,crtTime,updTime,updUser)VALUES('" + evtpgID + "','" + list[0].data[i][Urlindex] + "','" + list[0].data[i][Websiteindex] + "','" + adSdt + "','" + adEdt + "','" + list[0].data[i][Channelindex] + "','" + list[0].data[i][Positionindex] + "','" + list[0].data[i][Sizeindex] + "',GETDATE(),GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
                 if (err) {
-                  console.log(err);
+                  winston.error(err);
                 }
                 successnum++;
                 if (i == list[0].data.length - 1) {
@@ -223,7 +223,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT evtpgID,tpc,convert(varchar, sdt, 111)sdt,convert(varchar, edt, 111)edt FROM dm_EvtpgMst_View where client = '" + client + "'  and funcCatge = '" + funcCatge + "' order by tpc asc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         for (var i = 0; i < recordset.rowsAffected; i++) {
@@ -238,7 +238,7 @@ module.exports = (app) => {
     Promise.all([p1]).then(function (results) {
       res.end(JSON.stringify(data));
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -260,7 +260,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT codeValue,codeLabel FROM sy_CodeTable where codeGroup = 'funcCatge' order by codeValue desc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         funcCatge = recordset.recordset;
@@ -271,7 +271,7 @@ module.exports = (app) => {
       if (evtpgID != '') {
         db.query("SELECT count(*)adcount FROM dm_EvtadMst where evtpgID = '" + evtpgID + "'", function (err, recordset) {
           if (err) {
-            console.log(err);
+            winston.error(err);
             reject(2);
           }
           adcount = recordset.recordset[0].adcount;
@@ -285,7 +285,7 @@ module.exports = (app) => {
       if (evtpgID != '') {
         db.query("SELECT TOP 1 convert(varchar, updTime, 120)updTime,updUser FROM dm_EvtadMst where evtpgID = '" + evtpgID + "' order by updTime desc ", function (err, recordset) {
           if (err) {
-            console.log(err);
+            winston.error(err);
             reject(2);
           }
           if (recordset.rowsAffected > 0) {
@@ -331,7 +331,7 @@ module.exports = (app) => {
         'mainInfo': mainInfo
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -344,7 +344,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT evtadID FROM dm_EvtadTag where evtadID=" + evtadID + " and tagLabel ='" + newtag + "' and ( isDel <> 'Y' or isDel is null ) ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         if (recordset.rowsAffected != 0)
@@ -368,11 +368,11 @@ module.exports = (app) => {
         }
         addtag(evtadID, newtag, function (err, data) {
           if (err)
-            console.log("ERROR : ", err);
+            winston.error("ERROR : ", err);
           else {
             db.query("SELECT TOP 1 tagID FROM dm_EvtadTag where evtadID =" + evtadID + " order by tagID desc  ", function (err, recordset) {
               if (err)
-                console.log(err);
+                winston.error(err);
               tagID = recordset.recordset[0].tagID;
               res.end(tagID.toString());
             });
@@ -380,7 +380,7 @@ module.exports = (app) => {
         });
       }
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
 
@@ -390,7 +390,7 @@ module.exports = (app) => {
     var evtadID = req.body.evtadID;
     var tagID = req.body.tagID;
     db.query("UPDATE dm_EvtadTag set isDel = 'Y',updTime = GETDATE(),updUser = '" + req.user.userId + "' where evtadID =" + evtadID + " and tagID = " + tagID, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       res.end('ok');
     });
   });
@@ -403,7 +403,7 @@ module.exports = (app) => {
     var adSize = req.body.adSize;
     var url = req.body.url;
     db.query("update dm_EvtadMst set adSdt ='" + adSdt + "',adEdt ='" + adEdt + "',adPos ='" + adPos + "',adSize ='" + adSize + "',url ='" + url + "'  where evtadID =" + evtadID, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       res.end('ok');
     });
   });
@@ -416,7 +416,7 @@ module.exports = (app) => {
     var adSize = req.body.adSize;
     var url = req.body.url;
     db.query("delete from dm_EvtadMst where evtadID =" + evtadID, function (err, recordset) {
-      if (err) console.log(err);
+      if (err) winston.error(err);
       res.end('ok');
     });
   });
@@ -434,7 +434,7 @@ module.exports = (app) => {
     var p1 = new Promise(function (resolve, reject) {
       db.query("SELECT ROW_NUMBER() OVER (ORDER BY a.adSdt ASC) as no,a.evtadID,a.evtpgID,a.url,a.adChannel,a.adSource,a.adPos,a.adSize,a.updUser,convert(varchar, a.adSdt, 111)adSdt,convert(varchar, a.adEdt, 111)adEdt,convert(varchar, a.updTime, 120)updTime, (select count(*) from dm_EvtadTag b where a.evtadID = b.evtadID and ( b.isDel <>'Y' or b.isDel is null) ) sumtag FROM dm_EvtadMst a where a.evtpgID ='" + evtpgID + "' order by a.adSdt asc ", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
           reject(2);
         }
         for (var i = 0; i < recordset.rowsAffected; i++) {
@@ -467,7 +467,7 @@ module.exports = (app) => {
     Promise.all([p1]).then(function (results) {
       db.query("SELECT deat.* FROM dm_EvtadTag deat where deat.evtadID in ( select dem.evtadID from dm_EvtadMst dem where dem.evtpgID = '" + evtpgID + "' ) and (deat.isDel is null  or deat.isDel <>'Y' )", function (err, recordset) {
         if (err)
-          console.log(err);
+          winston.error(err);
         for (var i = 0; i < adlist.length; i++) {
           taginfo = [];
           for (var j = 0; j < recordset.rowsAffected; j++) {
@@ -483,7 +483,7 @@ module.exports = (app) => {
             taginfo: taginfo
           });
         }
-        console.log(JSON.stringify(adlist));
+        winston.error(JSON.stringify(adlist));
         res.render('EvadList', {
           'user': req.user,
           'items': recordset.recordset,
@@ -496,7 +496,7 @@ module.exports = (app) => {
         });
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -524,7 +524,7 @@ module.exports = (app) => {
         'funcCatge': funcCatge
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 

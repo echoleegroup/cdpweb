@@ -9,7 +9,7 @@ const url = require('url');
 const http = require('http');
 
 module.exports = (app) => {
-  console.log('[custmotivationRoute::create] Creating custmotivation route.');
+  winston.info('[custmotivationRoute::create] Creating custmotivation route.');
   const router = express.Router();
 
   router.get('/cust/bhv/cp/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.CUST_MOTIVATION)], function (req, res) {
@@ -56,7 +56,7 @@ module.exports = (app) => {
       });
 
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
 
     });
   });

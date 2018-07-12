@@ -16,7 +16,7 @@ function toUP(value) {
     return value.toUpperCase();
 };
 module.exports = (app) => {
-  console.log('[talist_rspuploadRoute::create] Creating talist_rspupload route.');
+  winston.info('[talist_rspuploadRoute::create] Creating talist_rspupload route.');
   const router = express.Router();
 
   router.post('/ta/rsp/upload_act', [middleware.check(), middleware.checkEditPermission(permission.TA_REACTION_UPLOAD), upload.single('uploadingFile')], function (req, res) {
@@ -48,7 +48,7 @@ module.exports = (app) => {
       function getnewindex(mdID, callback) {
         db.query("INSERT INTO cu_RespListMst(mdID,batID,respListName,respListChannel,respListDesc,respListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
           if (err) {
-            console.log(err);
+            winston.error(err);
             reject(err);
           }
           callback(null, 0);
@@ -74,7 +74,7 @@ module.exports = (app) => {
         l = nameArray.pop();
         nameMime.unshift(l);
       } // Mime是檔案的後綴 Mime=nameMime.join('');
-      // console.log(Mime); res.send("done"); //重命名檔案
+      // winston.error(Mime); res.send("done"); //重命名檔案
       // 加上檔案後綴
       // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
       filepath = file.path;
@@ -135,7 +135,7 @@ module.exports = (app) => {
               if (key == 'LISCNO') {
                 db.query("SELECT CustID_u FROM cu_LicsnoIndex where LISCNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
                   if (err)
-                    console.log(err);
+                    winston.error(err);
                   if (recordset.rowsAffected == 0)
                     callback(null, "0");
                   else
@@ -205,7 +205,7 @@ module.exports = (app) => {
         }
       }
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -237,7 +237,7 @@ module.exports = (app) => {
     Promise.all([p1, p3]).then(function (results) {
       db.query("SELECT mdName FROM md_Model where mdID = '" + mdID + "'", function (err, recordset) {
         if (err) {
-          console.log(err);
+          winston.error(err);
         }
         var modelList = req.session.modelList;
         var navMenuList = req.session.navMenuList;
@@ -255,7 +255,7 @@ module.exports = (app) => {
         });
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
   router.get('/ta/rsp/edit', [middleware.check(), middleware.checkEditPermission(permission.TA_REACTION_UPLOAD)], function (req, res) {

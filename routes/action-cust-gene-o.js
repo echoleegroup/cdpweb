@@ -9,7 +9,7 @@ const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
 const http = require('http');
 
 module.exports = (app) => {
-  console.log('[custGeneRoute::create] Creating custGene route.');
+  winston.info('[custGeneRoute::create] Creating custGene route.');
   const router = express.Router();
 
   router.get('/cust/char/cp/:mdID/:batID', [middleware.check(), middleware.checkViewPermission(permission.CUST_GENE)], function (req, res) {
@@ -55,7 +55,7 @@ module.exports = (app) => {
       });
 
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 

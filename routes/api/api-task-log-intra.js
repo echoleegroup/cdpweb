@@ -26,7 +26,6 @@ module.exports = (app) => {
       res.json(resData);
     }).fail(err => {
       winston.error('initialize task log failed: ', err);
-      console.log(err);
       res.json(null, 500, 'internal service error!');
     });
   });

@@ -74,7 +74,7 @@ module.exports = (app) => {
     criteriaFeaturePromise(CLIENT_CRITERIA_FEATURE_SET_ID, INTEGRATION_ANALYSIS_TREE_ID).then(resSet => {
       res.json(resSet);
     }).fail(err => {
-      console.log('===/features/criteria/client internal server error: ', err);
+      winston.error('===/features/criteria/client internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
@@ -333,7 +333,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/export/download/:queryId', middlewares, (req, res) => {
+  router.get('/export/download/:queryId', middlewares, auth.checkViewPermission(permission.INTEGRATED_EXPORT), (req, res) => {
     // const fs = require('fs');
     let queryId = req.params.queryId;
     let fileName = `${queryId}.zip`;
@@ -353,7 +353,7 @@ module.exports = (app) => {
       });
       return deferred.promise;
     }).fail(err => {
-      console.log(err);
+      winston.error(err);
       res.json(null, 500, 'internal service error!');
     });
   });

@@ -6,7 +6,7 @@ const permission = require("../utils/constants").MENU_CODE;
 const db = require("../utils/sql-server-connector").db;
 
 module.exports = (app) => {
-  console.log('[modelRoute::create] Creating model route.');
+  winston.info('[modelRoute::create] Creating model route.');
   const router = express.Router();
 
   router.get('/modelList', [middleware.check(), middleware.checkViewPermission(permission.MODEL_LIST)], function (req, res) {
@@ -104,7 +104,7 @@ module.exports = (app) => {
         'mgrMenuList': mgrMenuList
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
 
   });

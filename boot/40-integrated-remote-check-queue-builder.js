@@ -48,7 +48,7 @@ module.exports = (app) => {
       queue.push(queryId, processor);
     });
   }).fail(err => {
-    console.log(err);
+    winston.error(err);
     winston.error('get remote processing integrated query task failed: ', err);
   });
 };

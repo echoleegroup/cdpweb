@@ -9,7 +9,7 @@ const url = require('url');
 const http = require('http');
 
 module.exports = (app) => {
-  console.log('[generaudicRoute::create] Creating generaudic route.');
+  winston.info('[generaudicRoute::create] Creating generaudic route.');
   const router = express.Router();
 
   router.get('/cal/cp/:mdID/:batID',[middleware.check(), middleware.checkViewPermission(permission.GENE_RAUDIC)], function (req, res) {
@@ -87,7 +87,7 @@ module.exports = (app) => {
       });
 
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
 
     });
   });

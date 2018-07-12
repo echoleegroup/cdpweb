@@ -1,5 +1,7 @@
 "use strict";
+const winston = require('winston');
 const db_info = require("../app-config").get("SQL_SERVER_INFO");
+
 var config = {
   user: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
@@ -9,8 +11,8 @@ var config = {
 };
 var sql = require('mssql');
 sql.connect(config, function (err) {
-  if (err) console.log(err);
-  else console.log("mssql connected");
+  if (err) winston.error(err);
+  else winston.info("mssql connected");
 });
 var db = new sql.Request();
 exports.db = db;

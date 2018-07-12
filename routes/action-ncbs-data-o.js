@@ -13,7 +13,7 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 
 module.exports = (app) => {
-  console.log('[NCBSDataRoute::create] Creating NCBSData route.');
+  winston.info('[NCBSDataRoute::create] Creating NCBSData route.');
   const router = express.Router();
 
   router.post('/NCBS/upload_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS), upload.single('uploadingFile')], function (req, res) {
@@ -57,7 +57,7 @@ module.exports = (app) => {
     var l = nameArray.pop();
     nameMime.unshift(l);
     // Mime是檔案的後綴 Mime=nameMime.join('');
-    // console.log(Mime); res.send("done"); //重命名檔案
+    // winston.error(Mime); res.send("done"); //重命名檔案
     // 加上檔案後綴
     // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
     uniqName = file.filename;
@@ -90,13 +90,13 @@ module.exports = (app) => {
       }
       insertMst(origName, uniqName, function (err, data) {
         if (err) {
-          console.log("ERROR : ", err);
+          winston.error("ERROR : ", err);
           reject(1)
         }
         else {
           db.query("SELECT TOP 1 cnm.ncbsID,cnm.ncbsName,cnm.Client,cnm.ncbsYear,cnm.ncbsDesc,cnm.ncbsQus,convert(varchar,cnm.ncbsSdt,111)ncbsSdt,convert(varchar,cnm.ncbsEdt,111)ncbsEdt,convert(varchar,cnm.updTime,120)updTime,cnm.updUser,(select count(*) FROM cu_NCBSDet cnb where cnb.ncbsID = cnm.ncbsID)NSBCcount FROM cu_NCBSMst cnm order by ncbsID desc  ", function (err, recordset) {
             if (err)
-              console.log(err);
+              winston.error(err);
             ncbsID = recordset.recordset[0].ncbsID;
             maininfo = recordset.recordset;
             resolve(ncbsID);
@@ -134,7 +134,7 @@ module.exports = (app) => {
               const checkdata = (keyIndex, callback) => {
                 db.query("SELECT CustID_u,LICSNO FROM cu_LicsnoIndex where REPLACE(LICSNO,'-','')  = '" + list[0].data[i][keyIndex].toString().replace("-", "") + "'", function (err, recordset) {
                   if (err)
-                    console.log(err);
+                    winston.error(err);
                   if (recordset.rowsAffected == 0)
                     callback(null, "0");
                   else {
@@ -153,7 +153,7 @@ module.exports = (app) => {
                     anscontent += list[0].data[i][j] + ",";
                 }
                 if (err)
-                  console.log("ERROR : ", err);
+                  winston.error("ERROR : ", err);
                 if (data1 == "0") {
                   errornum++;
                   var linenum = i + 1;
@@ -196,7 +196,7 @@ module.exports = (app) => {
                   else {
                     db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {
                       if (err) {
-                        console.log(err);
+                        winston.error(err);
                       }
                       successnum++;
                       if (i == list[0].data.length - 1) {
@@ -226,7 +226,7 @@ module.exports = (app) => {
       }
 
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
@@ -269,7 +269,7 @@ module.exports = (app) => {
         'datetime': datetime
       });
     }).catch(function (e) {
-      console.log(e);
+      winston.error(e);
     });
   });
 
