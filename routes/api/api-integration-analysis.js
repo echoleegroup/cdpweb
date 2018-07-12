@@ -333,7 +333,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/export/download/:queryId', middlewares, auth.checkViewPermission(permission.INTEGRATED_EXPORT), (req, res) => {
+  router.get('/export/download/:queryId', middlewares, auth.checkViewPermission(MENU_CODE.INTEGRATED_EXPORT), (req, res) => {
     // const fs = require('fs');
     let queryId = req.params.queryId;
     let fileName = `${queryId}.zip`;

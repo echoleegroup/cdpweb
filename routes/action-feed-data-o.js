@@ -15,7 +15,7 @@ const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 
 module.exports = (app) => {
-  winston.error('[FeedDataRoute::create] Creating FeedData route.');
+  winston.info('[FeedDataRoute::create] Creating FeedData route.');
   const router = express.Router();
 
   router.get('/search', [middleware.check(), middleware.checkViewPermission(permission.FEED_DATA_LIST)], function (req, res) {

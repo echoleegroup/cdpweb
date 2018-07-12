@@ -1,10 +1,11 @@
 "use strict";
 const express = require('express');
-const Q = require('q');
+// const Q = require('q');
 const winston = require('winston');
-const boom = require('boom');
+// const boom = require('boom');
 const middleware = require('../middlewares/login-check');
-const modelService = require('../services/model-service');
+const permission = require("../utils/constants").MENU_CODE;
+// const modelService = require('../services/model-service');
 
 module.exports = (app) => {
   winston.info('[TargetRoute::create] Creating target route.');

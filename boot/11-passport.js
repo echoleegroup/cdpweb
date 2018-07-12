@@ -39,7 +39,7 @@ module.exports = () => {
           });
         }
       } else {
-        winston.error('帳號或密碼不正確');
+        winston.warn('帳號或密碼不正確');
         return done(null, false, {
           message: '帳號或密碼不正確'
         });

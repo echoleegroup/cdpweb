@@ -6,7 +6,7 @@ const factory = require("../../middlewares/response-factory");
 const taskLogService = require('../../services/task-log-service');
 
 module.exports = (app) => {
-  winston.info('[api-model] Creating api-integration-analysis route.');
+  winston.info('[api-model] Creating api-task-log-intra route.');
   const router = express.Router();
 
   router.post('/init', factory.ajax_response_factory(), (req, res) => {

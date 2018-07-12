@@ -4,16 +4,16 @@ const express = require('express');
 const path = require('path');
 const winston = require('winston');
 const Q = require('q');
-const _ = require('lodash');
+// const _ = require('lodash');
 const factory = require("../../middlewares/response-factory");
 const integratedAnalysisHelper = require('../../helpers/integrated-analysis-helper');
 const integrationTaskService = require('../../services/integration-analysis-task-service');
-const integrationAnalysisService = require('../../services/integration-analysis-statistic-service');
+// const integrationAnalysisService = require('../../services/integration-analysis-statistic-service');
 const constants = require('../../utils/constants');
 const queue = require('../../utils/queue');
 
 module.exports = (app) => {
-  winston.info('[api-model] Creating api-integration-analysis route.');
+  winston.info('[api-model] Creating api-integration-analysis-intra route.');
   const router = express.Router();
 
   router.get('/export/query/parsing/:queryId', factory.ajax_response_factory(), (req, res) => {
