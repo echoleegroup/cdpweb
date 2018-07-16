@@ -515,6 +515,7 @@ module.exports = (app) => {
             cookieCount: recordset.recordset[i].cookieCount,
             dxidCount: recordset.recordset[i].dxidCount,
             canvasCount: recordset.recordset[i].canvasCount,
+            licsnoCount: recordset.recordset[i].licsnoCount,
             url: recordset.recordset[i].url
           });
           data.push({
