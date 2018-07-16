@@ -439,7 +439,7 @@ const getMinPeriod = (chartType, minPeriod) => {
 
 module.exports.backendCriteriaDataWrapper = (criteria, masterFeature, masterFilter, analyzableFeatures, relatives) => {
   let today = moment().startOf('day');
-  let startDay = today.add(-1, 'months');
+  let startDay = moment().startOf('day').add(-3, 'months');
   return {
     criteria: criteria,
     export: {

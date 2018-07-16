@@ -33,7 +33,8 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
 
     const column1Handler = {
       continuous: (feature) => {
-        let value = (feature.chartSize > 0 && feature.median)? feature.median: '無資料';
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.median)? feature.median: ' - ';
         return (
           <td>{value} <img src="/images/icon_median.png" alt="中" className="icon_float"/> </td>
         );
@@ -47,7 +48,8 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
     };
     const column2Handler = {
       continuous: (feature) => {
-        let value = (feature.chartSize > 0 && feature.average)? feature.average: '無資料';
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.average)? feature.average: ' - ';
         return (
           <td>{value} <img src="/images/icon_average.png" alt="平" className="icon_float"/> </td>
         );
@@ -65,27 +67,29 @@ export default class IntegratedAnalysisChartSmall extends IntegratedAnalysisChar
           hour: 'YYYY/MM/DD HH',
           minute: 'YYYY/MM/DD HH:mm'
         };
-        return (feature.chartSize > 0 && feature.maxScale)?
-          (<td>{moment(feature.maxScale, 'X').startOf(feature.minPeriod).format(formatter[feature.minPeriod])}</td>):
-          (<td>無資料</td>);
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.maxScale)?
+            moment(feature.maxScale, 'X').startOf(feature.minPeriod).format(formatter[feature.minPeriod]): ' - ';
+        return (<td>{value}</td>);
       }
     };
     const column3Handler = {
       continuous: (feature) => {
-        let value = (feature.chartSize > 0 && feature.standardDeviation)? feature.standardDeviation: '無資料';
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.standardDeviation)? feature.standardDeviation: ' - ';
         return (
           <td>{value} <img src="/images/icon_sd.png" alt="S.D." className="icon_float"/> </td>
         );
       },
       category: (feature) => {
-        return (feature.chartSize > 0 && feature.maxProportion)?
-          (<td>{feature.maxProportion}%</td>):
-          (<td>無資料</td>);
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.maxProportion)? feature.maxProportion: ' - ';
+        return (<td>{value}</td>);
       },
       date: (feature) => {
-        return (feature.chartSize > 0 && feature.maxProportion)?
-          (<td>{feature.maxProportion}%</td>):
-          (<td>無資料</td>);
+        let value = (feature.chartSize <= 0)? '無資料':
+          (feature.maxProportion)? feature.maxProportion: ' - ';
+        return (<td>{value}</td>);
       }
     };
 
