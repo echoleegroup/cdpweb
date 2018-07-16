@@ -511,7 +511,7 @@ module.exports = (app) => {
         res.end("已新增過");
       else {
         const addtag = (ListID, newtag, callback) => {
-          db.query("INSERT INTO cu_OuterListTag(outerListID,tagLabel,updTime,updUser) VALUES(" + ListID + ",'" + newtag + "',GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
+          db.query("INSERT INTO cu_OuterListTag(outerListID,tagLabel,crtTime,updTime,updUser) VALUES(" + ListID + ",'" + newtag + "',GETDATE(),GETDATE(),'" + req.user.userId + "') ", function (err, recordset) {
             if (err)
               callback(err, null);
             else
@@ -539,7 +539,7 @@ module.exports = (app) => {
   router.post('/outdata/tag/del', function (req, res) {
     var ListID = req.body.ListID;
     var tagID = req.body.tagID;
-    db.query("UPDATE cu_OuterListTag set isDel = 'Y' where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {
+    db.query("UPDATE cu_OuterListTag set isDel = 'Y',updTime = GETDATE() where outerListID = " + ListID + " and tagID =  " + tagID, function (err, recordset) {
       if (err) winston.error(err);
       res.end('刪除成功');
     });

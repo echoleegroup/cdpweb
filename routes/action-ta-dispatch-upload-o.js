@@ -200,7 +200,7 @@ module.exports = (app) => {
     var sentListChannel;
     var items;
     var p1 = new Promise(function (resolve, reject) {
-      db.query("SELECT batID,batName FROM md_Batch where mdID ='" + mdID + "' and isClosed <> 'Y'  and isDel <> 'Y' order by updTime desc ", function (err, recordset) {
+      db.query("SELECT batID,batName FROM md_Batch where mdID ='" + mdID + "' and ( isClosed <> 'Y' or isClosed is null )  and ( isDel <> 'Y' or isDel is null ) order by updTime desc ", function (err, recordset) {
         if (err) {
           reject(err);
         }

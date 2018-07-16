@@ -585,7 +585,7 @@ module.exports = (app) => {
     let evtadID = req.body.evtadID;
     let sql = "SELECT tagLabel " +
       " FROM dm_EvtadTag " +
-      " where evtadID = @evtadID ";
+      " where evtadID = @evtadID and (isDel <> 'Y' or isDel is null)";
     let request = _connector.queryRequest()
       .setInput('evtadID', _connector.TYPES.NVarChar, evtadID)
     Q.nfcall(request.executeQuery, sql).then((resultSet) => {

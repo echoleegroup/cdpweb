@@ -7,8 +7,7 @@
       <!-- form set Start -->
       <div class="form_block">
         <h2>回應名單上傳</h2>
-        <form id="reg" action="/target/ta/rsp/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal"
-          enctype="multipart/form-data">
+        <form id="reg" action="/target/ta/rsp/upload_act" method="post" onsubmit="return checkForm()" class="form-horizontal" enctype="multipart/form-data">
           <input id="mdID" name="mdID" type="hidden" value="{{mdID}}" />
           <div class="form-group">
             <label for="inputName" class="col-sm-3 control-label">模型名稱</label>
@@ -22,7 +21,7 @@
               <select class="form-control custom" id="batID" name="batID">
                 <option value="">請選擇</option>
                 {{#each batchlist as |bat|}}
-                  <option value="{{bat.batID}}">{{bat.batName}}</option>
+                <option value="{{bat.batID}}">{{bat.batName}}</option>
                 {{/each}}
               </select>
             </div>
@@ -33,7 +32,7 @@
               <select class="form-control custom" id="sentListChannel" name="sentListChannel">
                 <option value="">請選擇</option>
                 {{#each sentListChannel as |Categ|}}
-                  <option value="{{Categ.codeValue}}">{{Categ.codeLabel}}</option>
+                <option value="{{Categ.codeValue}}">{{Categ.codeLabel}}</option>
                 {{/each}}
               </select>
             </div>
@@ -79,7 +78,11 @@
             <div class="col-sm-8">
               <div class="form-inline btn btn-default btn-file">
                 <input type="hidden" class="form-control" id="imageFileTitle1" name="imageFileTitle1" placeholder="請輸入檔案"> 請選擇檔案
-                <input type="file" id="uploadingFile" name="uploadingFile" class="btn btn-lg btn-default">
+                <input type="file" id="uploadingFile" name="uploadingFile" class="btn btn-lg btn-default" onchange="getFilePath()">
+              </div>
+              <div class="isa_warning" id="showPath" style="display:none">
+                <i class="fa fa-file-text"></i>
+                <font id="pathText"></font>
               </div>
             </div>
           </div>
@@ -173,7 +176,12 @@
   $('#endDate').datepicker({
     locale: "zh-tw"
   });
-
+  function getFilePath() {
+    var NewArray = new Array();
+    NewArray = document.getElementById("uploadingFile").value.split("\\");
+    document.getElementById("pathText").innerHTML = NewArray[2];
+    document.getElementById("showPath").style.display = "block";
+  }
   function checkForm() {
     if (document.getElementById("batID").value == '') {
       alert("請選擇活動梯次");
