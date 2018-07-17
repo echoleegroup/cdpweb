@@ -189,7 +189,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
         </ComponentLeftColumnGrid>
         {/*<!-- 右欄 Start -->*/}
         <ComponentRightColumnGrid>
-          <Loadable loaded={!this.state.isLoaded} spinner>
+          <Loadable active={!this.state.isLoaded} spinner>
             <FeatureAnalysis selectedFeature={this.state.selectedFeature}
                              selectedFeaturePath={this.state.selectedFeaturePath}
                              // feature={this.state.feature}
