@@ -113,7 +113,7 @@ export default class ModalTagPicker extends React.PureComponent {
     this.optionsFilter = (e) => {
       let keyword = this.keywordInput.value;
       if (!this.composition && this.keyword !== keyword) {
-        console.log('keyword: ', keyword);
+        // console.log('keyword: ', keyword);
         this.keyword = keyword;
 
         this.setState({isLoaded: false});
@@ -170,13 +170,13 @@ export default class ModalTagPicker extends React.PureComponent {
                 </div>
               </div>
             </div>
-            <div className="form-group form-inline" style={{marginBottom: '0px'}}>
-              <h3>查詢結果</h3>
-              <label className="pull-right" style={{marginTop: '-35px'}}>
-                <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
-              </label>
-            </div>
             <Loadable active={!this.state.isLoaded} spinner>
+              <div className="form-group form-inline" style={{marginBottom: '0px'}}>
+                <h3>查詢結果</h3>
+                <label className="pull-right" style={{marginTop: '-35px'}}>
+                  <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
+                </label>
+              </div>
               <PickerMultiple nodes={this.state.filteredOptions}
                               selected={this.state.selected.toJS()}
                               tailClickHandler={this.tailClickHandler}/>

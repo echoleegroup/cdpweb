@@ -103,7 +103,7 @@ export default class CustomTargetFilter extends React.PureComponent {
     };
 
     this.changeViewHandler = (isPreview) => {
-      console.log('criteria preview mode: ', isPreview);
+      // console.log('criteria preview mode: ', isPreview);
       if (isPreview) {
         //trigger query
         this.filterResultPreview();

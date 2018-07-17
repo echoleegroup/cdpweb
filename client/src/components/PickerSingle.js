@@ -4,7 +4,7 @@ import {NODE_TYPE_DICT as NODE_TYPE} from '../utils/tree-node-util';
 export default class PickerSingle extends React.PureComponent {
 
   componentWillUnmount() {
-    console.log('PickerSingle componentWillUnmount');
+    // console.log('PickerSingle componentWillUnmount');
   };
 
   TailContainer(props) {
@@ -37,7 +37,7 @@ export default class PickerSingle extends React.PureComponent {
 
 class Tree extends React.PureComponent {
   componentWillUnmount() {
-    console.log('Tree componentWillUnmount');
+    // console.log('Tree componentWillUnmount');
   };
 
   render() {

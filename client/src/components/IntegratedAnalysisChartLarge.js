@@ -55,7 +55,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
 
   fetchChartData(mode, queryId, featureId) {
     getChartData(mode, queryId, featureId, data => {
-      console.log('get chart data: ', data);
+      // console.log('get chart data: ', data);
       this.setState({
         // feature: data.feature,
         chartData: data,
@@ -354,11 +354,11 @@ export class ContinuousLargeChart extends React.Component {
   };
 
   componentDidMount() {
-    console.log('component continuous chart did mount');
+    // console.log('component continuous chart did mount');
   };
 
   componentDidUpdate() {
-    console.log('component continuous chart did update');
+    // console.log('component continuous chart did update');
   };
 
   render() {
