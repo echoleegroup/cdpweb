@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import {isEmpty} from 'lodash';
 import Rx from "rxjs/Rx";
 import AmCharts from '@amcharts/amcharts3-react';
@@ -189,7 +189,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
         </ComponentLeftColumnGrid>
         {/*<!-- 右欄 Start -->*/}
         <ComponentRightColumnGrid>
-          <Loader loaded={this.state.isLoaded}>
+          <Loadable loaded={!this.state.isLoaded} spinner>
             <FeatureAnalysis selectedFeature={this.state.selectedFeature}
                              selectedFeaturePath={this.state.selectedFeaturePath}
                              // feature={this.state.feature}
@@ -202,7 +202,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
               <ComponentChartBody feature={this.state.selectedFeature}
                                   chartData={this.state.chartData}/>
             </FeatureAnalysis>
-          </Loader>
+          </Loadable>
           {/*<!-- table set Start -->*/}
           <TaskDataInformation records={this.state.records} mode={this.mode} queryId={this.queryId}/>
         </ComponentRightColumnGrid>

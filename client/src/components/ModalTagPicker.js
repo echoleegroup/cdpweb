@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import {xorBy, debounce, assign, filter, uniqBy, differenceBy, difference} from 'lodash';
 import shortid from 'shortid';
 import {List} from "immutable";
@@ -176,11 +176,11 @@ export default class ModalTagPicker extends React.PureComponent {
                 <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
               </label>
             </div>
-            <Loader loaded={this.state.isLoaded}>
+            <Loadable active={!this.state.isLoaded} spinner>
               <PickerMultiple nodes={this.state.filteredOptions}
                               selected={this.state.selected.toJS()}
                               tailClickHandler={this.tailClickHandler}/>
-            </Loader>
+            </Loadable>
           </div>
           <div className="btn-block center-block">
             <button type="button" className="btn btn-lg btn-default" onClick={this.submit}>加入</button>

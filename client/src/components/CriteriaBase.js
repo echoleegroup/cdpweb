@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import {assign, isEmpty} from 'lodash';
 import ModalCriteriaSetter from './ModalCriteriaSetter';
 import CriteriaComboBundle from './CriteriaComboBundle';
@@ -133,11 +133,11 @@ export default class CriteriaBase extends React.PureComponent {
     }
 
     return (
-      <Loader loaded={this.state.isLoaded}>
+      <Loadable active={!this.state.isLoaded} spinner>
         <CriteriaBaseContainer {...mapToProps}/>
         {/*<!-- 新增條件組合 -->*/}
         <ComponentModals/>
-      </Loader>
+      </Loadable>
     );
   };
 

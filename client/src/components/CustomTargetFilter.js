@@ -1,11 +1,11 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import numeral from 'numeral';
 import {format} from 'util';
 import {Map} from 'immutable';
 import AlertMessenger from './AlertMessenger';
 import CustomTargetFilterCriteria from './CustomTargetCriteria';
-import {FILTER_RESULT_EXPORT, getCustomTargetFilterPreview, getCriteriaHistory} from '../actions/custom-filter-action';
+import {FILTER_RESULT_EXPORT, getCustomTargetFilterPreview} from '../actions/custom-filter-action';
 
 const ALLOW_DOWNLOAD_THRESHOLD = 30000;
 
@@ -57,7 +57,7 @@ export default class CustomTargetFilter extends React.PureComponent {
       if (isReady) {
         let criteria = this.criteriaGathering();
         this.setState(prevState => ({
-          // isLoaded: false,
+          isLoaded: false,
           criteria: prevState.criteria
             // .set('isIncludeModelTarget', criteria.isIncludeModelTarget)
             .set('statements', criteria.statements)
@@ -135,7 +135,7 @@ export default class CustomTargetFilter extends React.PureComponent {
   render() {
     let isIncludeModelTarget = this.state.criteria.get('isIncludeModelTarget')
     return (
-      <Loader loaded={this.state.isLoaded}>
+      <Loadable active={!this.state.isLoaded} spinner>
         <CustomTargetFilterCriteria params={this.props.params}
                                     criteria={this.state.criteria.get('statements')}
                                     changeViewHandler={this.changeViewHandler}
@@ -172,7 +172,7 @@ export default class CustomTargetFilter extends React.PureComponent {
                     onClick={this.filterResultExport}>自定名單下載</button>
           </div>
         </div>
-      </Loader>
+      </Loadable>
     );
   };
 }

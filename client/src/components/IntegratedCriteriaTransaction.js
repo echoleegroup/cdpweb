@@ -6,6 +6,10 @@ import {getTransactionFeatureSets} from "../actions/integrated-analysis-action";
 import IntegratedCriteriaFeatureSetPicker from "./IntegratedCriteriaFeatureSetPicker";
 
 export default class IntegratedCriteriaTransaction extends IntegratedCriteriaBase {
+  constructor(props) {
+    super(props);
+    this.state.featureSets = [];
+  };
 
   componentWillMount() {
     super.componentWillMount();

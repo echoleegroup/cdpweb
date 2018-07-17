@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import AnonymousAnalysisCriteriaTrail from "./AnonymousCriteriaTrail";
 import {getAnonymousExportFeaturePool} from '../actions/anonymous-analysis-action';
@@ -78,14 +78,14 @@ export default class AnonymousQueryHome extends CriteriaHomeLayout {
                                                   stepNext={this.stepTo(STEPS.step4)}/>;
       case STEPS.step4:
         return (
-          <Loader loaded={this.state.isLoaded}>
+          <Loadable active={!this.state.isLoaded} spinner>
             <AnonymousAnalysisOutputFeaturePicker ref={this.storeCurrentStepComponent}
                                                   criteria={this.state.criteria}
                                                   output={this.state.output}
                                                   featureOptions={this.state.featureOptions}
                                                   params={this.params}
                                                   step={STEPS.step4}/>
-          </Loader>
+          </Loadable>
         );
 
     }

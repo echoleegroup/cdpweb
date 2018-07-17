@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import {getPotentialTargetSummary} from '../actions/model-action';
 
 export default class CustomTargetIllustration extends React.PureComponent {
@@ -31,7 +31,7 @@ export default class CustomTargetIllustration extends React.PureComponent {
 
   render() {
     return (
-      <Loader loaded={this.state.isLoaded}>
+      <Loadable active={!this.state.isLoaded} spinner>
         <div className="table_block table-responsive">
           <h2>客群資訊</h2>
           <h3>自定受眾</h3>
@@ -55,7 +55,7 @@ export default class CustomTargetIllustration extends React.PureComponent {
             </tbody>
           </table>
         </div>
-      </Loader>
+      </Loadable>
     );
   };
 }

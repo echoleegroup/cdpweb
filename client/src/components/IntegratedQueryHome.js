@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from 'react-loader';
+import Loadable from 'react-loading-overlay';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import {List} from 'immutable';
 import {assign} from 'lodash';
@@ -132,7 +132,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
                                            stepNext={this.stepTo(STEPS.step7)}/>;
       case STEPS.step7:
         return (
-          <Loader loaded={this.state.isLoaded}>
+          <Loadable active={!this.state.isLoaded} spinner>
             <IntegratedCriteriaExportFeaturePicker ref={this.storeCurrentStepComponent}
                                                    criteria={this.state.criteria}
                                                    output={this.state.output}
@@ -140,7 +140,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
                                                    relativeSetOptions={this.state.relativeSetOptions}
                                                    params={this.params}
                                                    step={STEPS.step7}/>
-          </Loader>
+          </Loadable>
         );
 
     }
