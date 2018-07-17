@@ -133,18 +133,19 @@ export default class CriteriaBase extends React.PureComponent {
     }
 
     return (
-      <Loadable active={!this.state.isLoaded} spinner>
+      <div>
         <CriteriaBaseContainer {...mapToProps}/>
         {/*<!-- 新增條件組合 -->*/}
         <ComponentModals/>
-      </Loadable>
+      </div>
     );
   };
 
   ComponentModals(props) {
     let mapToProps = {
       features: this.state.features,
-      featureRefCodeMap: this.state.featureRefCodeMap
+      featureRefCodeMap: this.state.featureRefCodeMap,
+      isLoaded: this.state.isLoaded
     };
     return (
       <ModalCriteriaSetter {...mapToProps} ref={(e) => {

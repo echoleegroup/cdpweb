@@ -1,5 +1,4 @@
 import React from 'react';
-import Loadable from 'react-loading-overlay';
 import {assign} from 'lodash';
 import CriteriaBundle from './CriteriaBundle';
 import ModalCriteriaSetter from './ModalCriteriaSetter';
@@ -63,14 +62,13 @@ export default class CriteriaBundleTransaction extends CriteriaBundle {
 
     let mapToProps = {
       features: this.state.features || [],
-      featureRefCodeMap: this.state.featureRefCodeMap || {}
+      featureRefCodeMap: this.state.featureRefCodeMap || {},
+      isLoaded: this.state.isLoaded
     };
     return (
-      <Loadable active={!this.state.isLoaded} spinner>
-        <ModalCriteriaSetter {...mapToProps} ref={(e) => {
-          this.slaveModal = e;
-        }}/>
-      </Loadable>
+      <ModalCriteriaSetter {...mapToProps} ref={(e) => {
+        this.slaveModal = e;
+      }}/>
     );
   };
 };

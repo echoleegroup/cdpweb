@@ -164,13 +164,13 @@ export default class ModalTrailHitPicker extends React.PureComponent {
                 </div>
               </div>
             </div>
-            <div className="form-group form-inline" style={{marginBottom: '0px'}}>
-              <h3>查詢結果</h3>
-              <label className="pull-right" style={{marginTop: '-35px'}}>
-                <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
-              </label>
-            </div>
             <Loadable active={!this.state.isLoaded} spinner>
+              <div className="form-group form-inline" style={{marginBottom: '0px'}}>
+                <h3>查詢結果</h3>
+                <label className="pull-right" style={{marginTop: '-35px'}}>
+                  <input type="checkbox" defaultChecked={false} onClick={this.selectAllOnChangeHandler}/> 全選
+                </label>
+              </div>
               <PickerMultiple nodes={this.state.filteredOptions}
                               selected={this.state.selected.toJS()}
                               tailClickHandler={this.tailClickHandler}/>

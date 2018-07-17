@@ -1,4 +1,5 @@
 import React from 'react';
+import Loadable from 'react-loading-overlay';
 import shortid from 'shortid';
 import moment from 'moment';
 import {find, assign, pick, isEmpty} from 'lodash';
@@ -190,31 +191,33 @@ export default class ModalCriteriaSetter extends React.PureComponent {
     return (
       <div className="modal" style={{display: display}}>
         <div className="table_block">
-          <h2>新增條件</h2>
-          <div className="modalContent">
-            <div className="col-md-6">
-              <h3>挑選欄位條件</h3>
-              <PickerSingle nodes={this.props.features}
-                            branchClickHandler={this.branchClickHandler}
-                            tailClickHandler={this.tailClickHandler}
-                            selected={this.state.selectedFeature}/>
+          <Loadable active={!this.props.isLoaded} spinner>
+            <h2>新增條件</h2>
+            <div className="modalContent">
+              <div className="col-md-6">
+                <h3>挑選欄位條件</h3>
+                <PickerSingle nodes={this.props.features}
+                              branchClickHandler={this.branchClickHandler}
+                              tailClickHandler={this.tailClickHandler}
+                              selected={this.state.selectedFeature}/>
+              </div>
+              <div className="col-md-2">
+                <OperatorSelector criteria={this.state.criteria}
+                                  operators={this.operatorSet}
+                                  operatorChangeHandler={this.operatorChangeHandler}/>
+              </div>
+              <div className="col-md-4">
+                <FieldValueSetter criteria={this.state.criteria}
+                                  refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')] || []}
+                                  ref={(e) => {this.valueSetter = e;}}/>
+              </div>
             </div>
-            <div className="col-md-2">
-              <OperatorSelector criteria={this.state.criteria}
-                                operators={this.operatorSet}
-                                operatorChangeHandler={this.operatorChangeHandler}/>
+            <AlertMessenger message_error={this.state.message_error}/>
+            <div className="btn-block center-block">
+              <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
+              <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
             </div>
-            <div className="col-md-4">
-              <FieldValueSetter criteria={this.state.criteria}
-                                refOptions={this.props.featureRefCodeMap[this.state.criteria.get('ref')] || []}
-                                ref={(e) => {this.valueSetter = e;}}/>
-            </div>
-          </div>
-          <AlertMessenger message_error={this.state.message_error}/>
-          <div className="btn-block center-block">
-            <button type="button" className="btn btn-lg btn-default" onClick={this.confirmCriteria}>確定</button>
-            <button type="button" className="btn btn-lg btn-default" onClick={this.closeModal}>取消</button>
-          </div>
+          </Loadable>
         </div>
         <div className="overlay" onClick={this.closeModal}/>
       </div>

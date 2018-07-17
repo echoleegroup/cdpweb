@@ -31,12 +31,12 @@ export default class CustomTargetIllustration extends React.PureComponent {
 
   render() {
     return (
-      <Loadable active={!this.state.isLoaded} spinner>
-        <div className="table_block table-responsive">
-          <h2>客群資訊</h2>
-          <h3>自定受眾</h3>
-          <p>在(現有) 潛在客群中依條件挑出名單，條件可以自行設定</p>
-          <br />
+      <div className="table_block table-responsive">
+        <h2>客群資訊</h2>
+        <h3>自定受眾</h3>
+        <p>在(現有) 潛在客群中依條件挑出名單，條件可以自行設定</p>
+        <br />
+        <Loadable active={!this.state.isLoaded} spinner>
           <table className="table">
             <tbody>
             <tr>
@@ -54,8 +54,8 @@ export default class CustomTargetIllustration extends React.PureComponent {
             </tr>
             </tbody>
           </table>
-        </div>
-      </Loadable>
+        </Loadable>
+      </div>
     );
   };
 }
