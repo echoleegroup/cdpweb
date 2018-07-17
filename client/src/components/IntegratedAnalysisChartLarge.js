@@ -1,6 +1,6 @@
 import React from 'react';
 import Loadable from 'react-loading-overlay';
-import {isEmpty} from 'lodash';
+import {isEmpty, assign} from 'lodash';
 import Rx from "rxjs/Rx";
 import AmCharts from '@amcharts/amcharts3-react';
 // import BranchOfNavTree from './BranchOfNavTree';
@@ -116,13 +116,16 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
   // };
 
   ComponentChartBody(props) {
+    const mapToProps = {
+      chartData: props.chartData
+    };
     switch (props.feature.category) {
       case 'continuous':
-        return <ContinuousLargeChart {...props}/>;
+        return <ContinuousLargeChart {...mapToProps}/>;
       case 'category':
-        return <CategoryLargeChart {...props}/>;
+        return <CategoryLargeChart {...mapToProps}/>;
       case 'date':
-        return <TimelineLargeChart {...props}/>;
+        return <TimelineLargeChart {...mapToProps}/>;
       default:
         return <div/>;
     }
@@ -191,14 +194,7 @@ export class IntegratedAnalysisChartLarge extends React.PureComponent {
         <ComponentRightColumnGrid>
           <Loadable active={!this.state.isLoaded} spinner>
             <FeatureAnalysis selectedFeature={this.state.selectedFeature}
-                             selectedFeaturePath={this.state.selectedFeaturePath}
-                             // feature={this.state.feature}
-                             // chart={this.state.chart}
-                             // unit={this.state.unit}
-                             // description={this.state.description}
-                             // dataSource={this.state.dataSource}
-                             // chartContainer={this.getChartContainer(this.state.chart.category)}
-            >
+                             selectedFeaturePath={this.state.selectedFeaturePath}>
               <ComponentChartBody feature={this.state.selectedFeature}
                                   chartData={this.state.chartData}/>
             </FeatureAnalysis>
@@ -295,7 +291,7 @@ class FeatureAnalysis extends React.PureComponent {
   };
 }
 
-export class ContinuousLargeChart extends React.Component {
+export class ContinuousLargeChart extends React.PureComponent {
   constructor(props) {
     super(props);
     this.chartHeight = '400px';
@@ -305,7 +301,7 @@ export class ContinuousLargeChart extends React.Component {
       "marginRight": 80,
       "autoMarginOffset": 20,
       "marginTop": 7,
-      "dataProvider": this.props.chartData,
+      // "dataProvider": this.props.chartData,
       "valueAxes": [{
         "axisAlpha": 0.2,
         "dashLength": 1,
@@ -349,9 +345,9 @@ export class ContinuousLargeChart extends React.Component {
     };
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.feature.id !== this.props.feature.id;
-  };
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return nextProps.feature.id !== this.props.feature.id;
+  // };
 
   componentDidMount() {
     // console.log('component continuous chart did mount');
@@ -362,9 +358,11 @@ export class ContinuousLargeChart extends React.Component {
   };
 
   render() {
-    this.chartConfig.dataProvider = this.props.chartData;
+    const config = assign({}, this.chartConfig, {
+      dataProvider: this.props.chartData
+    });
     return (
-      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
+      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={config} />
     );
   };
 }
@@ -407,10 +405,12 @@ export class CategoryLargeChart extends ContinuousLargeChart {
   };
 
   render() {
-    this.chartConfig.dataProvider = this.props.chartData;
+    const config = assign({}, this.chartConfig, {
+      dataProvider: this.props.chartData
+    });
     // this.chartConfig.titles.text = this.props.selectedFeature.label;
     return (
-      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={this.chartConfig} />
+      <AmCharts.React style={{ width: "100%", height: this.chartHeight }} options={config} />
     );
   };
 }
