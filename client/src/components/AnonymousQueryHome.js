@@ -65,7 +65,7 @@ export default class AnonymousQueryHome extends CriteriaHomeLayout {
         return <AnonymousAnalysisCriteriaTrail ref={this.storeCurrentStepComponent}
                                                criteria={this.state.criteria.get(STEPS.step2)}
                                                params={this.params}
-                                               alertMessageAdaptor={this.alertMessageAdaptor}
+                                               changeViewHandler={this.changeViewHandler}
                                                step={STEPS.step2}
                                                stepPrev={this.stepTo(STEPS.step1)}
                                                stepNext={this.stepTo(STEPS.step3)}/>;

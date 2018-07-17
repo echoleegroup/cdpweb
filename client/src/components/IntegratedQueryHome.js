@@ -87,14 +87,14 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
         return <IntegratedCriteriaClient ref={this.storeCurrentStepComponent}
                                          criteria={this.state.criteria.get(STEPS.step1)}
                                          params={this.params}
-                                         alertMessageAdaptor={this.alertMessageAdaptor}
+                                         changeViewHandler={this.changeViewHandler}
                                          step={STEPS.step1}
                                          stepNext={this.stepTo(STEPS.step2)}/>;
       case STEPS.step2:
         return <IntegratedCriteriaVehicle ref={this.storeCurrentStepComponent}
                                           criteria={this.state.criteria.get(STEPS.step2)}
                                           params={this.params}
-                                          alertMessageAdaptor={this.alertMessageAdaptor}
+                                          changeViewHandler={this.changeViewHandler}
                                           step={STEPS.step2}
                                           stepPrev={this.stepTo(STEPS.step1)}
                                           stepNext={this.stepTo(STEPS.step3)}/>;
@@ -102,7 +102,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
         return <IntegratedCriteriaTransaction ref={this.storeCurrentStepComponent}
                                               criteria={this.state.criteria.get(STEPS.step3)}
                                               params={this.params}
-                                              alertMessageAdaptor={this.alertMessageAdaptor}
+                                              changeViewHandler={this.changeViewHandler}
                                               step={STEPS.step3}
                                               stepPrev={this.stepTo(STEPS.step2)}
                                               stepNext={this.stepTo(STEPS.step4)}/>;
@@ -110,7 +110,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
         return <IntegratedCriteriaTag ref={this.storeCurrentStepComponent}
                                       criteria={this.state.criteria.get(STEPS.step4)}
                                       params={this.params}
-                                      alertMessageAdaptor={this.alertMessageAdaptor}
+                                      changeViewHandler={this.changeViewHandler}
                                       step={STEPS.step4}
                                       stepPrev={this.stepTo(STEPS.step3)}
                                       stepNext={this.stepTo(STEPS.step5)}/>;
@@ -118,7 +118,7 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
         return <IntegratedCriteriaTrail ref={this.storeCurrentStepComponent}
                                         criteria={this.state.criteria.get(STEPS.step5)}
                                         params={this.params}
-                                        alertMessageAdaptor={this.alertMessageAdaptor}
+                                        changeViewHandler={this.changeViewHandler}
                                         step={STEPS.step5}
                                         stepPrev={this.stepTo(STEPS.step4)}
                                         stepNext={this.stepTo(STEPS.step6)}/>;

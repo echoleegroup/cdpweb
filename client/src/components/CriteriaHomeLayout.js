@@ -82,11 +82,11 @@ export default class CriteriaHomeLayout extends React.PureComponent {
     };
 
     // message adaptor
-    this.alertMessageAdaptor = (message_error, message_warning, message_success) => {
+    this.changeViewHandler = (isPreview) => {
       this.setState({
-        message_error,
-        message_warning,
-        message_success
+        message_error: undefined,
+        message_warning: undefined,
+        message_success: undefined
       });
     };
 
