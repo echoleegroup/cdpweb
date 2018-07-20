@@ -4,26 +4,26 @@ import {xorBy, debounce, assign, filter, uniqBy, differenceBy, difference} from 
 import shortid from 'shortid';
 import {List} from "immutable";
 import {CRITERIA_COMPONENT_DICT} from "../utils/criteria-dictionary";
-import PickerMultiple from './PickerMultiple'
+import PickerMultiple from './PickerMultiple';
+import AlertMessenger from "./AlertMessenger";
 import {NODE_TYPE_DICT as NODE_TYPE} from "../utils/tree-node-util";
 
 const INITIAL_CRITERIA = Object.freeze({
   id: undefined,
-  type: CRITERIA_COMPONENT_DICT.FIELD_TAG,
+  type: undefined,
   value: undefined,
   value_label: undefined
 });
 
 const extractAllNode = (nodes) => {
   let tailNodes = filter(nodes, {type: NODE_TYPE.Tail});
-  // console.log('tailNodes: ', tailNodes);
+
   return filter(nodes, {type: NODE_TYPE.Branch}).reduce((accumulator, branchNode) => {
     return accumulator.concat(extractAllNode(branchNode.children))
   }, tailNodes);
 };
 
 const toggleList = (target, selected) => {
-  // console.log('toggleList target: ', target);
   return xorBy([target], selected, 'id');
 };
 
@@ -36,7 +36,8 @@ export default class ModalTagPicker extends React.PureComponent {
       collapse: true,
       selected: List(),
       options: [],
-      filteredOptions: []
+      filteredOptions: [],
+      message_error: undefined
     };
 
     this.composition = false;
@@ -47,6 +48,7 @@ export default class ModalTagPicker extends React.PureComponent {
   componentWillMount() {
     this.openModal = (callback) => {
       this.responseCriteria = callback;
+
       this.setState({
         isOpen: true
       });
@@ -61,9 +63,7 @@ export default class ModalTagPicker extends React.PureComponent {
       this.keywordInput.value = this.keyword;
       this.setState(prevState => ({
         isOpen: false,
-        // isLoaded: false,
         collapse: true,
-        // selected: List(),
         filteredOptions: prevState.options
       }));
     };
@@ -74,18 +74,22 @@ export default class ModalTagPicker extends React.PureComponent {
           id: shortid.generate(),
           value: node.id,
           value_label: node.label
+        }, {
+          type: this.bundleType()
         })
       });
 
-      this.responseCriteria(res);
-      this.abort();
+      if (res.length === 0) {
+        this.setState({
+          message_error: '請至少選擇一個項目'
+        });
+      } else {
+        this.responseCriteria(res);
+        this.abort();
+      }
     };
 
     this.selectAllOptions = () => {
-      // const mergeHandler = (oldVal, newVal) => {};
-      // this.setState(prevState => ({
-      //   selected: mergeWith((oldVal, newVal) => {}, this.state)
-      // }));
 
       let allNode = extractAllNode(this.state.filteredOptions);
       this.setState(prevState => ({
@@ -131,7 +135,7 @@ export default class ModalTagPicker extends React.PureComponent {
       }));
     };
 
-    this.dataHandler(null, (data) => {
+    this.dataHandler({}, (data) => {
       this.setState({
         isLoaded: true,
         options: data,
@@ -139,6 +143,14 @@ export default class ModalTagPicker extends React.PureComponent {
         selected: List(filter(data, option => this.props.selected.indexOf(option.id) > -1))
       });
     });
+  };
+
+  bundleType() {
+    return CRITERIA_COMPONENT_DICT.FIELD_TAG;
+  };
+
+  inputLabel() {
+    return '標籤';
   };
 
   componentWillReceiveProps(nextProps) {
@@ -158,7 +170,7 @@ export default class ModalTagPicker extends React.PureComponent {
           <h2>{this.props.title}</h2>
           <div className="modalContent">
             <div className="form-group">
-              <label htmlFor="inputName" className="col-sm-2 control-label">標籤</label>
+              <label htmlFor="inputName" className="col-sm-2 control-label">{this.inputLabel()}</label>
               <div className="col-sm-9">
                 <div className="form-inline">
                   <input type="text" className="form-control" defaultValue={null}
@@ -182,6 +194,7 @@ export default class ModalTagPicker extends React.PureComponent {
                               tailClickHandler={this.tailClickHandler}/>
             </Loadable>
           </div>
+          <AlertMessenger message_error={this.state.message_error}/>
           <div className="btn-block center-block">
             <button type="button" className="btn btn-lg btn-default" onClick={this.submit}>加入</button>
             <button type="button" className="btn btn-lg btn-default" onClick={this.abort}>關閉</button>

@@ -18,7 +18,7 @@ export default class CriteriaBundleTrailHit extends CriteriaBundleTag {
   componentWillMount() {
     super.componentWillMount();
 
-    this.fetchFeatureData = (keyword, periodStart, periodEnd, callback) => {
+    this.fetchFeatureData = ({keyword, periodStart, periodEnd}, callback) => {
       getTrailHitCriteriaFeatures(
         this.getPropertyState('ref'), keyword, periodStart, periodEnd, callback);
     };

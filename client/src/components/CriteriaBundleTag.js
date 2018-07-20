@@ -3,7 +3,7 @@ import {map} from 'lodash';
 import {List} from 'immutable';
 import {getTagCriteriaFeatures} from "../actions/integrated-analysis-action";
 import CriteriaBundleTransaction from "./CriteriaBundleTransaction";
-import TagPickerModal from "./ModalTagPicker";
+import ModalTagPicker from "./ModalTagPicker";
 
 const OPERATOR_OPTIONS =  {
   or: '任一'
@@ -25,7 +25,7 @@ export default class CriteriaBundleTag extends CriteriaBundleTransaction {
       }));
     };
 
-    this.fetchFeatureData = (keyword, callback) => {
+    this.fetchFeatureData = ({keyword}, callback) => {
       getTagCriteriaFeatures(
         this.getPropertyState('ref'), keyword, callback);
     };
@@ -42,7 +42,7 @@ export default class CriteriaBundleTag extends CriteriaBundleTransaction {
       selected: map(this.state.properties.get('criteria').toJS(), 'value')
     };
     return (
-      <TagPickerModal {...mapToProps} ref={(e) => {
+      <ModalTagPicker {...mapToProps} ref={(e) => {
         this.slaveModal = e;
       }}/>
     );
