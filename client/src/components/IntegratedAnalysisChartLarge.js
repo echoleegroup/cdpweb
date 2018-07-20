@@ -297,6 +297,14 @@ export class ContinuousLargeChart extends React.PureComponent {
     this.chartHeight = '400px';
     this.chartConfig = {
       "type": "serial",
+      "listeners": [
+        {
+          "event": "dataUpdated",
+          "method": (e) => {
+            this.props.chartData.length > 0 && e.chart.zoomOut();
+          }
+        }
+      ],
       "theme": "light",
       "marginRight": 80,
       "autoMarginOffset": 20,
@@ -325,12 +333,13 @@ export class ContinuousLargeChart extends React.PureComponent {
         "lineColor": "#F2B530"
       }],
       "chartScrollbar": {
-        "autoGridCount": true,
-        "graph": "g1",
-        "scrollbarHeight": 40
+        "enabled": true,
+        "graph": "g1"
       },
       "chartCursor": {
-        "limitToGraph":"g1"
+        "enabled": true,
+        // "limitToGraph":"g1",
+        "offset": 5
       },
       "categoryField": "scale",
       "categoryAxis": {
@@ -372,13 +381,24 @@ export class CategoryLargeChart extends ContinuousLargeChart {
     super(props);
     this.chartConfig = {
       "type": "serial",
+      "listeners": [
+        {
+          "event": "dataUpdated",
+          "method": (e) => {
+            this.props.chartData.length > 0 && e.chart.zoomOut();
+          }
+        }
+      ],
       "categoryField": "scale",
       "startDuration": 1,
+      "startEffect": "easeInSine",
       "categoryAxis": {
         "gridPosition": "start"
       },
       "chartCursor": {
-        "enabled": true
+        "enabled": true,
+        "graph": "AmGraph-1",
+        "offset": 5
       },
       "chartScrollbar": {
         "enabled": true
@@ -391,7 +411,7 @@ export class CategoryLargeChart extends ContinuousLargeChart {
           "fillAlphas": 1,
           "id": "AmGraph-1",
           "title": "graph 1",
-          "type": "column",
+          "graphType": "column",
           "valueField": "peak"
         }
       ],
