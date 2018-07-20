@@ -555,7 +555,7 @@ module.exports = (app) => {
       "sc.codeLabel,CONVERT(varchar,demv.trkSdt,111) trksdt,CONVERT(varchar,demv.trkEdt,111) trkedt," +
       "deams.browseCount,deams.cookieCount,deams.canvasCount " +
       "FROM dm_EvtadMst deam " +
-      "LEFT JOIN dm_EvtpgMst_View demv on demv.evtpgID = deam.evtpgID " + where +
+      "INNER JOIN dm_EvtpgMst_View demv on demv.evtpgID = deam.evtpgID " + where +
       "LEFT JOIN sy_CodeTable sc on sc.codeValue = demv.funcCatge and sc.codeGroup ='funcCatge' " +
       "LEFT JOIN dm_EvtadMst_statistic deams on deams.evtadID = deam.evtadID " +
       "WHERE deam.evtadID in ( SELECT distinct(deat.evtadID) FROM dm_EvtadTag deat) " +

@@ -133,7 +133,7 @@ module.exports = (app) => {
           else {
             const checkdata = (mdID, callback) => {
               if (key == 'LISCNO') {
-                db.query("SELECT CustID_u FROM cu_LicsnoIndex where LISCNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
+                db.query("SELECT CustID_u FROM cu_LicsnoIndex where LICSNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
                   if (err)
                     winston.error(err);
                   if (recordset.rowsAffected == 0)

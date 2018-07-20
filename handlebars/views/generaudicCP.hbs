@@ -28,6 +28,11 @@
               <td id="desc">ECHO</td>
             </tr>
             <tr>
+              <td>特徵重要性:</td>
+              <td id="score">ECHO</td>
+            </tr>
+            <tr>
+            <tr>
               <td>資料來源：</td>
               <td id="source">ECHO</td>
             </tr>
@@ -229,6 +234,7 @@
         document.getElementById("nodename").innerHTML = myObj.pnodeName + "&gt;" + myObj.nodeName;
         document.getElementById("source").innerHTML = myObj.dataSource;
         document.getElementById("updtime").innerHTML = myObj.updateDate;
+        document.getElementById("score").innerHTML = myObj.score;
         document.getElementById("unit").innerHTML = myObj.featNameExt;
         document.getElementById("desc").innerHTML = myObj.featDesc;
 

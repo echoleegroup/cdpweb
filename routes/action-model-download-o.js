@@ -168,6 +168,7 @@ module.exports = (app) => {
       resp.on('end', function () {
         const path = JSON.parse(msg).jsonOutput.data;
         const stats = fs.statSync(path);
+        const fileName = JSON.parse(msg).jsonOutput.filename;
         Q.nfcall(queryLogService.insertDownloadLog, {
           queryId: 'modelDownload',
           filePath: path,
@@ -175,7 +176,7 @@ module.exports = (app) => {
           fileSize: stats.size
         }).then(logId => {
           res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-          res.setHeader("Content-Disposition", "attachment; filename=file.xls");
+          res.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xls");
           res.sendFile(path);
         });
       });

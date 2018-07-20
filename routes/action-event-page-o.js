@@ -334,7 +334,6 @@ module.exports = (app) => {
     var sql = '';
     var maininfo = [];
     var data = [];
-    var mainifolist = [];
     var taginfo = [];
     var adlist = [];
     var ad = [];
@@ -418,8 +417,11 @@ module.exports = (app) => {
         }
         for (var i = 0; i < data.length; i++) {
           adlist = [];
+          let count = 1;
           for (var j = 0; j < ad.length; j++) {
             if (data[i].maininfo[0].evtpgID == ad[j].evtpgID) {
+              ad[j].no = count;
+              count++;
               adlist.push({
                 ad: ad[j]
               });

@@ -20,12 +20,12 @@
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" id="sliderscope" name="optradio">設定閥值分數調整數量：
-                  <span>建議閥值:{{batListThold}}以上</span>
+                  <input type="radio" id="sliderscope" name="optradio">設定模型分數調整數量：
+                  <span>建議分數:{{batListThold}}以上</span>
                   <div class="rangeslider">
                     <span class="high">高</span>
                     <span class="low">低</span>
-                    <span class="sliderName">閥值分數</span>
+                    <span class="sliderName">模型分數</span>
                     <input id="ex12c" type="text" num="scope" />
                     <div class="info">
                       <p>名單數：
@@ -41,7 +41,7 @@
         <div class="btn-block center-block">
           <input type="hidden" id="mdID" name="mdID" value="{{mdID}}" />
           <input type="hidden" id="batID" name="batID" value="{{batID}}" />
-          <button type="submit" class="btn btn-lg btn-default" onclick="download()">推薦受眾名單下載</button>
+          <button type="submit" class="btn btn-lg btn-default" onclick="download()">模型名單下載</button>
         </div>
       </div>
     </div>
