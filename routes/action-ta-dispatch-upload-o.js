@@ -55,6 +55,7 @@ module.exports = (app) => {
     const licsNoColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.car.xlsx);
     const custIdColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.uID.xlsx);
     const vinColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.VIN.xlsx);
+    const telColumnIndex = sheetHeader.indexOf("Tel");
     const messageBody = {
       success_num: 0,
       error_num: 0,
@@ -104,9 +105,9 @@ module.exports = (app) => {
           winston.info('get init cu_SentListMst done, sentListID = ', sentListID);
 
           const insertSql = "INSERT INTO cu_SentListDet " +
-            "(mdID, batID, sentListID, uCustID, uLicsNO, uVIN, rptKey, sentListScore) " +
+            "(mdID, batID, sentListID, uCustID, uLicsNO, uVIN,uTel ,rptKey, sentListScore) " +
             "VALUES" +
-            "(@mdID, @batID, @sentListID, @CustID, @LICSNO, @VIN, @CustID_u, " +
+            "(@mdID, @batID, @sentListID, @CustID, @LICSNO, @VIN, @Tel, @CustID_u," +
             "(" +
             "SELECT max(mdListScore) " +
             "FROM md_ListDet mld " +
@@ -149,6 +150,7 @@ module.exports = (app) => {
                     .setInput('CustID', _connector.TYPES.NVarChar, row[custIdColumnIndex])
                     .setInput('LICSNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
                     .setInput('VIN', _connector.TYPES.NVarChar, row[vinColumnIndex])
+                    .setInput('Tel', _connector.TYPES.NVarChar, row[telColumnIndex])
                     .setInput('CustID_u', _connector.TYPES.NVarChar, licsData.CustID_u)
                     .setInput('refLICSNO', _connector.TYPES.NVarChar, licsData.LICSNO);
 
