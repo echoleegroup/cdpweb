@@ -334,12 +334,12 @@ export class ContinuousLargeChart extends React.PureComponent {
       }],
       "chartScrollbar": {
         "enabled": true,
-        "graph": "g1"
+        "graph": "g1",
+        "offset": 5
       },
       "chartCursor": {
-        "enabled": true,
+        "enabled": true
         // "limitToGraph":"g1",
-        "offset": 5
       },
       "categoryField": "scale",
       "categoryAxis": {
@@ -393,15 +393,16 @@ export class CategoryLargeChart extends ContinuousLargeChart {
       "startDuration": 1,
       "startEffect": "easeInSine",
       "categoryAxis": {
-        "gridPosition": "start"
+        "gridPosition": "start",
+        "gridThickness": 0
       },
       "chartCursor": {
+        "enabled": true
+      },
+      "chartScrollbar": {
         "enabled": true,
         "graph": "AmGraph-1",
         "offset": 5
-      },
-      "chartScrollbar": {
-        "enabled": true
       },
       "trendLines": [],
       "graphs": [
@@ -411,7 +412,7 @@ export class CategoryLargeChart extends ContinuousLargeChart {
           "fillAlphas": 1,
           "id": "AmGraph-1",
           "title": "graph 1",
-          "graphType": "column",
+          "type": "column",
           "valueField": "peak"
         }
       ],
