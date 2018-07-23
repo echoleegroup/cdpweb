@@ -1,4 +1,5 @@
 import React from 'react';
+import Loadable from 'react-loading-overlay';
 import {List} from 'immutable';
 import { Modal, Button } from 'react-bootstrap';
 import {xorBy, map} from 'lodash';
@@ -39,7 +40,8 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
       selectedRelative: props.output.selectedRelative,
       queryId: undefined,
       message_error: undefined,
-      showModal: false
+      showModal: false,
+      isLoaded: true
     };
 
   };
@@ -76,6 +78,8 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
     };
 
     this.processPostDate = (e) => {
+      this.props.pageLoading();
+
       let criteria = this.props.criteria.toJS();
       let selectedFeatures = this.state.selectedFeature.toJS();
       let selectedRelativeSets = this.state.selectedRelative.toJS();
@@ -102,12 +106,12 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
           mode: res.mode,
           showModal: true,
           message_error: undefined
-        });
+        }, this.props.pageUnloading);
       }, err => {
         this.setState({
           message_error: '搜尋失敗，請稍後再試或聯絡相關人員',
           showModal: false
-        });
+        }, this.props.pageUnloading);
       });
     };
 
@@ -120,7 +124,7 @@ export default class IntegratedCriteriaExportFeaturePicker extends React.PureCom
 
   render() {
     return (
-      <div className="table_block feature">
+      <div className="table_block">
         <h2>查詢條件</h2>
         <h3>第七步 挑選下載欄位</h3>
         <h4>挑選下載欄位</h4>

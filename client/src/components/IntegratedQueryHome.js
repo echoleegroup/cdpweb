@@ -1,5 +1,4 @@
 import React from 'react';
-import Loadable from 'react-loading-overlay';
 import CriteriaHomeLayout from "./CriteriaHomeLayout";
 import {List} from 'immutable';
 import {assign} from 'lodash';
@@ -132,15 +131,15 @@ export default class IntegratedQueryHome extends CriteriaHomeLayout {
                                            stepNext={this.stepTo(STEPS.step7)}/>;
       case STEPS.step7:
         return (
-          <Loadable active={!this.state.isLoaded} spinner>
-            <IntegratedCriteriaExportFeaturePicker ref={this.storeCurrentStepComponent}
-                                                   criteria={this.state.criteria}
-                                                   output={this.state.output}
-                                                   featureOptions={this.state.featureOptions}
-                                                   relativeSetOptions={this.state.relativeSetOptions}
-                                                   params={this.params}
-                                                   step={STEPS.step7}/>
-          </Loadable>
+          <IntegratedCriteriaExportFeaturePicker ref={this.storeCurrentStepComponent}
+                                                 criteria={this.state.criteria}
+                                                 output={this.state.output}
+                                                 featureOptions={this.state.featureOptions}
+                                                 relativeSetOptions={this.state.relativeSetOptions}
+                                                 params={this.params}
+                                                 step={STEPS.step7}
+                                                 pageLoading={this.pageLoading}
+                                                 pageUnloading={this.pageUnloading}/>
         );
 
     }

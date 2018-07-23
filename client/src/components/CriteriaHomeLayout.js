@@ -1,4 +1,5 @@
 import React  from 'react';
+import Loadable from 'react-loading-overlay';
 import {List, Map} from 'immutable';
 import {values, assign} from 'lodash';
 import AlertMessenger from './AlertMessenger';
@@ -92,6 +93,18 @@ export default class CriteriaHomeLayout extends React.PureComponent {
       */
     };
 
+    this.pageLoading = () => {
+      this.setState({
+        isLoaded: false
+      });
+    };
+
+    this.pageUnloading = () => {
+      this.setState({
+        isLoaded: true
+      });
+    };
+
     // execute
     this.fetchPreparedData(data => {
       this.setState(assign({
@@ -122,7 +135,7 @@ export default class CriteriaHomeLayout extends React.PureComponent {
     let ComponentContent = this.ComponentContent;
     let ComponentSideBar = this.ComponentSideBar;
     return (
-      <div>
+      <Loadable active={!this.state.isLoaded} spinner>
         <div className="row">
           <div className="col-md-12 col-sm-12 col-xs-12">
             <AlertMessenger message_error={this.state.message_error}/>
@@ -139,7 +152,7 @@ export default class CriteriaHomeLayout extends React.PureComponent {
             <ComponentSideBar/>
           </div>
         </div>
-      </div>
+      </Loadable>
     );
   };
 
