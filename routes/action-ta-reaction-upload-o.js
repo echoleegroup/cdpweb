@@ -5,6 +5,7 @@ const xlsx = require("node-xlsx");
 const multer = require('multer');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
+const moment = require('moment');
 const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
 const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
@@ -19,196 +20,167 @@ module.exports = (app) => {
   winston.info('[talist_rspuploadRoute::create] Creating talist_rspupload route.');
   const router = express.Router();
 
-  router.post('/ta/rsp/upload_act', [middleware.check(), middleware.checkEditPermission(permission.TA_REACTION_UPLOAD), upload.single('uploadingFile')], function (req, res) {
-    var mdID = req.body.mdID || '';
-    var batID = req.body.batID || '';
-    var sentListChannel = req.body.sentListChannel || '';
-    var startDate = req.body.startDate || '';
-    var sentListName = req.body.sentListName || '';
-    var sentListDesc = req.body.sentListDesc || '';
-    var optradio = req.body.optradio || '';
-    var filepath = '';
-    var VINindex, CustIDindex, LISCNOindex, RespTimeindex;
-    var key = '';
-    var newindex;
-    var total;
-    var successnum = 0;
-    var errornum = 0;
-    var respListTime;
-    var errormsg = '錯誤資訊\r\n';
-    var allmsg = '';
-    if (optradio == 'car')
-      key = 'LISCNO';
-    else if (optradio == 'uID')
-      key = 'CustID';
-    else
-      key = 'VIN';
-    var keyindex = 0;
-    var p1 = new Promise(function (resolve, reject) {
-      function getnewindex(mdID, callback) {
-        db.query("INSERT INTO cu_RespListMst(mdID,batID,respListName,respListChannel,respListDesc,respListTime,updTime,updUser) values('" + mdID + "','" + batID + "','" + sentListName + "','" + sentListChannel + "','" + sentListDesc + "','" + startDate + "',GETDATE(),'" + req.user.userId + "')", function (err, recordset) {
-          if (err) {
-            winston.error(err);
-            reject(err);
-          }
-          callback(null, 0);
-        });
-      }
-      getnewindex(mdID, function (err, data) {
-        db.query("SELECT TOP 1 respListID,convert(varchar, respListTime, 120)respListTime FROM cu_RespListMst where mdID ='" + mdID + "' and batID ='" + batID + "' order by respListID desc ", function (err, recordset) {
-          newindex = recordset.recordset[0].respListID;
-          respListTime = recordset.recordset[0].respListTime
-          resolve(newindex);
-        });
-      });
-    });
-    var p2 = new Promise(function (resolve, reject) {
-      var file = req.file;
-      // 以下代碼得到檔案後綴
-      var name = file.originalname;
-      var nameArray = name.split('');
-      var nameMime = [];
-      var l = nameArray.pop();
-      nameMime.unshift(l);
-      while (nameArray.length != 0 && l != '.') {
-        l = nameArray.pop();
-        nameMime.unshift(l);
-      } // Mime是檔案的後綴 Mime=nameMime.join('');
-      // winston.error(Mime); res.send("done"); //重命名檔案
-      // 加上檔案後綴
-      // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
-      filepath = file.path;
-      resolve(filepath);
-    });
-    Promise.all([p1, p2]).then(function (results) {
-      var list = xlsx.parse(filepath);
-      total = list[0].data.length - 1;
-      for (var i = 0; i < list[0].data[0].length; i++) {
-        if (list[0].data[0][i] == "LISCNO") {
-          LISCNOindex = i;
-          if (key == 'LISCNO')
-            keyindex = i;
-        }
-        else if (list[0].data[0][i] == "CustID") {
-          CustIDindex = i;
-          if (key == 'CustID')
-            keyindex = i;
-        }
-        else if (list[0].data[0][i] == "VIN") {
-          VINindex = i;
-          if (key == 'VIN')
-            keyindex = i;
-        }
-        else if (list[0].data[0][i] == "RespTime") {
-          RespTimeindex = i;
+  router.post('/ta/rsp/upload_act', [
+    middleware.check(),
+    middleware.checkEditPermission(permission.TA_DISPATCH_UPLOAD),
+    upload.single('uploadingFile')
+  ], function (req, res, next) {
 
-        }
-      }
-      i = 1
-      checkandinsert(i);
-      function checkandinsert(i) {
-        if (i < list[0].data.length) {
-          if (list[0].data[i][keyindex] == "") {
-            errornum++;
-            var linenum = i + 1;
-            errormsg += 'Line ' + linenum.toString() + ','
-            for (var j = 0; j < list[0].data[i].length; j++) {
-              if (j == list[0].data[i].length - 1)
-                errormsg += list[0].data[i][j] + "\r\n";
-              else
-                errormsg += list[0].data[i][j] + ",";
-            }
-            if (i == list[0].data.length - 1) {
-              if (errornum === 0)
-                errormsg = "";
-              var currentdate = new Date();
-              var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-              res.redirect("/target/ta/rsp/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime" + datetime + "&respListID=" + newindex);
-            }
-            checkandinsert(i + 1);
-          }
-          else {
-            const checkdata = (mdID, callback) => {
-              if (key == 'LISCNO') {
-                db.query("SELECT CustID_u FROM cu_LicsnoIndex where LICSNO  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
-                  if (err)
-                    winston.error(err);
-                  if (recordset.rowsAffected == 0)
-                    callback(null, "0");
-                  else
-                    callback(null, recordset.recordset[0].CustID_u);
+    winston.info('/ta/rsp/upload_act get file');
+    const _ = require('lodash');
+    const COLUMN_MAPPER = {
+      car: {xlsx: 'LISCNO', db: 'LICSNO'},
+      uID: {xlsx: 'CustID', db: 'CustID_u'},
+      VIN: {xlsx: 'VIN', db: 'VIN'}
+    };
+    const indexToRowNumberOffset = 2;
+    const mdID = req.body.mdID || '';
+    const batID = req.body.batID || '';
+    const respListCateg = req.body.sentListCateg || '';
+    const respListChannel = req.body.sentListChannel || '';
+    const startDate = req.body.startDate || '';
+    const respListName = req.body.sentListName || '';
+    const respListDesc = req.body.sentListDesc || '';
+    const optradio = req.body.optradio || '';
+
+    const xlsxFile = req.file;
+    const xlsxData = xlsx.parse(xlsxFile.path);
+    const sheetName = xlsxData[0].name;
+    const sheetData = xlsxData[0].data;
+    const sheetHeader = sheetData.splice(0, 1)[0]; //sheetData is changed mutely.
+    const xlsxKeyColumn = COLUMN_MAPPER[optradio].xlsx;
+    const dbKeyColumn = COLUMN_MAPPER[optradio].db;
+    const xlsxKeyColumnIndex = sheetHeader.indexOf(xlsxKeyColumn);
+    const licsNoColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.car.xlsx);
+    const custIdColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.uID.xlsx);
+    const vinColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.VIN.xlsx);
+    const messageBody = {
+      success_num: 0,
+      error_num: 0,
+      total: sheetData.length,
+      error_msg: []
+    };
+    const keys = sheetData.map(row => {
+      return row[xlsxKeyColumnIndex] || '';
+    });
+
+    // winston.info('xlsxKeyColumn: ', xlsxKeyColumn);
+    // winston.info('sheetHeader: ', sheetHeader);
+    // winston.info('xlsxKeyColumnIndex: ', xlsxKeyColumnIndex);
+    // winston.info('licsNoColumnIndex: ', licsNoColumnIndex);
+    // winston.info('custIdColumnIndex: ', custIdColumnIndex);
+    // winston.info('vinColumnIndex: ', vinColumnIndex);
+
+    const Q = require('q');
+    const _connector = require('../utils/sql-query-util');
+
+    const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE ${dbKeyColumn} IN ('${_.pull(keys, '').join(`','`)}') `;
+    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
+      // winston.info('get validation and licsno: ', licsDataSet);
+      const validation = _.keyBy(licsDataSet, 'validation');
+
+      const initSql = 'INSERT INTO cu_RespListMst(mdID,batID,respListName,respListChannel,respListDesc,respListTime,updTime,updUser) ' +
+          'OUTPUT INSERTED.respListID ' +
+          'VALUES(@mdID, @batID, @respListName, @respListChannel, ' +
+          '@respListDesc, @respListTime, @updTime, @updUser)';
+
+      return Q.nfcall(_connector.queryRequest()
+        .setInput('mdID', _connector.TYPES.NVarChar, mdID)
+        .setInput('batID', _connector.TYPES.NVarChar, batID)
+        .setInput('respListName', _connector.TYPES.NVarChar, respListName)
+        .setInput('respListChannel', _connector.TYPES.NVarChar, respListChannel)
+        .setInput('respListDesc', _connector.TYPES.NVarChar, respListDesc)
+        .setInput('respListTime', _connector.TYPES.DateTime, moment(startDate, 'YYYY/MM/DD').toDate())
+        .setInput('updTime', _connector.TYPES.DateTime, new Date())
+        .setInput('updUser', _connector.TYPES.NVarChar, req.user.userId)
+        .executeQuery, initSql)
+        .then(resultSet => {
+
+          const respListID = resultSet[0].respListID;
+
+          winston.info('get init cu_RespListMst done, respListID = ', respListID);
+
+          const insertSql = "INSERT INTO cu_RespListDet " +
+            "(mdID, batID, respListID, uCustID, uLicsNO, uVIN, rptKey) " +
+            "VALUES" +
+            "(@mdID, @batID, @respListID, @CustID, @LICSNO, @VIN, @CustID_u)";
+          const partitions = 3;
+          const chunkSize = Math.trunc(sheetData.length / partitions) + 1;
+          const chunks = _.chunk(sheetData, chunkSize);
+          const chunkProcesses = chunks.map((chunk, chunkIndex) => {
+            const firstLineNumberOfChunk = chunkSize * chunkIndex + indexToRowNumberOffset;
+
+            return _.reduce(chunk, (_promise, row, rowIndex) => {
+              const keyValue = row[xlsxKeyColumnIndex];
+              const licsData = validation[keyValue];
+              const lineOfXlsx = rowIndex + firstLineNumberOfChunk;
+              // winston.info('keyValue: ', keyValue);
+              if (_.isEmpty(keyValue)) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行(${row.join(',')})，${keyValue}無資料`
+                });
+                return _promise;
+              } else if (!licsData) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行(${row.join(',')})，${keyValue}無效`
+                });
+                return _promise;
+              } else {
+                return _promise.then(() => {
+                  // winston.info('before execute insert')
+                  let request = _connector.queryRequest()
+                    .setInput('mdID', _connector.TYPES.NVarChar, mdID)
+                    .setInput('batID', _connector.TYPES.NVarChar, batID)
+                    .setInput('respListID', _connector.TYPES.Int, respListID)
+                    .setInput('CustID', _connector.TYPES.NVarChar, row[custIdColumnIndex])
+                    .setInput('LICSNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
+                    .setInput('VIN', _connector.TYPES.NVarChar, row[vinColumnIndex])
+                    .setInput('CustID_u', _connector.TYPES.NVarChar, licsData.CustID_u);
+
+
+                  return Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
+                    // winston.info('after execute insert');
+                    messageBody.success_num += 1;
+                    return null;
+                  }).catch(err => {
+                    winston.error('import reaction list failed: ', err);
+                    messageBody.error_num += 1;
+                    messageBody.error_msg.push({
+                      line: lineOfXlsx,
+                      message: `第${lineOfXlsx}行(${row.join(',')})，匯入失敗`
+                    });
+                    return null;
+                  });
                 });
               }
-              else if (key == 'VIN') {
-                db.query("SELECT CustID_u FROM cu_LicsnoIndex where VIN  = '" + list[0].data[i][keyindex] + "'", function (err, recordset) {
-                  if (recordset.rowsAffected == 0)
-                    callback(null, "0");
-                  else
-                    callback(null, recordset.recordset[0].CustID_u);
-                });
-              }
-              else if (key == 'CustID') {
-                callback(null, list[0].data[i][keyindex]);
-              }
-            }
-            checkdata(mdID, function (err, data1) {
-              if (data1 == "0") {
-                errornum++;
-                var linenum = i + 1;
-                errormsg += 'Line ' + linenum.toString() + ','
-                for (var j = 0; j < list[0].data[i].length; j++) {
-                  if (j == list[0].data[i].length - 1)
-                    errormsg += list[0].data[i][j] + "\r\n";
-                  else
-                    errormsg += list[0].data[i][j] + ",";
-                }
-                if (i == list[0].data.length - 1) {
-                  if (errornum === 0)
-                    errormsg = "";
-                  var currentdate = new Date();
-                  var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                    + currentdate.getHours() + ":"
-                    + currentdate.getMinutes() + ":"
-                    + currentdate.getSeconds();
-                  res.redirect("/target/ta/rsp/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime" + datetime + "&respListID=" + newindex);
-                }
-                checkandinsert(i + 1);
-              }
-              else {
-                var datatime = '';
-                if (list[0].data[i][RespTimeindex] == undefined)
-                  datatime = respListTime;
-                else
-                  datatime = list[0].data[i][RespTimeindex];
-                let CustID = toUP(list[0].data[i][CustIDindex]);
-                let LISCNO = toUP(list[0].data[i][LISCNOindex]);
-                db.query("INSERT INTO cu_RespListDet (mdID,batID,respListID,uCustID,uLicsNO,uVIN,uRespTime,rptKey) values('" + mdID + "','" + batID + "'," + newindex + ",'" + CustID + "','" + LISCNO + "','" + list[0].data[i][VINindex] + "','" + datatime + "','" + data1 + "')", function (err, recordset) {
-                  successnum++;
-                  if (i == list[0].data.length - 1) {
-                    if (errornum === 0)
-                      errormsg = "";
-                    var currentdate = new Date();
-                    var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                      + currentdate.getHours() + ":"
-                      + currentdate.getMinutes() + ":"
-                      + currentdate.getSeconds();
-                    res.redirect("/target/ta/rsp/edit?successnum=" + successnum + "&errormsg=" + errormsg + "&errornum=" + errornum + "&total=" + total + "&dispaly=block&datetime" + datetime + "&respListID=" + newindex);
-                  }
-                  checkandinsert(i + 1);
-                });
-              }
-            });
-          }
-        }
-      }
-    }).catch(function (e) {
-      winston.error(e);
+            }, Q());
+          });
+
+          return Q.all(chunkProcesses).then(chunkResult => {
+            return respListID;
+          });
+
+        });
+
+    }).then(respListID => {
+      winston.info('insert complete: respListID = ', respListID);
+      let messages = _.map(_.sortBy(messageBody.error_msg, ['line']), 'message');
+      res.redirect('/target/ta/rsp/edit?' +
+        `successnum=${messageBody.success_num}` +
+        `&errormsg=${messages.join('\n')}` +
+        `&errornum=${messageBody.error_num}` +
+        `&total=${messageBody.total}&dispaly=block` +
+        `&datetime=${moment().format('YYYY/MM/DD HH:mm:ss')}` +
+        `&respListID=${respListID}`);
+    }).fail(err => {
+      winston.error('POST /ta/rsp/upload_act error: ', err);
+      next(require('boom').internal());
     });
   });
-
   router.get('/ta/rsp/upload/:mdID/:batID', [middleware.check(), middleware.checkEditPermission(permission.TA_REACTION_UPLOAD)], function (req, res) {
     var mdID = req.params.mdID || '';
     var batID = req.params.batID || '';
