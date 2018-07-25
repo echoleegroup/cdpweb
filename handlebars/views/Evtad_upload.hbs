@@ -59,9 +59,12 @@
 						<div class="col-sm-8">
 							<div class="form-inline btn btn-default btn-file">
 								<input type="hidden" class="form-control" id="imageFileTitle1" name="imageFileTitle1" placeholder="請輸入檔案"> 請選擇檔案
-								<input type="file" id="uploadingFile" name="uploadingFile" class="btn btn-lg btn-default">
-
-							</div>
+								<input type="file" id="uploadingFile" name="uploadingFile" class="btn btn-lg btn-default"onchange="getFilePath()">
+              </div>
+              <div class="isa_warning" id="showPath" style="display:none">
+                <i class="fa fa-file-text"></i>
+                <font id="pathText"></font>
+              </div>
 
 						</div>
 					</div>
@@ -189,6 +192,12 @@
 		}
 		return true;
 	}
+  function getFilePath() {
+    var NewArray = new Array();
+    NewArray = document.getElementById("uploadingFile").value.split("\\");
+    document.getElementById("pathText").innerHTML = NewArray[2];
+    document.getElementById("showPath").style.display = "block";
+  }
 	function upevtpgID() {
 
 		var c = document.getElementById("client");
