@@ -465,58 +465,26 @@ module.exports = {
     let requestBody = null;
     if (hasTag) {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
-      requestBody = require('querystring').stringify({
-        req_owner: `{${JSON.stringify(resultScript)}}`,
-        req_log: JSON.stringify(queryScript)
-      });
-
-      request({
-        url: requestUrl,
-        method: 'POST',
-        json: true,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: requestBody
-      }, (error, response, body) => {
-        if (error)
-          callback(error, null);
-        else
-          callback(null, resultScript);
-      });
+      requestBody = {
+        req_owner: resultScript,
+        req_log: queryScript
+      };
     } else {
       requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
-      requestBody = JSON.stringify(resultScript);
-
-      request({
-        url: requestUrl,
-        method: 'POST',
-        json: true,
-        body: requestBody
-      }, (error, response, body) => {
-        if (error)
-          callback(error, null);
-        else
-          callback(null, resultScript);
-      });
+      requestBody = resultScript;
     }
 
-    // winston.info('queryScript: ', queryScript.statistic);
-    // winston.info('requestBody.req_log: ', requestBody.req_log.statistic);
-
-
-    // request({
-    //   method: 'POST',
-    //   uri: requestUrl,
-    //   body: JSON.stringify(requestBody),
-    //   json: true
-    // }, (error, response, body) => {
-    //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
-    //   if (error)
-    //     callback(error, null);
-    //   else
-    //     callback(null, resultScript);
-    // });
+    request({
+      url: requestUrl,
+      method: 'POST',
+      json: true,
+      body: requestBody
+    }, (error, response, body) => {
+      if (error)
+        callback(error, null);
+      else
+        callback(null, resultScript);
+    });
   }
 };
 
