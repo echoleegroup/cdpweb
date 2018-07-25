@@ -8,7 +8,7 @@ const path = require('path');
 const winston = require('winston');
 const express = require('express');
 const session = require("express-session");
-const FileStore = require('session-file-store')(session);
+const LevelStore = require('level-session-store')(session);
 const exphbs = require('express-handlebars');
 const helpers = require('handlebars-helpers');
 const passport = require('passport');
@@ -43,16 +43,11 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
-    // cookie: {
-    //   //secure: true,
-    //   maxAge: 60 * 1000 * 240
-    // }, // 10分鐘session
-    store: new FileStore({
-      path: '.sessiondb',
-      ttl: 60 * 1000 * 240,
-      logFn: winston.info,
-      secret: '@#$TYHBVGHJIY^TWEYKJHNBGFDWGHJKUYTWE#$%^&*&^%$#', // 建议使用 128 个字符的随机字符串
-    })
+    cookie: { 
+      //secure: true,
+      maxAge: 60 * 1000 * 240
+    }, // 10分鐘session
+    store: new LevelStore('.sessiondb')
 }));
 app.use(passport.initialize());
 app.use(passport.session());
