@@ -205,7 +205,7 @@ module.exports = (app) => {
         return Q.nfcall(
           integrationService.getTrailPeriodLogEDMReadFeatures, keyword, periodStart, periodEnd
         ).then(data => {
-          return _.sortBy(data, ['id'], ['desc']).map(row => {
+          return _.orderBy(data, ['id'], ['desc']).map(row => {
             return {
               id: row.id,
               name: `${row.subject}(${row.scheduledate})`
@@ -216,7 +216,7 @@ module.exports = (app) => {
         return Q.nfcall(
           integrationService.getTrailPeriodLogPushReadFeatures, keyword, periodStart, periodEnd
         ).then(data => {
-          return _.sortBy(data, ['pid'], ['desc']).map(row => {
+          return _.orderBy(data, ['pid'], ['desc']).map(row => {
             return {
               id: row.id,
               name: `${row.title}(${moment(row.start_datetime).format('YYYY-MM-DD')})`

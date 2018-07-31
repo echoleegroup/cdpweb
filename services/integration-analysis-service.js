@@ -295,7 +295,7 @@ module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodE
 module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, periodEnd, callback) => {
   // const keyspace = 'jamzoo';
   const cql = 'SELECT pid, title, start_datetime ' +
-    'FROM getpushhistory ' +
+    'FROM jamzoo.getpushhistory ' +
     'WHERE start_datetime >= :startDate AND start_datetime <= :endDate ALLOW FILTERING;';
   const params = {
     startDate: moment().startOf('day').add(-1, 'month').toDate(),
