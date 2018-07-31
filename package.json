@@ -17,6 +17,7 @@
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.2",
     "boom": "^7.1.1",
+    "cassandra-driver": "^3.5.0",
     "connect-flash": "^0.1.1",
     "content-disposition": "^0.5.2",
     "cookie-parser": "^1.4.3",

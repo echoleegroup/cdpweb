@@ -1,8 +1,10 @@
-const request = require('request');
+// const request = require('request');
+const moment = require('moment');
 const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
-const appConfig = require("../app-config");
+const cassandra_client = require('../utils/cassandra-client');
+// const appConfig = require("../app-config");
 
 // module.exports.getFeatureById = (featureId, callback) => {
 //   const sql = 'SELECT feature.featID, feature.featName, feature.dataType, feature.chartType, ' +
@@ -281,39 +283,73 @@ module.exports.getTrailPeriodLogAPPpgFeatures = (callback) => {
 };
 
 module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodEnd, callback) => {
-  const endpoint = appConfig.get('JAVA_API_ENDPOINT');
-  request({
-    method: 'GET',
-    baseUrl: endpoint,
-    uri: '/jsoninfo/getEdmList.do',
-    json: true
-  }, (error, response, body) => {
-    // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
-    if (error) {
-      return callback(error);
-    } else if (response.statusCode !== 200) {
-      callback(body.errorMessage);
-    } else {
-      callback(null, body.jsonOutput.data);
-    }
+  const keyspace = 'edm';
+  const cql = 'SELECT id, subject, scheduledate FROM reportlist';
+  Q(cassandra_client.execute(cql, [], {prepare: true, keyspace})).then(result => {
+    const dataSet = result.rows.map(row => {
+      return {
+        id: row.id,
+        name: `${row.subject}(${row.scheduledate})`
+      };
+    });
+    callback(null, dataSet);
+  }).fail(err => {
+    callback(err);
   });
+
+  // const endpoint = appConfig.get('JAVA_API_ENDPOINT');
+  // request({
+  //   method: 'GET',
+  //   baseUrl: endpoint,
+  //   uri: '/jsoninfo/getEdmList.do',
+  //   json: true
+  // }, (error, response, body) => {
+  //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
+  //   if (error) {
+  //     return callback(error);
+  //   } else if (response.statusCode !== 200) {
+  //     callback(body.errorMessage);
+  //   } else {
+  //     callback(null, body.jsonOutput.data);
+  //   }
+  // });
 };
 
 module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, periodEnd, callback) => {
-  const endpoint = appConfig.get('JAVA_API_ENDPOINT');
-  request({
-    method: 'GET',
-    baseUrl: endpoint,
-    uri: '/jsoninfo/getAppPushList.do',
-    json: true
-  }, (error, response, body) => {
-    // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
-    if (error) {
-      return callback(error);
-    } else if (response.statusCode !== 200) {
-      callback(body.errorMessage);
-    } else {
-      callback(null, body.jsonOutput.data);
-    }
+  const keyspace = 'jamzoo';
+  const cql = 'SELECT pid, title, start_datetime ' +
+    'FROM getpushhistory ' +
+    'WHERE start_datetime >= :startDate AND start_datetime <= :endDate ALLOW FILTERING;';
+  const params = {
+    startDate: moment().startOf('day').add(-1, 'month').toDate(),
+    endDate: moment().startOf('day').toDate()
+  };
+
+  Q(cassandra_client.execute(cql, params, {prepare: true, keyspace})).then(result => {
+    const dataSet = result.rows.map(row => {
+      return {
+        id: row.id,
+        name: `${row.subject.replaceAll(/\?/g, ' ')}(${moment(row.start_datetime).format('YYYY-MM-DD')})`
+      };
+    });
+    callback(null, dataSet);
+  }).fail(err => {
+    callback(err);
   });
+  // const endpoint = appConfig.get('JAVA_API_ENDPOINT');
+  // request({
+  //   method: 'GET',
+  //   baseUrl: endpoint,
+  //   uri: '/jsoninfo/getAppPushList.do',
+  //   json: true
+  // }, (error, response, body) => {
+  //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
+  //   if (error) {
+  //     return callback(error);
+  //   } else if (response.statusCode !== 200) {
+  //     callback(body.errorMessage);
+  //   } else {
+  //     callback(null, body.jsonOutput.data);
+  //   }
+  // });
 };
