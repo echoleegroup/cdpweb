@@ -66,7 +66,7 @@ module.exports = () => {
         return moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       },
       formatter: (options) => {
-        console.log('==== 01-winston: options: ', options.meta);
+        // console.log('==== 01-winston: options: ', options.meta);
         return winston.config.colorize(options.level, options.timestamp() + ' ') +
           winston.config.colorize(options.level, options.level.toUpperCase()) + ' ' +
           (options.message ? options.message : '') +

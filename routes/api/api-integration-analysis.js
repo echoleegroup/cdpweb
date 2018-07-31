@@ -5,7 +5,7 @@ const fs = require('fs');
 const winston = require('winston');
 const Q = require('q');
 const _ = require('lodash');
-const shortid = require('shortid');
+const moment = require('moment');
 const auth = require("../../middlewares/login-check");
 const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
@@ -202,9 +202,27 @@ module.exports = (app) => {
   const getTrailHitFeaturesPromise = (setId, keyword, periodStart, periodEnd) => {
     switch (setId) {
       case 'LogEDMRead':
-        return Q.nfcall(integrationService.getTrailPeriodLogEDMReadFeatures, keyword, periodStart, periodEnd);
+        return Q.nfcall(
+          integrationService.getTrailPeriodLogEDMReadFeatures, keyword, periodStart, periodEnd
+        ).then(data => {
+          return _.sortBy(data, ['id'], ['desc']).map(row => {
+            return {
+              id: row.id,
+              name: `${row.subject}(${row.scheduledate})`
+            };
+          });
+        });
       case 'LogPushRead':
-        return Q.nfcall(integrationService.getTrailPeriodLogPushReadFeatures, keyword, periodStart, periodEnd);
+        return Q.nfcall(
+          integrationService.getTrailPeriodLogPushReadFeatures, keyword, periodStart, periodEnd
+        ).then(data => {
+          return _.sortBy(data, ['pid'], ['desc']).map(row => {
+            return {
+              id: row.id,
+              name: `${row.title}(${moment(row.start_datetime).format('YYYY-MM-DD')})`
+            };
+          });
+        });
       default:
         return Q([]);
     }

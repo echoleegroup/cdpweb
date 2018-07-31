@@ -283,40 +283,17 @@ module.exports.getTrailPeriodLogAPPpgFeatures = (callback) => {
 };
 
 module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodEnd, callback) => {
-  const keyspace = 'edm';
-  const cql = 'SELECT id, subject, scheduledate FROM reportlist';
-  Q(cassandra_client.execute(cql, [], {prepare: true, keyspace})).then(result => {
-    const dataSet = result.rows.map(row => {
-      return {
-        id: row.id,
-        name: `${row.subject}(${row.scheduledate})`
-      };
-    });
-    callback(null, dataSet);
+  // const keyspace = 'edm';
+  const cql = 'SELECT id, subject, scheduledate FROM edm.reportlist';
+  Q(cassandra_client.execute(cql, [], {prepare: true})).then(result => {
+    callback(null, result.rows);
   }).fail(err => {
     callback(err);
   });
-
-  // const endpoint = appConfig.get('JAVA_API_ENDPOINT');
-  // request({
-  //   method: 'GET',
-  //   baseUrl: endpoint,
-  //   uri: '/jsoninfo/getEdmList.do',
-  //   json: true
-  // }, (error, response, body) => {
-  //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
-  //   if (error) {
-  //     return callback(error);
-  //   } else if (response.statusCode !== 200) {
-  //     callback(body.errorMessage);
-  //   } else {
-  //     callback(null, body.jsonOutput.data);
-  //   }
-  // });
 };
 
 module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, periodEnd, callback) => {
-  const keyspace = 'jamzoo';
+  // const keyspace = 'jamzoo';
   const cql = 'SELECT pid, title, start_datetime ' +
     'FROM getpushhistory ' +
     'WHERE start_datetime >= :startDate AND start_datetime <= :endDate ALLOW FILTERING;';
@@ -325,31 +302,9 @@ module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, period
     endDate: moment().startOf('day').toDate()
   };
 
-  Q(cassandra_client.execute(cql, params, {prepare: true, keyspace})).then(result => {
-    const dataSet = result.rows.map(row => {
-      return {
-        id: row.id,
-        name: `${row.subject.replaceAll(/\?/g, ' ')}(${moment(row.start_datetime).format('YYYY-MM-DD')})`
-      };
-    });
-    callback(null, dataSet);
+  Q(cassandra_client.execute(cql, params, {prepare: true})).then(result => {
+    callback(null, result.rows);
   }).fail(err => {
     callback(err);
   });
-  // const endpoint = appConfig.get('JAVA_API_ENDPOINT');
-  // request({
-  //   method: 'GET',
-  //   baseUrl: endpoint,
-  //   uri: '/jsoninfo/getAppPushList.do',
-  //   json: true
-  // }, (error, response, body) => {
-  //   // winston.info('getTrailPeriodLogEDMReadFeatures: ', body);
-  //   if (error) {
-  //     return callback(error);
-  //   } else if (response.statusCode !== 200) {
-  //     callback(body.errorMessage);
-  //   } else {
-  //     callback(null, body.jsonOutput.data);
-  //   }
-  // });
 };
