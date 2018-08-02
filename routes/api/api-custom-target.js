@@ -160,9 +160,7 @@ module.exports = (app) => {
       }
 
       //arrange result set into specific format, to export as xlsx by node-xlsx
-      let exportDateSet = [];
-      exportDateSet.push(exportFeatureLabels);
-      exportDateSet = exportDateSet.concat(resultSet.map(row => { //transform resultSet[{row},{row}] into[[row],[row]]
+      let exportDateSet = [exportFeatureLabels].concat(resultSet.map(row => { //transform resultSet[{row},{row}] into[[row],[row]]
         //transform row object into array in the order of exportFeatureIds
         return exportFeatureIds.map(featId => row[featId]);
       }));
