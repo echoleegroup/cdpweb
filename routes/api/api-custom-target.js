@@ -128,7 +128,7 @@ module.exports = (app) => {
         throw null;
       } else {
         let exportFeatureIds = _.map(downloadFeatures, 'featID');
-        // let exportColumns = _.map(downloadFeatures, 'featID');
+        let queryFields = _.map(_.filter(downloadFeatures, {customized: 'N'}), 'featID');
         let exportFeatureLabels = _.map(downloadFeatures, 'featName');
         // _.forEach(downloadFeatures, feature => {
         //   exportFeatureIds.push(feature.featID);
@@ -139,7 +139,7 @@ module.exports = (app) => {
           model,
           exportFeatureIds,
           exportFeatureLabels,
-          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, exportFeatureIds, [
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, queryFields, [
             customTargetHelper.get_mdListScoreCustomizer(),
             customTargetHelper.get_mdListSentCustomizer(mdId),
             customTargetHelper.get_mdListSlodCustomizer()

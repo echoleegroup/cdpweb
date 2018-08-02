@@ -182,6 +182,7 @@ module.exports = (app) => {
         Q.nfcall(modelService.getBatchTargetInfoOfCategory, mdID, batID, criteriaHelper.MODEL_LIST_CATEGORY),
         Q.nfcall(exportService.getDownloadFeaturesOfSet, criteriaHelper.CUSTOMER_FEATURE_SET_ID)
       ]).spread((model, downloadFeatures) => {
+        const queryFields = _.map(_.filter(downloadFeatures, {customized: 'N'}), 'featID');
         const exportFeatureIds = _.map(downloadFeatures, 'featID');
         const exportFeatureLabels = _.map(downloadFeatures, 'featName');
         const pluginHandlers = [
@@ -192,7 +193,7 @@ module.exports = (app) => {
           modelTargetDnldRestrictionDispatcher(restriction, model, records, thresholdLowerBound, thresholdUpperBound));
 
         return Q.nfcall(
-          criteriaService.queryTargetByCustomCriteria, mdID, batID, [], model, exportFeatureIds, pluginHandlers
+          criteriaService.queryTargetByCustomCriteria, mdID, batID, [], model, queryFields, pluginHandlers
         ).then(resultSet => {
           //arrange result set into specific format, to export as xlsx by node-xlsx
           let exportDateSet = [exportFeatureLabels].concat(resultSet.map(row => { //transform resultSet[{row},{row}] into[[row],[row]]
