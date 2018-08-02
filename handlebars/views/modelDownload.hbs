@@ -9,27 +9,29 @@
 
       <div class="form_block">
         <h2>模型受眾名單調整</h2>
-        <form class="form-horizontal form-inline">
+        <form class="form-horizontal form-inline" method="post" id="downloadForm"
+              target="_blank" action="/target/model/download_act">
           <div class="form-group">
             <div class="col-sm-3 control-label">名單數量調整</div>
             <div class="col-sm-9">
               <div class="radio">
                 <label>
-                  <input type="radio" id="enternum" name="optradio">設定名單數量：</label>
-                <input type="text" class="form-control form-inline" id="num" name="num" value="" placeholder="">
+                  <input type="radio" id="restrict_records" name="restriction" value="RECORDS" checked>設定名單數量：
+                </label>
+                <input type="number" class="form-control form-inline" id="records" name="records" value="1000" placeholder="">
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" id="sliderscope" name="optradio">設定模型分數調整數量：
+                  <input type="radio" id="restrict_threshold" name="restriction" value="THRESHOLD">設定模型分數調整數量：
                   <span>建議分數:{{batListThold}}以上</span>
                   <div class="rangeslider">
                     <span class="high">高</span>
                     <span class="low">低</span>
                     <span class="sliderName">模型分數</span>
-                    <input id="ex12c" type="text" num="scope" />
+                    <input id="ex12c" type="text" />
                     <div class="info">
                       <p>名單數：
-                        <input type="text" id="tapopcount" value="{{tapopcount}}" disabled>
+                        <input type="text" id="tapopcount" name="tapopCount" value="{{tapopcount}}" readonly>
                       </p>
                     </div>
                   </div>
@@ -37,10 +39,12 @@
               </div>
             </div>
           </div>
+          <input type="hidden" name="mdID" value="{{mdID}}" />
+          <input type="hidden" name="batID" value="{{batID}}" />
+          <input type="hidden" id="thresholdLowerBound" name="thresholdLowerBound" />
+          <input type="hidden" id="thresholdUpperBound" name="thresholdUpperBound" />
         </form>
         <div class="btn-block center-block">
-          <input type="hidden" id="mdID" name="mdID" value="{{mdID}}" />
-          <input type="hidden" id="batID" name="batID" value="{{batID}}" />
           <button type="submit" class="btn btn-lg btn-default" onclick="download()">模型名單下載</button>
         </div>
       </div>
@@ -63,7 +67,7 @@
           <tr>
             <td>建議閥值：</td>
             <td>{{batListThold}}
-              <i flow="down" tooltip="tooltip說明">
+              <i flow="down" tooltip="tooltip說明" />
             </td>
           </tr>
 
@@ -132,18 +136,21 @@
 <script>
   $("#ex12c").bootstrapSlider({ id: "slider12c", min: 0, max: 1, range: true, value: [{{ batListThold }}, 1] });
   $("#ex12c").bootstrapSlider().on('slide', function (event) {
+    console.log('event: ', event);
     $.ajax({
 
       url: "/target/model/download/update",
       data: {
         "mdID": "{{mdID}}",
         "batID": "{{batID}}",
-        "scope": document.getElementById("ex12c").value
+        "lowerBound": event.value[0],
+        "upperBound": event.value[1]
       },
       type: "POST",
       dataType: "json",
       success: function (Jdata) {
-        document.getElementById("tapopcount").value = Jdata.total;
+        console.log('Jdata: ', Jdata);
+        $("#tapopcount").val(Jdata.total);
       },
 
       error: function () {
@@ -285,26 +292,24 @@
 </script>
 <script>
   function download() {
-    var method;
-    if (!document.getElementById("sliderscope").checked && !document.getElementById("enternum").checked) {
-      alert("請選擇要下載的方式");
+    if ($("#restrict_records").is(":checked") && $("#records").val() === "") {
+      alert("請輸入名單數量");
       return false;
     }
-    else {
-      if (document.getElementById("num").value == "" && document.getElementById("enternum").checked) {
-        alert("請輸入數字");
-        return false;
-      }
-    }
-    if (document.getElementById("sliderscope").checked)
-      method = 1;
-    else
-      method = 2;
 
-    var url = "/target/model/download_act?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
-    url += "&ex12c=" + document.getElementById("ex12c").value + "&num=" + document.getElementById("num").value + "&method=" + method;
-    window.open(url, '_blank');
-
+    var thresholdRange = $("#ex12c").bootstrapSlider('getValue');
+    $("#thresholdLowerBound").val(thresholdRange[0]);
+    $("#thresholdUpperBound").val(thresholdRange[1]);
+    $("#downloadForm").submit();
+    // if (document.getElementById("sliderscope").checked)
+    //   method = 1;
+    // else
+    //   method = 2;
+    //
+    // var url = "/target/model/download_act?" + "mdID=" + document.getElementById("mdID").value + "&batID=" + document.getElementById("batID").value + "&tapopcount=" + document.getElementById("tapopcount").value;
+    // url += "&ex12c=" + document.getElementById("ex12c").value + "&num=" + document.getElementById("num").value + "&method=" + method;
+    // window.open(url, '_blank');
+    //
 
   }
 </script>

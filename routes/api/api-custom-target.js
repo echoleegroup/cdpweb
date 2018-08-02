@@ -2,6 +2,7 @@
 
 const express = require('express');
 const winston = require('winston');
+const moment = require('moment');
 const Q = require('q');
 const _ = require('lodash');
 const path = require('path');
@@ -127,7 +128,7 @@ module.exports = (app) => {
         throw null;
       } else {
         let exportFeatureIds = _.map(downloadFeatures, 'featID');
-        let exportColumns = _.map(_.filter(downloadFeatures, {customized: 'N'}), 'featID');
+        // let exportColumns = _.map(downloadFeatures, 'featID');
         let exportFeatureLabels = _.map(downloadFeatures, 'featName');
         // _.forEach(downloadFeatures, feature => {
         //   exportFeatureIds.push(feature.featID);
@@ -138,7 +139,7 @@ module.exports = (app) => {
           model,
           exportFeatureIds,
           exportFeatureLabels,
-          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, exportColumns, [
+          Q.nfcall(criteriaService.queryTargetByCustomCriteria, mdId, batId, statements, model, exportFeatureIds, [
             customTargetHelper.get_mdListScoreCustomizer(),
             customTargetHelper.get_mdListSentCustomizer(mdId),
             customTargetHelper.get_mdListSlodCustomizer()
@@ -167,7 +168,7 @@ module.exports = (app) => {
       }));
 
       //generate excel file
-      let filename = Date.now();
+      let filename = `自訂名單下載-${model.batName}-${moment().format('YYYYMMDDHHmm')}`;
       let xlsxFilename = `${filename}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
 
@@ -187,9 +188,10 @@ module.exports = (app) => {
           fileSize: zipBuff.length
         }).then(result => {
           const zipContentType = 'application/octet-stream';
+          const contentDisposition = require('content-disposition');
 
           res.setHeader('Content-Type', zipContentType);
-          res.setHeader('Content-Disposition', `attachment; filename=${filename}.zip`);
+          res.setHeader("Content-Disposition", contentDisposition(`${filename}.zip`));
           res.setHeader('Content-Transfer-Encoding', 'binary');
           res.setHeader('Content-Length', zipBuff.length);
 

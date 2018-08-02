@@ -95,10 +95,11 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
 
   // compose start!
   let sqlSelect = downloadFeatureIds;
-  // let sqlFrom = `${bigTable} big_table, md_ListDet detail`;
+  let sqlReduction = [];
   let sqlFrom = ['md_ListDet detail'];
   let sqlJoin = [];
   let sqlWhere = [];
+  let sqlSort = ['detail.mdListScore DESC'];
   let TYPES = _connector.TYPES;
   let request = _connector.queryRequest();
 
@@ -134,10 +135,12 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
 
   //customizer handler
   customizer.map(handler => {
-    let {select, join, where, parameters} = handler();
+    let {select, reduction, join, where, sort, parameters} = handler();
     sqlSelect = sqlSelect.concat(select || []);
+    sqlReduction = sqlReduction.concat(reduction || []);
     sqlJoin = sqlJoin.concat(join || []);
     sqlWhere = sqlWhere.concat(where || []);
+    sqlSort = sqlSort.concat(sort || []);
     // !_.isEmpty(select) && (sqlSelect = ` ${sqlSelect}, ${select} `);
     // !_.isEmpty(from) && (sqlFrom = ` ${sqlFrom}, ${from} `);
     // !_.isEmpty(where) && (sqlWhere = ` AND ${sqlWhere} AND ${where} `);
@@ -147,7 +150,11 @@ module.exports.queryTargetByCustomCriteria = (mdId, batId, statements, model, do
   });
 
   //compose all the partial sql to full sql
-  let sql = `SELECT ${sqlSelect.join(' , ')} FROM ${sqlFrom.join(' , ')} ${sqlJoin.join(' ')} WHERE ${sqlWhere.join(' AND ')}`;
+  let sql =
+    `SELECT ${sqlReduction.join(' ')} ${sqlSelect.join(' , ')} ` +
+    `FROM ${sqlFrom.join(' , ')} ${sqlJoin.join(' ')} ` +
+    `WHERE ${sqlWhere.join(' AND ')} ` +
+    `ORDER BY ${sqlSort.join(' , ')}`;
   winston.info('queryTargetByCustomCriteria::sql: %s', sql);
 
   //execute query

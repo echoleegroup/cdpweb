@@ -58,9 +58,9 @@ module.exports.getBatchCategoryFeatures = (featureIds, callback) => {
 };
 
 module.exports.getBatchTargetInfoOfCategory = (mdId, batId, mdListCateg, callback) => {
-  const sql = 'SELECT md.*, mdList.batListThold ' +
-    'FROM md_Model md, md_ListMst mdList ' +
-    'WHERE md.mdID = mdList.mdID AND md.batID = mdList.batID ' +
+  const sql = 'SELECT md.*, bat.batName, mdList.batListThold ' +
+    'FROM md_Model md, md_ListMst mdList, md_Batch bat ' +
+    'WHERE md.mdID = mdList.mdID AND md.batID = mdList.batID AND md.mdID = bat.mdID AND md.batID = bat.batID ' +
     'AND mdList.mdListCateg = @mdListCateg AND md.mdID = @mdId and md.batID = @batId';
   let request = _connector.queryRequest()
     .setInput('mdId', _connector.TYPES.NVarChar, mdId)
