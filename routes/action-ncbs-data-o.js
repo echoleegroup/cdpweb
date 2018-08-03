@@ -11,223 +11,168 @@ const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 const upload = multer({ dest: storage });
 const _connector = require('../utils/sql-query-util');
 const Q = require('q');
-
+const moment = require('moment');
 module.exports = (app) => {
   winston.info('[NCBSDataRoute::create] Creating NCBSData route.');
   const router = express.Router();
 
-  router.post('/NCBS/upload_act', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS), upload.single('uploadingFile')], function (req, res) {
-    var client = req.body.client || '';
-    var ncbsYear = req.body.ncbsYear || '';
-    var ncbsQus = req.body.ncbsQus || '';
-    var ncbsName = req.body.ncbsName || '';
-    var ncbsSdt = req.body.ncbsSdt || '';
-    var ncbsEdt = req.body.ncbsEdt || '';
-    var ncbsDesc = req.body.ncbsDesc || '';
-    var filepath = '';
-    var uLicsNOindex;
-    let oLicsNo;
-    var keyIndex = 0;
-    var origName = "";
-    var uniqName = "";
-    var anstitle = '';
-    var anscontent = '';
-    var canvasID = '';
-    var canvasIDindex = '';
-    var q4_b = '';
-    var q4_b_index = '';
-    var total;
-    var successnum = 0;
-    var errornum = 0;
-    var updtime;
-    var errormsg = '錯誤資訊\r\n';
-    var allmsg = '';
-    var modelList = req.session.modelList;
-    var navMenuList = req.session.navMenuList;
-    var mgrMenuList = req.session.mgrMenuList;
-    var ncbsID = 0;
-    var uLicsNO = '';
-    var maininfo;
-    var file = req.file;
-    // 以下代碼得到檔案後綴
-    origName = file.originalname;
-    var name = file.originalname;
-    var nameArray = name.split('');
-    var nameMime = [];
-    var l = nameArray.pop();
-    nameMime.unshift(l);
-    // Mime是檔案的後綴 Mime=nameMime.join('');
-    // winston.error(Mime); res.send("done"); //重命名檔案
-    // 加上檔案後綴
-    // fs.renameSync('./upload/'+file.filename,'./upload/'+file.filename+Mime);
-    uniqName = file.filename;
-    filepath = file.path;
-    var list = xlsx.parse(filepath);
-    var p1 = new Promise(function (resolve, reject) {
-      total = list[0].data.length - 1;
-      for (var i = 0; i < list[0].data[0].length; i++) {
-        if (list[0].data[0][i] == "realid") {
-          keyIndex = i;
-        }
-        if (list[0].data[0][i] == "CanvasID") {
-          canvasIDindex = i;
-        }
-        if (list[0].data[0][i] == "q4_b") {
-          q4_b_index = i;
-        }
-        if (i == list[0].data[0].length - 1)
-          anstitle += list[0].data[0][i];
-        else
-          anstitle += list[0].data[0][i] + ",";
-      }
-      function insertMst(origName, uniqName, callback) {
-        db.query("INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) VALUES('" + ncbsName + "','" + client + "','" + ncbsYear + "','" + ncbsDesc + "','" + ncbsQus + "','" + origName + "','" + uniqName + "','" + ncbsSdt + "','" + ncbsEdt + "','" + anstitle + "',GETDATE(),GETDATE(),'" + req.user.userId + "','NCBS')", function (err, recordset) {
-          if (err)
-            callback(err, null);
-          else
-            callback(null, 0);
-        });
-      }
-      insertMst(origName, uniqName, function (err, data) {
-        if (err) {
-          winston.error("ERROR : ", err);
-          reject(1)
-        }
-        else {
-          db.query("SELECT TOP 1 cnm.ncbsID,cnm.ncbsName,cnm.Client,cnm.ncbsYear,cnm.ncbsDesc,cnm.ncbsQus,convert(varchar,cnm.ncbsSdt,111)ncbsSdt,convert(varchar,cnm.ncbsEdt,111)ncbsEdt,convert(varchar,cnm.updTime,120)updTime,cnm.updUser,(select count(*) FROM cu_NCBSDet cnb where cnb.ncbsID = cnm.ncbsID)NSBCcount FROM cu_NCBSMst cnm order by ncbsID desc  ", function (err, recordset) {
-            if (err)
-              winston.error(err);
-            ncbsID = recordset.recordset[0].ncbsID;
-            maininfo = recordset.recordset;
-            resolve(ncbsID);
+  router.post('/NCBS/upload_act', [
+    middleware.check(),
+    middleware.checkEditPermission(permission.FEED_DATA_NCBS),
+    upload.single('uploadingFile')
+  ], function (req, res, next) {
+    winston.info('/feeddata/NCBS/upload_act get file');
+    const _ = require('lodash');
+    const COLUMN_MAPPER = {
+      car: { xlsx: 'realid', db: 'LICSNO' },
+    };
+    const indexToRowNumberOffset = 2;
+    const client = req.body.client || '';
+    const ncbsYear = req.body.ncbsYear || '';
+    const ncbsQus = req.body.ncbsQus || '';
+    const ncbsName = req.body.ncbsName || '';
+    const ncbsSdt = req.body.ncbsSdt || '';
+    const ncbsEdt = req.body.ncbsEdt || '';
+    const ncbsDesc = req.body.ncbsDesc || '';
+    const xlsxFile = req.file;
+    const xlsxData = xlsx.parse(xlsxFile.path);
+    const sheetData = xlsxData[0].data;
+    const sheetHeader = sheetData.splice(0, 1)[0]; //sheetData is changed mutely.
+    const licsNoColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.car.xlsx);
+    const canvasIDindex = sheetHeader.indexOf("CanvasID");
+    const q4_b_index = sheetHeader.indexOf("q4_b");
+    const dbKeyColumn = COLUMN_MAPPER["car"].db;
+    const origName = xlsxFile.originalname;
+    const uniqName = xlsxFile.filename;
+    const messageBody = {
+      success_num: 0,
+      error_num: 0,
+      total: sheetData.length,
+      error_msg: []
+    };
+    const keys = sheetData.map(row => {
+      return row[licsNoColumnIndex].toString().replace("-", "") || '';
+    });
+
+    const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE REPLACE(${dbKeyColumn},'-','') IN ('${_.pull(keys, '').join(`','`)}') `;
+    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
+      // winston.info('get validation and licsno: ', licsDataSet);
+      const validation = _.keyBy(licsDataSet, 'validation');
+      const initSql = 'INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) ' +
+        'OUTPUT INSERTED.ncbsID ' +
+        'VALUES(@ncbsName, @client, @ncbsYear, @ncbsDesc,@ncbsQus, @origName ,@uniqName, @ncbsSdt ,@ncbsEdt ,@anstitle ,@crtTime,@updTime,@updUser ,@funcCatge)';
+        return Q.nfcall(_connector.queryRequest()
+        .setInput('ncbsName', _connector.TYPES.NVarChar, ncbsName)
+        .setInput('client', _connector.TYPES.NVarChar, client)
+        .setInput('ncbsYear', _connector.TYPES.NVarChar, ncbsYear)
+        .setInput('ncbsDesc', _connector.TYPES.NVarChar, ncbsDesc)
+        .setInput('ncbsQus', _connector.TYPES.NVarChar, ncbsQus)
+        .setInput('origName', _connector.TYPES.NVarChar, origName)
+        .setInput('uniqName', _connector.TYPES.NVarChar, uniqName)
+        .setInput('ncbsSdt', _connector.TYPES.DateTime, moment(ncbsSdt, 'YYYY/MM/DD').toDate())
+        .setInput('ncbsEdt', _connector.TYPES.DateTime, moment(ncbsEdt, 'YYYY/MM/DD').toDate())
+        .setInput('anstitle', _connector.TYPES.NVarChar, sheetHeader.join(","))
+        .setInput('crtTime', _connector.TYPES.DateTime, new Date())
+        .setInput('updTime', _connector.TYPES.DateTime, new Date())
+        .setInput('updUser', _connector.TYPES.NVarChar, req.user.userId)
+        .setInput('funcCatge', _connector.TYPES.NVarChar, 'NCBS')
+        .executeQuery, initSql)
+        .then(resultSet => {
+
+          const ncbsID = resultSet[0].ncbsID;
+
+          winston.info('get init cu_NCBSMst done, ncbsID = ', ncbsID);
+
+          const insertSql = "INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)" +
+            " VALUES( @ncbsID, @uLicsNO, @anscontent, @canvasID)";
+          const partitions = 3;
+          const chunkSize = Math.trunc(sheetData.length / partitions) + 1;
+          const chunks = _.chunk(sheetData, chunkSize);
+          const chunkProcesses = chunks.map((chunk, chunkIndex) => {
+            const firstLineNumberOfChunk = chunkSize * chunkIndex + indexToRowNumberOffset;
+
+            return _.reduce(chunk, (_promise, row, rowIndex) => {
+              const keyValue = row[licsNoColumnIndex];
+              const licsData = validation[keyValue];
+              const lineOfXlsx = rowIndex + firstLineNumberOfChunk;
+              // winston.info('keyValue: ', keyValue);
+              if (_.isEmpty(keyValue)) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行${keyValue}無資料`
+                });
+                return _promise;
+              } else if (client == 'TOYOTA' && row[q4_b_index] != '5') {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行${keyValue}無效`
+                });
+                return _promise;
+              } else if (!licsData) {
+                messageBody.error_num += 1;
+                messageBody.error_msg.push({
+                  line: lineOfXlsx,
+                  message: `第${lineOfXlsx}行${keyValue}無效`
+                });
+                return _promise;
+              }
+              else {
+                return _promise.then(() => {
+                  // winston.info('before execute insert')
+                  let request = _connector.queryRequest()
+                    .setInput('ncbsID', _connector.TYPES.Int, ncbsID)
+                    .setInput('uLicsNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
+                    .setInput('anscontent', _connector.TYPES.NVarChar, row.join(","))
+                    .setInput('canvasID', _connector.TYPES.NVarChar, row[canvasIDindex])
+
+
+                  return Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
+                    // winston.info('after execute insert');
+                    messageBody.success_num += 1;
+                    return null;
+                  }).catch(err => {
+                    winston.error('import ncbsDet list failed: ', err);
+                    messageBody.error_num += 1;
+                    messageBody.error_msg.push({
+                      line: lineOfXlsx,
+                      message: `第${lineOfXlsx}行匯入失敗`
+                    });
+                    return null;
+                  });
+                });
+              }
+            }, Q());
           });
-        }
+
+          return Q.all(chunkProcesses).then(chunkResult => {
+            return ncbsID;
+          });
+
+        });
+
+    }).then(ncbsID => {
+      winston.info('insert complete: ncbsID = ', ncbsID);
+      let messages = _.map(_.sortBy(messageBody.error_msg, ['line']), 'message');
+      let sql = "UPDATE cu_NCBSMst SET successNum = @successnum ,errorNum = @errornum ,errorMsg = @errormsg ,total = @total  where ncbsID = @ncbsID";
+      let request = _connector.queryRequest()
+        .setInput('successnum', _connector.TYPES.Int, messageBody.success_num)
+        .setInput('errornum', _connector.TYPES.Int, messageBody.error_num)
+        .setInput('total', _connector.TYPES.Int, messageBody.total)
+        .setInput('errorMsg', _connector.TYPES.NVarChar, messages.join('\n'))
+        .setInput('ncbsID', _connector.TYPES.Int, ncbsID);
+      return Q.nfcall(request.executeUpdate, sql).then(resultSet => {
+        res.redirect('/feeddata/NCBS/edit?' +
+          `ncbsID=${ncbsID}`);
+      }).fail(err => {
+        winston.error('POST /feeddata/NCBS/upload_act error: ', err);
+        next(require('boom').internal());
       });
-    });
-
-    Promise.all([p1]).then(function (results) {
-      var i = 1
-      res.redirect("/feeddata/NCBS/upload");           
-      checkandinsert(i);
-      function checkandinsert(i) {
-        try {
-          if (i < list[0].data.length) {
-            if (list[0].data[i][keyIndex] == "") {
-              errornum++;
-              var linenum = i + 1;
-              errormsg += 'Line ' + linenum.toString() + '\r\n';
-              if (i == list[0].data.length - 1) {
-                var currentdate = new Date();
-                var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                  + currentdate.getHours() + ":"
-                  + currentdate.getMinutes() + ":"
-                  + currentdate.getSeconds();
-                let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
-                db.query(sql, function (err, recordset) {
-                  
-                });
-                
-              }
-              checkandinsert(i + 1);
-            }
-            else {
-              const checkdata = (keyIndex, callback) => {
-                db.query("SELECT CustID_u,LICSNO FROM cu_LicsnoIndex where REPLACE(LICSNO,'-','')  = '" + list[0].data[i][keyIndex].toString().replace("-", "") + "'", function (err, recordset) {
-                  if (err)
-                    winston.error(err);
-                  if (recordset.rowsAffected == 0)
-                    callback(null, "0");
-                  else {
-                    uLicsNO = recordset.recordset[0].LICSNO;
-                    callback(null, recordset.recordset[0].CustID_u);
-                  }
-                });
-              }
-              checkdata(keyIndex, function (err, data1) {
-                anscontent = '';
-                canvasID = list[0].data[i][canvasIDindex];
-                for (var j = 0; j < list[0].data[i].length; j++) {
-                  if (j == list[0].data[i].length - 1)
-                    anscontent += list[0].data[i][j];
-                  else
-                    anscontent += list[0].data[i][j] + ",";
-                }
-                if (err)
-                  winston.error("ERROR : ", err);
-                if (data1 == "0") {
-                  errornum++;
-                  var linenum = i + 1;
-                  errormsg += 'Line ' + linenum.toString() + '\r\n';
-
-                  if (i == list[0].data.length - 1) {
-                    var currentdate = new Date();
-                    var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                      + currentdate.getHours() + ":"
-                      + currentdate.getMinutes() + ":"
-                      + currentdate.getSeconds();
-                    let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
-                    db.query(sql, function (err, recordset) {
-                     
-                    });
-                   
-                  }
-                  else {
-                    checkandinsert(i + 1);
-                  }
-                }
-                else {
-                  if (client == 'TOYOTA' && list[0].data[i][q4_b_index] != '5') {
-                    errormsg += 'Line ' + linenum.toString() + '\r\n';
-                    if (i == list[0].data.length - 1) {
-                      var currentdate = new Date();
-                      var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                        + currentdate.getHours() + ":"
-                        + currentdate.getMinutes() + ":"
-                        + currentdate.getSeconds();
-                      let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
-                      db.query(sql, function (err, recordset) {
-                       
-                      });
-                      
-                    }
-                    else
-                      checkandinsert(i + 1);
-                  }
-                  else {
-                    db.query("INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)VALUES(" + ncbsID + ",'" + uLicsNO + "','" + anscontent + "','" + canvasID + "')", function (err, recordset) {
-                      if (err) {
-                        winston.error(err);
-                      }
-                      successnum++;
-                      if (i == list[0].data.length - 1) {
-                        var currentdate = new Date();
-                        var datetime = currentdate.getFullYear() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getDate() + " "
-                          + currentdate.getHours() + ":"
-                          + currentdate.getMinutes() + ":"
-                          + currentdate.getSeconds();
-                        let sql = "update cu_NCBSMst set successNum = " + successnum + ",errorNum = " + errornum + ",errorMsg = '" + errormsg + "',total = " + total + " where ncbsID = " + ncbsID;
-                        db.query(sql, function (err, recordset) {
-                         
-                        });
-                        
-                      }
-                      else
-                        checkandinsert(i + 1);
-                    });
-                  }
-                }
-              });
-
-            }
-          }
-        } catch (error) {
-          winston.error(error);
-        }
-      }
-
-    }).catch(function (e) {
-      winston.error(e);
-    });
+    }).fail(err => {
+      winston.error('POST /feeddata/NCBS/upload_act error: ', err);
+      next(require('boom').internal());
+    });;
   });
 
   router.get('/NCBS/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
@@ -261,7 +206,7 @@ module.exports = (app) => {
         'mgrMenuList': mgrMenuList,
         'maininfo': maininfo,
         'ncbsID': ncbsID,
-        'dispaly': dispaly,
+        'dispaly': "block",
         'successnum': successnum,
         'errormsg': errormsg,
         'errornum': errornum,
