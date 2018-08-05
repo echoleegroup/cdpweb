@@ -487,7 +487,7 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
   }).then(features => {
     callback(null, _.keyBy(features, 'featID'));
   }).fail(err => {
-    winston.error('===getFeaturesAsMap: ', err);
+    winston.error('===getStatisticFeaturesOfQueryTask: ', err);
     callback(err);
   });
 };
@@ -506,7 +506,7 @@ module.exports.getStatisticFeatureOfQueryTask = (queryId, featureId, callback) =
   }).then(feature => {
     callback(null, feature);
   }).fail(err => {
-    winston.error('===getFeaturesAsMap: ', err);
+    winston.error('===getStatisticFeatureOfQueryTask: ', err);
     callback(err);
   });
 };
