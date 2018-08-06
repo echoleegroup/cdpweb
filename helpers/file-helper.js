@@ -4,49 +4,68 @@ const path = require('path');
 const request = require('request');
 const Q = require('q');
 const winston = require('winston');
-const constants = require("../utils/constants");
 
-module.exports.buildXlsxBuffer = ({
+module.exports.buildXlsxWorkbook = ({
                                     sheetName='模型名單',
                                     xlsxDataSet=[[]]
-                                  }) => {
-  const xlsx = require('node-xlsx');
-  return xlsx.build([{name: sheetName, data: xlsxDataSet}]);
-};
+                                  }, callback) => {
+  const XlsxPopulate = require('xlsx-populate');
 
-module.exports.buildXlsxFile = ({
-                                  sheetName='模型名單',
-                                  xlsxDataSet=[[]],
-                                  xlsxFileAbsolutePath
-                                }, callback) => {
+  return XlsxPopulate.fromBlankAsync().then(workbook => {
+    workbook.sheet(0).name(sheetName).cell("A1").value(xlsxDataSet);
+    callback(null, workbook);
 
-  let buffer = this.buildXlsxBuffer({sheetName, xlsxDataSet});
-
-  Q.nfcall(fs.writeFile, xlsxFileAbsolutePath , buffer, {'flag':'w'}).then(res => {
-    callback(null, buffer);
-  }).fail(err => {
-    callback(err, null);
+    // Write to file.
+    // return workbook.toFileAsync("/Users/hd/Downloads/test-3.xlsx", { password: "vvv" });
+  }).catch(err => {
+    callback(err);
   });
 };
 
-module.exports.buildZipBuffer = ({
-                                   path = [],
-                                   buff = [],
-                                   password
-                                 }) => {
-  const Minizip = require('minizip-asm.js');
+module.exports.buildXlsxFile = ({
+                                       sheetName='模型名單',
+                                       xlsxDataSet=[[]],
+                                       password,
+                                       xlsxFileAbsolutePath
+                                     }, callback) => {
 
-  let archiveOptions = {};
-  if (password) {
-    archiveOptions.password = password;
-  }
+  Q.nfcall(this.buildXlsxWorkbook, {sheetName, xlsxDataSet}).then(workbook => {
+    // Write to file.
+    return workbook.toFileAsync(xlsxFileAbsolutePath, { password: password }).then(() => {
+      callback(null, fs.statSync(xlsxFileAbsolutePath));
+    }).catch(err => {
+      callback(err);
+    });
+  });
 
-  let mz = new Minizip();
-  for (let i in path) {
-    mz.append(path[i], buff[i], archiveOptions);
-  }
-  return mz.zip();
+  //
+  // let buffer = this.buildXlsxBuffer({sheetName, xlsxDataSet});
+  //
+  // Q.nfcall(fs.writeFile, xlsxFileAbsolutePath , buffer, {'flag':'w'}).then(res => {
+  //   callback(null, buffer);
+  // }).fail(err => {
+  //   callback(err, null);
+  // });
 };
+
+// module.exports.buildZipBuffer = ({
+//                                    path = [],
+//                                    buff = [],
+//                                    password
+//                                  }) => {
+//   const Minizip = require('minizip-asm.js');
+//
+//   let archiveOptions = {};
+//   if (password) {
+//     archiveOptions.password = password;
+//   }
+//
+//   let mz = new Minizip();
+//   for (let i in path) {
+//     mz.append(path[i], buff[i], archiveOptions);
+//   }
+//   return mz.zip();
+// };
 
 
 

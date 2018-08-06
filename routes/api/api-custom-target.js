@@ -166,34 +166,37 @@ module.exports = (app) => {
       }));
 
       //generate excel file
-      let filename = `自訂名單下載-${model.batName}-${moment().format('YYYYMMDDHHmm')}`;
-      let xlsxFilename = `${filename}.xlsx`;
+      let now = moment().format('YYYYMMDDHHmm');
+      let exportFilename = `自訂名單下載-${model.batName}-${now}.xlsx`;
+      let xlsxFilename = `customize-target-${model.batName}-${now}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
 
       return Q.nfcall(fileHelper.buildXlsxFile, {
         xlsxDataSet: exportDateSet,
-        xlsxFileAbsolutePath: xlsxFileAbsolutePath
-      }).then(xlsxBuffer => {
-        const zipBuff = fileHelper.buildZipBuffer({
-          path: [xlsxFilename],
-          buff: [xlsxBuffer],
-          password: req.user.userId.toLowerCase()
-        });
+        xlsxFileAbsolutePath: xlsxFileAbsolutePath,
+        password: req.user.userId.toLowerCase()
+      }).then(stat => {
+        // const zipBuff = fileHelper.buildZipBuffer({
+        //   path: [xlsxFilename],
+        //   buff: [xlsxBuffer],
+        //   password: req.user.userId.toLowerCase()
+        // });
         return Q.nfcall(queryService.insertDownloadLog, {
           queryId: queryLogId,
           filePath: xlsxFileAbsolutePath,
           userId: req.user.userId,
-          fileSize: zipBuff.length
+          fileSize: stat.size
         }).then(result => {
-          const zipContentType = 'application/octet-stream';
-          const contentDisposition = require('content-disposition');
-
-          res.setHeader('Content-Type', zipContentType);
-          res.setHeader("Content-Disposition", contentDisposition(`${filename}.zip`));
-          res.setHeader('Content-Transfer-Encoding', 'binary');
-          res.setHeader('Content-Length', zipBuff.length);
-
-          res.end(new Buffer(zipBuff, 'binary'));
+          res.download(xlsxFileAbsolutePath, exportFilename);
+          // const zipContentType = 'application/octet-stream';
+          // const contentDisposition = require('content-disposition');
+          //
+          // res.setHeader('Content-Type', zipContentType);
+          // res.setHeader("Content-Disposition", contentDisposition(`${filename}.zip`));
+          // res.setHeader('Content-Transfer-Encoding', 'binary');
+          // res.setHeader('Content-Length', zipBuff.length);
+          //
+          // res.end(new Buffer(zipBuff, 'binary'));
         })
       });
 
