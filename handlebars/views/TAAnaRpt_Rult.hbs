@@ -80,7 +80,7 @@
         clickpercent = myObj.clickpercent;
       x = "";
       x += '<table class="table"><tr><td rowspan="5"><h3>' + myObj.modelName + '</h3></td>';
-      x += '<td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂訂單數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td></tr>';
+      x += '<td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂人數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td></tr>';
       x += '<tr><td><span class="num">' + myObj.sentCount + '</span></td><td><span class="num">' + order + '</span></td><td><span class="num">' + tostore + '</span></td><td><span class="num">' + register + '</span></td><td><span class="num">' + click + '</span></td></tr>';
       x += '<tr><td></td><td><span class="labelItem">受訂率(%)</span></td><td><span class="labelItem">來店率(%)</span></td><td><span class="labelItem">登錄率(%)</span></td><td><span class="labelItem">點擊率(%)</span></td></tr>';
       x += '<tr><td></td><td><span class="num">' + orderpercent + '</span></td><td><span class="num">' + tostorepercent + '</span></td><td><span class="num">' + registerpercent + '</span></td><td><span class="num">' + clickpercent + '</span></td></tr>';
@@ -128,7 +128,7 @@
           else
             batchclickpercent = myObj.betchInfolist[i].clickpercent;
           batchHtml += '<h3 class="month">' + myObj.betchInfolist[i].batName + '</h3><div class="table-responsive result"><table class="table">';
-          batchHtml += '<tr><td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂訂單數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td><td rowspan="4" width="180"><a href="javascript:getDeatil(' + k + ',\'' + myObj.betchInfolist[i].batID + '\',\'' + mdID + '\')" id="openModal1" class="btn btn-chart">各名單來源受訂/回應圖</a></td></tr>';
+          batchHtml += '<tr><td><span class="labelItem">投放人數</span></td><td><span class="labelItem">受訂人數</span></td><td><span class="labelItem">來店人數</span></td><td><span class="labelItem">登錄人數</span></td><td><span class="labelItem">點擊人數</span></td><td rowspan="4" width="180"><a href="javascript:getDeatil(' + k + ',\'' + myObj.betchInfolist[i].batID + '\',\'' + mdID + '\')" id="openModal1" class="btn btn-chart">各名單來源受訂/回應圖</a></td></tr>';
           batchHtml += '<tr><td><span class="num">' + myObj.betchInfolist[i].sentCount + '</span></td><td><span class="num">' + batchorder + '</span></td><td><span class="num">' + batchtostore + '</span></td><td><span class="num">' + batchregister + '</span></td><td><span class="num">' + batchclick + '</span></td></tr>';
           batchHtml += '<tr><td></td><td><span class="labelItem">受訂率(%)</span></td><td><span class="labelItem">來店率(%)</span></td><td><span class="labelItem">登錄率(%)</span></td><td><span class="labelItem">點擊率(%)</span></td></tr>';
           batchHtml += '<tr><td></td><td><span class="num">' + batchorderpercent + '</span></td><td><span class="num">' + batchtostorepercent + '</span></td><td><span class="num">' + batchregisterpercent + '</span></td><td><span class="num">' + batchclickpercent + '</span></td></tr>';
