@@ -1,7 +1,6 @@
 "use strict";
 const multer = require('multer');
 const winston = require('winston');
-const xlsx = require("node-xlsx");
 const express = require('express');
 const db = require("../utils/sql-server-connector").db;
 const middleware = require("../middlewares/login-check");
@@ -12,6 +11,8 @@ const upload = multer({ dest: storage });
 const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 const moment = require('moment');
+const XlsxStreamReader = require("xlsx-stream-reader");
+const fs = require("fs");
 module.exports = (app) => {
   winston.info('[NCBSDataRoute::create] Creating NCBSData route.');
   const router = express.Router();
@@ -35,146 +36,137 @@ module.exports = (app) => {
     const ncbsEdt = req.body.ncbsEdt || '';
     const ncbsDesc = req.body.ncbsDesc || '';
     const xlsxFile = req.file;
-    const xlsxData = xlsx.parse(xlsxFile.path);
-    const sheetData = xlsxData[0].data;
-    const sheetHeader = sheetData.splice(0, 1)[0]; //sheetData is changed mutely.
-    const licsNoColumnIndex = sheetHeader.indexOf(COLUMN_MAPPER.car.xlsx);
-    const canvasIDindex = sheetHeader.indexOf("CanvasID");
-    const q4_b_index = sheetHeader.indexOf("q4_b");
+    let licsNoColumnIndex;
+    let canvasIDindex;
+    let q4_b_index;
     const dbKeyColumn = COLUMN_MAPPER["car"].db;
     const origName = xlsxFile.originalname;
     const uniqName = xlsxFile.filename;
     const messageBody = {
       success_num: 0,
       error_num: 0,
-      total: sheetData.length,
+      total: 0,
       error_msg: []
     };
-    const keys = sheetData.map(row => {
-      return row[licsNoColumnIndex].toString().replace("-", "") || '';
+    let ncbsID;
+    var workBookReader = new XlsxStreamReader();
+    workBookReader.on('error', function (error) {
+      throw (error);
     });
-
-    const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE REPLACE(${dbKeyColumn},'-','') IN ('${_.pull(keys, '').join(`','`)}') `;
-    Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
-      // winston.info('get validation and licsno: ', licsDataSet);
-      const validation = _.keyBy(licsDataSet, 'validation');
-      const initSql = 'INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) ' +
-        'OUTPUT INSERTED.ncbsID ' +
-        'VALUES(@ncbsName, @client, @ncbsYear, @ncbsDesc,@ncbsQus, @origName ,@uniqName, @ncbsSdt ,@ncbsEdt ,@anstitle ,@crtTime,@updTime,@updUser ,@funcCatge)';
-        return Q.nfcall(_connector.queryRequest()
-        .setInput('ncbsName', _connector.TYPES.NVarChar, ncbsName)
-        .setInput('client', _connector.TYPES.NVarChar, client)
-        .setInput('ncbsYear', _connector.TYPES.NVarChar, ncbsYear)
-        .setInput('ncbsDesc', _connector.TYPES.NVarChar, ncbsDesc)
-        .setInput('ncbsQus', _connector.TYPES.NVarChar, ncbsQus)
-        .setInput('origName', _connector.TYPES.NVarChar, origName)
-        .setInput('uniqName', _connector.TYPES.NVarChar, uniqName)
-        .setInput('ncbsSdt', _connector.TYPES.DateTime, moment(ncbsSdt, 'YYYY/MM/DD').toDate())
-        .setInput('ncbsEdt', _connector.TYPES.DateTime, moment(ncbsEdt, 'YYYY/MM/DD').toDate())
-        .setInput('anstitle', _connector.TYPES.NVarChar, sheetHeader.join(","))
-        .setInput('crtTime', _connector.TYPES.DateTime, new Date())
-        .setInput('updTime', _connector.TYPES.DateTime, new Date())
-        .setInput('updUser', _connector.TYPES.NVarChar, req.user.userId)
-        .setInput('funcCatge', _connector.TYPES.NVarChar, 'NCBS')
-        .executeQuery, initSql)
-        .then(resultSet => {
-
-          const ncbsID = resultSet[0].ncbsID;
-
-          winston.info('get init cu_NCBSMst done, ncbsID = ', ncbsID);
-
-          const insertSql = "INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)" +
-            " VALUES( @ncbsID, @uLicsNO, @anscontent, @canvasID)";
-          const partitions = 3;
-          const chunkSize = Math.trunc(sheetData.length / partitions) + 1;
-          const chunks = _.chunk(sheetData, chunkSize);
-          const chunkProcesses = chunks.map((chunk, chunkIndex) => {
-            const firstLineNumberOfChunk = chunkSize * chunkIndex + indexToRowNumberOffset;
-
-            return _.reduce(chunk, (_promise, row, rowIndex) => {
-              const keyValue = row[licsNoColumnIndex];
-              const licsData = validation[keyValue];
-              const lineOfXlsx = rowIndex + firstLineNumberOfChunk;
-              // winston.info('keyValue: ', keyValue);
-              if (_.isEmpty(keyValue)) {
+    workBookReader.on('worksheet', function (workSheetReader) {
+      if (workSheetReader.id > 1) {
+        // we only want first sheet
+        workSheetReader.skip();
+        return;
+      }
+      workSheetReader.on('row', function (row) {
+        if (row.attributes.r == 1) {
+          // do something with row 1 like save as column names
+          licsNoColumnIndex = row.values.indexOf(COLUMN_MAPPER.car.xlsx);
+          canvasIDindex = row.values.indexOf("CanvasID");
+          q4_b_index = row.values.indexOf("q4_b");
+          const initSql = 'INSERT INTO cu_NCBSMst(ncbsName,Client,ncbsYear,ncbsDesc,ncbsQus,origName,uniqName,ncbsSdt,ncbsEdt,ncbsStruc,crtTime,updTime,updUser,funcCatge) ' +
+            'OUTPUT INSERTED.ncbsID ' +
+            'VALUES(@ncbsName, @client, @ncbsYear, @ncbsDesc,@ncbsQus, @origName ,@uniqName, @ncbsSdt ,@ncbsEdt ,@anstitle ,@crtTime,@updTime,@updUser ,@funcCatge)';
+          Q.nfcall(_connector.queryRequest()
+            .setInput('ncbsName', _connector.TYPES.NVarChar, ncbsName)
+            .setInput('client', _connector.TYPES.NVarChar, client)
+            .setInput('ncbsYear', _connector.TYPES.NVarChar, ncbsYear)
+            .setInput('ncbsDesc', _connector.TYPES.NVarChar, ncbsDesc)
+            .setInput('ncbsQus', _connector.TYPES.NVarChar, ncbsQus)
+            .setInput('origName', _connector.TYPES.NVarChar, origName)
+            .setInput('uniqName', _connector.TYPES.NVarChar, uniqName)
+            .setInput('ncbsSdt', _connector.TYPES.DateTime, moment(ncbsSdt, 'YYYY/MM/DD').toDate())
+            .setInput('ncbsEdt', _connector.TYPES.DateTime, moment(ncbsEdt, 'YYYY/MM/DD').toDate())
+            .setInput('anstitle', _connector.TYPES.NVarChar, row.values.join(","))
+            .setInput('crtTime', _connector.TYPES.DateTime, new Date())
+            .setInput('updTime', _connector.TYPES.DateTime, new Date())
+            .setInput('updUser', _connector.TYPES.NVarChar, req.user.userId)
+            .setInput('funcCatge', _connector.TYPES.NVarChar, 'NCBS')
+            .executeQuery, initSql)
+            .then(resultSet => {
+              ncbsID = resultSet[0].ncbsID;
+            });
+        } else {
+          const validationSql = `SELECT ${dbKeyColumn} AS validation, LICSNO, CustID_u FROM cu_LicsnoIndex WHERE REPLACE(${dbKeyColumn},'-','') = '${row.values[licsNoColumnIndex].replace("-", "")}' `;
+          Q.nfcall(_connector.queryRequest().executeQuery, validationSql).then(licsDataSet => {
+            if (row.values[licsNoColumnIndex] == '') {
+              messageBody.error_num += 1;
+              messageBody.error_msg.push({
+                line: workSheetReader.rowCount,
+                message: `第${row.attributes.r}行${row.values[licsNoColumnIndex]}無資料`
+              });
+            }
+            else if (licsDataSet == '') {
+              messageBody.error_num += 1;
+              messageBody.error_msg.push({
+                line: workSheetReader.rowCount,
+                message: `第${row.attributes.r}行${row.values[licsNoColumnIndex]}無效`
+              });
+            }
+            else if (client == 'TOYOTA' && row.values[q4_b_index] != '5') {
+              messageBody.error_num += 1;
+              messageBody.error_msg.push({
+                line: workSheetReader.rowCount,
+                message: `第${row.attributes.r}行${row.values[licsNoColumnIndex]}無效`
+              });
+            }
+            else {
+              const insertSql = "INSERT INTO cu_NCBSDet (ncbsID,uLicsNO,uData,uCanvas)" +
+                " VALUES( @ncbsID, @uLicsNO, @anscontent, @canvasID)";
+              let request = _connector.queryRequest()
+                .setInput('ncbsID', _connector.TYPES.Int, ncbsID)
+                .setInput('uLicsNO', _connector.TYPES.NVarChar, row.values[licsNoColumnIndex])
+                .setInput('anscontent', _connector.TYPES.NVarChar, row.values.join(","))
+                .setInput('canvasID', _connector.TYPES.NVarChar, row.values[canvasIDindex]);
+              Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
+                // winston.info('after execute insert');
+                messageBody.success_num += 1;
+              }).fail(err => {
+                winston.error('import ncbsDet list failed: ', err);
                 messageBody.error_num += 1;
                 messageBody.error_msg.push({
-                  line: lineOfXlsx,
-                  message: `第${lineOfXlsx}行${keyValue}無資料`
+                  line: workSheetReader.rowCount,
+                  message: `第${workSheetReader.rowCount}行匯入失敗`
                 });
-                return _promise;
-              } else if (client == 'TOYOTA' && row[q4_b_index] != '5') {
-                messageBody.error_num += 1;
-                messageBody.error_msg.push({
-                  line: lineOfXlsx,
-                  message: `第${lineOfXlsx}行${keyValue}無效`
-                });
-                return _promise;
-              } else if (!licsData) {
-                messageBody.error_num += 1;
-                messageBody.error_msg.push({
-                  line: lineOfXlsx,
-                  message: `第${lineOfXlsx}行${keyValue}無效`
-                });
-                return _promise;
-              }
-              else {
-                return _promise.then(() => {
-                  // winston.info('before execute insert')
-                  let request = _connector.queryRequest()
-                    .setInput('ncbsID', _connector.TYPES.Int, ncbsID)
-                    .setInput('uLicsNO', _connector.TYPES.NVarChar, row[licsNoColumnIndex])
-                    .setInput('anscontent', _connector.TYPES.NVarChar, row.join(","))
-                    .setInput('canvasID', _connector.TYPES.NVarChar, row[canvasIDindex])
+              });
+            }
+          }).fail(err => {
+            winston.error(' error: ', err);
+            next(require('boom').internal());
+          });;
+        }
+      });
+      workSheetReader.on('end', function () {
+        messageBody.total = workSheetReader.rowCount;
 
-
-                  return Q.nfcall(request.executeUpdate, insertSql).then(resultSet => {
-                    // winston.info('after execute insert');
-                    messageBody.success_num += 1;
-                    return null;
-                  }).catch(err => {
-                    winston.error('import ncbsDet list failed: ', err);
-                    messageBody.error_num += 1;
-                    messageBody.error_msg.push({
-                      line: lineOfXlsx,
-                      message: `第${lineOfXlsx}行匯入失敗`
-                    });
-                    return null;
-                  });
-                });
-              }
-            }, Q());
-          });
-
-          return Q.all(chunkProcesses).then(chunkResult => {
-            return ncbsID;
-          });
-
-        });
-
-    }).then(ncbsID => {
-      winston.info('insert complete: ncbsID = ', ncbsID);
+      });
+      // call process after registering handlers
+      workSheetReader.process();
+    });
+    workBookReader.on('end', function () {
       let messages = _.map(_.sortBy(messageBody.error_msg, ['line']), 'message');
       let sql = "UPDATE cu_NCBSMst SET successNum = @successnum ,errorNum = @errornum ,errorMsg = @errormsg ,total = @total  where ncbsID = @ncbsID";
       let request = _connector.queryRequest()
         .setInput('successnum', _connector.TYPES.Int, messageBody.success_num)
         .setInput('errornum', _connector.TYPES.Int, messageBody.error_num)
-        .setInput('total', _connector.TYPES.Int, messageBody.total)
+        .setInput('total', _connector.TYPES.Int, messageBody.total - 1)
         .setInput('errorMsg', _connector.TYPES.NVarChar, messages.join('\n'))
         .setInput('ncbsID', _connector.TYPES.Int, ncbsID);
-      return Q.nfcall(request.executeUpdate, sql).then(resultSet => {
-        res.redirect('/feeddata/NCBS/edit?' +
-          `ncbsID=${ncbsID}`);
+      Q.nfcall(request.executeUpdate, sql).then(resultSet => {
       }).fail(err => {
         winston.error('POST /feeddata/NCBS/upload_act error: ', err);
         next(require('boom').internal());
       });
-    }).fail(err => {
-      winston.error('POST /feeddata/NCBS/upload_act error: ', err);
-      next(require('boom').internal());
-    });;
-  });
 
+      winston.info("NCBS upload done")
+    });
+
+    fs.createReadStream(xlsxFile.path).pipe(workBookReader);
+    res.render('NCBSmessage', {
+    });
+  });
+  
   router.get('/NCBS/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var ncbsID = req.query.ncbsID || '';
     var successnum = req.query.successnum || '';
