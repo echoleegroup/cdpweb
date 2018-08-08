@@ -57,6 +57,7 @@
     "winston": "^2.4.0",
     "winston-daily-rotate-file": "^1.7.2",
     "xlsx-populate": "^1.17.0",
+    "xlsx-stream-reader": "^1.0.3",
     "yauzl": "^2.9.1"
   },
   "devDependencies": {
