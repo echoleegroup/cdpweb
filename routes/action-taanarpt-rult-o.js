@@ -2,6 +2,7 @@
 // const http = require('http');
 // const url = require('url');
 const _ = require('lodash');
+const boom = require('boom');
 const moment = require('moment');
 const path = require('path');
 const Q = require('q');
@@ -57,7 +58,7 @@ module.exports = (app) => {
 
   });
 
-  router.post('/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)], function (req, res) {
+  router.post('/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)], function (req, res, next) {
     const mdID = req.body.mdID;
     const userId = req.user.userId;
     const sql = 'WITH sentList AS ( ' +
@@ -116,7 +117,7 @@ module.exports = (app) => {
       .setInput('mdID', _connector.TYPES.NVarChar, mdID);
 
     Q.all([
-      Q.nfcall(request.executeUpdate, sql),
+      Q.nfcall(request.executeQuery, sql),
       Q.nfcall(codeGroupHelper.getCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
       Q.nfcall(modelService.getModel, mdID)
     ]).spread((resData, codeGroupMap, model) => {
@@ -132,9 +133,9 @@ module.exports = (app) => {
       const exportDateSet = [];
       exportDateSet.push(header); //header
       resData.forEach(row => {  //content
-        exportDateSet.add([
+        exportDateSet.push([
           row.CNTRNO, row.class_1_name, row.class_1_uid, row.class_1_mobile,
-          row.class_2_name, row.class_2_uid, row.class_2_mobile, row.class_3_name, row.class_3_uid, class_3_mobile,
+          row.class_2_name, row.class_2_uid, row.class_2_mobile, row.class_3_name, row.class_3_uid, row.class_3_mobile,
           row.CARMDL, row.ORDDT, row.DLRCD, row.BRNHCD, row.batID,
           row.sentListTime, sentListChannelMap[row.sentListChannel], row.rptkey, row.uTel,
           row.respListTime, RespListChannelMap[row.respListChannel]
@@ -167,10 +168,8 @@ module.exports = (app) => {
         });
       });
     }).fail(err => {
-      if (err) {
-        winston.error(`===/taanarpt_rult/download_act(mdID=${mdID}): `, err);
-        res.json(req.params, 500, 'internal service error');
-      }
+      winston.error(`===/taanarpt_rult/download_act(mdID=${mdID}): `, err);
+      next(boom.internal())
     });
   });
   return router;

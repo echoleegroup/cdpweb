@@ -51,7 +51,7 @@ const _that = {
         // winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
         Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
           callback(null, (result.recordsets.length > 1)? result.recordsets: result.recordset);
-        }).catch(err => {
+        }).fail(err => {
           callback(err);
         });
       },
@@ -59,7 +59,7 @@ const _that = {
         // winston.info('sql-query-util.queryRequest.executeQuery.sql: ', sql);
         Q.nfcall(execParameterizedSql, sql, inputs).then(result => {
           callback(null, (result.rowsAffected.length > 1)? result.rowsAffected: result.rowsAffected[0]);
-        }).catch(err => {
+        }).fail(err => {
           winston.error('sql util executeUpdate error: ', err);
           callback(err);
         });

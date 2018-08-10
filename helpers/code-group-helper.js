@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const Q = require('q');
 const codeGroupService = require('../services/code-group-service');
 
 module.exports.getCodeGroupMap = (codeGroup, callback) => {
