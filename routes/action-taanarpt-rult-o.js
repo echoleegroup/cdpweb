@@ -9,7 +9,8 @@ const express = require('express');
 const winston = require('winston');
 // const appConfig = require("../app-config");
 const middleware = require("../middlewares/login-check");
-const permission = require("../utils/constants").MENU_CODE;
+const constants = require("../utils/constants");
+const permission = constants.MENU_CODE;
 const _connector = require('../utils/sql-query-util');
 const codeGroupHelper = require('../helpers/code-group-helper');
 const fileHelper = require('../helpers/file-helper');
@@ -18,7 +19,6 @@ const queryService = require('../services/query-log-service');
 // const db = require("../utils/sql-server-connector").db;
 // const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
 const java_api_service = require('../services/java-api-service');
-const constants = require("../utils/constants");
 // const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
 module.exports = (app) => {
   winston.info('[taanarptRoute::create] Creating taanarpt route.');
@@ -57,7 +57,7 @@ module.exports = (app) => {
 
   });
 
-  router.get('/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)], function (req, res) {
+  router.post('/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)], function (req, res) {
     const mdID = req.body.mdID;
     const userId = req.user.userId;
     const sql = 'WITH sentList AS ( ' +
@@ -172,18 +172,6 @@ module.exports = (app) => {
         res.json(req.params, 500, 'internal service error');
       }
     });
-
-
-    // var mdID = req.query.mdID || '';
-    // var url = "/jsoninfo/download_ta_xls.do?mdID=" + encodeURI(mdID)+"&userID="+req.user.userId;
-    // java_api_service.api(url, req, res, function (err, result) {
-    //   res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-    //   res.setHeader("Content-Disposition", "attachment; filename=file.xls");
-    //   res.sendFile(result.jsonOutput.data);
-    // });
   });
   return router;
 };
-
-
-
