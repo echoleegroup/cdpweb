@@ -13,7 +13,7 @@ module.exports = {
       },
       queryID: {
         type: DataTypes.STRING(20),
-        allowNull: false
+        allowNull: true
       },
       logFilename: {
         type: DataTypes.STRING(50),

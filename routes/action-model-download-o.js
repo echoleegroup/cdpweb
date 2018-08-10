@@ -203,8 +203,8 @@ module.exports = (app) => {
 
           const fileHelper = require('../helpers/file-helper');
           let now = moment().format('YYYYMMDDHHmm');
-          const exportFilename = `模型名單下載-${model.batName}-${now}.xlsx`;
-          const xlsxFilename = `model-target-${model.batName}-${now}.xlsx`;
+          const exportFilename = `模型名單-${model.mdName}-${model.batName}-${now}.xlsx`;
+          const xlsxFilename = `model-target-${model.mdID}-${model.batID}-${now}.xlsx`;
           const xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
 
           return Q.nfcall(fileHelper.buildXlsxFile, {

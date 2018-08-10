@@ -19,23 +19,23 @@ module.exports.getModels = (callback=() => { }) => {
 module.exports.getModel = (mdId, callback=() => {}) => {
   const sql = 'SELECT * FROM md_Model WHERE mdID = @mdId';
 
-  //preparedStatement
-  /*
-  let prepared = _connector.preparedStatement()
-    .setType('mdId', _connector.TYPES.NVarChar)
-    .setType('batId', _connector.TYPES.NVarChar);
-
-  Q.nfcall(prepared.execute, sql, {
-    mdId: mdId,
-    batId: batId
-  }).then((resultSet) => {
-    winston.info('===resultSet: %j', resultSet[0]);
+  let request = _connector.queryRequest().setInput('mdId', _connector.TYPES.NVarChar, mdId);
+  Q.nfcall(request.executeQuery, sql).then((resultSet) => {
     callback(null, resultSet[0]);
   }).fail((err) => {
     winston.error('===query model failed:', err);
+    callback(err);
   });
-  */
-  let request = _connector.queryRequest().setInput('mdId', _connector.TYPES.NVarChar, mdId);
+};
+
+module.exports.getBatch = (mdId, batId, callback=() => {}) => {
+  const sql = 'SELECT * ' +
+    'FROM md_Model md, md_Batch bat ' +
+    'WHERE md.mdID = @mdId AND md.mdID = bat.mdID AND bat.batID = @batId';
+
+  let request = _connector.queryRequest()
+    .setInput('mdId', _connector.TYPES.NVarChar, mdId)
+    .setInput('batId', _connector.TYPES.NVarChar, batId);
   Q.nfcall(request.executeQuery, sql).then((resultSet) => {
     callback(null, resultSet[0]);
   }).fail((err) => {

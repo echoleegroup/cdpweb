@@ -15,6 +15,7 @@ const exportService = require('../../services/export-service');
 const modelService = require('../../services/model-service');
 const queryService = require('../../services/query-log-service');
 const criteriaHelper = require('../../helpers/criteria-helper');
+const codeGroupHelper = require('../../helpers/code-group-helper');
 const customTargetHelper = require('../../helpers/custom-target-helper');
 const fileHelper = require('../../helpers/file-helper');
 const constants = require('../../utils/constants');
@@ -42,9 +43,9 @@ module.exports = (app) => {
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       // get code group from features
       let codeGroupGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
-      return Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroupGroups).then(codeGroupResSet => ({
+      return Q.nfcall(codeGroupHelper.getCodeGroupsMap, codeGroupGroups).then(featureRefCodeMap => ({
         features: fields,
-        featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
+        featureRefCodeMap
       }));
     }).then(resSet => {
       res.json(resSet);
@@ -167,8 +168,8 @@ module.exports = (app) => {
 
       //generate excel file
       let now = moment().format('YYYYMMDDHHmm');
-      let exportFilename = `自訂名單下載-${model.batName}-${now}.xlsx`;
-      let xlsxFilename = `customize-target-${model.batName}-${now}.xlsx`;
+      let exportFilename = `自訂名單-${model.mdName}-${model.batName}-${now}.xlsx`;
+      let xlsxFilename = `customize-target-${model.mdID}-${model.batID}-${now}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
 
       return Q.nfcall(fileHelper.buildXlsxFile, {
@@ -197,7 +198,7 @@ module.exports = (app) => {
           // res.setHeader('Content-Length', zipBuff.length);
           //
           // res.end(new Buffer(zipBuff, 'binary'));
-        })
+        });
       });
 
     }).fail(err => {

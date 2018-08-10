@@ -15,6 +15,7 @@ const queryLogService = require('../services/query-log-service');
 const integrationTaskService = require('../services/integration-analysis-task-service');
 const integrationStatisticService = require('../services/integration-analysis-statistic-service');
 const fileHelper = require('./file-helper');
+const codeGroupHelper = require('./code-group-helper');
 
 const CHART_CATEGORY = {
   CONTINUOUS: 'continuous',
@@ -25,8 +26,8 @@ const CHART_CATEGORY = {
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {
     if (!_.isEmpty(feature.codeGroup)) {
-      Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-        feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+      Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+        feature.codeGroup = codeGroup;
         callback(null, feature);
       });
     } else {
@@ -40,8 +41,8 @@ const getFeaturesAsMap = (featureIds, callback) => {
   Q.nfcall(integrationService.getDownloadFeaturesByIds, featureIds).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
-        return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-          feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+        return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+          feature.codeGroup = codeGroup;
           return feature;
         });
       } else {
@@ -473,8 +474,8 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
   Q.nfcall(integrationStatisticService.getStatisticFeaturesOfTask, queryId).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
-        return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-          feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+        return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+          feature.codeGroup = codeGroup;
           return feature;
         });
       } else {
@@ -495,8 +496,8 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
 module.exports.getStatisticFeatureOfQueryTask = (queryId, featureId, callback) => {
   Q.nfcall(integrationStatisticService.getStatisticFeatureOfTask, queryId, featureId).then(feature => {
     if (!_.isEmpty(feature.codeGroup)) {
-      return Q.nfcall(codeGroupService.getFeatureCodeGroup, feature.codeGroup).then(codeGroup => {
-        feature.codeGroup = _.keyBy(codeGroup, 'codeValue');
+      return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+        feature.codeGroup = codeGroup;
         return feature;
       });
     } else {

@@ -14,6 +14,7 @@ const integrationStatisticService = require('../../services/integration-analysis
 const codeGroupService = require('../../services/code-group-service');
 const queryLogService = require('../../services/query-log-service');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
+const codeGroupHelper = require('../../helpers/code-group-helper');
 const criteriaHelper = require('../../helpers/criteria-helper');
 const constants = require('../../utils/constants');
 const MENU_CODE = constants.MENU_CODE;
@@ -56,9 +57,9 @@ const criteriaFeaturePromise = (setId, treeId) => {
     let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
     // get code group from features
     let refCodeGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
-    return Q.nfcall(codeGroupService.getFeatureCodeGroups, refCodeGroups).then(codeGroupResSet => ({
+    return Q.nfcall(codeGroupHelper.getCodeGroupsMap, refCodeGroups).then(featureRefCodeMap => ({
       features: fields,
-      featureRefCodeMap: _.groupBy(codeGroupResSet, 'codeGroup')
+      featureRefCodeMap
     }));
   });
 };
