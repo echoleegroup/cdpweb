@@ -166,6 +166,11 @@ module.exports = (app) => {
           res.download(xlsxFileAbsolutePath, exportFilename);
         });
       });
+    }).fail(err => {
+      if (err) {
+        winston.error(`===/taanarpt_rult/download_act(mdID=${mdID}): `, err);
+        res.json(req.params, 500, 'internal service error');
+      }
     });
 
 
