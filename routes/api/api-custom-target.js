@@ -173,6 +173,7 @@ module.exports = (app) => {
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_CUSTOM_TARGET_ASSERTS_PATH_ABSOLUTE, xlsxFilename);
 
       return Q.nfcall(fileHelper.buildXlsxFile, {
+        sheetName: '自訂名單',
         xlsxDataSet: exportDateSet,
         xlsxFileAbsolutePath: xlsxFileAbsolutePath,
         password: req.user.userId.toLowerCase()

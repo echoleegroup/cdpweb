@@ -71,7 +71,7 @@ module.exports = (app) => {
       '  FROM cu_Slod ' +
       `  WHERE CNTSTS = '1' AND MOVSTS NOT IN ('6', '7') AND substring(CNTRNO, 2, 1) <> '5' ` +
       ') ' +
-      'SELECT slod.*, slod.sentListTime, slod.sentListChannel, slod.respListTime, slod.respListChannel, ' +
+      'SELECT slod.*, ' +
       '       type1.CUSTNM AS class_1_name, type1.CUSTID AS class_1_uid, type1.MOBILE AS class_1_mobile, ' +
       '       type2.CUSTNM AS class_2_name, type2.CUSTID AS class_2_uid, type2.MOBILE AS class_2_mobile, ' +
       '       type3.CUSTNM AS class_3_name, type3.CUSTID AS class_3_uid, type3.MOBILE AS class_3_mobile ' +
@@ -121,6 +121,7 @@ module.exports = (app) => {
       Q.nfcall(codeGroupHelper.getCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
       Q.nfcall(modelService.getModel, mdID)
     ]).spread((resData, codeGroupMap, model) => {
+      winston.info('codeGroupMap: ', codeGroupMap);
       const header = [
         '訂單編號', '訂單領照人姓名', '訂單領照人身份證字號', '訂單領照人手機',
         '訂單訂約人姓名', '訂單訂約人身份證字號', '訂單訂約人手機', '訂單使用人姓名', '訂單使用人身份證字號', '訂單使用人手機',
@@ -137,7 +138,7 @@ module.exports = (app) => {
           row.CNTRNO, row.class_1_name, row.class_1_uid, row.class_1_mobile,
           row.class_2_name, row.class_2_uid, row.class_2_mobile, row.class_3_name, row.class_3_uid, row.class_3_mobile,
           row.CARMDL, row.ORDDT, row.DLRCD, row.BRNHCD, row.batID,
-          row.sentListTime, sentListChannelMap[row.sentListChannel], row.rptkey, row.uTel,
+          row.sentListTime, sentListChannelMap[row.sentListChannel], row.rptKey, row.uTel,
           row.respListTime, RespListChannelMap[row.respListChannel]
         ]);
       });
@@ -148,10 +149,18 @@ module.exports = (app) => {
       let xlsxFilename = `ta-report-${model.mdID}-${now}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_FOLDER_PATH_ABSOLUTE, xlsxFilename);
 
-      return Q.nfcall(fileHelper.buildXlsxFile, {
+      return Q.nfcall(fileHelper.buildXlsxWorkbook, {
+        sheetName: '成效報表',
         xlsxDataSet: exportDateSet,
-        xlsxFileAbsolutePath: xlsxFileAbsolutePath,
-        password: userId.toLowerCase()
+        // xlsxFileAbsolutePath: xlsxFileAbsolutePath,
+        // password: userId.toLowerCase()
+      }).then(workbook => {
+        workbook.sheet(0).column(12).style('numberFormat', 'yyyy-mm-dd');
+        workbook.sheet(0).column(16).style('numberFormat', 'yyyy-mm-dd');
+        return Q.nfcall(fileHelper.exportWorkbookToFile, workbook, {
+          xlsxFileAbsolutePath: xlsxFileAbsolutePath,
+          password: userId.toLowerCase()
+        });
       }).then(stat => {
         // const zipBuff = fileHelper.buildZipBuffer({
         //   path: [xlsxFilename],

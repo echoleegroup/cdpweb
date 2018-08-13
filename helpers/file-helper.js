@@ -31,56 +31,27 @@ module.exports.buildXlsxFile = ({
 
   Q.nfcall(this.buildXlsxWorkbook, {sheetName, xlsxDataSet}).then(workbook => {
     // Write to file.
-    return workbook.toFileAsync(xlsxFileAbsolutePath, { password: password }).then(() => {
-      callback(null, fs.statSync(xlsxFileAbsolutePath));
-    }).catch(err => {
-      callback(err);
-    });
+    this.exportWorkbookToFile(workbook, {xlsxFileAbsolutePath, password}, callback);
   });
-
-  //
-  // let buffer = this.buildXlsxBuffer({sheetName, xlsxDataSet});
-  //
-  // Q.nfcall(fs.writeFile, xlsxFileAbsolutePath , buffer, {'flag':'w'}).then(res => {
-  //   callback(null, buffer);
-  // }).fail(err => {
-  //   callback(err, null);
-  // });
 };
 
-// module.exports.buildZipBuffer = ({
-//                                    path = [],
-//                                    buff = [],
-//                                    password
-//                                  }) => {
-//   const Minizip = require('minizip-asm.js');
-//
-//   let archiveOptions = {};
-//   if (password) {
-//     archiveOptions.password = password;
-//   }
-//
-//   let mz = new Minizip();
-//   for (let i in path) {
-//     mz.append(path[i], buff[i], archiveOptions);
-//   }
-//   return mz.zip();
-// };
-
-
+module.exports.exportWorkbookToFile = (workbook, {xlsxFileAbsolutePath, password}, callback) => {
+  // Write to file.
+  workbook.toFileAsync(xlsxFileAbsolutePath, { password: password }).then(() => {
+    callback(null, fs.statSync(xlsxFileAbsolutePath));
+  }).catch(err => {
+    callback(err);
+  });
+};
 
 
 
 module.exports.httpResponseArchiveFile = ({
                                             res,
-                                            path = [],
-                                            buff = [],
-                                            fileName = Date.now(),
-                                            password
+                                            zipBuffer,
+                                            fileName = Date.now()
                                           }) => {
   const zipContentType = 'application/octet-stream';
-
-  let zipBuffer = this.buildZipBuffer({path, buff, password});
 
   res.setHeader('Content-Type', zipContentType);
   res.setHeader('Content-Disposition', `attachment; filename=${fileName}.zip`);
