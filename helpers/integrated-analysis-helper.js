@@ -375,7 +375,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
         // entries.push(fileName);
         // let featureIds = ('master' === baseName)? featureIdMap.master.features:
         //   (featureIdMap.relatives[baseName])? featureIdMap.relatives[baseName].features: [];
-        let featureIds = featureIdMap[baseName];
+        let featureIds = featureIdMap[baseName] || [];
 
         promises.push(queryResultEntryParserPromise(baseName, mode, featureIds, zipFile, entry, workingPath));
       } else if ('meta' === fileName) {

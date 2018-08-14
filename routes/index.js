@@ -30,8 +30,7 @@ module.exports = (app) => {
 
   app.use('/feeddata', require('./action-feed-data-o')(app));
   app.use('/feeddata', require('./action-ncbs-data-o')(app));
-  winston.info('=======d');
-  
+
   app.use('/taanarpt_rult', require('./action-taanarpt-rult-o')(app));
   //顧客數據導出
   app.use('/integration', require('./action-integration')(app));

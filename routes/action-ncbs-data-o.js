@@ -173,7 +173,6 @@ module.exports = (app) => {
     res.render('NCBSmessage', {
     });
   });
-  winston.info('=====a');
   router.get('/NCBS/edit', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var ncbsID = req.query.ncbsID || '';
     var successnum = req.query.successnum || '';
@@ -216,7 +215,6 @@ module.exports = (app) => {
       winston.error(e);
     });
   });
-  winston.info('=====b');
   router.get('/NCBS/upload', [middleware.check(), middleware.checkEditPermission(permission.FEED_DATA_NCBS)], function (req, res) {
     var modelList = req.session.modelList;
     var navMenuList = req.session.navMenuList;
@@ -233,6 +231,5 @@ module.exports = (app) => {
       });
     });
   });
-  winston.info('=====c');
   return router;
 };
