@@ -144,8 +144,9 @@ module.exports = (app) => {
           row.class_2_name, row.class_2_uid, row.class_2_mobile,
           row.class_3_name, row.class_3_uid, row.class_3_mobile,
           row.CARMDL, moment(row.ORDDT).format('YYYY-MM-DD'), row.DLRCD, row.BRNHCD, row.batID,
-          moment(row.sentListTime).format('YYYY-MM-DD'), sentListLabel, row.rptKey, row.uTel,
-          moment(row.respListTime).format('YYYY-MM-DD'), respListLabel
+          row.sentListTime? moment(row.sentListTime).format('YYYY-MM-DD'): null,
+          sentListLabel, row.rptKey, row.uTel,
+          row.respListTime? moment(row.respListTime).format('YYYY-MM-DD'): null, respListLabel
         ]);
       });
 
