@@ -30,17 +30,17 @@ module.exports.getPortalSyCodeGroup = (codeGroup, callback) => {
 
 module.exports.getPortalSyCodeGroups = (codeGroupList = [], callback) => {
   const codeGroupSql = `'${codeGroupList.join(`', '`)}'`;
-  const sql = 'SELECT codeGroup, codeValue, codeLabel, codeSort ' +
-    'FROM CodeGroup_View ' +
+  const sql = 'SELECT codeGroup, codeValue, codeLabel ' +
+    'FROM sy_CodeTable ' +
     `WHERE codeGroup in (${codeGroupSql}) ` +
-    'ORDER BY codeSort';
+    'ORDER BY codeValue';
 
   let request = _connector.queryRequest();
 
   Q.nfcall(request.executeQuery, sql).then(result => {
     callback(null, result);
   }).fail(err => {
-    winston.error('===getFeatureCodeGroups failed:', err);
+    winston.error('===getPortalSyCodeGroups failed:', err);
     callback(err);
   });
 };

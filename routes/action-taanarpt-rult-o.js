@@ -129,18 +129,23 @@ module.exports = (app) => {
         '回應時間', '回應管道'
       ];
       const sentListChannelMap = _.keyBy(codeGroupMap.sentListChannel, 'codeValue');
-      const RespListChannelMap = _.keyBy(codeGroupMap.RespListChannel, 'codeValue');
+      const respListChannelMap = _.keyBy(codeGroupMap.RespListChannel, 'codeValue');
       // init xlsx data set
       const exportDateSet = [];
       exportDateSet.push(header); //header
       resData.forEach(row => {  //content
         winston.info('type of row.sentListTime', typeof row.sentListTime);
+        let sentListLabel =
+          sentListChannelMap[row.sentListChannel]? sentListChannelMap[row.sentListChannel].codeLabel: null;
+        let respListLabel =
+          respListChannelMap[row.respListChannel]? respListChannelMap[row.respListChannel].codeLabel: null;
         exportDateSet.push([
           row.CNTRNO, row.class_1_name, row.class_1_uid, row.class_1_mobile,
-          row.class_2_name, row.class_2_uid, row.class_2_mobile, row.class_3_name, row.class_3_uid, row.class_3_mobile,
-          row.CARMDL, row.ORDDT, row.DLRCD, row.BRNHCD, row.batID,
-          row.sentListTime, sentListChannelMap[row.sentListChannel], row.rptKey, row.uTel,
-          row.respListTime, RespListChannelMap[row.respListChannel]
+          row.class_2_name, row.class_2_uid, row.class_2_mobile,
+          row.class_3_name, row.class_3_uid, row.class_3_mobile,
+          row.CARMDL, moment(row.ORDDT).format('YYYY-MM-DD'), row.DLRCD, row.BRNHCD, row.batID,
+          moment(row.sentListTime).format('YYYY-MM-DD'), sentListLabel, row.rptKey, row.uTel,
+          moment(row.respListTime).format('YYYY-MM-DD'), respListLabel
         ]);
       });
 
@@ -150,18 +155,11 @@ module.exports = (app) => {
       let xlsxFilename = `ta-report-${model.mdID}-${now}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_FOLDER_PATH_ABSOLUTE, xlsxFilename);
 
-      return Q.nfcall(fileHelper.buildXlsxWorkbook, {
+      return Q.nfcall(fileHelper.buildXlsxFile, {
         sheetName: '成效報表',
         xlsxDataSet: exportDateSet,
-        // xlsxFileAbsolutePath: xlsxFileAbsolutePath,
-        // password: userId.toLowerCase()
-      }).then(workbook => {
-        workbook.sheet(0).column(12).style('numberFormat', 'yyyy-mm-dd');
-        workbook.sheet(0).column(16).style('numberFormat', 'yyyy-mm-dd');
-        return Q.nfcall(fileHelper.exportWorkbookToFile, workbook, {
-          xlsxFileAbsolutePath: xlsxFileAbsolutePath,
-          password: userId.toLowerCase()
-        });
+        xlsxFileAbsolutePath: xlsxFileAbsolutePath,
+        password: userId.toLowerCase()
       }).then(stat => {
         // const zipBuff = fileHelper.buildZipBuffer({
         //   path: [xlsxFilename],

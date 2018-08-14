@@ -15,13 +15,13 @@ module.exports.getFeatureCodeGroupsMap = (codeGroups, callback) => {
 };
 
 module.exports.getPortalSyCodeGroupMap = (codeGroup, callback) => {
-  Q.nfcall(codeGroupService.getFeatureCodeGroup, codeGroup).then(codeData => {
+  Q.nfcall(codeGroupService.getPortalSyCodeGroup, codeGroup).then(codeData => {
     callback(null, _.keyBy(codeData, 'codeValue'));
   });
 };
 
 module.exports.getPortalSyCodeGroupsMap = (codeGroups, callback) => {
-  Q.nfcall(codeGroupService.getFeatureCodeGroups, codeGroups).then(codeData => {
+  Q.nfcall(codeGroupService.getPortalSyCodeGroups, codeGroups).then(codeData => {
     callback(null, _.groupBy(codeData, 'codeGroup'));
   });
 };
