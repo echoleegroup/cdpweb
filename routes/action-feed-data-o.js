@@ -9,8 +9,15 @@ const middleware = require("../middlewares/login-check");
 const downloadService = require('../services/download-service');
 const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
-const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
-const upload = multer({ dest: storage });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, constants.ASSERTS_FOLDER_PATH_ABSOLUTE)
+  },
+  filename: function (req, file, cb) {
+    cb(null,  'FeedData-' + Date.now()+".xlsx")
+  }
+})
+const upload = multer({ storage: storage });
 const _connector = require('../utils/sql-query-util');
 const Q = require('q');
 
