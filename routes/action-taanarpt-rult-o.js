@@ -118,7 +118,7 @@ module.exports = (app) => {
 
     Q.all([
       Q.nfcall(request.executeQuery, sql),
-      Q.nfcall(codeGroupHelper.getCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
+      Q.nfcall(codeGroupHelper.getPortalSyCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
       Q.nfcall(modelService.getModel, mdID)
     ]).spread((resData, codeGroupMap, model) => {
       winston.info('codeGroupMap: ', codeGroupMap);
@@ -134,6 +134,7 @@ module.exports = (app) => {
       const exportDateSet = [];
       exportDateSet.push(header); //header
       resData.forEach(row => {  //content
+        winston.info('type of row.sentListTime', typeof row.sentListTime);
         exportDateSet.push([
           row.CNTRNO, row.class_1_name, row.class_1_uid, row.class_1_mobile,
           row.class_2_name, row.class_2_uid, row.class_2_mobile, row.class_3_name, row.class_3_uid, row.class_3_mobile,

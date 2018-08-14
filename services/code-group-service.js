@@ -23,3 +23,24 @@ module.exports.getFeatureCodeGroups = (codeGroupList = [], callback) => {
     callback(err);
   });
 };
+
+module.exports.getPortalSyCodeGroup = (codeGroup, callback) => {
+  this.getFeatureCodeGroups([codeGroup], callback);
+};
+
+module.exports.getPortalSyCodeGroups = (codeGroupList = [], callback) => {
+  const codeGroupSql = `'${codeGroupList.join(`', '`)}'`;
+  const sql = 'SELECT codeGroup, codeValue, codeLabel, codeSort ' +
+    'FROM CodeGroup_View ' +
+    `WHERE codeGroup in (${codeGroupSql}) ` +
+    'ORDER BY codeSort';
+
+  let request = _connector.queryRequest();
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
+  }).fail(err => {
+    winston.error('===getFeatureCodeGroups failed:', err);
+    callback(err);
+  });
+};

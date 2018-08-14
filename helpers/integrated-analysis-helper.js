@@ -26,7 +26,7 @@ const CHART_CATEGORY = {
 module.exports.getFeatureAsMap = (featureId, callback) => {
   Q.nfcall(cdpService.getFeature, featureId).then(feature => {
     if (!_.isEmpty(feature.codeGroup)) {
-      Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+      Q.nfcall(codeGroupHelper.getFeatureCodeGroupMap, feature.codeGroup).then(codeGroup => {
         feature.codeGroup = codeGroup;
         callback(null, feature);
       });
@@ -41,7 +41,7 @@ const getFeaturesAsMap = (featureIds, callback) => {
   Q.nfcall(integrationService.getDownloadFeaturesByIds, featureIds).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
-        return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+        return Q.nfcall(codeGroupHelper.getFeatureCodeGroupMap, feature.codeGroup).then(codeGroup => {
           feature.codeGroup = codeGroup;
           return feature;
         });
@@ -474,7 +474,7 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
   Q.nfcall(integrationStatisticService.getStatisticFeaturesOfTask, queryId).then(features => {
     let promises = features.map(feature => {
       if (!_.isEmpty(feature.codeGroup)) {
-        return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+        return Q.nfcall(codeGroupHelper.getFeatureCodeGroupMap, feature.codeGroup).then(codeGroup => {
           feature.codeGroup = codeGroup;
           return feature;
         });
@@ -496,7 +496,7 @@ module.exports.getStatisticFeaturesOfQueryTask = (queryId, callback) => {
 module.exports.getStatisticFeatureOfQueryTask = (queryId, featureId, callback) => {
   Q.nfcall(integrationStatisticService.getStatisticFeatureOfTask, queryId, featureId).then(feature => {
     if (!_.isEmpty(feature.codeGroup)) {
-      return Q.nfcall(codeGroupHelper.getCodeGroupMap, feature.codeGroup).then(codeGroup => {
+      return Q.nfcall(codeGroupHelper.getFeatureCodeGroupMap, feature.codeGroup).then(codeGroup => {
         feature.codeGroup = codeGroup;
         return feature;
       });

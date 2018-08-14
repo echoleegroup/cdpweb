@@ -43,7 +43,7 @@ module.exports = (app) => {
       let fields = criteriaHelper.featuresToTreeNodes(features, foldingTree);
       // get code group from features
       let codeGroupGroups = _.uniq(_.reject(_.map(features, 'codeGroup'), _.isEmpty));
-      return Q.nfcall(codeGroupHelper.getCodeGroupsMap, codeGroupGroups).then(featureRefCodeMap => ({
+      return Q.nfcall(codeGroupHelper.getFeatureCodeGroupsMap, codeGroupGroups).then(featureRefCodeMap => ({
         features: fields,
         featureRefCodeMap
       }));
