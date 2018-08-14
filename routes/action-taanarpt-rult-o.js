@@ -121,7 +121,6 @@ module.exports = (app) => {
       Q.nfcall(codeGroupHelper.getPortalSyCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
       Q.nfcall(modelService.getModel, mdID)
     ]).spread((resData, codeGroupMap, model) => {
-      winston.info('codeGroupMap: ', codeGroupMap);
       const header = [
         '訂單編號', '訂單領照人姓名', '訂單領照人身份證字號', '訂單領照人手機',
         '訂單訂約人姓名', '訂單訂約人身份證字號', '訂單訂約人手機', '訂單使用人姓名', '訂單使用人身份證字號', '訂單使用人手機',
@@ -134,7 +133,6 @@ module.exports = (app) => {
       const exportDateSet = [];
       exportDateSet.push(header); //header
       resData.forEach(row => {  //content
-        winston.info('type of row.sentListTime', typeof row.sentListTime);
         let sentListLabel =
           sentListChannelMap[row.sentListChannel]? sentListChannelMap[row.sentListChannel].codeLabel: null;
         let respListLabel =
