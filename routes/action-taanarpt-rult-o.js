@@ -166,7 +166,7 @@ module.exports = (app) => {
         //   password: req.user.userId.toLowerCase()
         // });
         return Q.nfcall(queryService.insertDownloadLog, {
-          queryId: undefined,
+          queryId: mdID,
           filePath: xlsxFileAbsolutePath,
           userId: req.user.userId,
           fileSize: stat.size
