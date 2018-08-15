@@ -284,8 +284,14 @@ module.exports.getTrailPeriodLogAPPpgFeatures = (callback) => {
 
 module.exports.getTrailPeriodLogEDMReadFeatures = (keyword, periodStart, periodEnd, callback) => {
   // const keyspace = 'edm';
-  const cql = 'SELECT id, subject, scheduledate FROM edm.reportlist';
-  Q(cassandra_client.execute(cql, [], {prepare: true})).then(result => {
+  const cql = 'SELECT id, subject, scheduledate ' +
+    'FROM edm.reportlist ' +
+    'WHERE scheduledatetrans >= :startDate ALLOW FILTERING; ';
+  const params = {
+    startDate: moment().startOf('day').add(-1, 'month').toDate()
+  };
+
+  Q(cassandra_client.execute(cql, params, {prepare: true})).then(result => {
     callback(null, result.rows);
   }).fail(err => {
     callback(err);
@@ -296,10 +302,9 @@ module.exports.getTrailPeriodLogPushReadFeatures = (keyword, periodStart, period
   // const keyspace = 'jamzoo';
   const cql = 'SELECT pid, title, start_datetime ' +
     'FROM jamzoo.getpushhistory ' +
-    'WHERE start_datetime >= :startDate AND start_datetime <= :endDate ALLOW FILTERING;';
+    'WHERE start_datetime >= :startDate ALLOW FILTERING;';
   const params = {
-    startDate: moment().startOf('day').add(-1, 'month').toDate(),
-    endDate: moment().startOf('day').toDate()
+    startDate: moment().startOf('day').add(-1, 'month').toDate()
   };
 
   Q(cassandra_client.execute(cql, params, {prepare: true})).then(result => {
