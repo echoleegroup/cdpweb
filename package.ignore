@@ -24,3 +24,4 @@ public/swagger/mockup-server
 .git
 .gitignore
 .DS_Store
+!js
