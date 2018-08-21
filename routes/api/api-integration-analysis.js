@@ -220,7 +220,7 @@ module.exports = (app) => {
           return _.orderBy(data, ['pid'], ['desc']).map(row => {
             return {
               id: row.pid,
-              name: `${row.title}(${moment(row.start_datetime).format('YYYY-MM-DD')})`
+              name: `${row.title}(${moment(row.start_datetime).format('YYYY-MM-DD HH:mm')})`
             };
           });
         });
