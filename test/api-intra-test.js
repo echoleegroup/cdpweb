@@ -1,11 +1,13 @@
 const express = require('express');
 const fs = require('fs');
+const multer  = require('multer');
 const path = require('path');
 const Q = require('q');
 const winston = require('winston');
 const factory = require("../middlewares/response-factory");
 const auth = require('../middlewares/login-check');
 const constants = require('../utils/constants');
+const upload = multer({ dest: constants.ASSERTS_FOLDER_PATH_ABSOLUTE });
 
 module.exports = (app) => {
   winston.info('[api-model] Creating api-test route.');
@@ -120,6 +122,35 @@ module.exports = (app) => {
       res.json();
     }).fail(err => {
       res.json(null, 500, 'internal service error!');
+    });
+  });
+
+  router.post('/objectMail', factory.ajax_response_factory(), upload.single('file'), (req, res) => {
+    const to = req.body.to;
+    const subject = req.body.subject || '';
+    const text = req.body.text;
+    const file = req.file;
+    const mail = require('../utils/mail-util');
+    const path = file.path;
+    const originalname = file.originalname;
+
+    winston.info('originalname: ', originalname);
+
+    Q.nfcall(mail.textMail, to, {
+      subject: subject,
+      content: text,
+      attachments: [
+        {
+          filename: originalname,
+          content: file.buffer
+        }
+      ]
+    }).then(() => {
+      res.json();
+    }).fail(err => {
+      res.json(null, 500, 'internal service error!');
+    }).finally(() => {
+      fs.unlinkSync(path);
     });
   });
 

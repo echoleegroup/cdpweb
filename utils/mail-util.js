@@ -21,7 +21,8 @@ const send = (to, options = {}, callback = () => { }) => {
     to: to,
     subject: options.subject,
     html: options.html,
-    text: options.text
+    text: options.text,
+    attachments: options.attachments
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -39,7 +40,8 @@ module.exports.htmlMail = (to, options = {}, callback = () => { }) => {
   let wrappedOption = {
     subject: options.subject,
     html: options.content,
-    text: undefined
+    text: undefined,
+    attachments: options.attachments
   };
   send(to, wrappedOption, callback);
 };
@@ -48,7 +50,8 @@ module.exports.textMail = (to, options = {}, callback = () => { }) => {
   let wrappedOption = {
     subject: options.subject,
     html: undefined,
-    text: options.content
+    text: options.content,
+    attachments: options.attachments
   };
   send(to, wrappedOption, callback);
 };
