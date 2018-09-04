@@ -7,7 +7,7 @@ const winston = require('winston');
 const factory = require("../middlewares/response-factory");
 const auth = require('../middlewares/login-check');
 const constants = require('../utils/constants');
-const upload = multer({ dest: constants.ASSERTS_FOLDER_PATH_ABSOLUTE });
+const upload = multer({ storage: multer.memoryStorage() });
 
 module.exports = (app) => {
   winston.info('[api-model] Creating api-test route.');
@@ -131,10 +131,7 @@ module.exports = (app) => {
     const text = req.body.text;
     const file = req.file;
     const mail = require('../utils/mail-util');
-    const path = file.path;
     const originalname = file.originalname;
-
-    winston.info('originalname: ', originalname);
 
     Q.nfcall(mail.textMail, to, {
       subject: subject,
@@ -149,8 +146,6 @@ module.exports = (app) => {
       res.json();
     }).fail(err => {
       res.json(null, 500, 'internal service error!');
-    }).finally(() => {
-      fs.unlinkSync(path);
     });
   });
 
