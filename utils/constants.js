@@ -51,6 +51,7 @@ module.exports = Object.freeze({
     TA_REACTION_UPLOAD: "_targetTaReaction",
     TAANARPT_RULT: "_taanaRpt",
     EVENT_PAGE_Analysis:"actad_actAnalysis",
+    AD_HIT_Analysis:"actad_adAnalysis",
     CUSTOM_TARGET_FILTER: "_targetFilter",
     INTEGRATED_QUERY: "_integratedQry",
     INTEGRATED_EXPORT: "_integratedExp",

@@ -500,7 +500,7 @@ module.exports = (app) => {
     });
   });
 
-  router.get('/ad/analysis/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+  router.get('/ad/analysis/search', [middleware.check(), middleware.checkViewPermission(permission.AD_HIT_Analysis)], function (req, res) {
     let funcCatge;
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
@@ -528,7 +528,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/ad/analysis/list', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+  router.post('/ad/analysis/list', [middleware.check(), middleware.checkViewPermission(permission.AD_HIT_Analysis)], function (req, res) {
     let modelList = req.session.modelList;
     let navMenuList = req.session.navMenuList;
     let mgrMenuList = req.session.mgrMenuList;
@@ -581,7 +581,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/ad/analysis/tag/search', [middleware.check(), middleware.checkViewPermission(permission.EVENT_PAGE_Analysis)], function (req, res) {
+  router.post('/ad/analysis/tag/search', [middleware.check(), middleware.checkViewPermission(permission.AD_HIT_Analysis)], function (req, res) {
     let evtadID = req.body.evtadID;
     let sql = "SELECT tagLabel " +
       " FROM dm_EvtadTag " +
