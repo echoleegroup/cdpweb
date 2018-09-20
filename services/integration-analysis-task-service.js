@@ -183,7 +183,6 @@ module.exports.getTaskCriteriaByStatus = (status, callback) => {
     .setInput('status', _connector.TYPES.NVarChar, status);
 
   Q.nfcall(request.executeQuery, sql).then(result => {
-    winston.info('result: ', result.length);
     callback(null, result);
   }).fail(error => {
     callback(error);
