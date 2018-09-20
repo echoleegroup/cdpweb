@@ -23,8 +23,8 @@ module.exports = (app) => {
         return res.json(null, 401, `task ${queryId} not found`);
       }
 
-      return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(() => {
-        res.json();
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(status => {
+        res.json({status});
         const resultPackPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
         queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
       }).fail(err => {
@@ -136,8 +136,8 @@ module.exports = (app) => {
       return Q.nfcall(integratedAnalysisHelper.downloadQueryResultPack, queryId, remoteDownloadUrl).then(resultPackPath => {
         //
         return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
-          .then(() => {
-            res.json();
+          .then(status => {
+            res.json({status});
             require('request-promise-native').post(remoteDeleteUrl);
             return queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
           }).fail(err => {

@@ -23,9 +23,11 @@ const ANALYSIS_FEATURE_CHART_DATA = '/api/integration/%s/query/%s/chart/feature/
 
 const TASK_STATUS = {
   INIT: "初始化",
+  PENDING: "待處理",
   REMOTE_PROCESSING: "搜尋中",
   REMOTE_SERVICE_UNAVAILABLE: "搜尋服務連線失敗",
   REMOTE_FILE_NOT_FOUND: "無法取得搜尋結果",
+  RESULT_PACK_NOT_FOUND: "搜尋結果遺失",
   PARSING: "資料解析中",
   PARSING_FAILED: "解析失敗",
   COMPLETE: "完成"
@@ -148,6 +150,10 @@ exports.getExportFeaturePool = (success, fail) => {
 
 exports.exportQuery = (criteria, success, fail) => {
   ajaxPostObservable(EXPORT_QUERY, criteria, undefined).subscribe(data => {
+    if (data.status === 'REMOTE_SERVICE_UNAVAILABLE') {
+      fail && fail(data.status);
+      return;
+    }
     success && success(data);
   }, err => {
     console.log('===exportQuery failed: ', err);

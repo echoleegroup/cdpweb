@@ -29,7 +29,7 @@ module.exports = (app) => {
             throw err;
           }).then(resultPackPath => {
             return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
-              .then(() => {
+              .then(status => {
                 require('request-promise-native').post(remoteDeleteUrl);
                 return queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
               }).fail(err => {

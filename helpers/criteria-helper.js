@@ -258,8 +258,8 @@ module.exports = {
   },
 
   frontSiteToBackendQeuryScriptTransformer: (queryId, queryScript, callback) => {
-    const API_360_HOST = appConfig.get("API_360_HOST");
-    const API_360_PORT = appConfig.get("API_360_PORT");
+    // const API_360_HOST = appConfig.get("API_360_HOST");
+    // const API_360_PORT = appConfig.get("API_360_PORT");
 
     const valueBuilder = (dataType, value) => {
       switch (dataType) {
@@ -453,38 +453,40 @@ module.exports = {
       statistic: queryScript.statistic
     };
 
+    callback(null, resultScript);
+
     // winston.info('resultScript: ', resultScript);
-
-    let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0) ||
-      (_.intersection(
-        ['TagQtn', 'TagOwnMedia', 'TagOuterMedia', 'TagEInterest', 'TagEIntent', 'TagActive'],
-        _.keys(queryScript.export.relatives)
-      ).length > 0);
-
-    let requestUrl = null;
-    let requestBody = null;
-    if (hasTag) {
-      requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
-      requestBody = {
-        req_owner: resultScript,
-        req_log: queryScript
-      };
-    } else {
-      requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
-      requestBody = resultScript;
-    }
-
-    request({
-      url: requestUrl,
-      method: 'POST',
-      json: true,
-      body: requestBody
-    }, (error, response, body) => {
-      if (error)
-        callback(error, null);
-      else
-        callback(null, resultScript);
-    });
+    //
+    // let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0) ||
+    //   (_.intersection(
+    //     ['TagQtn', 'TagOwnMedia', 'TagOuterMedia', 'TagEInterest', 'TagEIntent', 'TagActive'],
+    //     _.keys(queryScript.export.relatives)
+    //   ).length > 0);
+    //
+    // let requestUrl = null;
+    // let requestBody = null;
+    // if (hasTag) {
+    //   requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
+    //   requestBody = {
+    //     req_owner: resultScript,
+    //     req_log: queryScript
+    //   };
+    // } else {
+    //   requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
+    //   requestBody = resultScript;
+    // }
+    //
+    // request({
+    //   url: requestUrl,
+    //   method: 'POST',
+    //   json: true,
+    //   body: requestBody
+    // }, (error, response, body) => {
+    //   if (error)
+    //     callback(error, null);
+    //   else
+    //     callback(null, resultScript);
+    // });
   }
 };
 

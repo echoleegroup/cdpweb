@@ -40,6 +40,10 @@ exports.getAnonymousExportFeaturePool = (success, fail) => {
 
 exports.exportAnonymousQuery = (criteria, success, fail) => {
   ajaxPostObservable(ANONYMOUS_EXPORT_QUERY, criteria, undefined).subscribe(data => {
+    if (data.status === 'REMOTE_SERVICE_UNAVAILABLE') {
+      fail && fail(data.status);
+      return;
+    }
     success && success(data);
   }, err => {
     console.log('===exportQuery failed: ', err);

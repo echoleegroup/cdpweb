@@ -3,7 +3,9 @@
 const _ = require('lodash');
 const Q = require('q');
 const moment = require('moment');
+const request = require('request');
 const winston = require('winston');
+const appConfig = require("../app-config");
 const _connector = require('../utils/sql-query-util');
 
 const expire = 2;
@@ -11,6 +13,7 @@ const expireUnit = 'month';
 
 const PROCESS_STATUS = Object.freeze({
   INIT: "INIT",
+  PENDING: "PENDING",
   REMOTE_PROCESSING: "REMOTE_PROCESSING",
   REMOTE_SERVICE_UNAVAILABLE: "REMOTE_SERVICE_UNAVAILABLE",
   REMOTE_FILE_NOT_FOUND: "REMOTE_FILE_NOT_FOUND",
@@ -32,7 +35,7 @@ const updateTaskStatus = (queryId, status, callback) => {
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
-      callback(null, queryId);
+      callback(null, status);
     } else {
       throw new Error();
     }
@@ -61,16 +64,14 @@ module.exports.initQueryTask = (queryId, userId, callback) => {
   //   winston.info(`===insertQueryLog result: ${result}`);
   // });
   Q.nfcall(request.executeQuery, sql).then(result => {
-    callback(null, {
-      queryID: queryId
-    });
+    callback(null, PROCESS_STATUS.INIT);
   }).fail(err => {
     winston.error(`===insert query task failed! (queryID=${queryId}, userId=${userId}: `, err);
     callback(err);
   });
 };
 
-module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) => {
+module.exports.setQueryTaskStatusPending = (queryId, queryScript, callback) => {
   const sql = 'UPDATE cu_IntegratedQueryTask ' +
     'SET status = @status, updTime = @updTime, queryScript = @queryScript ' +
     'WHERE queryID = @queryId ';
@@ -78,12 +79,12 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
   let request = _connector.queryRequest()
     .setInput('queryId', _connector.TYPES.NVarChar, queryId)
     .setInput('updTime', _connector.TYPES.DateTime, new Date())
-    .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.REMOTE_PROCESSING)
+    .setInput('status', _connector.TYPES.NVarChar, PROCESS_STATUS.PENDING)
     .setInput('queryScript', _connector.TYPES.NVarChar, queryScript);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
-      callback(null, queryId);
+      callback(null, PROCESS_STATUS.PENDING);
     } else {
       throw new Error();
     }
@@ -91,6 +92,10 @@ module.exports.setQueryTaskStatusProcessing = (queryId, queryScript, callback) =
     winston.error(`===update integration query task failed! (queryId=${queryId}, status=${status}): `, err);
     callback(err);
   });
+};
+
+module.exports.setQueryTaskStatusProcessing = (queryId, callback) => {
+  updateTaskStatus(queryId, PROCESS_STATUS.REMOTE_PROCESSING, callback);
 };
 
 module.exports.setQueryTaskStatusRemoteServiceUnavailable = (queryId, callback) => {
@@ -130,7 +135,7 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
     if (rowsAffected === 1) {
-      callback(null, queryId);
+      callback(null, PROCESS_STATUS.COMPLETE);
     } else {
       throw new Error();
     }
@@ -166,5 +171,77 @@ module.exports.getTasksByStatus = (status, callback) => {
     callback(null, result);
   }).fail(error => {
     callback(error);
+  });
+};
+
+module.exports.getTaskCriteriaByStatus = (status, callback) => {
+  const sql = "SELECT task.queryID, reserve1 AS wrappedFrontSiteScript, queryScript AS backendCriteriaScript " +
+    "FROM cu_IntegratedQueryTask task, cu_QueryLog log " +
+    "WHERE task.queryID = log.queryID AND task.status = @status";
+
+  let request = _connector.queryRequest()
+    .setInput('status', _connector.TYPES.NVarChar, status);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    winston.info('result: ', result.length);
+    callback(null, result);
+  }).fail(error => {
+    callback(error);
+  });
+};
+
+module.exports.identicalQueryPoster = (queryId, wrappedFrontEndScript, backendScript, callback) => {
+  const API_360_HOST = appConfig.get("API_360_HOST");
+  const API_360_PORT = appConfig.get("API_360_PORT");
+
+  let hasTag = ((wrappedFrontEndScript.criteria.tag.length + wrappedFrontEndScript.criteria.trail.length) > 0) ||
+    (_.intersection(
+      ['TagQtn', 'TagOwnMedia', 'TagOuterMedia', 'TagEInterest', 'TagEIntent', 'TagActive'],
+      _.keys(wrappedFrontEndScript.export.relatives)
+    ).length > 0);
+
+  let requestUrl = null;
+  let requestBody = null;
+  if (hasTag) {
+    requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
+    requestBody = {
+      req_owner: backendScript,
+      req_log: wrappedFrontEndScript
+    };
+  } else {
+    requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
+    requestBody = backendScript;
+  }
+
+  request({
+    url: requestUrl,
+    method: 'POST',
+    json: true,
+    body: requestBody
+  }, (error, response, body) => {
+    if (error)
+      callback(error, null);
+    else
+      callback(null, backendScript);
+  });
+};
+
+module.exports.anonymousQueryPoster = (queryId, backendScript, callback) => {
+  const API_360_HOST = appConfig.get("API_360_HOST");
+  const API_360_PORT = appConfig.get("API_360_PORT");
+
+  const requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_nonowner/${queryId}`;
+  const requestBody = backendScript;
+
+  request({
+    url: requestUrl,
+    method: 'POST',
+    json: true,
+    body: requestBody
+  }, (error, response, body) => {
+    if (error)
+      callback(error, null);
+    else
+      callback(null, backendScript);
   });
 };

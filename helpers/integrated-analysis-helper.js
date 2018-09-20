@@ -422,8 +422,10 @@ module.exports.initializeQueryTaskLog = (menuCode, criteria, features, filters, 
     reserve2: mode,
     updUser: userId
   }).then(insertRes => {
-    return Q.nfcall(integrationTaskService.initQueryTask, insertRes.queryID, userId)
-  }).then(resData => callback(null, resData)).fail(err => callback(err));
+    return Q.nfcall(
+      integrationTaskService.initQueryTask, insertRes.queryID, userId).then(
+        resData => callback(null, insertRes.queryID))
+  }).fail(err => callback(err));
 };
 
 const getMinPeriod = (chartType, minPeriod) => {
@@ -611,12 +613,15 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
         } catch (err) {
           winston.warn(`unlink file ${packPath} failed: ${err}`);
         }
-        return Q.resolve();
+        // return Q.resolve();
+        throw new Error(`integrated query task is not exist. queryId = ${queryId}`);
       } else if (!fs.existsSync(packPath)) {
-        return Q.nfcall(integrationTaskService.setQueryTaskStatusResultPackNotFound, queryId)
-          .fail(err => {
+        Q.nfcall(integrationTaskService.setQueryTaskStatusResultPackNotFound, queryId)
+          .then(status => {
+            throw new Error(status)
+          }).fail(err => {
             winston.error('update query task status to result pack not found failed(task=%j): ', task, err);
-            return Q.resolve(err);
+            throw err;
           });
       }
 
@@ -638,10 +643,14 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
           }).then(archiveStat => {
             winston.info('archive stat: %j', archiveStat);
             return Q.all([
-              Q.nfcall(userService.getUserInfo, task.creator),
+              Q.nfcall(userService.getUserInfo, task.creator).fail(err => {
+                winston.error('get query user info failed: ', err);
+              }),
               Q.nfcall(
                 integrationTaskService.setQueryTaskStatusComplete, queryId, archiveStat.size,
-                JSON.stringify(parsingInfo.entries), parsingInfo.records)
+                JSON.stringify(parsingInfo.entries), parsingInfo.records).fail(err => {
+                winston.error('set query task status as complete failed: ', err);
+              })
             ]).spread((userInfo, ...others) => {
               winston.info('get user info: ', userInfo);
               let to = userInfo.email;
@@ -655,8 +664,6 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
                   winston.error('send integrated query(queryId=%s) result mail to %s failed: ', queryId, to, err);
                 });
               return null;
-            }).fail(err => {
-              winston.error('get user info failed: ', err);
             });
           });
         }).fail(err => {
@@ -673,4 +680,70 @@ module.exports.getIntegratedQueryPackParser = (queryId, packPath) => {
         });
       });
   };
+};
+
+module.exports.isQueryServiceDisabled = () => {
+  const locker = path.resolve(__dirname, '..', '.360-lock');
+  return fs.existsSync(locker);
+}
+
+module.exports.disableQueryService = () => {
+  const locker = path.resolve(__dirname, '..', '.360-lock');
+  fs.writeFileSync(locker, moment().format('YYYY-MM-DD HH:mm:ss'));
+};
+
+module.exports.resumeQueryService = () => {
+  const locker = path.resolve(__dirname, '..', '.360-lock');
+  fs.unlinkSync(locker);
+
+  Q.nfcall(
+    integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
+      tasks.forEach(task => {
+        Q.nfcall(this.identicalQueryPoster, task.queryID, task.wrappedFrontSiteScript, task.backendCriteriaScript);
+      });
+  });
+};
+
+module.exports.identicalQueryPoster = (queryId, wrappedFrontSiteScript, backendCriteriaScript, callback) => {
+  const isServiceDisabled = this.isQueryServiceDisabled();
+  if (isServiceDisabled) {
+    return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
+  }
+
+  Q.nfcall(
+    integrationTaskService.identicalQueryPoster, queryId, wrappedFrontSiteScript, backendCriteriaScript
+  ).then(() => {
+    return integrationTaskService.setQueryTaskStatusProcessing;
+  }).fail(err => {
+    winston.error('===post integrated query script request failed(queryID=%s): ', queryId, err);
+    return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
+  }).then((handler) => {
+    return Q.nfcall(handler, queryId);
+  }).then(status => {
+    callback(null, status);
+  }).fail(err => {
+    winston.error('===update integrated query task status failed(queryID=%s): ', queryId, err);
+  });
+};
+
+module.exports.anonymousQueryPoster = (queryId, queryScript, callback) => {
+  const isServiceDisabled = this.isQueryServiceDisabled();
+  if (isServiceDisabled) {
+    return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
+  }
+
+  Q.nfcall(
+    integrationTaskService.anonymousQueryPoster, queryId, queryScript
+  ).then(() => {
+    return integrationTaskService.setQueryTaskStatusProcessing;
+  }).fail(err => {
+    winston.error('===post anonymous integrated query script request failed(queryID=%s): ', queryId, err);
+    return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
+  }).then((handler) => {
+    return Q.nfcall(handler, queryId);
+  }).then(status => {
+    callback(null, status);
+  }).fail(err => {
+    winston.error('===update anonymous integrated query task status failed(queryID=%s): ', queryId, err);
+  });
 };
