@@ -189,6 +189,20 @@ module.exports.getTaskCriteriaByStatus = (status, callback) => {
   });
 };
 
+module.exports.updateResumeTime = (queryId, callback) => {
+  const sql = "UPDATE cu_IntegratedQueryTask SET resumeTime = @resumeTime WHERE queryID = @queryId";
+
+  let request = _connector.queryRequest()
+    .setInput('resumeTime', _connector.TYPES.DateTime, new Date())
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result);
+  }).fail(error => {
+    callback(error);
+  });
+};
+
 module.exports.identicalQueryPoster = (queryId, wrappedFrontEndScript, backendScript, callback) => {
   const API_360_HOST = appConfig.get("API_360_HOST");
   const API_360_PORT = appConfig.get("API_360_PORT");

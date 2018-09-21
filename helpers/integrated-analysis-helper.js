@@ -699,6 +699,7 @@ module.exports.resumeQueryService = () => {
   Q.nfcall(
     integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
       tasks.forEach(task => {
+        Q.nfcall(integrationTaskService.updateResumeTime, task.queryID);
         Q.nfcall(this.identicalQueryPoster, task.queryID, task.wrappedFrontSiteScript, task.backendCriteriaScript);
       });
   });
