@@ -72,7 +72,7 @@
           .append($("<td/>").append($("<span/>", {"class": "num"}).text(getNonNullValue(myObj.registerpercent))))
           .append($("<td/>").append($("<span/>", {"class": "num"}).text(getNonNullValue(myObj.clickpercent))));
       var statisticInfoDom = $("<tr/>")
-          .append($("<td/>", {"rowspan": "5"})
+          .append($("<td/>", {"colspan": "5"})
               .append($("<div/>", {"class": "info"})
                   .append($("<div/>", {"class": "table-responsive"})
                       .append($("<table/>", {"class": "table"})
@@ -241,7 +241,7 @@
         batchObj = Jdata.jsonOutput.data;
         // $("#table" + index).remove(".table");
         $("#table" + index).remove();
-        var tableDom = $("<table/>", {"class": "table table-bordered", "id": "table" + table}).append($("<tbody/>"));
+        var tableDom = $("<table/>", {"class": "table table-bordered", "id": "table" + index}).append($("<tbody/>"));
         tableDom.append($("<tr/>")
             .append($("<th/>").append($("<span/>", {"class": "labelItem"}).text("名單來源")))
             .append($("<th/>").append($("<span/>", {"class": "labelItem"}).text("投放數")))
