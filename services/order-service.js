@@ -111,7 +111,7 @@ module.exports.getOrderDetailOfModelBatchTarget = (mdID, batID, callback) => {
     '    LEFT JOIN ( ' +
     '      SELECT respMst.batID, respMst.respListTime, respMst.respListID, respMst.respListChannel ' +
     '      FROM cu_RespListMst respMst ' +
-    '      INNER JOIN cu_RespListDet respDet ON respMst.mdID = @mdID AND batID = @batID ' +
+    '      INNER JOIN cu_RespListDet respDet ON respMst.mdID = @mdID AND respMst.batID = @batID ' +
     '      AND respMst.respListID = respDet.respListID ' +
     '    ) AS all_resp ON all_sent.batID = all_resp.batID ' +
     '  ) AS seq_sent ' +

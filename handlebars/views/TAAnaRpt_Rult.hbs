@@ -120,15 +120,12 @@
                                   getDeatil(index, batchInfo.batID, mdID);
                                 }
                               }).text("各名單來源受訂/回應圖"))
-                              .append($("<form/>", {
-                                "method": "POST",
+                              .append($("<br/>"))
+                              .append($("<a/>", {
+                                "href": "/taanarpt_rult/download_act/" + mdID + "/" + batchInfo.batID,
                                 "target": "_blank",
-                                "action": "/taanarpt_rult/download_act/" + mdID + "/" + batchInfo.batID
-                              })
-                                  .append($("<button/>", {
-                                    "type": "submit",
-                                    "class": "btn btn-lg btn-default"
-                                  }).text("受訂資料下載")))))
+                                "class": "btn btn-chart"
+                              }).text("受訂資料下載"))))
                       .append($("<tr/>")
                           .append($("<td/>").append($("<span/>", {"class": "num"}).text(batchInfo.sentCount)))
                           .append($("<td/>").append($("<span/>", {"class": "num"}).text(getNonNullValue(batchInfo.order))))

@@ -97,7 +97,7 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/download_act/:mdID/:batID',
+  router.get('/download_act/:mdID/:batID',
     [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)],
     function(req, res, next) {
 
@@ -108,7 +108,7 @@ module.exports = (app) => {
       Q.all([
         Q.nfcall(orderService.getOrderDetailOfModelBatchTarget, mdID, batID),
         Q.nfcall(codeGroupHelper.getPortalSyCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
-        Q.nfcall(modelService.getBatch, mdID. batID)
+        Q.nfcall(modelService.getBatch, mdID, batID)
       ]).spread((resData, codeGroupMap, model) => {
         //generate excel file
         let now = moment().format('YYYYMMDDHHmm');
