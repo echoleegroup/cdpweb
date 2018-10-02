@@ -1,23 +1,7 @@
 const _ = require('lodash');
-const boom = require('boom');
 const moment = require('moment');
-const path = require('path');
 const Q = require('q');
-const express = require('express');
-const winston = require('winston');
-// const appConfig = require("../app-config");
-const middleware = require("../middlewares/login-check");
-const constants = require("../utils/constants");
-const permission = constants.MENU_CODE;
-const _connector = require('../utils/sql-query-util');
-const codeGroupHelper = require('../helpers/code-group-helper');
 const fileHelper = require('../helpers/file-helper');
-const modelService = require('../services/model-service');
-const queryService = require('../services/query-log-service');
-// const db = require("../utils/sql-server-connector").db;
-// const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
-const java_api_service = require('../services/java-api-service');
-const orderService = require('../services/order-service');
 
 module.exports.modelTargetOrderDataXslxGenerator = (orderDataSet, codeGroupMap, targetPath, password, callback) => {
   const header = [
