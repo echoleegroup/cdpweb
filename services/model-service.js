@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash');
 const Q = require('q');
 const winston = require('winston');
 const _connector = require('../utils/sql-query-util');
@@ -29,7 +28,7 @@ module.exports.getModel = (mdId, callback=() => {}) => {
 };
 
 module.exports.getBatch = (mdId, batId, callback=() => {}) => {
-  const sql = 'SELECT * ' +
+  const sql = 'SELECT md.*, bat.batName, bat.batDesc ' +
     'FROM md_Model md, md_Batch bat ' +
     'WHERE md.mdID = @mdId AND md.mdID = bat.mdID AND bat.batID = @batId';
 

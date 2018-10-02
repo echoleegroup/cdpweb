@@ -16,8 +16,7 @@
     </div>
     <div class="table_block table-responsive">
       <h2>受訂資訊</h2>
-      <form method="post" action="/taanarpt_rult/download_act" target="_blank">
-        <input type="hidden" name="mdID" value="{{mdID}}">
+      <form method="post" action="/taanarpt_rult/download_act/{{mdID}}" target="_blank">
         <div class="btn-block center-block">
           <button type="submit" class="btn btn-lg btn-default">受訂資料下載</button>
         </div>
@@ -120,7 +119,16 @@
                                 click: function() {
                                   getDeatil(index, batchInfo.batID, mdID);
                                 }
-                              }).text("各名單來源受訂/回應圖"))))
+                              }).text("各名單來源受訂/回應圖"))
+                              .append($("<form/>", {
+                                "method": "POST",
+                                "target": "_blank",
+                                "action": "/taanarpt_rult/download_act/" + mdID + "/" + batchInfo.batID
+                              })
+                                  .append($("<button/>", {
+                                    "type": "submit",
+                                    "class": "btn btn-lg btn-default"
+                                  }).text("受訂資料下載")))))
                       .append($("<tr/>")
                           .append($("<td/>").append($("<span/>", {"class": "num"}).text(batchInfo.sentCount)))
                           .append($("<td/>").append($("<span/>", {"class": "num"}).text(getNonNullValue(batchInfo.order))))

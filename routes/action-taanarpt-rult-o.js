@@ -14,13 +14,16 @@ const constants = require("../utils/constants");
 const permission = constants.MENU_CODE;
 const _connector = require('../utils/sql-query-util');
 const codeGroupHelper = require('../helpers/code-group-helper');
+const orderHelper = require('../helpers/order-helper');
 const fileHelper = require('../helpers/file-helper');
 const modelService = require('../services/model-service');
 const queryService = require('../services/query-log-service');
 // const db = require("../utils/sql-server-connector").db;
 // const java_api_endpoint = require("../app-config").get("JAVA_API_ENDPOINT");
 const java_api_service = require('../services/java-api-service');
+const orderService = require('../services/order-service');
 // const storage = constants.ASSERTS_FOLDER_PATH_ABSOLUTE;
+
 module.exports = (app) => {
   winston.info('[taanarptRoute::create] Creating taanarpt route.');
   const router = express.Router();
@@ -58,113 +61,27 @@ module.exports = (app) => {
 
   });
 
-  router.post('/download_act', [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)], function (req, res, next) {
-    const mdID = req.body.mdID;
-    const userId = req.user.userId;
-    const sql = 'WITH sentList AS ( ' +
-      '  SELECT *, DATEADD(YEAR, 1, sentListTime) AS sentListTimeAfterOneYear ' +
-      '  FROM cu_SentListView ' +
-      '  WHERE mdID = @mdID ' +
-      '), ' +
-      'slod AS ( ' +
-      '  SELECT * ' +
-      '  FROM cu_Slod ' +
-      `  WHERE CNTSTS = '1' AND MOVSTS NOT IN ('6', '7') AND substring(CNTRNO, 2, 1) <> '5' ` +
-      ') ' +
-      'SELECT slod.*, ' +
-      '       type1.CUSTNM AS class_1_name, type1.CUSTID AS class_1_uid, type1.MOBILE AS class_1_mobile, ' +
-      '       type2.CUSTNM AS class_2_name, type2.CUSTID AS class_2_uid, type2.MOBILE AS class_2_mobile, ' +
-      '       type3.CUSTNM AS class_3_name, type3.CUSTID AS class_3_uid, type3.MOBILE AS class_3_mobile ' +
-      'FROM ( ' +
-      '  SELECT * ' +
-      '  FROM ( ' +
-      '    SELECT all_sent.*, all_resp.respListTime, all_resp.respListID, all_resp.respListChannel, ' +
-      '           ROW_NUMBER() OVER ( ' +
-      '               PARTITION BY all_sent.CNTRNO, all_sent.batID, all_sent.rptKey, all_sent.uTel ' +
-      '               ORDER BY all_sent.sentListTime DESC, all_resp.respListTime DESC) AS SEQ ' +
-      '    FROM ( ' +
-      '      SELECT slod.CNTRNO, sent.batID, sent.rptKey, sent.uTel, ' +
-      '             sent.sentListID, sent.sentListTime, sent.sentListChannel, ' +
-      '             slod.CARMDL, slod.ORDDT, slod.DLRCD, slod.BRNHCD ' +
-      '      FROM slod ' +
-      '      INNER JOIN sentList sent ON slod.CUSTID = sent.rptKey ' +
-      '      AND slod.ORDDT >= sentListTime ' +
-      '      AND slod.ORDDT <= sentListTimeAfterOneYear ' +
-      '' +
-      '      UNION ' +
-      '' +
-      '      SELECT slod.CNTRNO, sent.batID, sent.rptKey, sent.uTel, ' +
-      '             sent.sentListID, sent.sentListTime, sent.sentListChannel, ' +
-      '             slod.CARMDL, slod.ORDDT, slod.DLRCD, slod.BRNHCD ' +
-      '      FROM slod ' +
-      '      INNER JOIN sentList sent ON slod.MOBILE = sent.uTel ' +
-      '      AND slod.ORDDT >= sentListTime ' +
-      '      AND slod.ORDDT <= sentListTimeAfterOneYear ' +
-      '    ) AS all_sent ' +
-      '    LEFT JOIN ( ' +
-      '      SELECT respMst.batID, respMst.respListTime, respMst.respListID, respMst.respListChannel ' +
-      '      FROM cu_RespListMst respMst ' +
-      '      INNER JOIN cu_RespListDet respDet ON respMst.mdID = @mdID AND respMst.respListID = respDet.respListID ' +
-      '    ) AS all_resp ON all_sent.batID = all_resp.batID ' +
-      '  ) AS seq_sent ' +
-      '  WHERE SEQ = 1 ' +
-      ') AS slod ' +
-      `LEFT JOIN cu_Slod type1 ON type1.CUSTCLASS = '1' AND type1.CNTRNO = slod.CNTRNO ` +
-      `LEFT JOIN cu_Slod type2 ON type2.CUSTCLASS = '2' AND type2.CNTRNO = slod.CNTRNO ` +
-      `LEFT JOIN cu_Slod type3 ON type3.CUSTCLASS = '3' AND type3.CNTRNO = slod.CNTRNO `;
+  router.post('/download_act/:mdID',
+    [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)],
+    function(req, res, next) {
 
-    const request = _connector.queryRequest()
-      .setInput('mdID', _connector.TYPES.NVarChar, mdID);
+    const mdID = req.params.mdID;
+    const userId = req.user.userId;
 
     Q.all([
-      Q.nfcall(request.executeQuery, sql),
+      Q.nfcall(orderService.getOrderDetailOfModelTarget, mdID),
       Q.nfcall(codeGroupHelper.getPortalSyCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
       Q.nfcall(modelService.getModel, mdID)
     ]).spread((resData, codeGroupMap, model) => {
-      const header = [
-        '訂單編號', '訂單領照人姓名', '訂單領照人身份證字號', '訂單領照人手機',
-        '訂單訂約人姓名', '訂單訂約人身份證字號', '訂單訂約人手機', '訂單使用人姓名', '訂單使用人身份證字號', '訂單使用人手機',
-        '車型', '受訂日', '經銷商', '營業所', '投放批次', '投放時間', '投放管道', '投放對象身分證', '投放對象手機',
-        '回應時間', '回應管道'
-      ];
-      const sentListChannelMap = _.keyBy(codeGroupMap.sentListChannel, 'codeValue');
-      const respListChannelMap = _.keyBy(codeGroupMap.RespListChannel, 'codeValue');
-      // init xlsx data set
-      const exportDateSet = [];
-      exportDateSet.push(header); //header
-      resData.forEach(row => {  //content
-        let sentListLabel =
-          sentListChannelMap[row.sentListChannel]? sentListChannelMap[row.sentListChannel].codeLabel: null;
-        let respListLabel =
-          respListChannelMap[row.respListChannel]? respListChannelMap[row.respListChannel].codeLabel: null;
-        exportDateSet.push([
-          row.CNTRNO, row.class_1_name, row.class_1_uid, row.class_1_mobile,
-          row.class_2_name, row.class_2_uid, row.class_2_mobile,
-          row.class_3_name, row.class_3_uid, row.class_3_mobile,
-          row.CARMDL, moment(row.ORDDT).format('YYYY-MM-DD'), row.DLRCD, row.BRNHCD, row.batID,
-          row.sentListTime? moment(row.sentListTime).format('YYYY-MM-DD'): null,
-          sentListLabel, row.rptKey, row.uTel,
-          row.respListTime? moment(row.respListTime).format('YYYY-MM-DD'): null, respListLabel
-        ]);
-      });
-
       //generate excel file
       let now = moment().format('YYYYMMDDHHmm');
       let exportFilename = `成效報表-${model.mdName}-${now}.xlsx`;
       let xlsxFilename = `ta-report-${model.mdID}-${now}.xlsx`;
       let xlsxFileAbsolutePath = path.join(constants.ASSERTS_FOLDER_PATH_ABSOLUTE, xlsxFilename);
 
-      return Q.nfcall(fileHelper.buildXlsxFile, {
-        sheetName: '成效報表',
-        xlsxDataSet: exportDateSet,
-        xlsxFileAbsolutePath: xlsxFileAbsolutePath,
-        password: userId.toLowerCase()
-      }).then(stat => {
-        // const zipBuff = fileHelper.buildZipBuffer({
-        //   path: [xlsxFilename],
-        //   buff: [xlsxBuffer],
-        //   password: req.user.userId.toLowerCase()
-        // });
+      return Q.nfcall(orderHelper.modelTargetOrderDataXslxGenerator, resData, codeGroupMap,
+        xlsxFileAbsolutePath, userId.toLowerCase()).then(stat => {
+
         return Q.nfcall(queryService.insertDownloadLog, {
           queryId: mdID,
           filePath: xlsxFileAbsolutePath,
@@ -179,5 +96,43 @@ module.exports = (app) => {
       next(boom.internal())
     });
   });
+
+  router.post('/download_act/:mdID/:batID',
+    [middleware.check(), middleware.checkDownloadPermission(permission.TAANARPT_RULT)],
+    function(req, res, next) {
+
+      const mdID = req.params.mdID;
+      const batID = req.params.batID;
+      const userId = req.user.userId;
+
+      Q.all([
+        Q.nfcall(orderService.getOrderDetailOfModelBatchTarget, mdID, batID),
+        Q.nfcall(codeGroupHelper.getPortalSyCodeGroupsMap, ['sentListChannel', 'RespListChannel']),
+        Q.nfcall(modelService.getBatch, mdID. batID)
+      ]).spread((resData, codeGroupMap, model) => {
+        //generate excel file
+        let now = moment().format('YYYYMMDDHHmm');
+        let exportFilename = `成效報表-${model.mdName}-${model.batName}-${now}.xlsx`;
+        let xlsxFilename = `ta-report-${mdID}-${batID}-${now}.xlsx`;
+        let xlsxFileAbsolutePath = path.join(constants.ASSERTS_FOLDER_PATH_ABSOLUTE, xlsxFilename);
+
+        return Q.nfcall(orderHelper.modelTargetOrderDataXslxGenerator, resData, codeGroupMap,
+          xlsxFileAbsolutePath, userId.toLowerCase()).then(stat => {
+
+          return Q.nfcall(queryService.insertDownloadLog, {
+            queryId: mdID,
+            filePath: xlsxFileAbsolutePath,
+            userId: req.user.userId,
+            fileSize: stat.size
+          }).then(result => {
+            res.download(xlsxFileAbsolutePath, exportFilename);
+          });
+        });
+      }).fail(err => {
+        winston.error(`===/taanarpt_rult/download_act(mdID=${mdID}): `, err);
+        next(boom.internal())
+      });
+    });
+
   return router;
 };
