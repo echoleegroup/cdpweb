@@ -365,10 +365,30 @@ module.exports = {
             children: conditionWrapper(condi.criteria, condi.operator)
           };
         } else {
-          return {
-            relation: operator,
-            column: condi.field_id,
-            expr: conditionExpr(condi.data_type, condi.input_type, condi.operator, condi.value)
+          switch (condi.operator) {
+            //if operator is 'not equal', compose the criteria as and/or (field != value or field is null)
+            case 'ne':
+              return {
+                relation: condi.operator,
+                children: [
+                  {
+                    relation: 'and', //operator of first criteria would be ignore.
+                    column: condi.field_id, // isNote
+                    expr: conditionExpr(condi.data_type, condi.input_type, condi.operator, condi.value) // = true
+                  },
+                  {
+                    relation: 'or', //
+                    column: shortid.generate(), // isNote
+                    expr: conditionExpr(condi.data_type, condi.input_type, 'in', undefined) // = true
+                  }
+                ]
+              };
+            default:
+              return {
+                relation: operator, //and
+                column: condi.field_id, // isNote
+                expr: conditionExpr(condi.data_type, condi.input_type, condi.operator, condi.value) // = true
+              }
           }
         }
       });
