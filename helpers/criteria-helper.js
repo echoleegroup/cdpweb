@@ -369,7 +369,7 @@ module.exports = {
             //if operator is 'not equal', compose the criteria as and/or (field != value or field is null)
             case 'ne':
               return {
-                relation: condi.operator,
+                relation: operator,
                 children: [
                   {
                     relation: 'and', //operator of first criteria would be ignore.
@@ -378,7 +378,7 @@ module.exports = {
                   },
                   {
                     relation: 'or', //
-                    column: shortid.generate(), // isNote
+                    column: condi.field_id, // isNote
                     expr: conditionExpr(condi.data_type, condi.input_type, 'in', undefined) // = true
                   }
                 ]
