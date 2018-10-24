@@ -338,10 +338,10 @@ module.exports = {
     const conditionExpr = (dataType, inputType, operator, value) => {
       // winston.info('dataType: ', dataType);
 
-      switch (dataType) {
+      switch (inputType) {
         // case 'number':
         //   return numberExprBuilder(operator, value);
-        case 'string':
+        case 'text':
           let _value = stringValueTransformer(inputType, value);
           return expressionSparkSqlBuilder(operator, dataType, _value);
         // case 'date':
