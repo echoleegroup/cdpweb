@@ -699,8 +699,24 @@ module.exports.resumeQueryService = () => {
   Q.nfcall(
     integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
       tasks.forEach(task => {
-        Q.nfcall(integrationTaskService.updateResumeTime, task.queryID);
-        Q.nfcall(this.identicalQueryPoster, task.queryID, task.wrappedFrontSiteScript, task.backendCriteriaScript);
+
+        const queryId = task.queryID;
+        const queryScriptStage2 = JSON.parse(task.queryScriptStage2);
+        const queryScriptStage3 = JSON.parse(task.queryScriptStage3);
+        const mode = task.mode;
+
+        switch (mode) {
+          case constants.INTEGRATED_MODE.IDENTIFIED:
+            Q.nfcall(this.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3);
+            Q.nfcall(integrationTaskService.updateResumeTime, queryId);
+            return;
+          case constants.INTEGRATED_MODE.ANONYMOUS:
+            Q.nfcall(this.anonymousQueryPoster, queryId, queryScriptStage3);
+            Q.nfcall(integrationTaskService.updateResumeTime, queryId);
+            return;
+          default:
+            return;
+        }
       });
   });
 };

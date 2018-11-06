@@ -188,7 +188,8 @@ module.exports.getTasksByStatus = (status, callback) => {
 };
 
 module.exports.getTaskCriteriaByStatus = (status, callback) => {
-  const sql = "SELECT task.queryID, reserve1 AS wrappedFrontSiteScript, queryScript AS backendCriteriaScript " +
+  const sql = "SELECT task.queryID, log.reserve2 AS mode, " +
+    "reserve1 AS queryScriptStage2, queryScript AS queryScriptStage3 " +
     "FROM cu_IntegratedQueryTask task, cu_QueryLog log " +
     "WHERE task.queryID = log.queryID AND task.status = @status";
 
