@@ -308,36 +308,36 @@ module.exports = (app) => {
       // winston.info('results: %j', results);
       // let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = _.assign({}, ...results);
-      let backendCriteriaData = integratedHelper.backendCriteriaDataWrapper(
+      let queryScriptStage2 = integratedHelper.backendCriteriaDataWrapper(
         criteria, expt.master, {}, analyzableFeatures, relatives);
 
       return Q.all([
-        backendCriteriaData,
+        queryScriptStage2,
         queryId,
-        Q.nfcall(queryLogService.updateQueryLogProcessingData, queryId, JSON.stringify(backendCriteriaData))
+        Q.nfcall(queryLogService.updateQueryLogProcessingData, queryId, JSON.stringify(queryScriptStage2))
       ]);
-    }).spread((backendCriteriaData, queryId, ...results) => {
+    }).spread((queryScriptStage2, queryId, ...results) => {
       // winston.info('queryId: %s', queryId);
       // winston.info('backendCriteriaData: %j', backendCriteriaData);
       // const integratedAnalysisTransService = require('../../services/trans-360backand-service');
       return Q.all([
         queryId,
-        backendCriteriaData,
-        Q.nfcall(criteriaHelper.frontSiteToBackendQeuryScriptTransformer, queryId, backendCriteriaData)
+        queryScriptStage2,
+        Q.nfcall(criteriaHelper.frontSiteToBackendQeuryScriptTransformer, queryId, queryScriptStage2)
           // .fail(err => {
           //   Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable, queryId);
           //   throw err;
           // })
       ]);
-    }).spread((queryId, backendCriteriaData, queryScript) => {
+    }).spread((queryId, queryScriptStage2, queryScriptStage3) => {
       return Q.nfcall(
-        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScript)).then(status => {
-          return Q.all([queryId, backendCriteriaData, queryScript]);
+        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3)).then(status => {
+          return Q.all([queryId, queryScriptStage2, queryScriptStage3]);
       });
-    }).spread((queryId, backendCriteriaData, queryScript) => {
+    }).spread((queryId, queryScriptStage2, queryScriptStage3) => {
       return Q.all([
         queryId,
-        Q.nfcall(integratedHelper.identicalQueryPoster, queryId, backendCriteriaData, queryScript)
+        Q.nfcall(integratedHelper.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3)
       ]);
     }).spread((queryId, status) => {
       res.json({queryId, mode, status});
@@ -349,7 +349,7 @@ module.exports = (app) => {
 
   router.get('/export/query/:queryId', middlewares, (req, res) => {
     let queryId = req.params.queryId;
-    Q.nfcall(integrationTaskService.getQueryTask, queryId).then(queryTask => {
+    Q.nfcall(integrationTaskService.getQueryTaskDetail, queryId).then(queryTask => {
       if (!queryTask) {
         return res.json(null, 301, 'task not found!');
       }
@@ -443,18 +443,18 @@ module.exports = (app) => {
       // winston.info('analyzableFeatures: %j', analyzableFeatures);
       // let analyzableFeatureIds = _.map(analyzableFeatures, 'featID');
       let relatives = {};
-      let backendCriteriaData =
+      let queryScriptStage2 =
         integratedHelper.backendCriteriaDataWrapper(criteria, expt.master, {}, analyzableFeatures, relatives);
 
       return Q.all([
-        backendCriteriaData,
+        queryScriptStage2,
         queryId,
-        Q.nfcall(queryLogService.updateQueryLogProcessingData, queryId, JSON.stringify(backendCriteriaData))
+        Q.nfcall(queryLogService.updateQueryLogProcessingData, queryId, JSON.stringify(queryScriptStage2))
       ]);
-    }).spread((backendCriteriaData, queryId, ...results) => {
+    }).spread((queryScriptStage3, queryId, ...results) => {
       return Q.nfcall(
-        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(backendCriteriaData)).then(status => {
-        return Q.all([queryId, backendCriteriaData]);
+        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3)).then(status => {
+        return Q.all([queryId, queryScriptStage3]);
       });
       // winston.info('queryId: %s', queryId);
       // winston.info('backendCriteriaData: %j', backendCriteriaData);
@@ -466,10 +466,10 @@ module.exports = (app) => {
       //       Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable, queryId);
       //       throw err;
       //     })]);
-    }).spread((queryId, queryScript) => {
+    }).spread((queryId, queryScriptStage3) => {
       return Q.all([
         queryId,
-        Q.nfcall(integratedHelper.anonymousQueryPoster, queryId, queryScript)
+        Q.nfcall(integratedHelper.anonymousQueryPoster, queryId, queryScriptStage3)
       ]);
     }).spread((queryId, status) => {
       res.json({queryId, mode, status});
@@ -494,7 +494,7 @@ module.exports = (app) => {
   router.get('/:mode/query/:queryId/navigate/features', middlewares, (req, res) => {
     let queryId = req.params.queryId;
     let mode = req.params.mode;
-    Q.nfcall(queryLogService.getQueryLogProcessingData, queryId).then(queryLogData => {
+    Q.nfcall(queryLogService.getQueryLog, queryId).then(queryLogData => {
       // let featureIds = JSON.parse(queryLogData.reserve1).export.analyzable.features;
       // winston.info('featureIds: %j', featureIds);
       return Q.all([

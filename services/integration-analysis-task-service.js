@@ -94,7 +94,7 @@ module.exports.setQueryTaskStatusPending = (queryId, queryScript, callback) => {
   });
 };
 
-module.exports.setQueryTaskStatusProcessing = (queryId, callback) => {
+module.exports.setQueryTaskStatusRemoteProcessing = (queryId, callback) => {
   updateTaskStatus(queryId, PROCESS_STATUS.REMOTE_PROCESSING, callback);
 };
 
@@ -145,7 +145,20 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
   });
 };
 
-module.exports.getQueryTask = (queryId, callback) => {
+module.exports.getQueryTask = (queryId) => {
+  const sql = 'SELECT queryScript FROM cu_IntegratedQueryTask WHERE queryID = @queryId';
+
+  let request = _connector.queryRequest()
+    .setInput('queryId', _connector.TYPES.NVarChar, queryId);
+
+  Q.nfcall(request.executeQuery, sql).then(result => {
+    callback(null, result[0]);
+  }).fail(err => {
+    callback(err);
+  });
+};
+
+module.exports.getQueryTaskDetail = (queryId, callback) => {
   const sql = 'SELECT task.queryID, task.status, task.records, log.crtTime, log.updUser, log.reserve2 as mode, ' +
     'task.archiveSizeInBytes, task.archiveEntries, log.criteria, task.expTime ' +
     'FROM cu_IntegratedQueryTask as task LEFT JOIN cu_QueryLog as log ' +

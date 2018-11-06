@@ -90,7 +90,7 @@ module.exports.updateQueryLogProcessingData = (queryId, script, callback) => {
   // });
 };
 
-module.exports.getQueryLogProcessingData = (queryId, callback) => {
+module.exports.getQueryLog = (queryId, callback) => {
   const sql = 'SELECT reserve1, reserve2, updUser, crtTime ' +
     'FROM cu_QueryLog q ' +
     'WHERE queryID = @queryId';

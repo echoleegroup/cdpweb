@@ -257,7 +257,7 @@ module.exports = {
     };
   },
 
-  frontSiteToBackendQeuryScriptTransformer: (queryId, queryScript, callback) => {
+  frontSiteToBackendQeuryScriptTransformer: (queryId, queryScriptStage2, callback) => {
     // const API_360_HOST = appConfig.get("API_360_HOST");
     // const API_360_PORT = appConfig.get("API_360_PORT");
 
@@ -419,12 +419,12 @@ module.exports = {
     //selectBlock of master table
     selectBlock.push({
       type: "master",
-      column: _.uniq(queryScript.export.master.features.concat(_.map(queryScript.statistic.features, 'feature_id')))
+      column: _.uniq(queryScriptStage2.export.master.features.concat(_.map(queryScriptStage2.statistic.features, 'feature_id')))
     });
 
     //selectBlock of relative tables
     selectBlock = selectBlock.concat(
-      _.map(queryScript.export.relatives, (value, key) => {
+      _.map(queryScriptStage2.export.relatives, (value, key) => {
         return {
           type: key,
           column: value.features
@@ -435,13 +435,13 @@ module.exports = {
     //where of main table
     whereBlock.push({
       type: 'master',
-      condition: conditionWrapper(queryScript.criteria.client).concat(
-        conditionWrapper(queryScript.criteria.vehicle))
+      condition: conditionWrapper(queryScriptStage2.criteria.client).concat(
+        conditionWrapper(queryScriptStage2.criteria.vehicle))
     });
     //where of transaction type.
     //** The backend script do not currently support logically 'or' between each transaction type.
     // Ignoring outer 'combo' criteria, and wrap child criteria separately.
-    let transaction = queryScript.criteria.transaction[0]? queryScript.criteria.transaction[0].criteria: [];
+    let transaction = queryScriptStage2.criteria.transaction[0]? queryScriptStage2.criteria.transaction[0].criteria: [];
     _.forEach(transaction, condition => {
       whereBlock.push({
         type: condition.ref,
@@ -450,15 +450,15 @@ module.exports = {
     });
 
     //postWhere of master table
-    if (!_.isEmpty(queryScript.export.master.filter)) {
+    if (!_.isEmpty(queryScriptStage2.export.master.filter)) {
       postWhereBlock.push({
         type: 'master',
-        condition: filterToPostWhereConditionWrapper(queryScript.export.master.filter)
+        condition: filterToPostWhereConditionWrapper(queryScriptStage2.export.master.filter)
       });
     }
 
     postWhereBlock = postWhereBlock.concat(
-      _.map(queryScript.export.relatives, (relative, type) => {
+      _.map(queryScriptStage2.export.relatives, (relative, type) => {
         return {
           type: type,
           condition: filterToPostWhereConditionWrapper(relative.filter)
@@ -466,47 +466,14 @@ module.exports = {
       })
     );
 
-    let resultScript = {
+    let queryScriptStage3 = {
       select: selectBlock,
       where: whereBlock,
       postWhere: postWhereBlock,
-      statistic: queryScript.statistic
+      statistic: queryScriptStage2.statistic
     };
 
-    callback(null, resultScript);
-
-    // winston.info('resultScript: ', resultScript);
-    //
-    // let hasTag = ((queryScript.criteria.tag.length + queryScript.criteria.trail.length) > 0) ||
-    //   (_.intersection(
-    //     ['TagQtn', 'TagOwnMedia', 'TagOuterMedia', 'TagEInterest', 'TagEIntent', 'TagActive'],
-    //     _.keys(queryScript.export.relatives)
-    //   ).length > 0);
-    //
-    // let requestUrl = null;
-    // let requestBody = null;
-    // if (hasTag) {
-    //   requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query_all/${queryId}`;
-    //   requestBody = {
-    //     req_owner: resultScript,
-    //     req_log: queryScript
-    //   };
-    // } else {
-    //   requestUrl = `http://${API_360_HOST}:${API_360_PORT}/query/${queryId}`;
-    //   requestBody = resultScript;
-    // }
-    //
-    // request({
-    //   url: requestUrl,
-    //   method: 'POST',
-    //   json: true,
-    //   body: requestBody
-    // }, (error, response, body) => {
-    //   if (error)
-    //     callback(error, null);
-    //   else
-    //     callback(null, resultScript);
-    // });
+    callback(null, queryScriptStage3);
   }
 };
 

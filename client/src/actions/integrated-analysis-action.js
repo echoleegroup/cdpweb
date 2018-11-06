@@ -177,7 +177,7 @@ exports.getNavigateFeatures = (mode, queryId, success, fail) => {
   ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
-    console.log('===getQueryTask failed: ', err);
+    console.log('===getNavigateFeatures failed: ', err);
     fail && fail(err);
   });
 };
@@ -187,7 +187,7 @@ exports.getChartData = (mode, queryId, featureId, success, fail) => {
   ajaxGetObservable(url, undefined, undefined).subscribe(data => {
     success && success(data);
   }, err => {
-    console.log('===getQueryTask failed: ', err);
+    console.log('===getChartData failed: ', err);
     fail && fail(err);
   });
 };

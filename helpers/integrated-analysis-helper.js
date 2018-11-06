@@ -414,7 +414,7 @@ module.exports.extractAndParseQueryResultFile = (queryId, zipPath, workingPath, 
 };
 
 module.exports.initializeQueryTaskLog = (menuCode, criteria, features, filters, mode, userId, callback) => {
-  Q.nfcall(queryLogService.insertQueryLog , {
+  Q.nfcall(queryLogService.insertQueryLog, {
     menuCode: menuCode,
     criteria,
     features,
@@ -560,7 +560,7 @@ module.exports.chartDataProcessor = (feature, chartData) => {
 };
 
 module.exports.getIntegratedQueryData = (queryId, callback) => {
-  Q.nfcall(queryLogService.getQueryLogProcessingData, queryId)
+  Q.nfcall(queryLogService.getQueryLog, queryId)
     .then(queryLog => {
       let exportScript = JSON.parse(queryLog.reserve1).export;
       let creator = queryLog.updUser;
@@ -714,7 +714,7 @@ module.exports.identicalQueryPoster = (queryId, wrappedFrontSiteScript, backendC
   Q.nfcall(
     integrationTaskService.identicalQueryPoster, queryId, wrappedFrontSiteScript, backendCriteriaScript
   ).then(() => {
-    return integrationTaskService.setQueryTaskStatusProcessing;
+    return integrationTaskService.setQueryTaskStatusRemoteProcessing;
   }).fail(err => {
     winston.error('===post integrated query script request failed(queryID=%s): ', queryId, err);
     return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
@@ -736,7 +736,7 @@ module.exports.anonymousQueryPoster = (queryId, queryScript, callback) => {
   Q.nfcall(
     integrationTaskService.anonymousQueryPoster, queryId, queryScript
   ).then(() => {
-    return integrationTaskService.setQueryTaskStatusProcessing;
+    return integrationTaskService.setQueryTaskStatusRemoteProcessing;
   }).fail(err => {
     winston.error('===post anonymous integrated query script request failed(queryID=%s): ', queryId, err);
     return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
