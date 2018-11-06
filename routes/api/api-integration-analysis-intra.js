@@ -28,8 +28,8 @@ module.exports = (app) => {
         return res.json(null, 401, `task ${queryId} not found`);
       }
 
-      const queryScriptStage3 = task.queryScript;
-      const queryScriptStage2 = queryLog.reserve1;
+      const queryScriptStage3 = JSON.parse(task.queryScript);
+      const queryScriptStage2 = JSON.parse(queryLog.reserve1);
       const mode = queryLog.reserve2;
 
       switch (mode) {

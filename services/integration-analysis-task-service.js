@@ -145,7 +145,7 @@ module.exports.setQueryTaskStatusComplete = (queryId, sizeInBytes, entries, reco
   });
 };
 
-module.exports.getQueryTask = (queryId) => {
+module.exports.getQueryTask = (queryId, callback) => {
   const sql = 'SELECT queryScript FROM cu_IntegratedQueryTask WHERE queryID = @queryId';
 
   let request = _connector.queryRequest()
