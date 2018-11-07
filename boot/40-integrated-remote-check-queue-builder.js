@@ -1,6 +1,7 @@
 const Q = require('q');
 const moment = require('moment');
 const winston = require('winston');
+const appConfig = require("./app-config");
 const queue = require('../utils/queue');
 const _connector = require('../utils/sql-query-util');
 const taskService = require('../services/integration-analysis-task-service');
@@ -21,8 +22,9 @@ module.exports = (app) => {
       const processor = () => {
         winston.info('integrated query task start to download: ', queryId);
 
-        const remoteDownloadUrl = `http://10.201.2.130:11002/download/${queryId}`;
-        const remoteDeleteUrl = `http://10.201.2.130:11002/delete/${queryId}`;
+        const requestUrl = `http://${appConfig.get("API_360_HOST")}:${appConfig.get("API_360_PORT")}`;
+        const remoteDownloadUrl = `${requestUrl}/download/${queryId}`;
+        const remoteDeleteUrl = `${requestUrl}/delete/${queryId}`;
 
         return Q.nfcall(integratedAnalysisHelper.downloadQueryResultPack, queryId, remoteDownloadUrl)
           .fail(err => {
