@@ -12,7 +12,9 @@ module.exports = (app) => {
       tasks.forEach(task => {
         const queryId = task.queryID;
         const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-        queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, sparkZipPath));
+        queue
+          .get(queue.TOPIC.INTEGRATED_QUERY_PARSER)
+          .push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, sparkZipPath));
       });
     }).fail(err => {
       winston.error('get parsing integrated query task failed: ', err);

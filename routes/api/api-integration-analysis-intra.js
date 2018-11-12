@@ -18,6 +18,23 @@ module.exports = (app) => {
   winston.info('[api-model] Creating api-integration-analysis-intra route.');
   const router = express.Router();
 
+  router.get('/query/disable', factory.ajax_response_factory(), (req, res) => {
+    integratedHelper.disableQueryService();
+    queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).suspend();
+    res.json('service disabled');
+  });
+
+  router.get('/query/resume', factory.ajax_response_factory(), (req, res) => {
+    const fs = require('fs');
+    const locker = path.resolve(__dirname, '..', '.360-lock');
+    fs.unlinkSync(locker);
+
+    queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).resume();
+
+    // integratedHelper.resumeQueryService();
+    res.json('service resumed');
+  });
+
   router.get('/export/query/redo/:queryId', factory.ajax_response_factory(), (req, res) => {
     const queryId = req.params.queryId;
     Q.all([
@@ -32,16 +49,14 @@ module.exports = (app) => {
       const queryScriptStage2 = JSON.parse(queryLog.reserve1);
       const mode = queryLog.reserve2;
 
-      switch (mode) {
-        case constants.INTEGRATED_MODE.IDENTIFIED:
-          return Q.nfcall(integratedHelper.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3);
-        case constants.INTEGRATED_MODE.ANONYMOUS:
-          return Q.nfcall(integratedHelper.anonymousQueryPoster, queryId, queryScriptStage3);
-        default:
-          return res.json(null, 402, `unknow task mode: ${mode}`);
-      }
+      let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
+
+      queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, task.queryScript);
 
     }).then(status => {
+      Q.nfcall(integrationTaskService.updateResumeTime, queryId);
       res.json({status});
     }).fail(err => {
       winston.error('re-do integrated query task failed: ', err);
@@ -60,7 +75,9 @@ module.exports = (app) => {
       return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId).then(status => {
         res.json({status});
         const resultPackPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-        queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
+        queue
+          .get(queue.TOPIC.INTEGRATED_QUERY_PARSER)
+          .push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
       }).fail(err => {
         winston.error('update query task status to parsing failed(task=%j): ', task, err);
         return res.json(null, 500, 'internal service error');
@@ -82,12 +99,18 @@ module.exports = (app) => {
       const remoteDownloadUrl = `http://${req.params.ip}:${req.params.port}/download/${queryId}`;
       const remoteDeleteUrl = `http://${req.params.ip}:${req.params.port}/delete/${queryId}`;
       return Q.nfcall(integratedAnalysisHelper.downloadQueryResultPack, queryId, remoteDownloadUrl).then(resultPackPath => {
-        //
+
         return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
           .then(status => {
             res.json({status});
+
+            //download finished. Fire next query script. Must be fired after update current task status.
+            queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).next();
+
             require('request-promise-native').post(remoteDeleteUrl);
-            return queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
+            return queue
+              .get(queue.TOPIC.INTEGRATED_QUERY_PARSER)
+              .push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
           }).fail(err => {
             winston.error('update query task status to parsing failed(task=%j): ', task, err);
             return res.json(null, 500, 'internal service error');

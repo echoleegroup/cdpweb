@@ -1,7 +1,7 @@
 const Q = require('q');
 const moment = require('moment');
 const winston = require('winston');
-const appConfig = require("./app-config");
+const appConfig = require("../app-config");
 const queue = require('../utils/queue');
 const _connector = require('../utils/sql-query-util');
 const taskService = require('../services/integration-analysis-task-service');
@@ -33,7 +33,9 @@ module.exports = (app) => {
             return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
               .then(status => {
                 require('request-promise-native').post(remoteDeleteUrl);
-                return queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
+                return queue
+                  .get(queue.TOPIC.INTEGRATED_QUERY_PARSER)
+                  .push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, resultPackPath));
               }).fail(err => {
                 winston.error('update query task status to parsing failed(task=%j): ', task, err);
                 throw err;
@@ -47,7 +49,7 @@ module.exports = (app) => {
 
       };  //end of processor
 
-      queue.push(queryId, processor);
+      queue.get(queue.TOPIC.INTEGRATED_REMOTE_CHECKER).push(queryId, processor);
     });
   }).fail(err => {
     winston.error(err);

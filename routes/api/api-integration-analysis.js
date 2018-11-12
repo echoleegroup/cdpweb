@@ -11,7 +11,8 @@ const factory = require("../../middlewares/response-factory");
 const integrationService = require('../../services/integration-analysis-service');
 const integrationTaskService = require('../../services/integration-analysis-task-service');
 const integrationStatisticService = require('../../services/integration-analysis-statistic-service');
-const codeGroupService = require('../../services/code-group-service');
+// const codeGroupService = require('../../services/code-group-service');
+const queue = require('../../utils/queue');
 const queryLogService = require('../../services/query-log-service');
 const integratedHelper = require('../../helpers/integrated-analysis-helper');
 const codeGroupHelper = require('../../helpers/code-group-helper');
@@ -330,17 +331,20 @@ module.exports = (app) => {
           // })
       ]);
     }).spread((queryId, queryScriptStage2, queryScriptStage3) => {
-      return Q.nfcall(
-        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3)).then(status => {
-          return Q.all([queryId, queryScriptStage2, queryScriptStage3]);
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3))
+        .then(status => {
+          let handler = integratedHelper.identicalQueryPoster(queryId, queryScriptStage2, queryScriptStage3);
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+          return res.json({queryId, mode, status});
+          // return Q.all([queryId, queryScriptStage2, queryScriptStage3]);
       });
-    }).spread((queryId, queryScriptStage2, queryScriptStage3) => {
-      return Q.all([
-        queryId,
-        Q.nfcall(integratedHelper.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3)
-      ]);
-    }).spread((queryId, status) => {
-      res.json({queryId, mode, status});
+    // }).spread((queryId, queryScriptStage2, queryScriptStage3) => {
+    //   return Q.all([
+    //     queryId,
+    //     Q.nfcall(integratedHelper.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3)
+    //   ]);
+    // }).spread((queryId, status) => {
+    //   res.json({queryId, mode, status});
     }).fail(err => {
       winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');
@@ -452,45 +456,27 @@ module.exports = (app) => {
         Q.nfcall(queryLogService.updateQueryLogProcessingData, queryId, JSON.stringify(queryScriptStage2))
       ]);
     }).spread((queryScriptStage3, queryId, ...results) => {
-      return Q.nfcall(
-        integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3)).then(status => {
-        return Q.all([queryId, queryScriptStage3]);
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3))
+        .then(status => {
+          let handler = integratedHelper.anonymousQueryPoster(queryId, queryScriptStage3);
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+          return res.json({queryId, mode, status});
+        // return Q.all([queryId, queryScriptStage3]);
       });
-      // winston.info('queryId: %s', queryId);
-      // winston.info('backendCriteriaData: %j', backendCriteriaData);
-      // const integratedAnalysisTransService = require('../../services/spark-api-log-service');
-      // return Q.all([
-      //   queryId,
-      //   Q.nfcall(integratedAnalysisTransService.transService, queryId, backendCriteriaData)
-      //     .fail(err => {
-      //       Q.nfcall(integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable, queryId);
-      //       throw err;
-      //     })]);
-    }).spread((queryId, queryScriptStage3) => {
-      return Q.all([
-        queryId,
-        Q.nfcall(integratedHelper.anonymousQueryPoster, queryId, queryScriptStage3)
-      ]);
-    }).spread((queryId, status) => {
-      res.json({queryId, mode, status});
+    // }).spread((queryId, queryScriptStage3) => {
+    //   return Q.all([
+    //     queryId,
+    //     Q.nfcall(integratedHelper.anonymousQueryPoster, queryId, queryScriptStage3)
+    //   ]);
+    // }).spread((queryId, status) => {
+    //   res.json({queryId, mode, status});
     }).fail(err => {
       winston.error('===/export/query internal server error: ', err);
       res.json(null, 500, 'internal service error');
     });
   });
 
-  router.get('/query/disable', factory.ajax_response_factory(), (req, res) => {
-    integratedHelper.disableQueryService();
-    res.json('service disabled');
-  });
-
-  router.get('/query/resume', factory.ajax_response_factory(), (req, res) => {
-    integratedHelper.resumeQueryService();
-    res.json('service resumed');
-  });
-
   // chart
-
   router.get('/:mode/query/:queryId/navigate/features', middlewares, (req, res) => {
     let queryId = req.params.queryId;
     let mode = req.params.mode;

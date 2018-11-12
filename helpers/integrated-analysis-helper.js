@@ -692,75 +692,62 @@ module.exports.disableQueryService = () => {
   fs.writeFileSync(locker, moment().format('YYYY-MM-DD HH:mm:ss'));
 };
 
-module.exports.resumeQueryService = () => {
-  const locker = path.resolve(__dirname, '..', '.360-lock');
-  fs.unlinkSync(locker);
+module.exports.getQueryPosterHandler = (queryId, mode, queryScriptStage2, queryScriptStage3) => {
 
-  Q.nfcall(
-    integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
-      tasks.forEach(task => {
-
-        const queryId = task.queryID;
-        const queryScriptStage2 = JSON.parse(task.queryScriptStage2);
-        const queryScriptStage3 = JSON.parse(task.queryScriptStage3);
-        const mode = task.mode;
-
-        switch (mode) {
-          case constants.INTEGRATED_MODE.IDENTIFIED:
-            Q.nfcall(this.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3);
-            Q.nfcall(integrationTaskService.updateResumeTime, queryId);
-            return;
-          case constants.INTEGRATED_MODE.ANONYMOUS:
-            Q.nfcall(this.anonymousQueryPoster, queryId, queryScriptStage3);
-            Q.nfcall(integrationTaskService.updateResumeTime, queryId);
-            return;
-          default:
-            return;
-        }
-      });
-  });
-};
-
-module.exports.identicalQueryPoster = (queryId, wrappedFrontSiteScript, backendCriteriaScript, callback) => {
-  const isServiceDisabled = this.isQueryServiceDisabled();
-  if (isServiceDisabled) {
-    return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
+  if (mode === constants.INTEGRATED_MODE.IDENTIFIED) {
+    return Q.nfcall(this.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3);
+  } else if (mode === constants.INTEGRATED_MODE.ANONYMOUS) {
+    return Q.nfcall(this.anonymousQueryPoster, queryId, queryScriptStage3);
+  } else {
+    return () => Q();
   }
 
-  Q.nfcall(
-    integrationTaskService.identicalQueryPoster, queryId, wrappedFrontSiteScript, backendCriteriaScript
-  ).then(() => {
-    return integrationTaskService.setQueryTaskStatusRemoteProcessing;
-  }).fail(err => {
-    winston.error('===post integrated query script request failed(queryID=%s): ', queryId, err);
-    return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
-  }).then((handler) => {
-    return Q.nfcall(handler, queryId);
-  }).then(status => {
-    callback(null, status);
-  }).fail(err => {
-    winston.error('===update integrated query task status failed(queryID=%s): ', queryId, err);
-  });
 };
 
-module.exports.anonymousQueryPoster = (queryId, queryScript, callback) => {
-  const isServiceDisabled = this.isQueryServiceDisabled();
-  if (isServiceDisabled) {
-    return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
-  }
+module.exports.identicalQueryPoster = (queryId, queryScriptStage2, queryScriptStage3, callback) => {
+  // const isServiceDisabled = this.isQueryServiceDisabled();
+  // if (isServiceDisabled) {
+  //   return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
+  // }
 
-  Q.nfcall(
-    integrationTaskService.anonymousQueryPoster, queryId, queryScript
-  ).then(() => {
-    return integrationTaskService.setQueryTaskStatusRemoteProcessing;
-  }).fail(err => {
-    winston.error('===post anonymous integrated query script request failed(queryID=%s): ', queryId, err);
-    return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
-  }).then((handler) => {
-    return Q.nfcall(handler, queryId);
-  }).then(status => {
-    callback(null, status);
-  }).fail(err => {
-    winston.error('===update anonymous integrated query task status failed(queryID=%s): ', queryId, err);
-  });
+  return () => {
+    return Q.nfcall(
+      integrationTaskService.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3
+    ).then(() => {
+      return integrationTaskService.setQueryTaskStatusRemoteProcessing;
+    }).fail(err => {
+      winston.error('===post integrated query script request failed(queryID=%s): ', queryId, err);
+      return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
+    }).then((handler) => {
+      return Q.nfcall(handler, queryId);
+    }).then(status => {
+      callback(null, status);
+    }).fail(err => {
+      winston.error('===update integrated query task status failed(queryID=%s): ', queryId, err);
+    });
+  };
+};
+
+module.exports.anonymousQueryPoster = (queryId, queryScriptStage3, callback) => {
+  // const isServiceDisabled = this.isQueryServiceDisabled();
+  // if (isServiceDisabled) {
+  //   return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
+  // }
+
+  return () => {
+    Q.nfcall(
+      integrationTaskService.anonymousQueryPoster, queryId, queryScriptStage3
+    ).then(() => {
+      return integrationTaskService.setQueryTaskStatusRemoteProcessing;
+    }).fail(err => {
+      winston.error('===post anonymous integrated query script request failed(queryID=%s): ', queryId, err);
+      return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
+    }).then((handler) => {
+      return Q.nfcall(handler, queryId);
+    }).then(status => {
+      callback(null, status);
+    }).fail(err => {
+      winston.error('===update anonymous integrated query task status failed(queryID=%s): ', queryId, err);
+    });
+  };
 };
