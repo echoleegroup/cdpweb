@@ -25,18 +25,18 @@ module.exports = (app) => {
       _queue.push(queryId, handler);
     });
   });
-
-
-
-
-  return Q.nfcall(integrationTaskService.getTasksByStatus, integrationTaskService.PROCESS_STATUS.PARSING)
-    .then(tasks => {
-      tasks.forEach(task => {
-        const queryId = task.queryID;
-        const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-        queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, sparkZipPath));
-      });
-    }).fail(err => {
-      winston.error('get parsing integrated query task failed: ', err);
-    });
+  //
+  //
+  //
+  //
+  // return Q.nfcall(integrationTaskService.getTasksByStatus, integrationTaskService.PROCESS_STATUS.PARSING)
+  //   .then(tasks => {
+  //     tasks.forEach(task => {
+  //       const queryId = task.queryID;
+  //       const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
+  //       queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, sparkZipPath));
+  //     });
+  //   }).fail(err => {
+  //     winston.error('get parsing integrated query task failed: ', err);
+  //   });
 };
