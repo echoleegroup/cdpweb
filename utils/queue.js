@@ -70,7 +70,7 @@ class Queue {
 
   async next() {
     let head = _.head(this.queue);
-    if (head && !this.suspended && this.processing.length > 0 &&
+    if (head && !this.suspended && this.processing.length >= 0 &&
       this.processing.length < this.concurrence && await this.isNext()) {
 
 
@@ -90,7 +90,7 @@ class Queue {
   };
 
   async isNext() {
-    return true;
+    return Promise.resolve(true);
   };
 
   suspend() {

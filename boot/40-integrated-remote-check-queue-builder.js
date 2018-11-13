@@ -32,6 +32,9 @@ module.exports = (app) => {
           }).then(resultPackPath => {
             return Q.nfcall(integrationTaskService.setQueryTaskStatusParsing, queryId)
               .then(status => {
+                //download finished. Fire next query script. Must be fired after update current task status.
+                queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).next();
+
                 require('request-promise-native').post(remoteDeleteUrl);
                 return queue
                   .get(queue.TOPIC.INTEGRATED_QUERY_PARSER)

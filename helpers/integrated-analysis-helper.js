@@ -695,16 +695,16 @@ module.exports.disableQueryService = () => {
 module.exports.getQueryPosterHandler = (queryId, mode, queryScriptStage2, queryScriptStage3) => {
 
   if (mode === constants.INTEGRATED_MODE.IDENTIFIED) {
-    return Q.nfcall(this.identicalQueryPoster, queryId, queryScriptStage2, queryScriptStage3);
+    return this.identicalQueryPoster(queryId, queryScriptStage2, queryScriptStage3);
   } else if (mode === constants.INTEGRATED_MODE.ANONYMOUS) {
-    return Q.nfcall(this.anonymousQueryPoster, queryId, queryScriptStage3);
+    return this.anonymousQueryPoster(queryId, queryScriptStage3);
   } else {
     return () => Q();
   }
 
 };
 
-module.exports.identicalQueryPoster = (queryId, queryScriptStage2, queryScriptStage3, callback) => {
+module.exports.identicalQueryPoster = (queryId, queryScriptStage2, queryScriptStage3) => {
   // const isServiceDisabled = this.isQueryServiceDisabled();
   // if (isServiceDisabled) {
   //   return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
@@ -720,15 +720,13 @@ module.exports.identicalQueryPoster = (queryId, queryScriptStage2, queryScriptSt
       return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
     }).then((handler) => {
       return Q.nfcall(handler, queryId);
-    }).then(status => {
-      callback(null, status);
     }).fail(err => {
       winston.error('===update integrated query task status failed(queryID=%s): ', queryId, err);
     });
   };
 };
 
-module.exports.anonymousQueryPoster = (queryId, queryScriptStage3, callback) => {
+module.exports.anonymousQueryPoster = (queryId, queryScriptStage3) => {
   // const isServiceDisabled = this.isQueryServiceDisabled();
   // if (isServiceDisabled) {
   //   return callback(null, integrationTaskService.PROCESS_STATUS.PENDING);
@@ -744,8 +742,6 @@ module.exports.anonymousQueryPoster = (queryId, queryScriptStage3, callback) => 
       return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
     }).then((handler) => {
       return Q.nfcall(handler, queryId);
-    }).then(status => {
-      callback(null, status);
     }).fail(err => {
       winston.error('===update anonymous integrated query task status failed(queryID=%s): ', queryId, err);
     });
