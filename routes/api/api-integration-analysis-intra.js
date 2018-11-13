@@ -45,19 +45,19 @@ module.exports = (app) => {
         return res.json(null, 401, `task ${queryId} not found`);
       }
 
-      const queryScriptStage3 = JSON.parse(task.queryScript);
-      const queryScriptStage2 = JSON.parse(queryLog.reserve1);
-      const mode = queryLog.reserve2;
+      return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, task.queryScript).then(status => {
+        const queryScriptStage3 = JSON.parse(task.queryScript);
+        const queryScriptStage2 = JSON.parse(queryLog.reserve1);
+        const mode = queryLog.reserve2;
 
-      let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
+        let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
 
-      queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+        queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
 
-      return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, task.queryScript);
+        Q.nfcall(integrationTaskService.updateResumeTime, queryId);
+        res.json({status});
+      });
 
-    }).then(status => {
-      Q.nfcall(integrationTaskService.updateResumeTime, queryId);
-      res.json({status});
     }).fail(err => {
       winston.error('re-do integrated query task failed: ', err);
       return res.json(null, 500, 'internal service error');

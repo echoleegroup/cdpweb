@@ -105,8 +105,19 @@ class Queue {
 
 class IQTriggerQueue extends Queue {
   async isNext() {
-    let result = await integrationTaskService.getTasksByStatus(integrationTaskService.PROCESS_STATUS.REMOTE_PROCESSING);
-    return (result.length > 0);
+    let result = await this.getRemoteProcessingTaskCount();
+    return (result > 0);
+  }
+
+  async getRemoteProcessingTaskCount() {
+    return new Promise((resolve, reject) => {
+      Q.nfcall(integrationTaskService.getTasksByStatus, integrationTaskService.PROCESS_STATUS.REMOTE_PROCESSING)
+        .then(res => {
+          resolve(res.length);
+        }).fail(err => {
+          reject(err);
+      });
+    });
   }
 }
 
@@ -119,8 +130,8 @@ const TOPIC = {
 const _queue = {
   [TOPIC.INTEGRATED_QUERY_PARSER]: new Queue(TOPIC.INTEGRATED_QUERY_PARSER, 2),
   [TOPIC.INTEGRATED_REMOTE_CHECKER]: new Queue(TOPIC.INTEGRATED_REMOTE_CHECKER, 2),
-  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1),
-}
+  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1)
+};
 
 module.exports = {
   TOPIC,
