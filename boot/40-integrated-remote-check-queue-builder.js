@@ -57,5 +57,6 @@ module.exports = (app) => {
   }).fail(err => {
     winston.error(err);
     winston.error('get remote processing integrated query task failed: ', err);
+    throw err;
   });
 };

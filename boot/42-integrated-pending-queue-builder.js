@@ -12,7 +12,7 @@ module.exports = (app) => {
 
   return Q.nfcall(
     integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
-    tasks.forEach(task => {
+    tasks.forEach(async task => {
 
       const queryId = task.queryID;
       const queryScriptStage2 = JSON.parse(task.queryScriptStage2);
@@ -22,7 +22,7 @@ module.exports = (app) => {
       let handler = integratedAnalysisHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
       Q.nfcall(integrationTaskService.updateResumeTime, queryId);
 
-      _queue.push(queryId, handler);
+      await _queue.push(queryId, handler);
     });
   });
   //

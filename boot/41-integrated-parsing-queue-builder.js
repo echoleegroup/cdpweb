@@ -18,5 +18,6 @@ module.exports = (app) => {
       });
     }).fail(err => {
       winston.error('get parsing integrated query task failed: ', err);
+      throw err;
     });
 };
