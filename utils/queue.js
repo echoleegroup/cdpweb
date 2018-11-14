@@ -51,7 +51,7 @@ class Queue {
     this.auto_start = auto_start;
   };
 
-  async push(id = shortid.generate(), processor, callback = () => {}) {
+  push(id = shortid.generate(), processor, callback = () => {}) {
     // id = id || shortid.generate();
     const handler = () => {
       return Q(processor()).then(data => {
@@ -65,7 +65,7 @@ class Queue {
 
     winston.info(`task ${id} is pushed to topic ${this.topic}`);
 
-    this.auto_start && this.processing.length < this.concurrence && await this.next(id);
+    this.auto_start && this.processing.length < this.concurrence && this.next(id);
     return this;
   };
 
@@ -86,7 +86,7 @@ class Queue {
           winston.info(`ref ${ref} task ${id} finished in topic ${this.topic}`);
           _.remove(this.processing, {id});
           // concurrence.splice(concurrence.indexOf(id), 1);
-          this.auto_start && this.next(id);
+          this.next(id);
           resolve();
         });
       });

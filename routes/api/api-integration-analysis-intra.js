@@ -25,10 +25,7 @@ module.exports = (app) => {
   });
 
   router.get('/query/resume', factory.ajax_response_factory(), (req, res) => {
-    const fs = require('fs');
-    const locker = path.resolve(__dirname, '..', '.360-lock');
-    fs.unlinkSync(locker);
-
+    integratedHelper.resumeQueryService();
     queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).resume();
 
     // integratedHelper.resumeQueryService();

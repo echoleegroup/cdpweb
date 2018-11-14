@@ -692,6 +692,11 @@ module.exports.disableQueryService = () => {
   fs.writeFileSync(locker, moment().format('YYYY-MM-DD HH:mm:ss'));
 };
 
+module.exports.resumeQueryService = () => {
+  const locker = path.resolve(__dirname, '..', '.360-lock');
+  fs.unlinkSync(locker);
+};
+
 module.exports.getQueryPosterHandler = (queryId, mode, queryScriptStage2, queryScriptStage3) => {
 
   if (mode === constants.INTEGRATED_MODE.IDENTIFIED) {
