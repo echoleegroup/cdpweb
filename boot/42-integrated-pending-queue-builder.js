@@ -24,6 +24,8 @@ module.exports = (app) => {
 
       await _queue.push(queryId, handler);
     });
+
+    _queue.next();
   });
   //
   //

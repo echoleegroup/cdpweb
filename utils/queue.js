@@ -65,13 +65,14 @@ class Queue {
 
     winston.info(`task ${id} is pushed to topic ${this.topic}`);
 
-    return this.auto_start && this.processing.length < this.concurrence && await this.next();
+    this.auto_start && this.processing.length < this.concurrence && await this.next(id);
+    return this;
   };
 
   async next(ref) {
     winston.info('ref: ', ref);
 
-    if (await this.isNext()) {
+    if (await this.isNext(ref)) {
 
       let head = _.head(this.queue);
       this.processing.concat(_.remove(this.queue, {id: head.id}));
@@ -85,16 +86,16 @@ class Queue {
           winston.info(`ref ${ref} task ${id} finished in topic ${this.topic}`);
           _.remove(this.processing, {id});
           // concurrence.splice(concurrence.indexOf(id), 1);
-          this.auto_start && this.next();
+          this.auto_start && this.next(id);
           resolve();
         });
       });
+    } else {
+      return Promise.resolve();
     }
-
-    return Promise.resolve();
   };
 
-  async isNext() {
+  async isNext(ref) {
     return Promise.resolve(
       _.head(this.queue) && !this.suspended && this.processing.length < this.concurrence);
   };
@@ -110,18 +111,19 @@ class Queue {
 }
 
 class IQTriggerQueue extends Queue {
-  async isNext() {
+  async isNext(ref) {
+    winston.info(`${ref} isNext()`);
     let result = await this.getRemoteProcessingTaskCount();
-    return (result === 0 && await this.isNext());
+    return (result === 0 && await super.isNext(ref));
   }
 
   async getRemoteProcessingTaskCount() {
     return new Promise((resolve, reject) => {
-      Q.nfcall(integrationTaskService.getTasksByStatus, integrationTaskService.PROCESS_STATUS.REMOTE_PROCESSING)
-        .then(res => {
-          resolve(res.length);
-        }).fail(err => {
-          reject(err);
+      integrationTaskService.getTasksByStatus(integrationTaskService.PROCESS_STATUS.REMOTE_PROCESSING, (err ,res) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(res.length)
       });
     });
   }
@@ -136,7 +138,7 @@ const TOPIC = {
 const _queue = {
   [TOPIC.INTEGRATED_QUERY_PARSER]: new Queue(TOPIC.INTEGRATED_QUERY_PARSER, 2),
   [TOPIC.INTEGRATED_REMOTE_CHECKER]: new Queue(TOPIC.INTEGRATED_REMOTE_CHECKER, 2),
-  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1)
+  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1, false, false)
 };
 
 module.exports = {

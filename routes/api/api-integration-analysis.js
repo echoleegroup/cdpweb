@@ -334,7 +334,7 @@ module.exports = (app) => {
       return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3))
         .then(status => {
           let handler = integratedHelper.identicalQueryPoster(queryId, queryScriptStage2, queryScriptStage3);
-          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler).next();
           return res.json({queryId, mode, status});
           // return Q.all([queryId, queryScriptStage2, queryScriptStage3]);
       });
@@ -459,7 +459,7 @@ module.exports = (app) => {
       return Q.nfcall(integrationTaskService.setQueryTaskStatusPending, queryId, JSON.stringify(queryScriptStage3))
         .then(status => {
           let handler = integratedHelper.anonymousQueryPoster(queryId, queryScriptStage3);
-          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler).next();
           return res.json({queryId, mode, status});
         // return Q.all([queryId, queryScriptStage3]);
       });
