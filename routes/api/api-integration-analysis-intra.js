@@ -105,7 +105,7 @@ module.exports = (app) => {
             res.json({status});
 
             //download finished. Fire next query script. Must be fired after update current task status.
-            queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).next();
+            queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).next('api-integration-analysis-intra.js');
 
             require('request-promise-native').post(remoteDeleteUrl);
             return queue

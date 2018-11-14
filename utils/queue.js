@@ -51,7 +51,7 @@ class Queue {
     this.auto_start = auto_start;
   };
 
-  push(id = shortid.generate(), processor, callback = () => {}) {
+  async push(id = shortid.generate(), processor, callback = () => {}) {
     // id = id || shortid.generate();
     const handler = () => {
       return Q(processor()).then(data => {
@@ -65,23 +65,26 @@ class Queue {
 
     winston.info(`task ${id} is pushed to topic ${this.topic}`);
 
-    this.auto_start && this.next();
+    this.auto_start && this.processing.length >= 0 && this.processing.length < this.concurrence && await this.next();
   };
 
-  async next() {
+  async next(ref) {
+    winston.info('ref: ', ref);
+
+    let isNextTask = await this.isNext();
     let head = _.head(this.queue);
-    if (head && !this.suspended && this.processing.length >= 0 &&
-      this.processing.length < this.concurrence && await this.isNext()) {
 
+    if (head && !this.suspended &&
+      this.processing.length >= 0 && this.processing.length < this.concurrence && isNextTask) {
 
-      this.processing.push(_.remove(this.queue, {id: head.id}));
+      this.processing.concat(_.remove(this.queue, {id: head.id}));
 
       let id = head.id;
       let handler = head.handler;
-      winston.info(`task ${id} is fetched from topic ${this.topic}`);
+      winston.info(`ref ${ref} task ${id} is fetched from topic ${this.topic}`);
 
-      handler().finally(() => {
-        winston.info(`task ${id} finished in topic ${this.topic}`);
+      return handler().finally(() => {
+        winston.info(`ref ${ref} task ${id} finished in topic ${this.topic}`);
         _.remove(this.processing, {id});
         // concurrence.splice(concurrence.indexOf(id), 1);
         this.auto_start && this.next();
@@ -106,7 +109,7 @@ class Queue {
 class IQTriggerQueue extends Queue {
   async isNext() {
     let result = await this.getRemoteProcessingTaskCount();
-    return (result > 0);
+    return (result === 0);
   }
 
   async getRemoteProcessingTaskCount() {
