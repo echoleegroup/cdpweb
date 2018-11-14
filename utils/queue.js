@@ -42,12 +42,12 @@ const integrationTaskService = require('../services/integration-analysis-task-se
 // };
 
 class Queue {
-  constructor(topic, concurrence=2, suspended=false, auto_start=true) {
+  constructor(topic, concurrence=2, auto_start=true) {
     this.queue = [];
     this.processing = [];
     this.topic = topic;
     this.concurrence = concurrence;
-    this.suspended = suspended;
+    this.suspended = false;
     this.auto_start = auto_start;
   };
 
@@ -106,7 +106,7 @@ class Queue {
 
   resume() {
     this.suspended = false;
-    this.auto_start && this.next();
+    this.next();
   };
 }
 
@@ -138,7 +138,7 @@ const TOPIC = {
 const _queue = {
   [TOPIC.INTEGRATED_QUERY_PARSER]: new Queue(TOPIC.INTEGRATED_QUERY_PARSER, 2),
   [TOPIC.INTEGRATED_REMOTE_CHECKER]: new Queue(TOPIC.INTEGRATED_REMOTE_CHECKER, 2),
-  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1, false, false)
+  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1, false)
 };
 
 module.exports = {
