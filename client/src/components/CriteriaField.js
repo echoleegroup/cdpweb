@@ -1,5 +1,5 @@
 import React from 'react';
-import {find, assign} from 'lodash';
+import {isNull, assign} from 'lodash';
 // import moment from 'moment';
 import {OPERATOR_DICT as OPERATOR_DICT_DEFAULT} from '../utils/criteria-dictionary';
 
@@ -71,7 +71,7 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   displayTextFormatter(inputType, value, valueLabel) {
-    if(!value)
+    if (isNull(value))
       return null;
 
     switch (inputType) {
