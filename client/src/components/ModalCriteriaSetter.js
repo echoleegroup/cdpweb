@@ -310,15 +310,18 @@ class InputBase extends React.PureComponent {
   }
 
   validate(value) {
-    return isEmpty(value)? '請輸入條件值': null;
+    // return isEmpty(value)? '請輸入條件值': null;
+    return null;
   };
 
   getValue(inputElement) {
-    return $(inputElement).val();
+    let val = $(inputElement).val();
+    return isEmpty(val)? '': val;
   }
 
   getValueLabel(value) {
-    return value;
+    // return value;
+    return isEmpty(value)? '[無內容]': value;
   };
 
   render() {
