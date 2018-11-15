@@ -88,8 +88,8 @@ const preBuild = (tempTableName, callback) => {
 
 module.exports = (app) => {
   const dailyTaskReportCron = {
-    minute: 33,
-    hour: 7
+    minute: 23,
+    hour: 8
   };
 
   // schedule.scheduleJob(`0 * * * * *`, () => {

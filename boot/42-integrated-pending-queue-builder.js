@@ -12,7 +12,7 @@ module.exports = (app) => {
 
   return Q.nfcall(
     integrationTaskService.getTaskCriteriaByStatus, integrationTaskService.PROCESS_STATUS.PENDING).then(tasks => {
-    tasks.forEach(async task => {
+    tasks.forEach(task => {
 
       const queryId = task.queryID;
       const queryScriptStage2 = JSON.parse(task.queryScriptStage2);
@@ -20,25 +20,11 @@ module.exports = (app) => {
       const mode = task.mode;
 
       let handler = integratedAnalysisHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
-      Q.nfcall(integrationTaskService.updateResumeTime, queryId);
+      // Q.nfcall(integrationTaskService.updateResumeTime, queryId);
 
-      await _queue.push(queryId, handler);
+      _queue.push(queryId, handler);
     });
 
     _queue.next();
   });
-  //
-  //
-  //
-  //
-  // return Q.nfcall(integrationTaskService.getTasksByStatus, integrationTaskService.PROCESS_STATUS.PARSING)
-  //   .then(tasks => {
-  //     tasks.forEach(task => {
-  //       const queryId = task.queryID;
-  //       const sparkZipPath = path.join(constants.ASSERTS_SPARK_FEEDBACK_PATH_ABSOLUTE, `${queryId}.zip`);
-  //       queue.push(queryId, integratedAnalysisHelper.getIntegratedQueryPackParser(queryId, sparkZipPath));
-  //     });
-  //   }).fail(err => {
-  //     winston.error('get parsing integrated query task failed: ', err);
-  //   });
 };

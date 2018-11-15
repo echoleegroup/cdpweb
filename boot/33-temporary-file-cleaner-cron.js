@@ -1,12 +1,8 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const Q = require('q');
 const schedule = require('node-schedule');
-const winston = require('winston');
 const moment = require('moment');
 const constants = require('../utils/constants');
-const _connector = require('../utils/sql-query-util');
 
 module.exports = (app) => {
   let dailyTaskReportCron = {
