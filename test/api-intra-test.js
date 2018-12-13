@@ -125,24 +125,27 @@ module.exports = (app) => {
     });
   });
 
-  router.post('/objectMail', factory.ajax_response_factory(), upload.single('file'), (req, res) => {
+  router.post('/objectMail', factory.ajax_response_factory(), upload.any(), (req, res) => {
     const to = req.body.to;
     const subject = req.body.subject || '';
     const text = req.body.text;
-    const file = req.file;
+    // const file = req.file;
     const mail = require('../utils/mail-util');
-    const originalname = file.originalname;
 
-    Q.nfcall(mail.textMail, to, {
+    const body = {
       subject: subject,
       content: text,
-      attachments: [
-        {
-          filename: originalname,
-          content: file.buffer
-        }
-      ]
-    }).then(() => {
+      attachments: []
+    };
+
+    req.files.forEach(file => {
+      body.attachments.push({
+        filename: file.originalname,
+        content: file.buffer
+      });
+    });
+
+    Q.nfcall(mail.textMail, to, body).then(() => {
       res.json();
     }).fail(err => {
       res.json(null, 500, 'internal service error!');
