@@ -379,6 +379,10 @@ class DateInput extends InputBase {
 
 class RefOptionInput extends InputBase {
 
+  validate(value) {
+    return value.length > 0? null: '請至少選擇一個項目';
+  };
+
   getValue(element) {
     return $(element).find('input:checked').map((i, e) => {
       return e.value;
