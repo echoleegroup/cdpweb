@@ -71,7 +71,7 @@ export default class CriteriaField extends React.PureComponent {
   };
 
   displayTextFormatter(inputType, value, valueLabel) {
-    if (!!value)
+    if (!value)
       return null;
 
     switch (inputType) {
