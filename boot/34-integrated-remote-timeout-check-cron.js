@@ -14,7 +14,7 @@ module.exports = (app) => {
 
   // schedule.scheduleJob(`0 * * * * *`, () => {
   schedule.scheduleJob(`*/30 * * * *`, () => {
-    const yesterday = moment().startOf('day').add(-1, 'day').toDate();
+    const yesterday = moment().add(-1, 'day').toDate();
 
     const sql = 'UPDATE cu_IntegratedQueryTask ' +
       'SET status = @timeout, updTime = @updTime ' +
