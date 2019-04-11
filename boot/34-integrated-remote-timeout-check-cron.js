@@ -7,13 +7,13 @@ const _connector = require('../utils/sql-query-util');
 const integrationTaskService = require('../services/integration-analysis-task-service');
 
 module.exports = (app) => {
-  let dailyTaskReportCron = {
-    minute: 33,
-    hour: 8
-  };
+  // let dailyTaskReportCron = {
+  //   minute: 33,
+  //   hour: 8
+  // };
 
   // schedule.scheduleJob(`0 * * * * *`, () => {
-  schedule.scheduleJob(`${dailyTaskReportCron.minute} ${dailyTaskReportCron.hour} * * *`, () => {
+  schedule.scheduleJob(`*/30 * * * *`, () => {
     const yesterday = moment().startOf('day').add(-1, 'day').toDate();
 
     const sql = 'UPDATE cu_IntegratedQueryTask ' +
