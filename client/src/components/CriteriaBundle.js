@@ -79,7 +79,7 @@ export default class CriteriaBundle extends React.PureComponent {
     };
 
     this.insertCriteriaState = (criteria) => {
-      console.log('criteria: ', criteria);
+      // console.log('criteria: ', criteria);
       this.setState(prevState => ({
         properties: prevState.properties.set('criteria', prevState.properties.get('criteria').push(criteria))
       }));
