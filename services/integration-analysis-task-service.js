@@ -35,6 +35,7 @@ const updateTaskStatus = (queryId, status, callback) => {
     .setInput('status', _connector.TYPES.NVarChar, status);
 
   Q.nfcall(request.executeUpdate, sql).then(rowsAffected => {
+    console.log(`update task ${queryId} to status ${status}: ${rowsAffected}`);
     if (rowsAffected === 1) {
       callback(null, status);
     } else {

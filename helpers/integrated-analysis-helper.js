@@ -723,7 +723,7 @@ module.exports.identicalQueryPoster = (queryId, queryScriptStage2, queryScriptSt
     }).fail(err => {
       winston.error('===post integrated query script request failed(queryID=%s): ', queryId, err);
       return integrationTaskService.setQueryTaskStatusRemoteServiceUnavailable;
-    }).then((handler) => {
+    }).then(handler => {
       return Q.nfcall(handler, queryId);
     }).fail(err => {
       winston.error('===update integrated query task status failed(queryID=%s): ', queryId, err);
