@@ -49,7 +49,7 @@ module.exports = (app) => {
 
         let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
 
-        queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
+        queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler).next();
 
         Q.nfcall(integrationTaskService.updateResumeTime, queryId);
         res.json({status});
