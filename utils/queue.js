@@ -98,8 +98,12 @@ class Queue {
   };
 
   async getNext(ref, prevId) {
+    console.log('suspended: ', this.suspended);
+    console.log('processing: ', this.processing.length);
+    console.log('concurrence: ', this.concurrence);
     if (!this.suspended && this.processing.length < this.concurrence) {
       let head = _.head(this.queue);
+      console.log('head: ', head);
       this.processing.concat(_.remove(this.queue, {id: head.id}));
       return head;
     }
@@ -120,6 +124,7 @@ class IQTriggerQueue extends Queue {
   async getNext(ref, prevId) {
     // winston.info(`${ref} isNext()`);
     let result = await this.getRemoteProcessingTaskCount();
+    console.log('getRemoteProcessingTaskCount result: ', result)
     return (result === 0)? await super.getNext(ref, prevId): null;
   }
 
