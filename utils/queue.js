@@ -42,13 +42,13 @@ const integrationTaskService = require('../services/integration-analysis-task-se
 // };
 
 class Queue {
-  constructor(topic, concurrence=2, auto_start=true) {
+  constructor(topic, concurrence=2/*, auto_start=true*/) {
     this.queue = [];
     this.processing = [];
     this.topic = topic;
     this.concurrence = concurrence;
     this.suspended = false;
-    this.auto_start = auto_start;
+    // this.auto_start = auto_start;
   };
 
   push(id = shortid.generate(), processor, callback = () => {}) {
@@ -65,17 +65,19 @@ class Queue {
 
     winston.info(`task ${id} is pushed to topic ${this.topic}`);
 
-    this.auto_start && this.processing.length < this.concurrence && this.next(id);
+    //this.auto_start &&
+    this.processing.length < this.concurrence && this.next(id);
     return this;
   };
 
-  async next(ref) {
+  async next(ref, prevId) {
     winston.info('ref: ', ref);
+    let head = await this.getNext(ref, prevId);
 
-    if (await this.isNext(ref)) {
+    if (head) {
 
-      let head = _.head(this.queue);
-      this.processing.concat(_.remove(this.queue, {id: head.id}));
+      // let head = _.head(this.queue);
+      // this.processing.concat(_.remove(this.queue, {id: head.id}));
 
       let id = head.id;
       let handler = head.handler;
@@ -86,7 +88,7 @@ class Queue {
           winston.info(`ref ${ref} task ${id} finished in topic ${this.topic}`);
           _.remove(this.processing, {id});
           // concurrence.splice(concurrence.indexOf(id), 1);
-          this.next(id);
+          this.next(ref, id);
           resolve();
         });
       });
@@ -95,9 +97,13 @@ class Queue {
     }
   };
 
-  async isNext(ref) {
-    return Promise.resolve(
-      _.head(this.queue) && !this.suspended && this.processing.length < this.concurrence);
+  async getNext(ref, prevId) {
+    if (!this.suspended && this.processing.length < this.concurrence) {
+      let head = _.head(this.queue);
+      this.processing.concat(_.remove(this.queue, {id: head.id}));
+      return head;
+    }
+    return null;
   };
 
   suspend() {
@@ -111,10 +117,10 @@ class Queue {
 }
 
 class IQTriggerQueue extends Queue {
-  async isNext(ref) {
-    winston.info(`${ref} isNext()`);
+  async getNext(ref, prevId) {
+    // winston.info(`${ref} isNext()`);
     let result = await this.getRemoteProcessingTaskCount();
-    return (result === 0 && await super.isNext(ref));
+    return (result === 0)? await super.getNext(ref, prevId): null;
   }
 
   async getRemoteProcessingTaskCount() {
@@ -138,7 +144,7 @@ const TOPIC = {
 const _queue = {
   [TOPIC.INTEGRATED_QUERY_PARSER]: new Queue(TOPIC.INTEGRATED_QUERY_PARSER, 2),
   [TOPIC.INTEGRATED_REMOTE_CHECKER]: new Queue(TOPIC.INTEGRATED_REMOTE_CHECKER, 2),
-  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1, false)
+  [TOPIC.INTEGRATED_QUERY_TRIGGER]: new IQTriggerQueue(TOPIC.INTEGRATED_QUERY_TRIGGER, 1)
 };
 
 module.exports = {

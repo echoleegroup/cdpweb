@@ -335,7 +335,7 @@ module.exports = (app) => {
         .then(status => {
           let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage2, queryScriptStage3);
           // let handler = integratedHelper.identicalQueryPoster(queryId, queryScriptStage2, queryScriptStage3);
-          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler).next();
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
           return res.json({queryId, mode, status});
           // return Q.all([queryId, queryScriptStage2, queryScriptStage3]);
       });
@@ -461,7 +461,7 @@ module.exports = (app) => {
         .then(status => {
           let handler = integratedHelper.getQueryPosterHandler(queryId, mode, queryScriptStage3, queryScriptStage3);
           // let handler = integratedHelper.anonymousQueryPoster(queryId, queryScriptStage3);
-          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler).next();
+          queue.get(queue.TOPIC.INTEGRATED_QUERY_TRIGGER).push(queryId, handler);
           return res.json({queryId, mode, status});
         // return Q.all([queryId, queryScriptStage3]);
       });
