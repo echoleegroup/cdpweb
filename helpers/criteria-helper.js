@@ -261,7 +261,7 @@ module.exports = {
     // const API_360_HOST = appConfig.get("API_360_HOST");
     // const API_360_PORT = appConfig.get("API_360_PORT");
 
-    const valueBuilder = (dataType, value) => {
+    const textValueBuilder = (dataType, value) => {
       switch (dataType) {
         case 'string':
           return `'${value}'`;
@@ -282,22 +282,31 @@ module.exports = {
       }
     };
 
+    const dateValueBuilder = (dataType, value) => {
+      switch (dataType) {
+        case 'string':
+          return `'${moment(value).format('YYYYMMDD')}'`;
+        default:
+          return textValueBuilder(dataType, value);
+      }
+    };
+
     const expressionSparkSqlBuilder = (operator, dataType, value) => {
-      let _value = valueBuilder(dataType, value);
+      // let _value = textValueBuilder(dataType, value);
 
       switch (operator) {
         case 'eq':
-          return ` = ${_value}`;
+          return ` = ${value}`;
         case 'ne':
-          return ` != ${_value}`;
+          return ` != ${value}`;
         case 'lt':
-          return ` < ${_value}`;
+          return ` < ${value}`;
         case 'le':
-          return ` <= ${_value}`;
+          return ` <= ${value}`;
         case 'gt':
-          return ` > ${_value}`;
+          return ` > ${value}`;
         case 'ge':
-          return ` >= ${_value}`;
+          return ` >= ${value}`;
         case 'in':
           return ' IS NULL';
         case 'nn':
@@ -309,7 +318,7 @@ module.exports = {
 
     const optionSparkSqlBuilder = (operator, dataType, options = []) => {
       let optionValues = _.map(options, option => {
-        return valueBuilder(dataType, option);
+        return textValueBuilder(dataType, option);
       }).join(',');
 
       switch (operator) {
@@ -326,14 +335,14 @@ module.exports = {
       }
     };
 
-    const stringValueTransformer = (inputType, value) => {
-      switch (inputType) {
-        case 'date':
-          return moment(value).format('YYYYMMDD');
-        default:
-          return value;
-      }
-    };
+    // const stringValueTransformer = (inputType, value) => {
+    //   switch (inputType) {
+    //     case 'date':
+    //       return moment(value).format('YYYYMMDD');
+    //     default:
+    //       return value;
+    //   }
+    // };
 
     const conditionExpr = (dataType, inputType, operator, value) => {
       // winston.info('dataType: ', dataType);
@@ -342,10 +351,11 @@ module.exports = {
         // case 'number':
         //   return numberExprBuilder(operator, value);
         case 'text':
-          let _value = stringValueTransformer(inputType, value);
-          return expressionSparkSqlBuilder(operator, dataType, _value);
-        // case 'date':
-        //   return dateExprBuilder(operator, value);
+          let textValue = textValueBuilder(inputType, value);
+          return expressionSparkSqlBuilder(operator, dataType, textValue);
+        case 'date':
+          let dateValue = dateValueBuilder(inputType, value);
+          return expressionSparkSqlBuilder(operator, dataType, dateValue);
         // case 'datetime':
         //   return datetimeExprBuilder(operator, value);
         case 'refOption':
