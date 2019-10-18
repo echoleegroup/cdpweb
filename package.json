@@ -22,7 +22,7 @@
     "content-disposition": "^0.5.2",
     "cookie-parser": "^1.4.3",
     "csv-write-stream": "^2.0.0",
-    "debug": "~2.2.0",
+    "debug": "~2.6.9",
     "dotenv": "^4.0.0",
     "event-stream": "^3.3.4",
     "express": "^4.16.2",
