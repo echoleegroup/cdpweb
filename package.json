@@ -34,7 +34,7 @@
     "knex": "^0.12.6",
     "level": "^2.1.1",
     "level-session-store": "^2.1.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "method-override": "^2.3.7",
     "minizip-asm.js": "^1.0.10",
     "mkdirp": "^0.5.1",
