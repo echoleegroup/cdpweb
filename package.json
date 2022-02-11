@@ -26,7 +26,7 @@
     "dotenv": "^4.0.0",
     "event-stream": "^3.3.4",
     "express": "^4.16.2",
-    "express-handlebars": "^3.0.0",
+    "express-handlebars": "^5.3.1",
     "express-session": "^1.15.5",
     "forever": "^0.15.3",
     "handlebars-helpers": "^0.10.0",
